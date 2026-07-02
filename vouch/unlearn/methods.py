@@ -141,9 +141,12 @@ def npo(model, tok, forget_texts: Sequence[str],
         nll_theta = _seq_nll(model, fb)
         with torch.no_grad():
             nll_ref = _seq_nll(ref, fb)
-        # pi_ref/pi_theta = exp(nll_theta - nll_ref) at sequence level, so
-        # log(1 + (pi_ref/pi_theta)^beta) = softplus(beta * (nll_theta - nll_ref)).
-        loss = (2.0 / beta) * F.softplus(beta * (nll_theta - nll_ref)).mean()
+        # L_NPO = -(2/beta) E log sigma(-beta (log pi_theta - log pi_ref))
+        #       = (2/beta) E softplus(beta (nll_ref - nll_theta))  per sequence:
+        # minimized by RAISING nll_theta on the forget set, with the gradient
+        # scale sigma(beta (nll_ref - nll_theta)) decaying once the model has
+        # already forgotten (NPO's stability property vs plain ascent).
+        loss = (2.0 / beta) * F.softplus(beta * (nll_ref - nll_theta)).mean()
         if rgen is not None:
             rb = _encode_batch(next(rgen), tok, model.cfg.block_size, device)
             loss = loss + retain_weight * _seq_nll(model, rb).mean()
