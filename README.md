@@ -167,14 +167,32 @@ t = 1,024 (`fig4_tightness`).
 ### End-to-end on a real LM (GPU tier: GPT-2 on a Colab T4)
 
 Full pipeline per seed: canary generation + SHA-256 manifest commitment → fine-tune on
-keep ∪ forget ∪ in-twins → unlearn with each subject → black-box certification
-(512 pairs, ε = 0.2, α = 0.05, scores {loss, min-k}) → R-VOUCH probes on NPO
-(`results/lm_e2e_gpt2.json`, `fig6_lm_gpt2`). Headline: the fine-tuned model with no
-unlearning is **revoked within ~11 pairs** (mean in-vs-ghost loss gap ≈ 2.8 nats);
-subjects separate along the CS upper bound; recoverability probes re-certify the
-suppression-vs-erasure distinction. A CPU-affordable tier (`--model tiny`) runs the
-identical protocol on an in-repo small transformer with retrain-from-scratch ground
-truth.
+keep ∪ forget ∪ in-twins → unlearn with each subject → black-box certification →
+R-VOUCH probes on NPO. Two runs:
+
+**v2 (two-sided, 640 pairs, scores {loss, min-k, ratio}, corrected NPO), seed 0:**
+
+| subject | decision | CS upper bound on Δ | mean D (loss) |
+|---|---|---|---|
+| no unlearning | REVOKED (t≈11, log-e 294) | 0.92 | +2.12 |
+| retrain (exact) | **ISSUED** (t=349) | 0.21 | +0.11 |
+| GA | ISSUED (t=391) | 0.20 | +0.12 |
+| GradDiff | ISSUED (t=462) | 0.20 | +0.61 |
+| NPO | ISSUED (t=310) | 0.17 | +0.06 |
+| NPO + P1 relearn / P2 4-bit / P3 jailbreak | ISSUED | 0.13–0.22 | +0.05–0.23 |
+
+**v1 (one-sided, 512 pairs, 3 seeds)** additionally caught a **sign bug in our own NPO
+implementation** (the loss was being minimized toward memorization): revoked 3/3 seeds
+within ~11 pairs — statistical certification audits the unlearning *code*, not just the
+outcome. Retrain certified 3/3; results in `results/lm_e2e_gpt2_v1.json`.
+
+**Small-model tier** (`--model tiny`, 3 seeds, retrain ground truth affordable,
+`results/lm_e2e_tiny.json`): no-unlearning revoked 3/3 (log-e 154–212); retrain, GA,
+GradDiff certified 3/3; NPO 2/3 (1 honest UNDETERMINED at the 512-pair horizon).
+Dose–response (§6.7), measured: mean D by repetition stratum r = 1/2/4/8 is
+0.47 / 0.64 / 0.79 / 1.04 on the memorized model and ≈ 0 after unlearning.
+Utility guardrail: canary injection shifts held-out loss by +0.005 nats/char even at an
+extreme 38% corpus share (design target is < 0.05% share).
 
 ## Repository layout
 
