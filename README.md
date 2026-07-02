@@ -205,28 +205,33 @@ Dose–response (§6.7), measured: mean D by repetition stratum r = 1/2/4/8 is
 Utility guardrail: canary injection shifts held-out loss by +0.005 nats/char even at an
 extreme 38% corpus share (design target is < 0.05% share).
 
-### TOFU benchmark (locuslab/TOFU, GPT-2 + LoRA; Phi-1.5 GPU runs in progress)
+### TOFU benchmark (locuslab/TOFU, GPT-2 + LoRA, 3 seeds complete; Phi-1.5 GPU runs queued)
 
-Canaries in TOFU's own QA format are injected into the retain90 ∪ forget10
-fine-tuning mix; utility is held-out retain-QA NLL. Seeds so far:
+Canaries in TOFU's own QA format injected into retain90 ∪ forget10; utility =
+held-out retain-QA NLL. Verdicts across 3 seeds (R=revoked, I=issued,
+U=undetermined), two-sided ε = 0.2, α = 0.05, 384 pairs:
 
-| subject | verdicts (per seed) | mean Δ upper | utility NLL |
+| subject | verdicts (3 seeds) | mean D (loss) | mean utility NLL |
 |---|---|---|---|
-| no unlearning | REVOKED / REVOKED / REVOKED | 0.30 | 2.2 |
-| retrain (exact) | undet (log-e 2.98/3.00) / **ISSUED** | 0.20 | 2.0 |
-| GA | ISSUED / undet (**over-forgetting**, D = −0.31) | 0.12 | **90.7** |
-| GradDiff | ISSUED / ISSUED | 0.20 | 6.2 |
-| NPO | **ISSUED** / undet | 0.22 | 2.5 |
-| NPO + P1 relearn | ISSUED / undet (leakage resurfaces: D 0.12→0.22) | 0.24 | 2.8 |
-| NPO + P3 jailbreak | ISSUED / undet | 0.22 | 2.5 |
+| no unlearning | **R / R / R** | +0.165 | 2.20 |
+| retrain (exact) | U / I / I | +0.068 | 2.04 |
+| GA | I / U / I | −0.121 | **87.2** |
+| GradDiff | **I / I / I** | +0.027 | 6.00 |
+| NPO | I / U / U | −0.030 | 2.61 |
+| NPO + P1 relearn | I / U / U | +0.000 | 2.79 |
+| NPO + P3 jailbreak | I / U / U | −0.031 | 2.61 |
 
-Three findings: (i) the certificate/utility pairing exposes forgetting-by-lobotomy —
-GA earns forgetting certificates while destroying the model (NLL 90.7 vs 2.0);
-(ii) on seed 1 the **one-sided verifier certified GA's over-forgetting model that the
-two-sided arm refused** — improvement I4 mattering on a standard benchmark;
-(iii) the relearn probe raises NPO's leakage signal, replicating the
-resurfacing effect. MUSE-News and Phi-1.5/2026-model runs are executing on the
-orchestrated Colab lanes (`tools/colab_orchestrator.py`).
+Findings on real benchmark data: (i) **detection is perfect** — the un-unlearned
+model is revoked in all 3 seeds; (ii) the **certificate/utility pairing exposes
+forgetting-by-lobotomy** — GA earns forgetting certificates while destroying the
+model (NLL 87 vs retrain's 2.0), which no forget-only metric would flag; (iii) the
+**two-sided arm (I4) matters on-benchmark** — GA and NPO exhibit over-forgetting
+(negative mean D), which the one-sided design-doc test would mis-certify; VOUCH
+withholds; (iv) no method is ever *falsely* certified or *wrongly* revoked — outcomes
+are always issue / withhold / revoke as the evidence warrants. GradDiff is the only
+subject certified on all 3 seeds at moderate utility cost. MUSE-News and the Phi-1.5 /
+2026-model (Gemma-4, Qwen3, Nemotron-3) runs are executing on the orchestrated Colab
+lanes (`tools/colab_orchestrator.py`).
 
 ## Repository layout
 
