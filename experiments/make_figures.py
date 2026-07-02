@@ -202,7 +202,7 @@ def fig_ablation():
     for xi, (s, m) in enumerate(zip(sm, mm)):
         ax.annotate(f"{s:.0f}", (xi - w / 2 - 0.01, s + 30), ha="center", fontsize=8)
         ax.annotate(f"{m:.0f}", (xi + w / 2 + 0.01, m + 30), ha="center", fontsize=8)
-    ax.set_xticks(x, [f"{f:.0%} of pairs memorized" for f in fracs], fontsize=8.5)
+    ax.set_xticks(x, [f"{f:.0%} memorized" for f in fracs], fontsize=8.5)
     ax.set_ylabel("median detection time (pairs)")
     ax.legend(fontsize=7.8, frameon=False)
     ax.set_title("Sparse-leakage detection", fontsize=9.5)
