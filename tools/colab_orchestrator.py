@@ -74,8 +74,14 @@ def sh(cmd, timeout=240):
 
 
 def colab_exec(py, timeout=240):
-    return sh(f"printf %s {json.dumps(py)} | colab exec -s {SESSION}",
-              timeout=timeout)
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        f.write(py)
+        path = f.name
+    try:
+        return sh(f"colab exec -s {SESSION} -f {path}", timeout=timeout)
+    finally:
+        os.unlink(path)
 
 
 def log(msg):
