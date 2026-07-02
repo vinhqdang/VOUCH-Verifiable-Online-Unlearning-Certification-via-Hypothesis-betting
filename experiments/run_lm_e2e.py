@@ -183,12 +183,14 @@ def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
     retain_texts = keep
 
     def verify(model, tag, wrappers=None):
+        t_v = time.time()
         eng = ScoreEngine(be.logprob_fn(getattr(model, "m", model)),
                           base_logprob_fn=base_fn, n_queries=4)
         if wrappers is not None:
             eng.wrappers = wrappers
         diffs = [eng.pair_differences(p.in_twin, p.ghost_twin)
                  for p in manifest.pairs]
+        scoring_seconds = time.time() - t_v
         v = VouchVerifier(eng.score_names, VouchConfig(eps=eps, alpha=alpha),
                           manifest_sha256=commitment)
         cert = v.run(diffs, shuffle_seed=seed, early_stop=True)
@@ -199,6 +201,7 @@ def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
               f"meanD={mean_d:6.3f}")
         rec = json.loads(cert.to_json())
         rec["mean_loss_diff"] = mean_d
+        rec["scoring_seconds"] = scoring_seconds
         # raw per-pair score differences: lets any verifier variant be
         # re-run offline (the expensive part is scoring, not betting)
         rec["pair_diffs"] = diffs
