@@ -270,8 +270,9 @@ def run_job(job) -> None:
             sh(f"colab download -s {SESSION} {job['log']} {REPO}/results/{job['name']}_error.log",
                timeout=300)
             return
-        tail = [l for l in out.splitlines() if l.startswith('[seed')][-1:]
-        if tail:
+        tail = [l for l in out.splitlines() if l.startswith('[seed') and 'status=' in l][-1:]
+        if tail and tail[0] != getattr(run_job, "_last_" + job["name"], None):
+            setattr(run_job, "_last_" + job["name"], tail[0])
             log(f"progress: {tail[0]}")
         sh(f"colab download -s {SESSION} {job['result']} {job['local']}",
            timeout=600)
