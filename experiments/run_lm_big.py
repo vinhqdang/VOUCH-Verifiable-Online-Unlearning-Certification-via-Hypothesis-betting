@@ -80,20 +80,36 @@ def seq_nll(model, batch, pad_id):
 
 def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
                   seed=0, sign=+1, retain=None, retain_w=1.0, npo_ref=None,
-                  beta=0.1, log_every=100):
+                  beta=0.1, log_every=100, ckpt=None, ckpt_every=100):
     """Train `adapter` (already active) on texts.
 
     sign=+1: descent (fine-tune);  sign=-1: ascent (GA / GradDiff forget term).
     npo_ref: name of a frozen reference adapter -> NPO loss instead of CE.
+    ckpt: optional path for intra-stage checkpointing (adapter + optimizer +
+    step) so short-lived VMs make progress through long stages.
     """
+    from peft.utils import (get_peft_model_state_dict,
+                            set_peft_model_state_dict)
     rng = random.Random(("train", adapter, seed).__repr__())
     pad = tok.pad_token_id or 0
     params = [p for p in model.parameters() if p.requires_grad]
     opt = torch.optim.AdamW(params, lr=lr)
+    start_step = 0
+    if ckpt and os.path.exists(ckpt):
+        state = torch.load(ckpt, map_location=device)
+        set_peft_model_state_dict(model, state["adapter"], adapter_name=adapter)
+        opt.load_state_dict(state["opt"])
+        start_step = state["step"]
+        print(f"    [{adapter}] resumed at step {start_step}", flush=True)
     gen = batches(texts, bs, rng)
     rgen = batches(retain, bs, rng) if retain else None
     model.train()
     for step in range(steps):
+        if step < start_step:
+            next(gen)                      # keep batch order aligned
+            if rgen is not None:
+                next(rgen)
+            continue
         b = encode_batch(tok, next(gen), block, device)
         if npo_ref is not None:
             with torch.no_grad():
@@ -114,6 +130,13 @@ def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
         if log_every and (step + 1) % log_every == 0:
             print(f"    [{adapter}] step {step+1}/{steps} loss {loss.item():.4f}",
                   flush=True)
+        if ckpt and (step + 1) % ckpt_every == 0 and (step + 1) < steps:
+            torch.save({"adapter": get_peft_model_state_dict(
+                            model, adapter_name=adapter),
+                        "opt": opt.state_dict(), "step": step + 1}, ckpt)
+    if ckpt and os.path.exists(ckpt):
+        os.remove(ckpt)                    # stage finished; final ckpt is
+                                           # saved by the caller
 
 
 def clone_adapter(model, src, dst):

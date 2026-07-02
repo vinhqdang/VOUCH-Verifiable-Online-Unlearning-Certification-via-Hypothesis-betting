@@ -239,7 +239,8 @@ def main():
 
         model.set_adapter("ft")
         if not load_adapter("ft"):
-            train_adapter(model, tok, corpus, "ft", **tkw)
+            train_adapter(model, tok, corpus, "ft",
+                          ckpt=ckpt_path("ft_train"), **tkw)
             save_adapter("ft")
         if "none" in todo:
             verify("none", "ft")
@@ -247,7 +248,8 @@ def main():
         if "retrain" in todo:
             keep_corpus, _ = build_finetune_corpus(keep, [], [], seed=seed)
             fresh_adapter(model, "rt", lcfg)
-            train_adapter(model, tok, keep_corpus, "rt", **tkw)
+            train_adapter(model, tok, keep_corpus, "rt",
+                          ckpt=ckpt_path("rt_train"), **tkw)
             verify("retrain", "rt")
             drop_adapter(model, "rt")
 
@@ -269,7 +271,8 @@ def main():
             if not load_adapter("npo"):
                 clone_adapter(model, "ft", "npo")
                 train_adapter(model, tok, forget_texts, "npo", steps=250,
-                              retain=keep, npo_ref="ft", **ukw)
+                              retain=keep, npo_ref="ft",
+                              ckpt=ckpt_path("npo_train"), **ukw)
                 save_adapter("npo")
             if "npo" in todo:
                 verify("npo", "npo")
