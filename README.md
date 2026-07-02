@@ -240,6 +240,25 @@ subject certified on all 3 seeds at moderate utility cost. MUSE-News and the Phi
 2026-model (Gemma-4, Qwen3, Nemotron-3) runs are executing on the orchestrated Colab
 lanes (`tools/colab_orchestrator.py`).
 
+**Cross-architecture replication (TOFU, 3 seeds each).** The same benchmark run on
+a second architecture (Pythia-160M, GPT-NeoX) reproduces every qualitative finding:
+
+| subject | GPT-2 124M | Pythia-160M | mean utility NLL (GPT-2 / Pythia) |
+|---|---|---|---|
+| no unlearning | R/R/R | R/R/R | 2.2 / 1.9 |
+| retrain (exact) | U/I/I | **I/I/I** | 2.0 / 1.8 |
+| GA | I/U/I | I/U/I | **87 / 170** (lobotomy) |
+| GradDiff | I/I/I | I/U/**R** | 6.0 / 10.5 |
+| NPO | I/U/U | I/I/I | 2.6 / 2.2 |
+| NPO + P1 relearn | I/U/U | U/U/U | 2.8 / 2.6 |
+| NPO + P3 jailbreak | I/U/U | U/U/U | 2.6 / 2.2 |
+
+Detection of the un-unlearned model is **6/6 seeds across both architectures**;
+GA's forgetting-by-lobotomy is even starker on Pythia (utility 170); and on Pythia
+seed 2 GradDiff is **actively REVOKED** for over-forgetting (mean D = −0.54) — the
+two-sided arm (I4) not merely withholding but raising the alarm, on real benchmark
+data.
+
 ## Repository layout
 
 ```
