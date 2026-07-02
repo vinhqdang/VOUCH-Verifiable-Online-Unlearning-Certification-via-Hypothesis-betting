@@ -271,7 +271,9 @@ def run_job(job) -> None:
             if remote.startswith(VMDIR):
                 base = os.path.basename(remote)
                 local_ck = os.path.join(REPO, "results", base)
-                if not os.path.exists(local_ck):
+                # intra-stage (_train) ckpts mutate -> always refresh;
+                # final adapter ckpts are immutable -> skip if present
+                if base.endswith("_train.pt") or not os.path.exists(local_ck):
                     sh(f"colab download -s {SESSION} {remote} {local_ck}", timeout=600)
         # also check for process still running
         rc2, out2 = colab_exec(
