@@ -152,12 +152,18 @@ def wrap_for_unlearn(backend, model):
 
 def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
              alpha: float, device: str, methods: list, probes: bool,
-             corpus_scale: float = 1.0) -> dict:
+             corpus_scale: float = 1.0, use_ratio: bool = True) -> dict:
     t0 = time.time()
     if backend_name == "tiny":
         be = TinyBackend(seed, device)
+        base_fn = None          # random init is not a meaningful reference
     else:
         be = HFBackend(backend_name, seed, device)
+        # pristine pre-fine-tuning model M_0 for the base-calibrated ratio score
+        base_fn = None
+        if use_ratio:
+            base_model = be.factory()
+            base_fn = be.logprob_fn(getattr(base_model, "m", base_model))
 
     # Phase 0: data + canaries + commitment
     n_keep, n_forget = int(3000 * corpus_scale), int(500 * corpus_scale)
@@ -177,7 +183,8 @@ def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
     retain_texts = keep
 
     def verify(model, tag, wrappers=None):
-        eng = ScoreEngine(be.logprob_fn(getattr(model, "m", model)), n_queries=4)
+        eng = ScoreEngine(be.logprob_fn(getattr(model, "m", model)),
+                          base_logprob_fn=base_fn, n_queries=4)
         if wrappers is not None:
             eng.wrappers = wrappers
         diffs = [eng.pair_differences(p.in_twin, p.ghost_twin)
