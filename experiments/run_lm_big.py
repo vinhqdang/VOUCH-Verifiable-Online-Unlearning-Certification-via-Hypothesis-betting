@@ -158,6 +158,9 @@ def main():
     ap.add_argument("--queries", type=int, default=2)
     ap.add_argument("--block", type=int, default=128)
     ap.add_argument("--corpus-scale", type=float, default=1.0)
+    ap.add_argument("--methods", nargs="+",
+                    default=["none", "retrain", "ga", "grad_diff", "npo",
+                             "npo_P1_relearn", "npo_P3_jailbreak"])
     ap.add_argument("--tag", default="big")
     args = ap.parse_args()
 
@@ -230,54 +233,58 @@ def main():
             rec.update(mean_loss_diff=md, pair_diffs=diffs,
                        scoring_seconds=time.time() - t_v)
             results["certs"][tag] = rec
+            # partial save after every verification: sessions can be
+            # reclaimed mid-run, results must survive
+            with open(os.path.join(RESULTS, f"lm_e2e_{args.tag}.json"), "w") as f:
+                json.dump(all_out + [results], f, indent=2, default=float)
 
         tkw = dict(steps=args.train_steps, bs=args.batch, lr=args.lr,
                    block=args.block, device=device, seed=seed)
 
+        M = set(args.methods)
         # Phase 0': fine-tune adapter on corpus (includes in-twins)
         model.set_adapter("ft")
         train_adapter(model, tok, corpus, "ft", **tkw)
-        verify("none", "ft")
+        if "none" in M:
+            verify("none", "ft")
 
-        # retrain: fresh adapter, keep-only corpus (exact unlearning)
-        keep_corpus, _ = build_finetune_corpus(keep, [], [], seed=seed)
-        fresh_adapter(model, "rt", lcfg)
-        train_adapter(model, tok, keep_corpus, "rt", **tkw)
-        verify("retrain", "rt")
-        drop_adapter(model, "rt")
+        if "retrain" in M:
+            keep_corpus, _ = build_finetune_corpus(keep, [], [], seed=seed)
+            fresh_adapter(model, "rt", lcfg)
+            train_adapter(model, tok, keep_corpus, "rt", **tkw)
+            verify("retrain", "rt")
+            drop_adapter(model, "rt")
 
         ukw = dict(bs=max(args.batch // 2, 1), lr=args.lr / 2,
                    block=args.block, device=device, seed=seed)
 
-        # GA
-        clone_adapter(model, "ft", "ga")
-        train_adapter(model, tok, forget_texts, "ga", steps=100, sign=-1, **ukw)
-        verify("ga", "ga")
-        drop_adapter(model, "ga")
+        if "ga" in M:
+            clone_adapter(model, "ft", "ga")
+            train_adapter(model, tok, forget_texts, "ga", steps=100, sign=-1, **ukw)
+            verify("ga", "ga")
+            drop_adapter(model, "ga")
 
-        # GradDiff
-        clone_adapter(model, "ft", "gd")
-        train_adapter(model, tok, forget_texts, "gd", steps=250, sign=-1,
-                      retain=keep, **ukw)
-        verify("grad_diff", "gd")
-        drop_adapter(model, "gd")
+        if "grad_diff" in M:
+            clone_adapter(model, "ft", "gd")
+            train_adapter(model, tok, forget_texts, "gd", steps=250, sign=-1,
+                          retain=keep, **ukw)
+            verify("grad_diff", "gd")
+            drop_adapter(model, "gd")
 
-        # NPO (+RT), reference = frozen "ft" adapter on the same base
-        clone_adapter(model, "ft", "npo")
-        train_adapter(model, tok, forget_texts, "npo", steps=250,
-                      retain=keep, npo_ref="ft", **ukw)
-        verify("npo", "npo")
-
-        # P1 relearn probe on the NPO adapter
-        clone_adapter(model, "npo", "p1")
-        public = synthetic_bio_corpus(400, seed=seed + 4242)
-        train_adapter(model, tok, public, "p1", steps=100, **ukw)
-        verify("npo_P1_relearn", "p1")
-        drop_adapter(model, "p1")
-
-        # P3 jailbreak probe (prompt-level, NPO adapter)
-        verify("npo_P3_jailbreak", "npo", wrappers=JAILBREAK_WRAPPERS)
-        drop_adapter(model, "npo")
+        if "npo" in M:
+            clone_adapter(model, "ft", "npo")
+            train_adapter(model, tok, forget_texts, "npo", steps=250,
+                          retain=keep, npo_ref="ft", **ukw)
+            verify("npo", "npo")
+            if "npo_P1_relearn" in M:
+                clone_adapter(model, "npo", "p1")
+                public = synthetic_bio_corpus(400, seed=seed + 4242)
+                train_adapter(model, tok, public, "p1", steps=100, **ukw)
+                verify("npo_P1_relearn", "p1")
+                drop_adapter(model, "p1")
+            if "npo_P3_jailbreak" in M:
+                verify("npo_P3_jailbreak", "npo", wrappers=JAILBREAK_WRAPPERS)
+            drop_adapter(model, "npo")
 
         results["wall_seconds"] = time.time() - t0
         all_out.append(results)
