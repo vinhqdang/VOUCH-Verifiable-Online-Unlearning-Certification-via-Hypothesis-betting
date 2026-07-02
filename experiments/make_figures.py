@@ -250,6 +250,49 @@ def fig_lm(tag="gpt2", fname="fig6_lm_gpt2"):
     saveall(fig, fname)
 
 
+def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
+    runs = load(f"lm_e2e_{tag}")
+    if not runs:
+        return
+    order = ["none", "retrain", "ga", "grad_diff", "npo",
+             "npo_P1_relearn", "npo_P3_jailbreak"]
+    labels = {"none": "no\nunlearning", "retrain": "retrain", "ga": "GA",
+              "grad_diff": "GradDiff", "npo": "NPO",
+              "npo_P1_relearn": "NPO+P1\nrelearn", "npo_P3_jailbreak": "NPO+P3\njailbreak"}
+    colmap = {"ISSUED": C[1], "REVOKED": C[5], "UNDETERMINED": C[2]}
+    ms, dU, util, cols, anns = [], [], [], [], []
+    for m in order:
+        vals = [r["certs"][m] for r in runs if m in r.get("certs", {})]
+        if not vals:
+            continue
+        ms.append(labels[m])
+        dU.append(np.mean([v["delta_upper"] for v in vals]))
+        util.append(np.mean([v["utility_nll"] for v in vals]))
+        st = [v["status"] for v in vals]
+        maj = max(set(st), key=st.count)
+        cols.append(colmap[maj])
+        anns.append("/".join(x[0] for x in st))
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.0))
+    ax = axes[0]
+    bars = ax.bar(range(len(ms)), dU, color=cols, width=0.62, zorder=3)
+    for b, a in zip(bars, anns):
+        ax.annotate(a, (b.get_x() + b.get_width() / 2, b.get_height() + 0.012),
+                    ha="center", fontsize=7.5)
+    ax.set_xticks(range(len(ms)), ms, fontsize=7.5)
+    ax.set_ylabel(r"mean CS upper bound on $\Delta$")
+    ax.set_title("TOFU: certification per subject\n(I=issued, R=revoked, U=undetermined per seed)",
+                 fontsize=9)
+    ax = axes[1]
+    ax.bar(range(len(ms)), util, color=C[0], width=0.62, zorder=3)
+    ax.set_yscale("log")
+    for i, u in enumerate(util):
+        ax.annotate(f"{u:.1f}", (i, u * 1.15), ha="center", fontsize=7.5)
+    ax.set_xticks(range(len(ms)), ms, fontsize=7.5)
+    ax.set_ylabel("held-out retain-QA NLL (log)")
+    ax.set_title("TOFU: model utility per subject", fontsize=9)
+    saveall(fig, fname)
+
+
 if __name__ == "__main__":
     fig_validity()
     fig_soundness()
@@ -257,6 +300,7 @@ if __name__ == "__main__":
     fig_tightness()
     fig_ablation()
     fig_lm("gpt2_v2", "fig6_lm_gpt2")
+    fig_tofu()
     fig_lm("gpt2_v1", "fig6b_lm_gpt2_v1")
     fig_lm("tiny", "fig7_lm_tiny")
     print("figures done")

@@ -205,6 +205,29 @@ Dose–response (§6.7), measured: mean D by repetition stratum r = 1/2/4/8 is
 Utility guardrail: canary injection shifts held-out loss by +0.005 nats/char even at an
 extreme 38% corpus share (design target is < 0.05% share).
 
+### TOFU benchmark (locuslab/TOFU, GPT-2 + LoRA; Phi-1.5 GPU runs in progress)
+
+Canaries in TOFU's own QA format are injected into the retain90 ∪ forget10
+fine-tuning mix; utility is held-out retain-QA NLL. Seeds so far:
+
+| subject | verdicts (per seed) | mean Δ upper | utility NLL |
+|---|---|---|---|
+| no unlearning | REVOKED / REVOKED / REVOKED | 0.30 | 2.2 |
+| retrain (exact) | undet (log-e 2.98/3.00) / **ISSUED** | 0.20 | 2.0 |
+| GA | ISSUED / undet (**over-forgetting**, D = −0.31) | 0.12 | **90.7** |
+| GradDiff | ISSUED / ISSUED | 0.20 | 6.2 |
+| NPO | **ISSUED** / undet | 0.22 | 2.5 |
+| NPO + P1 relearn | ISSUED / undet (leakage resurfaces: D 0.12→0.22) | 0.24 | 2.8 |
+| NPO + P3 jailbreak | ISSUED / undet | 0.22 | 2.5 |
+
+Three findings: (i) the certificate/utility pairing exposes forgetting-by-lobotomy —
+GA earns forgetting certificates while destroying the model (NLL 90.7 vs 2.0);
+(ii) on seed 1 the **one-sided verifier certified GA's over-forgetting model that the
+two-sided arm refused** — improvement I4 mattering on a standard benchmark;
+(iii) the relearn probe raises NPO's leakage signal, replicating the
+resurfacing effect. MUSE-News and Phi-1.5/2026-model runs are executing on the
+orchestrated Colab lanes (`tools/colab_orchestrator.py`).
+
 ## Repository layout
 
 ```
