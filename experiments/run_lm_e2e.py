@@ -69,10 +69,20 @@ class TinyBackend:
 
 
 class HFBackend:
-    """HuggingFace causal-LM backend (gpt2, EleutherAI/pythia-*, ...)."""
+    """HuggingFace causal-LM backend (gpt2, Qwen3, Gemma, ...).
+
+    lora_r > 0 switches every training stage (fine-tune, unlearning,
+    retrain, probes) to LoRA adapters on a frozen base (design doc Sec 6.2:
+    LoRA r=16 above ~1B params).  "Retrain" then means a fresh adapter on
+    the pristine base trained on keep-only data -- exact unlearning within
+    the adapter-FT paradigm, since the base never saw the canaries.
+    """
+
+    lora_r: int = 0
+    dtype = None  # e.g. torch.bfloat16 for >=2B models on Ampere+
 
     def __init__(self, model_id: str, seed: int, device: str = "cuda"):
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        from transformers import AutoTokenizer
         torch.manual_seed(seed)
         self.name = model_id
         self.device = device
@@ -80,27 +90,35 @@ class HFBackend:
         if self.hf_tok.pad_token is None:
             self.hf_tok.pad_token = self.hf_tok.eos_token
         self._model_id = model_id
-        self.model = AutoModelForCausalLM.from_pretrained(model_id).to(device)
+        self.model = self._load()
         self.tok = self  # implements encode() for unlearn methods
         self.block = 128
 
+    def _load(self):
+        from transformers import AutoModelForCausalLM
+        kw = {}
+        if self.dtype is not None:
+            kw["torch_dtype"] = self.dtype
+        m = AutoModelForCausalLM.from_pretrained(self._model_id, **kw).to(self.device)
+        if self.lora_r > 0:
+            from peft import LoraConfig, get_peft_model
+            m = get_peft_model(m, LoraConfig(
+                r=self.lora_r, lora_alpha=2 * self.lora_r, lora_dropout=0.0,
+                target_modules="all-linear", task_type="CAUSAL_LM"))
+            if self.dtype is not None:
+                m = m.to(self.dtype)
+
         class _Cfg:  # duck-type model.cfg.block_size used by unlearn methods
-            block_size = self.block
-        for m in (self.model,):
-            m.cfg = _Cfg()
+            block_size = 128
+        m.cfg = _Cfg()
+        return m
 
     # tokenizer duck-typing for vouch.unlearn.methods
     def encode(self, s: str):
         return self.hf_tok(s, truncation=True, max_length=self.block)["input_ids"]
 
     def factory(self):
-        from transformers import AutoModelForCausalLM
-        m = AutoModelForCausalLM.from_pretrained(self._model_id).to(self.device)
-
-        class _Cfg:
-            block_size = self.block
-        m.cfg = _Cfg()
-        return m
+        return self._load()
 
     def logprob_fn(self, model):
         hf_tok, device = self.hf_tok, self.device
@@ -111,7 +129,7 @@ class HFBackend:
             p_ids = hf_tok(prefix)["input_ids"]
             t_ids = hf_tok(target)["input_ids"]
             ids = torch.tensor([p_ids + t_ids], device=device)
-            logits = model(ids).logits[0, :-1]
+            logits = model(input_ids=ids).logits[0, :-1]
             logp = torch.log_softmax(logits.float(), dim=-1)
             tgt = ids[0, 1:]
             tok_lp = logp[torch.arange(len(tgt)), tgt]
@@ -133,7 +151,7 @@ class _HFWrap(torch.nn.Module):
         self.cfg = hf_model.cfg
 
     def forward(self, idx):
-        return self.m(idx).logits
+        return self.m(input_ids=idx).logits.float()
 
     def parameters(self, recurse=True):
         return self.m.parameters(recurse)
@@ -293,9 +311,14 @@ def main():
     ap.add_argument("--train-steps", type=int, default=0, help="override HF train steps")
     ap.add_argument("--batch", type=int, default=0, help="override HF train batch size")
     ap.add_argument("--lr", type=float, default=0.0, help="override HF train lr")
+    ap.add_argument("--lora", type=int, default=0, help="LoRA rank (0 = full FT)")
+    ap.add_argument("--bf16", action="store_true", help="load model in bfloat16")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
 
+    HFBackend.lora_r = args.lora
+    if args.bf16:
+        HFBackend.dtype = torch.bfloat16
     if args.train_steps or args.batch or args.lr:
         kw = dict(HFBackend.train_kwargs)
         if args.train_steps:
