@@ -159,11 +159,20 @@ def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
         base_fn = None          # random init is not a meaningful reference
     else:
         be = HFBackend(backend_name, seed, device)
-        # pristine pre-fine-tuning model M_0 for the base-calibrated ratio score
+        # pristine pre-fine-tuning model M_0 for the base-calibrated ratio
+        # score; M_0 never changes, so memoize its logprobs across the ~10
+        # verifications of a seed (cuts scoring cost nearly in half)
         base_fn = None
         if use_ratio:
             base_model = be.factory()
-            base_fn = be.logprob_fn(getattr(base_model, "m", base_model))
+            _raw_base_fn = be.logprob_fn(getattr(base_model, "m", base_model))
+            _cache: dict = {}
+
+            def base_fn(prefix: str, target: str):
+                key = (prefix, target)
+                if key not in _cache:
+                    _cache[key] = _raw_base_fn(prefix, target)
+                return _cache[key]
 
     # Phase 0: data + canaries + commitment
     n_keep, n_forget = int(3000 * corpus_scale), int(500 * corpus_scale)
