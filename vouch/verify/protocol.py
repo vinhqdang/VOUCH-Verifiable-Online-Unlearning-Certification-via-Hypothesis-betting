@@ -70,7 +70,8 @@ class Certificate:
     t_stop: int
     t_revoked: int               # first revocation-crossing time (-1 if none)
     log_e_cert: float            # min over scores at t_stop
-    log_e_rev: float
+    log_e_rev: float             # final value
+    log_e_rev_max: float         # running max (value at the revocation decision)
     p_upper: float               # anytime upper conf. bound on sup_s p^s
     delta_upper: float           # = 2 * p_upper - 1
     delta_cs: Dict[str, List[float]]
@@ -127,6 +128,7 @@ class VouchVerifier:
         self._tie_rng = random.Random(self.cfg.tie_seed)
         self.t = 0
         self.revoked_at: Optional[int] = None
+        self.log_e_rev_max: float = 0.0   # running max (value at the decision)
         self.history: List[dict] = []
 
     # -- revocation combination ---------------------------------------------
@@ -173,6 +175,7 @@ class VouchVerifier:
         if self.cfg.two_sided:
             self.e_rev_sign_dn.update([zs[s] for s in self.score_names])
         self.t += 1
+        self.log_e_rev_max = max(self.log_e_rev_max, self.log_e_rev)
         state = {
             "t": self.t,
             "log_e_cert": self.log_e_cert,
@@ -234,6 +237,7 @@ class VouchVerifier:
             t_revoked=self.revoked_at if self.revoked_at is not None else -1,
             log_e_cert=self.log_e_cert,
             log_e_rev=self.log_e_rev,
+            log_e_rev_max=self.log_e_rev_max,
             p_upper=self.p_upper,
             delta_upper=2.0 * self.p_upper - 1.0,
             delta_cs={s: list(self.cs[s].advantage_interval) for s in self.score_names},
