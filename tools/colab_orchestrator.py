@@ -129,12 +129,23 @@ JOBS = [
 
 
 def sh(cmd, timeout=240):
+    """Run a shell command with hard timeout, immune to daemon grandchildren
+    holding pipes (colab CLI forks keepalive daemons): output goes to a temp
+    file, the `timeout` binary kills the process group."""
+    import shlex, tempfile
+    with tempfile.NamedTemporaryFile("r", delete=False) as f:
+        out_path = f.name
     try:
-        r = subprocess.run(cmd, shell=True, capture_output=True, text=True,
-                           timeout=timeout)
-        return r.returncode, (r.stdout + r.stderr)
+        rc = subprocess.call(
+            f"timeout -k 10 {timeout} bash -c {shlex.quote(cmd)} "
+            f"> {out_path} 2>&1 < /dev/null",
+            shell=True, timeout=timeout + 60)
+        with open(out_path) as f:
+            return rc, f.read()
     except subprocess.TimeoutExpired:
         return 124, "TIMEOUT"
+    finally:
+        os.unlink(out_path)
 
 
 def colab_exec(py, timeout=240):
