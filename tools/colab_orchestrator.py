@@ -49,6 +49,45 @@ JOBS = [
         "seeds": 3, "methods": 7,
     },
     {
+        "name": "qwen3_06b",
+        "cmd": (f"cd {VMDIR} && nohup python experiments/run_lm_big.py "
+                "--model Qwen/Qwen3-0.6B --seeds 0 --pairs 384 "
+                "--eps 0.2 --dtype fp32 --train-steps 400 --batch 4 "
+                "--queries 2 --tag qwen3_06b "
+                "--methods none retrain npo npo_P3_jailbreak "
+                "> /content/bench_qwen3_06b.log 2>&1 &"),
+        "log": "/content/bench_qwen3_06b.log",
+        "result": f"{VMDIR}/results/lm_e2e_qwen3_06b.json",
+        "local": f"{REPO}/results/lm_e2e_qwen3_06b.json",
+        "seeds": 1, "methods": 4,
+    },
+    {
+        "name": "qwen3_4b",
+        "cmd": (f"cd {VMDIR} && nohup python experiments/run_lm_big.py "
+                "--model Qwen/Qwen3-4B-Instruct-2507 --seeds 0 --pairs 384 "
+                "--eps 0.2 --dtype bf16 --train-steps 400 --batch 4 "
+                "--queries 2 --tag qwen3_4b "
+                "--methods none retrain npo npo_P3_jailbreak "
+                "> /content/bench_qwen3_4b.log 2>&1 &"),
+        "log": "/content/bench_qwen3_4b.log",
+        "result": f"{VMDIR}/results/lm_e2e_qwen3_4b.json",
+        "local": f"{REPO}/results/lm_e2e_qwen3_4b.json",
+        "seeds": 1, "methods": 4,
+    },
+    {
+        "name": "nemotron3_4b",
+        "cmd": (f"cd {VMDIR} && nohup python experiments/run_lm_big.py "
+                "--model nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16 --seeds 0 --pairs 384 "
+                "--eps 0.2 --dtype bf16 --train-steps 400 --batch 4 "
+                "--queries 2 --tag nemotron3_4b "
+                "--methods none retrain npo npo_P3_jailbreak "
+                "> /content/bench_nemotron3_4b.log 2>&1 &"),
+        "log": "/content/bench_nemotron3_4b.log",
+        "result": f"{VMDIR}/results/lm_e2e_nemotron3_4b.json",
+        "local": f"{REPO}/results/lm_e2e_nemotron3_4b.json",
+        "seeds": 1, "methods": 4,
+    },
+    {
         "name": "gemma4",
         "cmd": (f"cd {VMDIR} && nohup python experiments/run_lm_big.py "
                 "--model google/gemma-4-E2B-it --seeds 0 --pairs 384 "
@@ -171,7 +210,11 @@ def run_job(job) -> None:
             log("session appears dead; will reprovision")
             continue
         if "NOLOG" in out:
-            log("log missing; relaunching job")
+            log("log missing; (re)staging and relaunching job")
+            if not stage(job):
+                log("staging failed; retrying")
+                time.sleep(120)
+                continue
             colab_exec(f"import subprocess; subprocess.Popen({job['cmd']!r}, shell=True); print('RELAUNCHED')")
             time.sleep(240)
             continue
