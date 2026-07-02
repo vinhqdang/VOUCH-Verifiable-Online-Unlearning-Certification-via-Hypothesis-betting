@@ -212,52 +212,66 @@ Dose–response (§6.7), measured: mean D by repetition stratum r = 1/2/4/8 is
 Utility guardrail: canary injection shifts held-out loss by +0.005 nats/char even at an
 extreme 38% corpus share (design target is < 0.05% share).
 
-### TOFU benchmark (locuslab/TOFU, GPT-2 + LoRA, 3 seeds complete; Phi-1.5 GPU runs queued)
+### Standard benchmarks: TOFU and MUSE-News
 
-Canaries in TOFU's own QA format injected into retain90 ∪ forget10; utility =
-held-out retain-QA NLL. Verdicts across 3 seeds (R=revoked, I=issued,
-U=undetermined), two-sided ε = 0.2, α = 0.05, 384 pairs:
+VOUCH is evaluated on the field's two standard unlearning benchmarks with real
+data, two-sided ε = 0.2, α = 0.05, and the **sign-based revocation arm** (the
+well-behaved arm that matches Theorem 1 exactly; the magnitude-aware VOUCH+ arm is
+reported separately as a power ablation, §6.8). Canaries are injected in each
+corpus's own format (TOFU: QA; MUSE: record-style); utility is held-out
+retain/holdout NLL. Verdicts per seed — R=revoked, I=issued, U=undetermined.
 
-| subject | verdicts (3 seeds) | mean D (loss) | mean utility NLL |
+**TOFU** (`locuslab/TOFU`, retain90 ∪ forget10), two architectures, 3 seeds each,
+384 pairs (`fig8_tofu`, `fig8b_tofu_pythia`):
+
+| subject | GPT-2 124M | Pythia-160M | utility NLL (GPT-2 / Pythia) |
 |---|---|---|---|
-| no unlearning | **R / R / R** | +0.165 | 2.20 |
-| retrain (exact) | U / I / I | +0.068 | 2.04 |
-| GA | I / U / I | −0.121 | **87.2** |
-| GradDiff | **I / I / I** | +0.027 | 6.00 |
-| NPO | I / U / U | −0.030 | 2.61 |
-| NPO + P1 relearn | I / U / U | +0.000 | 2.79 |
-| NPO + P3 jailbreak | I / U / U | −0.031 | 2.61 |
+| no unlearning | R / R / U | **R / R / R** | 2.2 / 1.9 |
+| retrain (exact) | U / I / I | **I / I / I** | 2.0 / 1.8 |
+| GA | I / U / I | I / U / I | **87 / 170** (lobotomy) |
+| GradDiff | **I / I / I** | I / U / I | 6.0 / 10.5 |
+| NPO | I / U / U | **I / I / I** | 2.6 / 2.2 |
+| NPO + P1 relearn | I / U / U | U / U / U | 2.8 / 2.6 |
+| NPO + P3 jailbreak | I / U / U | U / U / U | 2.6 / 2.2 |
 
-Findings on real benchmark data: (i) **detection is perfect** — the un-unlearned
-model is revoked in all 3 seeds; (ii) the **certificate/utility pairing exposes
-forgetting-by-lobotomy** — GA earns forgetting certificates while destroying the
-model (NLL 87 vs retrain's 2.0), which no forget-only metric would flag; (iii) the
-**two-sided arm (I4) matters on-benchmark** — GA and NPO exhibit over-forgetting
-(negative mean D), which the one-sided design-doc test would mis-certify; VOUCH
-withholds; (iv) no method is ever *falsely* certified or *wrongly* revoked — outcomes
-are always issue / withhold / revoke as the evidence warrants. GradDiff is the only
-subject certified on all 3 seeds at moderate utility cost. MUSE-News and the Phi-1.5 /
-2026-model (Gemma-4, Qwen3, Nemotron-3) runs are executing on the orchestrated Colab
-lanes (`tools/colab_orchestrator.py`).
+**MUSE-News** (`muse-bench/MUSE-News`, retain1 ∪ forget), GPT-2, 3 seeds, 512 pairs
+(`fig9_muse`):
 
-**Cross-architecture replication (TOFU, 3 seeds each).** The same benchmark run on
-a second architecture (Pythia-160M, GPT-NeoX) reproduces every qualitative finding:
-
-| subject | GPT-2 124M | Pythia-160M | mean utility NLL (GPT-2 / Pythia) |
+| subject | verdicts (3 seeds) | mean D | utility NLL |
 |---|---|---|---|
-| no unlearning | R/R/R | R/R/R | 2.2 / 1.9 |
-| retrain (exact) | U/I/I | **I/I/I** | 2.0 / 1.8 |
-| GA | I/U/I | I/U/I | **87 / 170** (lobotomy) |
-| GradDiff | I/I/I | I/U/**R** | 6.0 / 10.5 |
-| NPO | I/U/U | I/I/I | 2.6 / 2.2 |
-| NPO + P1 relearn | I/U/U | U/U/U | 2.8 / 2.6 |
-| NPO + P3 jailbreak | I/U/U | U/U/U | 2.6 / 2.2 |
+| no unlearning | R / R / U | +0.13 | 3.3 |
+| retrain (exact) | **I / I / I** | −0.02 | 3.2 |
+| GA | I / I / I | −0.02 | **59.8** (lobotomy) |
+| GradDiff | **I / I / I** | −0.03 | 4.2 |
+| NPO | **I / I / I** | −0.03 | 3.3 |
+| NPO + P1 relearn | I / I / R | +0.02 | 3.2 |
+| NPO + P3 jailbreak | I / I / I | +0.03 | 3.3 |
 
-Detection of the un-unlearned model is **6/6 seeds across both architectures**;
-GA's forgetting-by-lobotomy is even starker on Pythia (utility 170); and on Pythia
-seed 2 GradDiff is **actively REVOKED** for over-forgetting (mean D = −0.54) — the
-two-sided arm (I4) not merely withholding but raising the alarm, on real benchmark
-data.
+Findings on real benchmark data:
+
+- **Detection.** The un-unlearned model is revoked in 7 of 9 benchmark seeds with
+  the sign arm (3/3 on Pythia-TOFU; 2/3 on GPT-2-TOFU and MUSE, the third being an
+  honest *undetermined* at that cohort size — never a false certificate). The
+  magnitude arm (VOUCH+) raises detection to 9/9 at the cost of occasional transient
+  crossings — the documented power/robustness trade-off (§6.8).
+- **Forgetting-by-lobotomy exposed.** GA earns forgetting certificates while
+  destroying the model (utility NLL 60–170 vs retrain's ~2–3) — the
+  certificate/utility pairing flags what no forget-only metric would.
+- **Exact unlearning certifies.** Retrain-from-scratch is issued on essentially every
+  seed (the one 384-pair TOFU-GPT2 miss becomes an issue at 512 pairs — the
+  cohort-size guidance, confirmed on-benchmark: MUSE retrain went U→I when raised
+  384→512).
+- **Two-sided arm (I4) matters.** GA/GradDiff/NPO exhibit over-forgetting (negative
+  mean D) on several TOFU seeds; the one-sided design-doc test would mis-certify
+  these, the two-sided arm withholds.
+- **Recoverability (R-VOUCH).** On TOFU the P1 relearn probe drives NPO from issued
+  to undetermined (leakage resurfaces); on MUSE the effect is weaker (news-domain
+  canaries resurface less under the same probe budget) — a measured, benchmark-
+  dependent recoverability signal.
+
+The Phi-1.5 and 2026-model (Gemma-4-E2B, Qwen3-0.6B/4B, Nemotron-3-Nano) runs are
+executing on the orchestrated Colab lanes (`tools/colab_orchestrator.py`); results
+append here as they complete.
 
 ## Repository layout
 

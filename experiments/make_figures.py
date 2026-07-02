@@ -272,7 +272,7 @@ def fig_cohort(fname="fig9_cohort_size"):
     saveall(fig, fname)
 
 
-def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
+def fig_tofu(tag="tofu_gpt2_rescored", fname="fig8_tofu", title="TOFU"):
     runs = load(f"lm_e2e_{tag}")
     if not runs:
         return
@@ -294,7 +294,8 @@ def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
         maj = max(set(st), key=st.count)
         cols.append(colmap[maj])
         anns.append("/".join(x[0] for x in st))
-    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.0))
+    fig, axes = plt.subplots(1, 2, figsize=(8.4, 3.1))
+    fig.subplots_adjust(wspace=0.34)
     ax = axes[0]
     bars = ax.bar(range(len(ms)), dU, color=cols, width=0.62, zorder=3)
     for b, a in zip(bars, anns):
@@ -302,7 +303,7 @@ def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
                     ha="center", fontsize=7.5)
     ax.set_xticks(range(len(ms)), ms, fontsize=7.5)
     ax.set_ylabel(r"mean CS upper bound on $\Delta$")
-    ax.set_title("TOFU: certification per subject\n(I=issued, R=revoked, U=undetermined per seed)",
+    ax.set_title(f"{title}: certification per subject\n(I=issued, R=revoked, U=undetermined per seed)",
                  fontsize=9)
     ax = axes[1]
     ax.bar(range(len(ms)), util, color=C[0], width=0.62, zorder=3)
@@ -311,7 +312,7 @@ def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
         ax.annotate(f"{u:.1f}", (i, u * 1.15), ha="center", fontsize=7.5)
     ax.set_xticks(range(len(ms)), ms, fontsize=7.5)
     ax.set_ylabel("held-out retain-QA NLL (log)")
-    ax.set_title("TOFU: model utility per subject", fontsize=9)
+    ax.set_title(f"{title}: model utility per subject", fontsize=9)
     saveall(fig, fname)
 
 
@@ -322,7 +323,9 @@ if __name__ == "__main__":
     fig_tightness()
     fig_ablation()
     fig_lm("gpt2_v2", "fig6_lm_gpt2")
-    fig_tofu()
+    fig_tofu("tofu_gpt2_rescored", "fig8_tofu", "TOFU (GPT-2)")
+    fig_tofu("tofu_pythia160m_rescored", "fig8b_tofu_pythia", "TOFU (Pythia-160M)")
+    fig_tofu("muse_gpt2_512_rescored", "fig9_muse", "MUSE-News (GPT-2)")
     fig_cohort()
     fig_lm("gpt2_v1", "fig6b_lm_gpt2_v1")
     fig_lm("tiny", "fig7_lm_tiny")
