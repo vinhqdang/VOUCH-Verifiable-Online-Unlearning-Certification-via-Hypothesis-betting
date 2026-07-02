@@ -1,0 +1,63 @@
+=== validity (seeds=2000) ===
+  false-cert  eps=0.05 alpha=0.05: 0.0250 (nominal 0.05)
+  false-cert  eps=0.1 alpha=0.05: 0.0280 (nominal 0.05)
+  false-rev   alpha=0.05: 0.0255 (nominal 0.05)
+  peeking binomial false-alarm alpha=0.05: 0.352  false-cert: 0.340   <-- inflation
+  false-cert  eps=0.05 alpha=0.01: 0.0060 (nominal 0.01)
+  false-cert  eps=0.1 alpha=0.01: 0.0055 (nominal 0.01)
+  false-rev   alpha=0.01: 0.0055 (nominal 0.01)
+  peeking binomial false-alarm alpha=0.01: 0.119  false-cert: 0.098   <-- inflation
+  calibration: nominal [0.01, 0.02, 0.05, 0.1, 0.2] -> realized [0.005, 0.0125, 0.027, 0.0605, 0.125]
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_validity.json
+=== validity done in 424.0s ===
+
+=== protocol (seeds=2000) ===
+  exact unlearning (512 pairs): issued 0.191, false-revoked 0.0280, CS coverage 0.9500
+  memorized (mu=0.5): revoked 1.000 median detection 37.0 pairs, false-issue 0.0000
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_protocol_validity.json
+=== protocol done in 151.2s ===
+
+=== soundness (seeds=2000) ===
+  false-cert under composite null: per-score-min 0.0070 (sound, <= 0.05) vs doc-mixture 0.9955 (INVALID)
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_soundness.json
+=== soundness done in 67.1s ===
+
+=== power (seeds=2000) ===
+  cert time eps=0.02 alpha=0.05: median 11189 (KL theory 14976), issued 0.55
+  cert time eps=0.02 alpha=0.01: median 13400 (KL theory 23021), issued 0.28
+  cert time eps=0.05 alpha=0.05: median 2998 (KL theory 2394), issued 1.00
+  cert time eps=0.05 alpha=0.01: median 4426 (KL theory 3680), issued 1.00
+  cert time eps=0.1 alpha=0.05: median 686 (KL theory 596), issued 1.00
+  cert time eps=0.1 alpha=0.01: median 1088 (KL theory 916), issued 1.00
+  cert time eps=0.2 alpha=0.05: median 166 (KL theory 147), issued 1.00
+  cert time eps=0.2 alpha=0.01: median 252 (KL theory 226), issued 1.00
+  revocation detect Delta=0.05: median 2948 pairs, rate 1.00
+  revocation detect Delta=0.1: median 690 pairs, rate 1.00
+  revocation detect Delta=0.2: median 179 pairs, rate 1.00
+  revocation detect Delta=0.4: median 48 pairs, rate 1.00
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_power.json
+=== power done in 75.8s ===
+
+=== tightness (seeds=2000) ===
+  CS upper (p=0.5): t=16: 0.911, t=32: 0.758, t=64: 0.682, t=128: 0.630, t=256: 0.592, t=512: 0.567, t=1024: 0.550
+  CS upper (p=0.6): t=16: 1.000, t=32: 0.841, t=64: 0.765, t=128: 0.717, t=256: 0.685, t=512: 0.663, t=1024: 0.645
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_tightness.json
+=== tightness done in 11.1s ===
+
+=== streaming (seeds=2000) ===
+  streaming all_exact: global-cert rate 0.986, details {"all_exact/any_wave_false_revoked": 0.216, "all_exact/global_certified_rate": 0.986}
+  streaming one_bad: global-cert rate 0.972, details {"one_bad/any_wave_false_revoked": 0.2, "one_bad/global_certified_rate": 0.972, "one_bad/bad_wave_revoked_rate": 0.998}
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_streaming.json
+=== streaming done in 121.1s ===
+
+=== ablation (seeds=2000) ===
+  strategy ons: median tau 638, issued 1.00
+  strategy agrapa: median tau 888, issued 1.00
+  strategy fixed: median tau 19, issued 0.10
+  strategy mixture: median tau 686, issued 1.00
+  strategy kt: median tau 891, issued 1.00
+  5% memorized: sign detect median 2196 (rate 0.78) vs magnitude 941 (rate 0.99)
+  15% memorized: sign detect median 292 (rate 1.00) vs magnitude 106 (rate 1.00)
+[saved] /home/user/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting/experiments/../results/sim_ablation.json
+=== ablation done in 36.9s ===
+

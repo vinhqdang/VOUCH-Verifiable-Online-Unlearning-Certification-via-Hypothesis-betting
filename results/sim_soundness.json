@@ -1,0 +1,7 @@
+{
+  "null": "score A at p = p0 = 0.55 (violating), B and C at 1/2",
+  "per_score_min_false_cert_rate": 0.007,
+  "doc_mixture_false_cert_rate": 0.9955,
+  "alpha": 0.05,
+  "n_pairs": 2048
+}

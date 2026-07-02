@@ -1,0 +1,9 @@
+{
+  "exact_unlearning/revoked_rate": 0.028,
+  "exact_unlearning/issued_rate": 0.1905,
+  "exact_unlearning/cs_coverage": 0.95,
+  "exact_unlearning/median_tau": 312.0,
+  "memorized/revoked_rate": 1.0,
+  "memorized/false_issue_rate": 0.0,
+  "memorized/median_detection_time": 37.0
+}

@@ -67,6 +67,7 @@ class Certificate:
     alpha: float
     wave: int
     t_stop: int
+    t_revoked: int               # first revocation-crossing time (-1 if none)
     log_e_cert: float            # min over scores at t_stop
     log_e_rev: float
     p_upper: float               # anytime upper conf. bound on sup_s p^s
@@ -108,6 +109,7 @@ class VouchVerifier:
                    for s in self.score_names}
         self._tie_rng = random.Random(self.cfg.tie_seed)
         self.t = 0
+        self.revoked_at: Optional[int] = None
         self.history: List[dict] = []
 
     # -- revocation combination ---------------------------------------------
@@ -179,10 +181,12 @@ class VouchVerifier:
         status = "UNDETERMINED"
         for idx in order:
             self.update(pair_diffs[idx])
-            if self.revoked():
+            if status != "REVOKED" and self.revoked():
                 status = "REVOKED"
-                if early_stop:
-                    break
+                self.revoked_at = self.t
+                # do NOT break: keep processing the cohort so the revocation
+                # e-process compounds evidence for the streaming global alarm
+                # (scoring is already paid for; stopping is optional anyway).
             if status == "UNDETERMINED" and self.certificate_earned() and early_stop:
                 status = "ISSUED"
                 break
@@ -200,6 +204,7 @@ class VouchVerifier:
             alpha=self.cfg.alpha,
             wave=self.wave,
             t_stop=self.t,
+            t_revoked=self.revoked_at if self.revoked_at is not None else -1,
             log_e_cert=self.log_e_cert,
             log_e_rev=self.log_e_rev,
             p_upper=self.p_upper,
@@ -212,31 +217,66 @@ class VouchVerifier:
 
 
 class GlobalCertificate:
-    """Streaming composition across deletion waves (Section 4.5).
+    """Streaming composition across deletion waves (Section 4.5), with the
+    composition direction corrected relative to the v1.0 design document.
 
-    Per-wave cohorts use independent coins, so per-wave e-processes
-    multiply into a global e-process: log-e values add.  The global
-    certificate is maintained continuously over the deletion history.
+    Certificates and alarms compose *differently* because their nulls sit on
+    opposite sides:
+
+      * Global certificate ("every wave sufficiently unlearned") targets a
+        UNION null (some wave has Delta >= eps).  The sound composition is
+        ALL-PASS: every wave individually earns its certificate at level
+        alpha.  A false global certificate then requires a truly-bad wave's
+        own e-process to cross 1/alpha -- probability <= alpha by Ville,
+        regardless of how many waves the history contains.  (Multiplying
+        certificate e-values, as Theorem 5 of the design doc suggests,
+        tests the INTERSECTION null "every wave is bad" -- rejecting it
+        only certifies that *some* wave is clean, which is not the claim.)
+
+      * Global revocation alarm ("some residual memorization somewhere")
+        targets the INTERSECTION null (all waves exactly unlearned), under
+        which every per-wave revocation e-process is a supermartingale, so
+        their product composes soundly: alarm when the product exceeds
+        1/alpha.  This history-wide alarm accumulates distributed,
+        sub-threshold leakage that no single wave reveals, and its
+        false-alarm probability over the entire deletion history is
+        <= alpha at any time.
+
+    Per-wave alarms additionally use alpha-spending alpha_k = alpha * 2^-(k+1)
+    so that family-wise false revocation over an unbounded history stays
+    <= alpha while each wave retains an individual alarm.
     """
 
     def __init__(self, alpha: float = 0.05):
         self.alpha = alpha
-        self.log_e_global = 0.0
+        self.log_e_rev_global = 0.0
         self.waves: List[Certificate] = []
 
     def add_wave(self, cert: Certificate) -> None:
         self.waves.append(cert)
-        self.log_e_global += cert.log_e_cert
+        self.log_e_rev_global += cert.log_e_rev
+
+    @property
+    def alpha_k(self) -> float:
+        """Alpha-spending level for the next wave's individual alarm."""
+        return self.alpha * 2.0 ** (-(len(self.waves) + 1))
 
     @property
     def certified(self) -> bool:
-        return self.log_e_global >= math.log(1.0 / self.alpha)
+        """All-pass composition: every wave issued its certificate."""
+        return bool(self.waves) and all(c.status == "ISSUED" for c in self.waves)
+
+    @property
+    def revocation_alarm(self) -> bool:
+        """History-wide anytime-valid alarm at level alpha (product)."""
+        return self.log_e_rev_global >= math.log(1.0 / self.alpha)
 
     def summary(self) -> dict:
         return {
             "waves": len(self.waves),
-            "log_e_global": self.log_e_global,
+            "log_e_rev_global": self.log_e_rev_global,
             "certified": self.certified,
+            "revocation_alarm": self.revocation_alarm,
             "statuses": [c.status for c in self.waves],
             "manifest_hashes": [c.manifest_sha256 for c in self.waves],
         }

@@ -1,0 +1,20 @@
+{
+  "strategy/ons/median_tau": 638.0,
+  "strategy/ons/issued_frac": 1.0,
+  "strategy/agrapa/median_tau": 887.5,
+  "strategy/agrapa/issued_frac": 1.0,
+  "strategy/fixed/median_tau": 19.0,
+  "strategy/fixed/issued_frac": 0.102,
+  "strategy/mixture/median_tau": 685.5,
+  "strategy/mixture/issued_frac": 1.0,
+  "strategy/kt/median_tau": 891.0,
+  "strategy/kt/issued_frac": 1.0,
+  "mag_rev/frac=0.05/sign_median": 2196.0,
+  "mag_rev/frac=0.05/mag_median": 941.0,
+  "mag_rev/frac=0.05/sign_rate": 0.778,
+  "mag_rev/frac=0.05/mag_rate": 0.988,
+  "mag_rev/frac=0.15/sign_median": 292.0,
+  "mag_rev/frac=0.15/mag_median": 105.5,
+  "mag_rev/frac=0.15/sign_rate": 1.0,
+  "mag_rev/frac=0.15/mag_rate": 1.0
+}

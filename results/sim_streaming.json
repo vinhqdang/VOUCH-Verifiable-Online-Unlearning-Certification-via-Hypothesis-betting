@@ -1,0 +1,14 @@
+{
+  "all_exact/fwer_per_wave_alarms": 0.0,
+  "all_exact/global_certified_rate_allpass": 0.484,
+  "all_exact/global_rev_alarm_rate": 0.002,
+  "one_bad/fwer_per_wave_alarms": 0.0,
+  "one_bad/global_certified_rate_allpass": 0.0,
+  "one_bad/global_rev_alarm_rate": 0.922,
+  "one_bad/bad_wave_alarm_rate": 0.984,
+  "one_bad/bad_wave_false_issue_rate": 0.0,
+  "all_weak/global_certified_rate_allpass": 0.0,
+  "all_weak/global_rev_alarm_rate": 0.616,
+  "all_weak/any_per_wave_alarm_rate": 0.136,
+  "all_weak/median_alarm_wave": 3.0
+}

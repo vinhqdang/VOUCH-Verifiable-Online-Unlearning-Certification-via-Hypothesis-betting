@@ -1,0 +1,74 @@
+{
+  "tau/eps=0.02/alpha=0.05": {
+    "median": 11189.0,
+    "issued_frac": 0.552,
+    "kl_theory": 14975.665435741714,
+    "q25": 4493.75,
+    "q75": 15860.75
+  },
+  "tau/eps=0.02/alpha=0.01": {
+    "median": 13400.0,
+    "issued_frac": 0.282,
+    "kl_theory": 23021.245452682862,
+    "q25": 6009.0,
+    "q75": 17555.0
+  },
+  "tau/eps=0.05/alpha=0.05": {
+    "median": 2998.5,
+    "issued_frac": 1.0,
+    "kl_theory": 2393.5888367852062,
+    "q25": 1428.5,
+    "q75": 4524.75
+  },
+  "tau/eps=0.05/alpha=0.01": {
+    "median": 4426.5,
+    "issued_frac": 1.0,
+    "kl_theory": 3679.529057381398,
+    "q25": 2734.25,
+    "q75": 6424.0
+  },
+  "tau/eps=0.1/alpha=0.05": {
+    "median": 685.5,
+    "issued_frac": 1.0,
+    "kl_theory": 596.1457044264449,
+    "q25": 309.0,
+    "q75": 1123.25
+  },
+  "tau/eps=0.1/alpha=0.01": {
+    "median": 1087.5,
+    "issued_frac": 1.0,
+    "kl_theory": 916.4211531067764,
+    "q25": 662.75,
+    "q75": 1572.25
+  },
+  "tau/eps=0.2/alpha=0.05": {
+    "median": 165.5,
+    "issued_frac": 1.0,
+    "kl_theory": 146.77050000913405,
+    "q25": 87.75,
+    "q75": 281.25
+  },
+  "tau/eps=0.2/alpha=0.01": {
+    "median": 251.5,
+    "issued_frac": 1.0,
+    "kl_theory": 225.6220079449124,
+    "q25": 151.75,
+    "q75": 390.0
+  },
+  "detect/delta=0.05": {
+    "median": 2947.5,
+    "detected_frac": 1.0
+  },
+  "detect/delta=0.1": {
+    "median": 689.5,
+    "detected_frac": 1.0
+  },
+  "detect/delta=0.2": {
+    "median": 179.0,
+    "detected_frac": 1.0
+  },
+  "detect/delta=0.4": {
+    "median": 48.0,
+    "detected_frac": 1.0
+  }
+}

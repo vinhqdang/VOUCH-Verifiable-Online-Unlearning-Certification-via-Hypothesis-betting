@@ -307,41 +307,66 @@ def exp_tightness(n_seeds: int, pool: Pool) -> None:
 # ----------------------------------------------------------------------------
 
 def _streaming_one(args):
-    seed, k_waves, m, scenario = args
+    """One deletion history of K waves.
+
+    Per-wave revocation alarms use alpha-spending  alpha_k = alpha * 2^-(k+1)
+    (valid for unbounded K, family-wise error <= alpha over the history);
+    the global product e-process gives a second, history-wide alarm that can
+    accumulate distributed sub-threshold leakage no single wave reveals.
+    """
+    seed, k_waves, m, scenario, alpha = args
     rng = np.random.default_rng(seed)
-    log_glob, any_false_global, per_wave = 0.0, 0, []
-    thr = math.log(1 / 0.05)
+    log_rev_glob = 0.0
+    thr = math.log(1 / alpha)
+    per_wave_alarm, statuses, global_alarm_wave = [], [], -1
+    # eps = 0.2 certificates; mu -> Delta via Delta = 2*Phi(mu) - 1
     for k in range(k_waves):
         if scenario == "all_exact":
-            p = 0.5
+            mu = 0.0                          # Delta = 0
         elif scenario == "one_bad":
-            p = 0.62 if k == 6 else 0.5
+            mu = 0.319 if k == 6 else 0.0     # Delta ~ 0.25 > eps in bad wave
+        elif scenario == "all_weak":
+            mu = 0.076                        # Delta ~ 0.06 in EVERY wave
         else:
             raise ValueError(scenario)
-        cfg = VouchConfig(eps=0.10, alpha=0.05)
+        cfg = VouchConfig(eps=0.20, alpha=alpha)
         v = VouchVerifier(["loss"], cfg)
-        diffs = [{"loss": float(d)} for d in
-                 rng.standard_normal(m) + (0.0 if p == 0.5 else 0.31)]
-        cert = v.run(diffs, shuffle_seed=seed * 100 + k, early_stop=True)
-        per_wave.append(cert.status)
-        log_glob += cert.log_e_cert
-    return per_wave, log_glob >= thr
+        diffs = [{"loss": float(d)} for d in rng.standard_normal(m) + mu]
+        cert = v.run(diffs, shuffle_seed=seed * 100 + k, early_stop=False)
+        statuses.append(cert.status)
+        alpha_k = alpha * 2.0 ** (-(k + 1))
+        per_wave_alarm.append(cert.log_e_rev >= math.log(1 / alpha_k))
+        log_rev_glob += cert.log_e_rev
+        if global_alarm_wave < 0 and log_rev_glob >= thr:
+            global_alarm_wave = k
+    all_pass = all(s == "ISSUED" for s in statuses)
+    return per_wave_alarm, all_pass, global_alarm_wave, statuses
 
 
 def exp_streaming(n_seeds: int, pool: Pool) -> None:
     out = {}
-    for scenario in ("all_exact", "one_bad"):
+    n = min(n_seeds, 500)
+    for scenario in ("all_exact", "one_bad", "all_weak"):
         res = pool.map(_streaming_one,
-                       [(s, 10, 512, scenario) for s in range(min(n_seeds, 500))])
-        waves = np.array([[st == "REVOKED" for st in r[0]] for r in res])
+                       [(s, 10, 512, scenario, 0.05) for s in range(n)])
+        waves = np.array([r[0] for r in res])
         glob = np.array([r[1] for r in res])
-        out[f"{scenario}/any_wave_false_revoked"] = float(waves.any(axis=1).mean()) \
-            if scenario == "all_exact" else float(waves[:, [i for i in range(10) if i != 6]].any(axis=1).mean())
-        out[f"{scenario}/global_certified_rate"] = float(glob.mean())
+        alarm = np.array([r[2] for r in res])
+        clean_idx = [i for i in range(10) if not (scenario == "one_bad" and i == 6)]
+        if scenario != "all_weak":
+            out[f"{scenario}/fwer_per_wave_alarms"] = float(waves[:, clean_idx].any(axis=1).mean())
+        out[f"{scenario}/global_certified_rate_allpass"] = float(glob.mean())
+        out[f"{scenario}/global_rev_alarm_rate"] = float((alarm >= 0).mean())
         if scenario == "one_bad":
-            out["one_bad/bad_wave_revoked_rate"] = float(waves[:, 6].mean())
-        print(f"  streaming {scenario}: global-cert rate {glob.mean():.3f}, "
-              f"details {json.dumps({k: v for k, v in out.items() if scenario in k})}")
+            out["one_bad/bad_wave_alarm_rate"] = float(waves[:, 6].mean())
+            bad_issued = np.array([r[3][6] == "ISSUED" for r in res])
+            out["one_bad/bad_wave_false_issue_rate"] = float(bad_issued.mean())
+        if scenario == "all_weak":
+            out["all_weak/any_per_wave_alarm_rate"] = float(waves.any(axis=1).mean())
+            fired = alarm[alarm >= 0]
+            out["all_weak/median_alarm_wave"] = float(np.median(fired)) if len(fired) else -1
+        print(f"  streaming {scenario}: "
+              f"{json.dumps({k.split('/',1)[1]: round(v,4) for k, v in out.items() if k.startswith(scenario)})}")
     save("sim_streaming", out)
 
 
