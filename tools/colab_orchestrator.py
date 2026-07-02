@@ -31,7 +31,7 @@ JOBS = [
     {
         "name": "tofu",
         "cmd": (f"cd {VMDIR} && nohup python experiments/run_benchmark.py "
-                "--dataset tofu --seeds 0 1 2 --resume --dtype fp16 "
+                "--dataset tofu --seeds 0 1 2 --resume --dtype fp32 "
                 "> /content/bench_tofu.log 2>&1 &"),
         "log": "/content/bench_tofu.log",
         "result": f"{VMDIR}/results/lm_e2e_tofu_phi-1_5.json",
@@ -41,7 +41,7 @@ JOBS = [
     {
         "name": "muse",
         "cmd": (f"cd {VMDIR} && nohup python experiments/run_benchmark.py "
-                "--dataset muse --seeds 0 1 2 --resume --dtype fp16 "
+                "--dataset muse --seeds 0 1 2 --resume --dtype fp32 "
                 "> /content/bench_muse.log 2>&1 &"),
         "log": "/content/bench_muse.log",
         "result": f"{VMDIR}/results/lm_e2e_muse_phi-1_5.json",

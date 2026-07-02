@@ -189,8 +189,13 @@ def main():
             v = VouchVerifier(eng.score_names,
                               VouchConfig(eps=args.eps, alpha=args.alpha),
                               manifest_sha256=commitment)
+            md_all = [d["loss"] for d in diffs]
+            if not np.isfinite(md_all).all():
+                raise RuntimeError(f"non-finite scores in {m_tag} "
+                                   f"({np.sum(~np.isfinite(md_all))} pairs) - "
+                                   "check dtype/stability")
             cert = v.run(diffs, shuffle_seed=seed, early_stop=True)
-            md = float(np.mean([d["loss"] for d in diffs]))
+            md = float(np.mean(md_all))
             un = utility_nll()
             print(f"[seed {seed}] {m_tag:16s} status={cert.status:12s} "
                   f"t={cert.t_stop:4d} logEcert={cert.log_e_cert:7.2f} "
