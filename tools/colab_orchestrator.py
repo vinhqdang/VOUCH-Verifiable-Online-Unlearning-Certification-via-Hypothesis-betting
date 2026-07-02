@@ -23,11 +23,36 @@ import sys
 import time
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SESSION = "vouch"
-TARBALL = "/tmp/vouch_orch.tar.gz"
+SESSION = os.environ.get("VOUCH_SESSION", "vouch")
+ACCEL = os.environ.get("VOUCH_ACCEL", "T4")   # "T4" | "cpu"
+TARBALL = f"/tmp/vouch_orch_{SESSION}.tar.gz"
 VMDIR = "/content/vouchB"
 
 JOBS = [
+    {
+        "name": "muse_cpu",
+        "cmd": (f"cd {VMDIR} && nohup python experiments/run_benchmark.py "
+                "--dataset muse --model gpt2 --seeds 0 1 2 --resume "
+                "--dtype fp32 --device cpu --train-steps 600 --batch 8 "
+                "> /content/bench_muse_cpu.log 2>&1 &"),
+        "log": "/content/bench_muse_cpu.log",
+        "result": f"{VMDIR}/results/lm_e2e_muse_gpt2.json",
+        "local": f"{REPO}/results/lm_e2e_muse_gpt2.json",
+        "ckpt_glob": "ckpt_muse_gpt2_*",
+        "seeds": 3, "methods": 7,
+    },
+    {
+        "name": "tofu_b_cpu",
+        "cmd": (f"cd {VMDIR} && nohup python experiments/run_benchmark.py "
+                "--dataset tofu --model gpt2 --seeds 3 4 5 --resume "
+                "--dtype fp32 --device cpu --train-steps 600 --batch 8 "
+                "--tag tofu_gpt2_b > /content/bench_tofu_b.log 2>&1 &"),
+        "log": "/content/bench_tofu_b.log",
+        "result": f"{VMDIR}/results/lm_e2e_tofu_gpt2_b.json",
+        "local": f"{REPO}/results/lm_e2e_tofu_gpt2_b.json",
+        "ckpt_glob": "ckpt_tofu_gpt2_b_*",
+        "seeds": 3, "methods": 7,
+    },
     {
         "name": "tofu",
         "cmd": (f"cd {VMDIR} && nohup python experiments/run_benchmark.py "
@@ -134,7 +159,8 @@ def session_alive() -> bool:
 
 def provision() -> bool:
     for attempt in range(24):  # up to ~2 h of retries
-        rc, out = sh(f"colab new -s {SESSION} --gpu T4", timeout=300)
+        accel_flag = "" if ACCEL == "cpu" else f" --gpu {ACCEL}"
+        rc, out = sh(f"colab new -s {SESSION}{accel_flag}", timeout=300)
         if "READY" in out:
             log(f"session ready (attempt {attempt + 1})")
             return True
@@ -173,6 +199,16 @@ shutil.copy(src, '{job["result"]}')
 print('PRIOR_STAGED')
 """
         colab_exec(mv)
+    import glob as _glob
+    for ck in _glob.glob(os.path.join(REPO, "results", job.get("ckpt_glob", "ckpt_NONE"))):
+        base = os.path.basename(ck)
+        sh(f"colab upload -s {SESSION} {ck} {base}", timeout=600)
+        colab_exec(f"""
+import shutil, os
+src = '/{base}' if os.path.exists('/{base}') else '/content/{base}'
+shutil.copy(src, '{VMDIR}/results/{base}')
+print('CKPT_STAGED')
+""")
     return True
 
 
@@ -228,6 +264,15 @@ def run_job(job) -> None:
             log(f"progress: {tail[0]}")
         sh(f"colab download -s {SESSION} {job['result']} {job['local']}",
            timeout=600)
+        # sync any new adapter checkpoints back
+        rc3, out3 = colab_exec(
+            f"import glob; print(' '.join(glob.glob('{VMDIR}/results/{job.get('ckpt_glob','ckpt_NONE')}')))")
+        for remote in (out3 or "").split():
+            if remote.startswith(VMDIR):
+                base = os.path.basename(remote)
+                local_ck = os.path.join(REPO, "results", base)
+                if not os.path.exists(local_ck):
+                    sh(f"colab download -s {SESSION} {remote} {local_ck}", timeout=600)
         # also check for process still running
         rc2, out2 = colab_exec(
             "import subprocess; print('ALIVE' if subprocess.run(['pgrep','-f','run_'], capture_output=True, text=True).stdout.strip() else 'DEADPROC')")

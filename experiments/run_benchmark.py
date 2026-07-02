@@ -214,8 +214,33 @@ def main():
         ukw = dict(bs=max(args.batch // 2, 1), lr=args.lr / 2,
                    block=args.block, device=device, seed=seed)
 
+        from peft.utils import (get_peft_model_state_dict,
+                                set_peft_model_state_dict)
+
+        def ckpt_path(name):
+            return os.path.join(RESULTS, f"ckpt_{tag}_seed{seed}_{name}.pt")
+
+        def save_adapter(name):
+            torch.save(get_peft_model_state_dict(model, adapter_name=name),
+                       ckpt_path(name))
+            print(f"[ckpt] saved {ckpt_path(name)}", flush=True)
+
+        def load_adapter(name) -> bool:
+            path = ckpt_path(name)
+            if not os.path.exists(path):
+                return False
+            if name not in model.peft_config:
+                model.add_adapter(name, lcfg)
+            sd = torch.load(path, map_location=device)
+            set_peft_model_state_dict(model, sd, adapter_name=name)
+            model.set_adapter(name)
+            print(f"[ckpt] loaded {path}", flush=True)
+            return True
+
         model.set_adapter("ft")
-        train_adapter(model, tok, corpus, "ft", **tkw)
+        if not load_adapter("ft"):
+            train_adapter(model, tok, corpus, "ft", **tkw)
+            save_adapter("ft")
         if "none" in todo:
             verify("none", "ft")
 
@@ -241,9 +266,11 @@ def main():
 
         need_npo = {"npo", "npo_P1_relearn", "npo_P3_jailbreak"} & set(todo)
         if need_npo:
-            clone_adapter(model, "ft", "npo")
-            train_adapter(model, tok, forget_texts, "npo", steps=250,
-                          retain=keep, npo_ref="ft", **ukw)
+            if not load_adapter("npo"):
+                clone_adapter(model, "ft", "npo")
+                train_adapter(model, tok, forget_texts, "npo", steps=250,
+                              retain=keep, npo_ref="ft", **ukw)
+                save_adapter("npo")
             if "npo" in todo:
                 verify("npo", "npo")
             if "npo_P1_relearn" in todo:
