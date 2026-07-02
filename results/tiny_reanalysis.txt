@@ -1,0 +1,60 @@
+=== results/lm_e2e_tiny.json ===
+seed  method            vouch_two_sided  t2   t2_revoked  vouch_one_sided  delta_upper  binom_rev_p  tost_equiv_p  perm_p  mean_D_loss
+0     none              REVOKED          512  12          REVOKED          0.9          0.0          1.0           0.0005  0.732      
+0     retrain           ISSUED           421  -1          ISSUED           0.148        0.2537       0.0001        0.6857  -0.01      
+0     ga                ISSUED           304  -1          ISSUED           0.174        0.6546       0.0           0.7001  -0.009     
+0     grad_diff         ISSUED           318  -1          ISSUED           0.156        0.4473       0.0           0.5937  -0.004     
+0     npo               ISSUED           262  -1          ISSUED           0.218        0.3454       0.0           0.7666  -0.014     
+0     npo_weak          UNDETERMINED     512  -1          UNDETERMINED     0.226        0.2006       0.0001        0.4983  0.0        
+0     npo_P1_relearn    ISSUED           381  -1          ISSUED           0.166        0.5527       0.0           0.5452  -0.003     
+0     npo_P2_quant4     ISSUED           296  -1          ISSUED           0.22         0.1547       0.0003        0.7681  -0.016     
+0     npo_P3_jailbreak  ISSUED           346  -1          ISSUED           0.216        0.0151       0.0105        0.085   0.047      
+1     none              REVOKED          512  18          REVOKED          0.906        0.0          1.0           0.0005  0.704      
+1     retrain           ISSUED           309  -1          ISSUED           0.22         0.1547       0.0003        0.2924  0.011      
+1     ga                ISSUED           235  -1          ISSUED           0.24         0.0853       0.0009        0.3393  0.007      
+1     grad_diff         ISSUED           408  -1          ISSUED           0.23         0.2828       0.0           0.5892  -0.006     
+1     npo               UNDETERMINED     512  -1          UNDETERMINED     0.226        0.0233       0.0065        0.2594  0.016      
+1     npo_weak          ISSUED           408  -1          ISSUED           0.23         0.5176       0.0           0.4173  0.003      
+1     npo_P1_relearn    ISSUED           413  -1          ISSUED           0.218        0.9          0.0005        0.7281  -0.026     
+1     npo_P2_quant4     UNDETERMINED     512  -1          UNDETERMINED     0.244        0.0286       0.005         0.2124  0.021      
+1     npo_P3_jailbreak  ISSUED           491  -1          ISSUED           0.138        0.9147       0.0007        0.7486  -0.024     
+2     none              REVOKED          512  21          REVOKED          0.798        0.0          1.0           0.0005  0.707      
+2     retrain           ISSUED           233  -1          ISSUED           0.184        0.7463       0.0           0.8281  -0.021     
+2     ga                ISSUED           250  -1          ISSUED           0.154        0.5176       0.0           0.2374  0.012      
+2     grad_diff         ISSUED           353  -1          ISSUED           0.004        0.6215       0.0           0.4418  0.004      
+2     npo               ISSUED           283  -1          ISSUED           0.184        0.1346       0.0004        0.4263  0.003      
+2     npo_weak          ISSUED           244  -1          ISSUED           0.216        0.1547       0.0003        0.0885  0.013      
+2     npo_P1_relearn    ISSUED           284  -1          ISSUED           0.21         0.3454       0.0           0.3078  0.019      
+2     npo_P2_quant4     ISSUED           237  -1          ISSUED           0.218        0.2263       0.0001        0.4118  0.005      
+2     npo_P3_jailbreak  ISSUED           235  -1          ISSUED           0.118        0.7172       0.0           0.8111  -0.039     
+[saved] results/lm_e2e_tiny_reanalysis.json
+
+--- dose-response: mean D_loss by repetition stratum ---
+seed  method             r=1       r=2       r=4       r=8
+0     none             0.473     0.640     0.786     1.038
+0     retrain          0.020    -0.036    -0.011    -0.013
+0     ga              -0.014    -0.019    -0.038     0.035
+0     grad_diff        0.010    -0.005    -0.015    -0.005
+0     npo             -0.013    -0.012    -0.042     0.009
+0     npo_weak        -0.001    -0.008    -0.013     0.023
+0     npo_P1_relearn    0.007    -0.044     0.024     0.001
+0     npo_P2_quant4   -0.016    -0.015    -0.045     0.011
+0     npo_P3_jailbreak    0.163    -0.038    -0.064     0.126
+1     none             0.394     0.556     0.890     0.986
+1     retrain         -0.032     0.038     0.004     0.036
+1     ga               0.007    -0.008     0.048    -0.019
+1     grad_diff       -0.007    -0.029     0.045    -0.034
+1     npo             -0.002     0.004     0.059     0.002
+1     npo_weak        -0.035    -0.003     0.035     0.014
+1     npo_P1_relearn    0.000    -0.102     0.003    -0.006
+1     npo_P2_quant4   -0.021     0.025     0.056     0.025
+1     npo_P3_jailbreak   -0.065     0.099    -0.040    -0.093
+2     none             0.448     0.598     0.781     1.010
+2     retrain          0.022    -0.034    -0.024    -0.049
+2     ga               0.088    -0.029     0.013    -0.025
+2     grad_diff        0.091    -0.026     0.033    -0.083
+2     npo              0.043     0.001     0.007    -0.038
+2     npo_weak         0.033    -0.006     0.028    -0.002
+2     npo_P1_relearn    0.170    -0.039    -0.000    -0.056
+2     npo_P2_quant4    0.050     0.005     0.002    -0.038
+2     npo_P3_jailbreak    0.099    -0.109    -0.035    -0.114
