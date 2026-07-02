@@ -287,16 +287,34 @@ def main():
     ap.add_argument("--methods", nargs="+",
                     default=["none", "retrain", "ga", "grad_diff", "npo", "npo_weak"])
     ap.add_argument("--no-probes", action="store_true")
+    ap.add_argument("--no-ratio", action="store_true",
+                    help="skip the base-calibrated ratio score (saves one model's memory)")
     ap.add_argument("--corpus-scale", type=float, default=1.0)
+    ap.add_argument("--train-steps", type=int, default=0, help="override HF train steps")
+    ap.add_argument("--batch", type=int, default=0, help="override HF train batch size")
+    ap.add_argument("--lr", type=float, default=0.0, help="override HF train lr")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
+
+    if args.train_steps or args.batch or args.lr:
+        kw = dict(HFBackend.train_kwargs)
+        if args.train_steps:
+            kw["steps"] = args.train_steps
+        if args.batch:
+            kw["batch_size"] = args.batch
+            HFBackend.unlearn_kwargs = dict(HFBackend.unlearn_kwargs,
+                                            batch_size=max(args.batch // 2, 1))
+        if args.lr:
+            kw["lr"] = args.lr
+            HFBackend.unlearn_kwargs = dict(HFBackend.unlearn_kwargs, lr=args.lr / 2)
+        HFBackend.train_kwargs = kw
 
     torch.set_num_threads(os.cpu_count() or 4)
     all_out = []
     for seed in args.seeds:
         res = run_seed(args.model, seed, args.pairs, args.eps, args.alpha,
                        args.device, args.methods, not args.no_probes,
-                       args.corpus_scale)
+                       args.corpus_scale, use_ratio=not args.no_ratio)
         all_out.append(res)
         tag = args.tag or args.model.replace("/", "_")
         path = os.path.join(RESULTS, f"lm_e2e_{tag}.json")
