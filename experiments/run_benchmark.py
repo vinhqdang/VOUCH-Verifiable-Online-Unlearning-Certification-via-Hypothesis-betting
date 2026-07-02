@@ -95,6 +95,7 @@ def main():
     ap.add_argument("--methods", nargs="+",
                     default=["none", "retrain", "ga", "grad_diff", "npo",
                              "npo_P1_relearn", "npo_P3_jailbreak"])
+    ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--resume", action="store_true",
                     help="skip (seed, method) pairs already in the output JSON")
     ap.add_argument("--tag", default="")
@@ -105,7 +106,7 @@ def main():
     from peft import LoraConfig, get_peft_model
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    device = "cuda"
+    device = args.device
     dtype = {"fp16": torch.float16, "bf16": torch.bfloat16,
              "fp32": torch.float32}[args.dtype]
 
@@ -259,7 +260,8 @@ def main():
             json.dump(all_out, f, indent=2, default=float)
         print(f"[saved] {out_path}", flush=True)
         del model, base
-        torch.cuda.empty_cache()
+        if device == "cuda":
+            torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
