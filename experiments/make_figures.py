@@ -250,6 +250,28 @@ def fig_lm(tag="gpt2", fname="fig6_lm_gpt2"):
     saveall(fig, fname)
 
 
+def fig_cohort(fname="fig9_cohort_size"):
+    d = load("sim_cohort_size")
+    if not d:
+        return
+    fig, ax = plt.subplots(figsize=(4.0, 3.0))
+    ms = [64, 128, 256, 384, 512, 1024, 2048]
+    for j, eps in enumerate((0.2, 0.1)):
+        y = [d.get(f"eps={eps}/m={m}", 0) for m in ms]
+        ax.plot(ms, y, "o-", lw=2, ms=5, color=C[j],
+                label=rf"$\varepsilon={eps}$")
+    ax.axhline(0.8, ls=":", lw=1, color=MUTED)
+    ax.annotate("80% power", (70, 0.82), fontsize=8, color=MUTED)
+    ax.set_xscale("log")
+    ax.set_xticks(ms, [str(m) for m in ms], fontsize=7.5, rotation=45)
+    ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax.set_xlabel("cohort size $m$ (pairs)")
+    ax.set_ylabel("issuance rate (exact unlearning)")
+    ax.set_title("Cohort-size sizing guide", fontsize=9.5)
+    ax.legend(fontsize=8.5, frameon=False)
+    saveall(fig, fname)
+
+
 def fig_tofu(tag="tofu_gpt2", fname="fig8_tofu"):
     runs = load(f"lm_e2e_{tag}")
     if not runs:
@@ -301,6 +323,7 @@ if __name__ == "__main__":
     fig_ablation()
     fig_lm("gpt2_v2", "fig6_lm_gpt2")
     fig_tofu()
+    fig_cohort()
     fig_lm("gpt2_v1", "fig6b_lm_gpt2_v1")
     fig_lm("tiny", "fig7_lm_tiny")
     print("figures done")

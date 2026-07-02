@@ -154,6 +154,13 @@ Median CS upper bound on Δ under exact unlearning: 0.26 at t = 128, 0.18 at t =
 0.13 at t = 512, 0.10 at t = 1,024 pairs; with true Δ = 0.2 the bound sits at 0.29 at
 t = 1,024 (`fig4_tightness`).
 
+### Cohort-size sizing guide (`fig9_cohort_size`)
+
+Issuance rate under exact unlearning vs cohort size m (two-sided, α=0.05): at
+ε=0.2, m reaches 80% power near 384 pairs and 91% at 512 (why the benchmark runs
+use 512); at ε=0.1 roughly 1,000–2,000 pairs are needed. This is the practitioner's
+answer to "how many canaries?" and matches the KL-based Theorem-3 numbers.
+
 ### Betting-strategy ablation (ε = 0.1, α = 0.05, exact unlearning)
 
 | strategy | median τ* | certified within 20k pairs |
