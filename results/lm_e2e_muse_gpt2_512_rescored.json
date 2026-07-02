@@ -1,0 +1,836 @@
+[
+  {
+    "seed": 0,
+    "dataset": "muse",
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "78138d55048c65379d82615e38dfdcd03ebe70abf334fd472dccf64f9fa454b5",
+    "corpus_stats": {
+      "n_docs": 5420,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.0799267400875738
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.052000000000000046,
+            0.3320000000000001
+          ],
+          "mink": [
+            -0.014000000000000012,
+            0.258
+          ]
+        },
+        "delta_upper": 0.3320000000000001,
+        "eps": 0.2,
+        "log_e_cert": -1.0897120619326175,
+        "log_e_rev": 6.269079521916985,
+        "log_e_rev_max": 7.237381879944074,
+        "manifest_sha256": "",
+        "p_upper": 0.666,
+        "per_score_log_e_cert": {
+          "loss": -1.0897120619326175,
+          "mink": 0.03741498366750972
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 137,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 0.1669227872043848,
+        "utility_nll": 3.2538064634799957,
+        "scoring_seconds": 135.7042956352234
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.16200000000000003,
+            0.1180000000000001
+          ],
+          "mink": [
+            -0.18799999999999994,
+            0.052000000000000046
+          ]
+        },
+        "delta_upper": 0.1180000000000001,
+        "eps": 0.2,
+        "log_e_cert": 3.0565433101982387,
+        "log_e_rev": -1.0398492613528547,
+        "log_e_rev_max": 1.3368664123603535,
+        "manifest_sha256": "",
+        "p_upper": 0.559,
+        "per_score_log_e_cert": {
+          "loss": 6.669828731936907,
+          "mink": 10.56404790433317
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 396,
+        "wave": 0,
+        "mean_loss_diff": -0.004576777573674917,
+        "utility_nll": 3.2270483684539797,
+        "scoring_seconds": 137.9196286201477
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.23199999999999998,
+            0.16799999999999993
+          ],
+          "mink": [
+            -0.18199999999999994,
+            0.21199999999999997
+          ]
+        },
+        "delta_upper": 0.21199999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.022331655265903,
+        "log_e_rev": -1.1129439972976258,
+        "log_e_rev_max": 0.11794912218547454,
+        "manifest_sha256": "",
+        "p_upper": 0.606,
+        "per_score_log_e_cert": {
+          "loss": 4.6788381097160405,
+          "mink": 3.1450576023392225
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 262,
+        "wave": 0,
+        "mean_loss_diff": 0.027868151664733887,
+        "utility_nll": 57.83852905273437,
+        "scoring_seconds": 141.23908066749573
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21799999999999997,
+            0.08200000000000007
+          ],
+          "mink": [
+            -0.18599999999999994,
+            0.07800000000000007
+          ]
+        },
+        "delta_upper": 0.08200000000000007,
+        "eps": 0.2,
+        "log_e_cert": 3.053205718601865,
+        "log_e_rev": -0.8642104708500871,
+        "log_e_rev_max": 8.326672684688674e-17,
+        "manifest_sha256": "",
+        "p_upper": 0.541,
+        "per_score_log_e_cert": {
+          "loss": 15.54659425747887,
+          "mink": 10.879437393333657
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 494,
+        "wave": 0,
+        "mean_loss_diff": -0.07811445370316505,
+        "utility_nll": 3.726243478059769,
+        "scoring_seconds": 142.8715353012085
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.20399999999999996,
+            0.21199999999999997
+          ],
+          "mink": [
+            -0.06599999999999995,
+            0.20599999999999996
+          ]
+        },
+        "delta_upper": 0.21199999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.068932298332098,
+        "log_e_rev": -1.0658946338118636,
+        "log_e_rev_max": 1.359965697525959,
+        "manifest_sha256": "",
+        "p_upper": 0.606,
+        "per_score_log_e_cert": {
+          "loss": 3.4645454784901357,
+          "mink": 3.068932298332098
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 242,
+        "wave": 0,
+        "mean_loss_diff": 0.013357143849134445,
+        "utility_nll": 3.295821105837822,
+        "scoring_seconds": 141.69304037094116
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.09999999999999998,
+            0.21399999999999997
+          ],
+          "mink": [
+            -0.08399999999999996,
+            0.12200000000000011
+          ]
+        },
+        "delta_upper": 0.21399999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.0638392881083307,
+        "log_e_rev": -1.0116411053501784,
+        "log_e_rev_max": 1.0266484525787591,
+        "manifest_sha256": "",
+        "p_upper": 0.607,
+        "per_score_log_e_cert": {
+          "loss": 3.0638392881083307,
+          "mink": 7.757727181486673
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 407,
+        "wave": 0,
+        "mean_loss_diff": 0.09083398804068565,
+        "utility_nll": 3.232036024928093,
+        "scoring_seconds": 143.9111351966858
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21799999999999997,
+            0.1140000000000001
+          ],
+          "mink": [
+            -0.16000000000000003,
+            0.19199999999999995
+          ]
+        },
+        "delta_upper": 0.19199999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.063891793157609,
+        "log_e_rev": -1.0804344679527047,
+        "log_e_rev_max": 0.3699850286560219,
+        "manifest_sha256": "",
+        "p_upper": 0.596,
+        "per_score_log_e_cert": {
+          "loss": 5.256514685331508,
+          "mink": 3.063891793157609
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 279,
+        "wave": 0,
+        "mean_loss_diff": 0.12063741187254567,
+        "utility_nll": 3.295821105837822,
+        "scoring_seconds": 233.41238403320312
+      }
+    },
+    "wall_seconds": 4927.305520534515
+  },
+  {
+    "seed": 1,
+    "dataset": "muse",
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "63525afb5bc1fc6bdbd6538d8256bf627549862fabc04e4ca61c44d1866bef16",
+    "corpus_stats": {
+      "n_docs": 5420,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.07988330991481514
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.020000000000000018,
+            0.266
+          ],
+          "mink": [
+            0.020000000000000018,
+            0.31000000000000005
+          ]
+        },
+        "delta_upper": 0.31000000000000005,
+        "eps": 0.2,
+        "log_e_cert": -0.9958615091438322,
+        "log_e_rev": 4.261836011727302,
+        "log_e_rev_max": 5.432533143729755,
+        "manifest_sha256": "",
+        "p_upper": 0.655,
+        "per_score_log_e_cert": {
+          "loss": 0.5988576601283018,
+          "mink": -0.9958615091438322
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 254,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 0.11064626439474523,
+        "utility_nll": 3.2584700709581376,
+        "scoring_seconds": 143.26469826698303
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21199999999999997,
+            0.062000000000000055
+          ],
+          "mink": [
+            -0.18399999999999994,
+            0.15399999999999991
+          ]
+        },
+        "delta_upper": 0.15399999999999991,
+        "eps": 0.2,
+        "log_e_cert": 3.1029826974833576,
+        "log_e_rev": -1.1520799616147528,
+        "log_e_rev_max": 1.348685118077702,
+        "manifest_sha256": "",
+        "p_upper": 0.577,
+        "per_score_log_e_cert": {
+          "loss": 7.869108941610492,
+          "mink": 4.145681757722782
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 331,
+        "wave": 0,
+        "mean_loss_diff": -0.082424305845052,
+        "utility_nll": 3.2264717727899552,
+        "scoring_seconds": 147.75258874893188
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.22399999999999998,
+            0.08400000000000007
+          ],
+          "mink": [
+            -0.20199999999999996,
+            0.1080000000000001
+          ]
+        },
+        "delta_upper": 0.1080000000000001,
+        "eps": 0.2,
+        "log_e_cert": 3.0547233161940652,
+        "log_e_rev": -1.1039749448689122,
+        "log_e_rev_max": 0.4897766500233185,
+        "manifest_sha256": "",
+        "p_upper": 0.554,
+        "per_score_log_e_cert": {
+          "loss": 10.758207133566815,
+          "mink": 7.5269815401613585
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 394,
+        "wave": 0,
+        "mean_loss_diff": -0.11889833584427834,
+        "utility_nll": 59.39799825668335,
+        "scoring_seconds": 146.7240014076233
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.09599999999999997,
+            0.21399999999999997
+          ],
+          "mink": [
+            -0.136,
+            0.19799999999999995
+          ]
+        },
+        "delta_upper": 0.21399999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.0579136517510443,
+        "log_e_rev": -0.9965509608315082,
+        "log_e_rev_max": 8.326672684688674e-17,
+        "manifest_sha256": "",
+        "p_upper": 0.607,
+        "per_score_log_e_cert": {
+          "loss": 3.0579136517510443,
+          "mink": 5.062445057978942
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 423,
+        "wave": 0,
+        "mean_loss_diff": -0.01240435242652893,
+        "utility_nll": 4.864575548171997,
+        "scoring_seconds": 145.40892028808594
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21999999999999997,
+            0.06600000000000006
+          ],
+          "mink": [
+            -0.19199999999999995,
+            0.06600000000000006
+          ]
+        },
+        "delta_upper": 0.06600000000000006,
+        "eps": 0.2,
+        "log_e_cert": 3.053483018273073,
+        "log_e_rev": -0.718493100551839,
+        "log_e_rev_max": 0.6938597809932439,
+        "manifest_sha256": "",
+        "p_upper": 0.533,
+        "per_score_log_e_cert": {
+          "loss": 15.478164992990319,
+          "mink": 13.598689467254617
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 488,
+        "wave": 0,
+        "mean_loss_diff": -0.131027240306139,
+        "utility_nll": 3.3805870646238327,
+        "scoring_seconds": 147.36729860305786
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.16999999999999993,
+            0.19799999999999995
+          ],
+          "mink": [
+            -0.20999999999999996,
+            0.12400000000000011
+          ]
+        },
+        "delta_upper": 0.19799999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.088370565504479,
+        "log_e_rev": -1.1397355975179868,
+        "log_e_rev_max": 0.3172455711987402,
+        "manifest_sha256": "",
+        "p_upper": 0.599,
+        "per_score_log_e_cert": {
+          "loss": 3.352138368881875,
+          "mink": 5.673296925345799
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 289,
+        "wave": 0,
+        "mean_loss_diff": -0.12470661476254463,
+        "utility_nll": 3.2315076199173927,
+        "scoring_seconds": 149.7128462791443
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.23199999999999998,
+            0.09200000000000008
+          ],
+          "mink": [
+            -0.17799999999999994,
+            0.14000000000000012
+          ]
+        },
+        "delta_upper": 0.14000000000000012,
+        "eps": 0.2,
+        "log_e_cert": 3.096365359702515,
+        "log_e_rev": -1.097230544973883,
+        "log_e_rev_max": 0.4783942805194115,
+        "manifest_sha256": "",
+        "p_upper": 0.5700000000000001,
+        "per_score_log_e_cert": {
+          "loss": 10.33248849387905,
+          "mink": 7.221645667694671
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 394,
+        "wave": 0,
+        "mean_loss_diff": -0.10312050829331072,
+        "utility_nll": 3.3805870646238327,
+        "scoring_seconds": 238.42520189285278
+      }
+    },
+    "wall_seconds": 5033.574095726013
+  },
+  {
+    "seed": 2,
+    "dataset": "muse",
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "5f0f1aefdb8ea354dfd07793c371078686303e436cefd18c87e4365d44fe4941",
+    "corpus_stats": {
+      "n_docs": 5420,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.07979290140585298
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.06799999999999995,
+            0.23399999999999999
+          ],
+          "mink": [
+            -0.051999999999999935,
+            0.236
+          ]
+        },
+        "delta_upper": 0.236,
+        "eps": 0.2,
+        "log_e_cert": 1.2475889506742726,
+        "log_e_rev": 0.33347158090618934,
+        "log_e_rev_max": 0.7558151081086346,
+        "manifest_sha256": "",
+        "p_upper": 0.618,
+        "per_score_log_e_cert": {
+          "loss": 2.428449929607266,
+          "mink": 1.2475889506742726
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "UNDETERMINED",
+        "t_revoked": -1,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 0.11195055418647826,
+        "utility_nll": 3.256939742565155,
+        "scoring_seconds": 145.64203715324402
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.10799999999999998,
+            0.22199999999999998
+          ],
+          "mink": [
+            -0.122,
+            0.20799999999999996
+          ]
+        },
+        "delta_upper": 0.22199999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.0758621652589135,
+        "log_e_rev": -1.050044045253348,
+        "log_e_rev_max": 0.32502786980520015,
+        "manifest_sha256": "",
+        "p_upper": 0.611,
+        "per_score_log_e_cert": {
+          "loss": 3.5655510582831624,
+          "mink": 3.0758621652589135
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 355,
+        "wave": 0,
+        "mean_loss_diff": 0.021645622327923775,
+        "utility_nll": 3.2273299235105513,
+        "scoring_seconds": 147.88098335266113
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.06399999999999995,
+            0.22599999999999998
+          ],
+          "mink": [
+            -0.05599999999999994,
+            0.1140000000000001
+          ]
+        },
+        "delta_upper": 0.22599999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.1420381928336667,
+        "log_e_rev": -1.0526225455100624,
+        "log_e_rev_max": 1.7896576565660016,
+        "manifest_sha256": "",
+        "p_upper": 0.613,
+        "per_score_log_e_cert": {
+          "loss": 3.1420381928336667,
+          "mink": 3.3740607390149044
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 369,
+        "wave": 0,
+        "mean_loss_diff": 0.046427980065345764,
+        "utility_nll": 62.095584812164304,
+        "scoring_seconds": 143.4651165008545
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.16000000000000003,
+            0.15799999999999992
+          ],
+          "mink": [
+            -0.061999999999999944,
+            0.20999999999999996
+          ]
+        },
+        "delta_upper": 0.20999999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.0200716670424796,
+        "log_e_rev": -1.1703358479232735,
+        "log_e_rev_max": 1.57444174028748,
+        "manifest_sha256": "",
+        "p_upper": 0.605,
+        "per_score_log_e_cert": {
+          "loss": 7.494836658927293,
+          "mink": 3.0200716670424796
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 361,
+        "wave": 0,
+        "mean_loss_diff": 0.005305375903844833,
+        "utility_nll": 3.863668041229248,
+        "scoring_seconds": 142.5848217010498
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.06799999999999995,
+            0.19999999999999996
+          ],
+          "mink": [
+            -0.03600000000000003,
+            0.21399999999999997
+          ]
+        },
+        "delta_upper": 0.21399999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.1130890118356134,
+        "log_e_rev": -0.796121480159324,
+        "log_e_rev_max": 1.6622811673357565,
+        "manifest_sha256": "",
+        "p_upper": 0.607,
+        "per_score_log_e_cert": {
+          "loss": 3.1939225151419883,
+          "mink": 3.1130890118356134
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 464,
+        "wave": 0,
+        "mean_loss_diff": 0.04407716915011406,
+        "utility_nll": 3.332161841392517,
+        "scoring_seconds": 147.32398104667664
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.07199999999999995,
+            0.17199999999999993
+          ],
+          "mink": [
+            0.04400000000000004,
+            0.21599999999999997
+          ]
+        },
+        "delta_upper": 0.21599999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.9503700816824643,
+        "log_e_rev": -1.0971922449312106,
+        "log_e_rev_max": 3.7384818644258138,
+        "manifest_sha256": "",
+        "p_upper": 0.608,
+        "per_score_log_e_cert": {
+          "loss": 6.119694130434708,
+          "mink": 3.9503700816824643
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 219,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 0.07850833237171173,
+        "utility_nll": 3.233110432326794,
+        "scoring_seconds": 138.83878445625305
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.10199999999999998,
+            0.18599999999999994
+          ],
+          "mink": [
+            0.006000000000000005,
+            0.22799999999999998
+          ]
+        },
+        "delta_upper": 0.22799999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.0453478743398015,
+        "log_e_rev": -0.9330947390053519,
+        "log_e_rev_max": 2.4546155224408612,
+        "manifest_sha256": "",
+        "p_upper": 0.614,
+        "per_score_log_e_cert": {
+          "loss": 5.287656959631317,
+          "mink": 3.0453478743398015
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 484,
+        "wave": 0,
+        "mean_loss_diff": 0.08196405569712308,
+        "utility_nll": 3.332161841392517,
+        "scoring_seconds": 229.8514063358307
+      }
+    },
+    "wall_seconds": 4943.718219995499
+  }
+]
