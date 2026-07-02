@@ -1,5 +1,147 @@
 [
   {
+    "seed": 0,
+    "backend": "gpt2",
+    "m_pairs": 640,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "two_sided": true,
+    "npo_fixed": true,
+    "certs": {
+      "none": {
+        "status": "REVOKED",
+        "t_stop": 640,
+        "log_e_cert": -1.84,
+        "log_e_rev": 293.52,
+        "delta_upper": 0.92,
+        "mean_loss_diff": 2.119,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "retrain": {
+        "status": "ISSUED",
+        "t_stop": 349,
+        "log_e_cert": 3.09,
+        "log_e_rev": -1.24,
+        "delta_upper": 0.212,
+        "mean_loss_diff": 0.11,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "ga": {
+        "status": "ISSUED",
+        "t_stop": 391,
+        "log_e_cert": 3.0,
+        "log_e_rev": -1.18,
+        "delta_upper": 0.204,
+        "mean_loss_diff": 0.122,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "grad_diff": {
+        "status": "ISSUED",
+        "t_stop": 462,
+        "log_e_cert": 3.02,
+        "log_e_rev": -0.7,
+        "delta_upper": 0.2,
+        "mean_loss_diff": 0.61,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "npo": {
+        "status": "ISSUED",
+        "t_stop": 310,
+        "log_e_cert": 3.11,
+        "log_e_rev": -1.24,
+        "delta_upper": 0.168,
+        "mean_loss_diff": 0.063,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "npo_weak": {
+        "status": "ISSUED",
+        "t_stop": 253,
+        "log_e_cert": 3.05,
+        "log_e_rev": -1.08,
+        "delta_upper": 0.23,
+        "mean_loss_diff": 0.206,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "npo_P1_relearn": {
+        "status": "ISSUED",
+        "t_stop": 345,
+        "log_e_cert": 3.06,
+        "log_e_rev": -0.97,
+        "delta_upper": 0.218,
+        "mean_loss_diff": 0.233,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "npo_P2_quant4": {
+        "status": "ISSUED",
+        "t_stop": 256,
+        "log_e_cert": 3.02,
+        "log_e_rev": -1.18,
+        "delta_upper": 0.202,
+        "mean_loss_diff": 0.099,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      },
+      "npo_P3_jailbreak": {
+        "status": "ISSUED",
+        "t_stop": 342,
+        "log_e_cert": 3.13,
+        "log_e_rev": -1.2,
+        "delta_upper": 0.134,
+        "mean_loss_diff": 0.052,
+        "score_class": [
+          "loss",
+          "mink",
+          "ratio"
+        ],
+        "note": "transcribed from run log; VM reclaimed before JSON download"
+      }
+    },
+    "corpus_stats": {
+      "n_docs": 5890,
+      "n_canary_insertions": 2390,
+      "canary_char_share": 0.4334
+    }
+  },
+  {
     "seed": 1,
     "backend": "gpt2",
     "m_pairs": 640,

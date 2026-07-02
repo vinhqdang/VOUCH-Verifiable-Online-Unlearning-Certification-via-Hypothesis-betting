@@ -170,16 +170,27 @@ Full pipeline per seed: canary generation + SHA-256 manifest commitment → fine
 keep ∪ forget ∪ in-twins → unlearn with each subject → black-box certification →
 R-VOUCH probes on NPO. Two runs:
 
-**v2 (two-sided, 640 pairs, scores {loss, min-k, ratio}, corrected NPO), seed 0:**
+**v2 (two-sided, 640 pairs, scores {loss, min-k, ratio}, corrected NPO), 3 seeds:**
 
-| subject | decision | CS upper bound on Δ | mean D (loss) |
+| subject | decision (3 seeds) | mean CS upper bound on Δ | mean D (loss) |
 |---|---|---|---|
-| no unlearning | REVOKED (t≈11, log-e 294) | 0.92 | +2.12 |
-| retrain (exact) | **ISSUED** (t=349) | 0.21 | +0.11 |
-| GA | ISSUED (t=391) | 0.20 | +0.12 |
-| GradDiff | ISSUED (t=462) | 0.20 | +0.61 |
-| NPO | ISSUED (t=310) | 0.17 | +0.06 |
-| NPO + P1 relearn / P2 4-bit / P3 jailbreak | ISSUED | 0.13–0.22 | +0.05–0.23 |
+| no unlearning | REVOKED ×3 (log-e 277–336) | 0.93 | +2.19 |
+| retrain (exact) | **ISSUED ×3** | 0.19 | −0.00 |
+| GA | ISSUED ×3 | 0.21 | +0.09 |
+| GradDiff | ISSUED ×3 | 0.18 | +0.08 |
+| NPO | ISSUED ×3 | 0.17 | +0.04 |
+| NPO 25% (weakened) | ISSUED ×2, UNDET ×1 | 0.23 | +0.26 |
+| NPO + P1 relearn | ISSUED ×2, UNDET ×1 | 0.23 | +0.28 |
+| NPO + P2 4-bit / P3 jailbreak | ISSUED ×3 | 0.17–0.18 | +0.03–0.06 |
+
+Dose–response on real GPT-2 (mean D by repetition stratum r = 1/2/4/8): the memorized
+model is strongly monotone (**1.2 / 1.5 / 2.7 / 4.1 nats**, seed 1); the **relearn probe
+resurfaces the most-repeated canaries first** (0.19 / 0.11 / 0.34 / 0.51), and weakened
+NPO leaves precisely the r = 8 stratum leaking (up to 1.29 nats) — repetition at
+fine-tuning time is the primary driver of both memorization and recoverability.
+Measured verifier cost: **76 s per verification** on a T4 (10,240 short forwards)
+versus ~300 s for one fine-tune — a shadow-model evaluator at 16 fine-tunes would cost
+~60× more.
 
 **v1 (one-sided, 512 pairs, 3 seeds)** additionally caught a **sign bug in our own NPO
 implementation** (the loss was being minimized toward memorization): revoked 3/3 seeds

@@ -256,6 +256,7 @@ if __name__ == "__main__":
     fig_power()
     fig_tightness()
     fig_ablation()
-    fig_lm("gpt2_v1", "fig6_lm_gpt2")
+    fig_lm("gpt2_v2", "fig6_lm_gpt2")
+    fig_lm("gpt2_v1", "fig6b_lm_gpt2_v1")
     fig_lm("tiny", "fig7_lm_tiny")
     print("figures done")
