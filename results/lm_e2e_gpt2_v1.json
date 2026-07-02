@@ -1,0 +1,941 @@
+[
+  {
+    "seed": 0,
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+    "corpus_stats": {
+      "n_docs": 5407,
+      "n_canary_insertions": 1907,
+      "canary_char_share": 0.3790040462456027
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            0.12400000000000011,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.05247533494031,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.737316001437019
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.7547811353724683
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.07199999999999995,
+            0.21799999999999997
+          ],
+          "mink": [
+            -0.126,
+            0.17399999999999993
+          ]
+        },
+        "delta_upper": 0.21799999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.117180000607237,
+        "log_e_rev": -0.7364499321653315,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 0.609,
+        "per_score_log_e_cert": {
+          "loss": 3.117180000607237,
+          "mink": 5.767826430578934
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 484,
+        "wave": 0,
+        "mean_loss_diff": 0.1437473006080836
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.268,
+            0.6160000000000001
+          ],
+          "mink": [
+            -0.134,
+            0.782
+          ]
+        },
+        "delta_upper": 0.782,
+        "eps": 0.2,
+        "log_e_cert": -1.0862784017465499,
+        "log_e_rev": 3.225094518862945,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 0.891,
+        "per_score_log_e_cert": {
+          "loss": -0.5753444615570036,
+          "mink": -1.0862784017465499
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 40,
+        "wave": 0,
+        "mean_loss_diff": 0.1823205817490816
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.61,
+            0.21999999999999997
+          ],
+          "mink": [
+            -0.598,
+            0.238
+          ]
+        },
+        "delta_upper": 0.238,
+        "eps": 0.2,
+        "log_e_cert": 3.0461077431911425,
+        "log_e_rev": -0.6469107519936235,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 0.619,
+        "per_score_log_e_cert": {
+          "loss": 3.0461077431911425,
+          "mink": 3.079627610652208
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 43,
+        "wave": 0,
+        "mean_loss_diff": -0.15497050061821938
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.0040000000000000036,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.0908831493441067,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.7429398522630817
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.6808813909447053
+      },
+      "npo_weak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.07400000000000007,
+            1.0
+          ],
+          "mink": [
+            -0.11199999999999999,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8372263800896281,
+        "log_e_rev": 3.2213273365439155,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8372263800896281,
+          "mink": -0.7788715065819519
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 16,
+        "wave": 0,
+        "mean_loss_diff": 2.218483020362328
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.061999999999999944,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8541028620536895,
+        "log_e_rev": 3.274476883033967,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8541028620536895,
+          "mink": -0.7432041792647853
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 15,
+        "wave": 0,
+        "mean_loss_diff": 2.306626058911206
+      },
+      "npo_P2_quant4": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.12200000000000011,
+            1.0
+          ],
+          "mink": [
+            0.12400000000000011,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8623483325348846,
+        "log_e_rev": 3.347471555096769,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8623483325348846,
+          "mink": -0.8611949694198656
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 17,
+        "wave": 0,
+        "mean_loss_diff": 2.6733125193277374
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.0040000000000000036,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.0883767527133528,
+        "manifest_sha256": "2d2a4703f926bc731af38c58db8eb4d5914b928a85a5943c04fde692afc64a15",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.7429398522630817
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.5371165094353882
+      }
+    },
+    "wall_seconds": 959.0266437530518
+  },
+  {
+    "seed": 1,
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+    "corpus_stats": {
+      "n_docs": 5407,
+      "n_canary_insertions": 1907,
+      "canary_char_share": 0.3793254350494091
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.19399999999999995,
+            1.0
+          ],
+          "mink": [
+            0.19399999999999995,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7677556709427621,
+        "log_e_rev": 3.046570872619011,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7677556709427621,
+          "mink": -0.7677556709427621
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 10,
+        "wave": 0,
+        "mean_loss_diff": 2.760296194202965
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.09599999999999997,
+            0.20999999999999996
+          ],
+          "mink": [
+            -0.134,
+            0.17999999999999994
+          ]
+        },
+        "delta_upper": 0.20999999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.0202687690817487,
+        "log_e_rev": -1.1659767006817376,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 0.605,
+        "per_score_log_e_cert": {
+          "loss": 3.0202687690817487,
+          "mink": 5.145433031238162
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 408,
+        "wave": 0,
+        "mean_loss_diff": -0.00972750992514193
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21199999999999997,
+            0.15999999999999992
+          ],
+          "mink": [
+            -0.014000000000000012,
+            0.3500000000000001
+          ]
+        },
+        "delta_upper": 0.3500000000000001,
+        "eps": 0.2,
+        "log_e_cert": -1.1828626980437509,
+        "log_e_rev": 3.023902501342583,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 0.675,
+        "per_score_log_e_cert": {
+          "loss": 5.7711709710055885,
+          "mink": -1.1828626980437509
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 300,
+        "wave": 0,
+        "mean_loss_diff": 0.25197831355035305
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21599999999999997,
+            0.20599999999999996
+          ],
+          "mink": [
+            -0.30799999999999994,
+            0.17999999999999994
+          ]
+        },
+        "delta_upper": 0.20599999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.073865977130188,
+        "log_e_rev": -1.4703698712949584,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 0.603,
+        "per_score_log_e_cert": {
+          "loss": 3.073865977130188,
+          "mink": 5.098695891739947
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 157,
+        "wave": 0,
+        "mean_loss_diff": -0.0891616940498352
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.19399999999999995,
+            1.0
+          ],
+          "mink": [
+            0.19399999999999995,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7677556709427621,
+        "log_e_rev": 3.032226257579312,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7677556709427621,
+          "mink": -0.7677556709427621
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 10,
+        "wave": 0,
+        "mean_loss_diff": 2.9781748593377415
+      },
+      "npo_weak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.0040000000000000036,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.0397267376304127,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.7429398522630817
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.3423367924115155
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            0.256,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.528294632595877,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.7964651600409656
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.459999257756863
+      },
+      "npo_P2_quant4": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.16599999999999993,
+            1.0
+          ],
+          "mink": [
+            0.19399999999999995,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.836854403093158,
+        "log_e_rev": 3.41688972507949,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.836854403093158,
+          "mink": -0.8294319080401249
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 14,
+        "wave": 0,
+        "mean_loss_diff": 3.002577056293376
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.19399999999999995,
+            1.0
+          ],
+          "mink": [
+            0.19399999999999995,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7677556709427621,
+        "log_e_rev": 3.007997138913292,
+        "manifest_sha256": "1df87835943c64044e8b6fc525548119724f41fc265210bf2b15e34dc9207de2",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7677556709427621,
+          "mink": -0.7677556709427621
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 10,
+        "wave": 0,
+        "mean_loss_diff": 2.845934528818664
+      }
+    },
+    "wall_seconds": 966.797375202179
+  },
+  {
+    "seed": 2,
+    "backend": "gpt2",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+    "corpus_stats": {
+      "n_docs": 5407,
+      "n_canary_insertions": 1907,
+      "canary_char_share": 0.37923786806397375
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.42000000000000004,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.0234493729239795,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.722202697781922
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.6241309295146493
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.31999999999999995,
+            0.22399999999999998
+          ],
+          "mink": [
+            -0.31399999999999995,
+            0.22599999999999998
+          ]
+        },
+        "delta_upper": 0.22599999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.0222256324234538,
+        "log_e_rev": -1.2499779004673708,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 0.613,
+        "per_score_log_e_cert": {
+          "loss": 3.0222256324234538,
+          "mink": 3.0348272650658834
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 132,
+        "wave": 0,
+        "mean_loss_diff": -0.09825936728157103
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.26,
+            0.17599999999999993
+          ],
+          "mink": [
+            -0.21199999999999997,
+            0.21399999999999997
+          ]
+        },
+        "delta_upper": 0.21399999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.1778640645870886,
+        "log_e_rev": -1.269064809853968,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 0.607,
+        "per_score_log_e_cert": {
+          "loss": 4.946034424759941,
+          "mink": 3.1778640645870886
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_stop": 215,
+        "wave": 0,
+        "mean_loss_diff": -0.05798831954598427
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.04999999999999993,
+            0.236
+          ],
+          "mink": [
+            -0.061999999999999944,
+            0.20199999999999996
+          ]
+        },
+        "delta_upper": 0.236,
+        "eps": 0.2,
+        "log_e_cert": 1.7788242277319046,
+        "log_e_rev": 0.5366134266953471,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 0.618,
+        "per_score_log_e_cert": {
+          "loss": 1.7788242277319046,
+          "mink": 3.71128143064551
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "UNDETERMINED",
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 0.6099315509200096
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.256,
+            1.0
+          ],
+          "mink": [
+            -0.06599999999999995,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.7964651600409656,
+        "log_e_rev": 3.225395962180093,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.7964651600409656,
+          "mink": -0.7488214978571304
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 11,
+        "wave": 0,
+        "mean_loss_diff": 2.5709117772930767
+      },
+      "npo_weak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.12400000000000011,
+            1.0
+          ],
+          "mink": [
+            0.09600000000000009,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8111934546707636,
+        "log_e_rev": 3.0359406056071117,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8049344593723814,
+          "mink": -0.8111934546707636
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 13,
+        "wave": 0,
+        "mean_loss_diff": 2.0801079630327877
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.12400000000000011,
+            1.0
+          ],
+          "mink": [
+            0.09600000000000009,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8111934546707636,
+        "log_e_rev": 3.171591235280212,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8049344593723814,
+          "mink": -0.8111934546707636
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 13,
+        "wave": 0,
+        "mean_loss_diff": 1.951048433111282
+      },
+      "npo_P2_quant4": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.22199999999999998,
+            1.0
+          ],
+          "mink": [
+            -0.040000000000000036,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8579778159322795,
+        "log_e_rev": 3.4791832277353354,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8579778159322795,
+          "mink": -0.8149532423317433
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 15,
+        "wave": 0,
+        "mean_loss_diff": 2.591522874776274
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.12400000000000011,
+            1.0
+          ],
+          "mink": [
+            0.09600000000000009,
+            1.0
+          ]
+        },
+        "delta_upper": 1.0,
+        "eps": 0.2,
+        "log_e_cert": -0.8111934546707636,
+        "log_e_rev": 3.2163628836509,
+        "manifest_sha256": "15e7cbf249f44e964332f3b90414fadb77baed8d085029e0d98d284472e3e4be",
+        "p_upper": 1.0,
+        "per_score_log_e_cert": {
+          "loss": -0.8049344593723814,
+          "mink": -0.8111934546707636
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_stop": 13,
+        "wave": 0,
+        "mean_loss_diff": 2.4325250944821164
+      }
+    },
+    "wall_seconds": 976.5107848644257
+  }
+]
