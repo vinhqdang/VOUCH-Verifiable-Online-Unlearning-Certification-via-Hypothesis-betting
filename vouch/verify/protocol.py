@@ -50,6 +50,7 @@ class VouchConfig:
     alpha: float = 0.05          # error level
     strategy: str = "mixture"    # betting strategy for e-processes
     use_magnitude_revocation: bool = True   # VOUCH+ arm
+    two_sided: bool = True       # close F under negation (catches over-forgetting)
     tie_seed: int = 20260702     # committed PRNG seed for tie-breaking
     cs_grid: int = 1001
 
@@ -94,16 +95,32 @@ class VouchVerifier:
         self.wave = wave
         self.manifest_sha256 = manifest_sha256
         p0, a = self.cfg.p0, self.cfg.alpha
-        # (a) per-score certificate e-processes: H0^cert,s : p^s >= p0
+        # (a) per-score certificate e-processes: H0^cert,s : p^s >= p0.
+        # With two_sided=True, F is closed under negation: each score also
+        # gets a process against H0 : p^s <= 1 - p0, so the certificate
+        # asserts |Delta^s| < eps for every s (a below-chance in-twin score
+        # is membership leakage too -- "over-forgetting", observed for
+        # ascent-style unlearning on real LMs).
         self.e_cert = {s: OneSidedEProcess(m0=p0, direction="below",
                                            strategy=self.cfg.strategy, alpha=a)
                        for s in self.score_names}
+        self.e_cert_neg = {}
+        if self.cfg.two_sided:
+            self.e_cert_neg = {s: OneSidedEProcess(m0=1.0 - p0, direction="above",
+                                                   strategy=self.cfg.strategy, alpha=a)
+                               for s in self.score_names}
         # (c) revocation arm: sign-mixture across scores, H0^rev : p^s <= 1/2
         self.e_rev_sign = MixtureEProcess(n_scores=len(self.score_names),
                                           m0=0.5, direction="above",
                                           strategy=self.cfg.strategy, alpha=a)
+        self.e_rev_sign_dn = MixtureEProcess(n_scores=len(self.score_names),
+                                             m0=0.5, direction="below",
+                                             strategy=self.cfg.strategy, alpha=a) \
+            if self.cfg.two_sided else None
         # (c') VOUCH+ magnitude-aware revocation (per score, mixed uniformly)
         self.e_rev_mag = {s: SymmetryEProcess(alpha=a) for s in self.score_names}
+        self.e_rev_mag_dn = {s: SymmetryEProcess(alpha=a) for s in self.score_names} \
+            if self.cfg.two_sided else None
         # (b) per-score confidence sequences for p^s
         self.cs = {s: BettingCS(alpha=a, grid=self.cfg.cs_grid)
                    for s in self.score_names}
@@ -117,16 +134,21 @@ class VouchVerifier:
     def log_e_rev(self) -> float:
         """Average of the sign-mixture and magnitude e-processes (an average
         of e-processes is an e-process)."""
-        le_sign = self.e_rev_sign.log_e
-        if not self.cfg.use_magnitude_revocation:
-            return le_sign
-        les = [le_sign] + [m.log_e for m in self.e_rev_mag.values()]
+        les = [self.e_rev_sign.log_e]
+        if self.cfg.two_sided:
+            les.append(self.e_rev_sign_dn.log_e)
+        if self.cfg.use_magnitude_revocation:
+            les.extend(m.log_e for m in self.e_rev_mag.values())
+            if self.cfg.two_sided:
+                les.extend(m.log_e for m in self.e_rev_mag_dn.values())
         mx = max(les)
         return mx + math.log(sum(math.exp(le - mx) for le in les) / len(les))
 
     @property
     def log_e_cert(self) -> float:
-        return min(e.log_e for e in self.e_cert.values())
+        vals = [e.log_e for e in self.e_cert.values()]
+        vals += [e.log_e for e in self.e_cert_neg.values()]
+        return min(vals)
 
     @property
     def p_upper(self) -> float:
@@ -142,9 +164,14 @@ class VouchVerifier:
             z = float(d > 0) if d != 0 else float(tie > 0.5)
             zs[s] = z
             self.e_cert[s].update(z)
+            if self.cfg.two_sided:
+                self.e_cert_neg[s].update(z)
+                self.e_rev_mag_dn[s].update(-d, tie_break=1.0 - tie)
             self.cs[s].update(z)
             self.e_rev_mag[s].update(d, tie_break=tie)
         self.e_rev_sign.update([zs[s] for s in self.score_names])
+        if self.cfg.two_sided:
+            self.e_rev_sign_dn.update([zs[s] for s in self.score_names])
         self.t += 1
         state = {
             "t": self.t,

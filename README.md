@@ -95,6 +95,23 @@ Engine improvements over the doc's reference ONS implementation:
   than sign-only betting (median 941 vs 2,196 pairs) at higher detection rate
   (99% vs 78% within 5,000 pairs).
 
+### I4 — Two-sided certification: over-forgetting is leakage too
+
+Discovered when running the end-to-end GPU tier: GradDiff on GPT-2 earned a
+(one-sided) certificate while its in-twins scored *below* their ghost twins
+(mean loss gap −0.155) — gradient-ascent-style unlearning had pushed the forgotten
+canaries to anomalously *bad* scores. Below-chance scoring is itself membership
+signal (an attacker negates the score), so the design doc's one-sided
+Δ = 2·P(in > ghost) − 1 target is too weak.
+
+**Fix.** VOUCH closes the score class under negation (`two_sided=True`, default):
+each score gets certificate e-processes against both `p ≥ ½ + ε/2` and
+`p ≤ ½ − ε/2` (the certificate now asserts **|Δˢ| < ε for every s**), and the
+revocation arm bets in both directions. Validity is unchanged (under the exact null
+every direction is a fair coin / symmetric); the measured protocol-level cost is
+~1.7× more pairs (median 283 vs 166 at ε = 0.2, α = 0.05; 1,182 vs 686 at ε = 0.1),
+and over-forgetting subjects are now correctly revoked (unit-tested).
+
 ## Results
 
 All numbers are reproducible from `experiments/` (JSON in `results/`, figures in
@@ -112,10 +129,10 @@ Peeking after **every** pair, stopping at the first crossing:
 | fixed-n binomial with peeking — false certification | **0.340** | **0.098** |
 
 Calibration is monotone and conservative across α ∈ {0.01, …, 0.2}
-(`fig1_validity`). Full-protocol runs (three correlated scores, CS + both arms, early
-stopping) give false-revocation 0.028 and uniform-in-time CS coverage 0.950 at nominal
-0.95; under genuine memorization (Δ ≈ 0.36) revocation fires 100% of the time at a
-median of **37 pairs** with zero false certificates.
+(`fig1_validity`). Full-protocol runs (three correlated scores, two-sided, CS + both
+arms, early stopping) give false-revocation 0.025 and uniform-in-time per-CS coverage
+0.971 at nominal 0.95; under genuine memorization (Δ ≈ 0.36) revocation fires 100% of
+the time at a median of **44 pairs** with zero false certificates.
 
 ### M2 — Power / certification time (exact unlearning; median pairs to certificate)
 
@@ -127,8 +144,9 @@ median of **37 pairs** with zero false certificates.
 | 0.20 | 166 | 147 | 252 | 226 |
 
 *medians over runs issued within the 20,000-pair horizon (55% / 28%).
-Revocation detection (median pairs, 100% detection): Δ = 0.05 → 2,948; Δ = 0.1 → 690;
-Δ = 0.2 → 179; Δ = 0.4 → 48.
+Two-sided protocol certificates (default) need ~1.7× more pairs: median 1,182 at
+ε = 0.1 and 283 at ε = 0.2 (α = 0.05). Revocation detection (median pairs, 100%
+detection): Δ = 0.05 → 2,948; Δ = 0.1 → 690; Δ = 0.2 → 179; Δ = 0.4 → 48.
 
 ### M3 — Tightness
 

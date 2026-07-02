@@ -192,6 +192,9 @@ def run_seed(backend_name: str, seed: int, m_pairs: int, eps: float,
               f"meanD={mean_d:6.3f}")
         rec = json.loads(cert.to_json())
         rec["mean_loss_diff"] = mean_d
+        # raw per-pair score differences: lets any verifier variant be
+        # re-run offline (the expensive part is scoring, not betting)
+        rec["pair_diffs"] = diffs
         return rec
 
     results = {"seed": seed, "backend": be.name, "m_pairs": m_pairs,

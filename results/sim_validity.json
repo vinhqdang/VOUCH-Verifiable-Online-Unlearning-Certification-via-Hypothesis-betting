@@ -1,14 +1,14 @@
 {
-  "false_cert_rate/eps=0.05/alpha=0.05": 0.025,
-  "false_cert_rate/eps=0.1/alpha=0.05": 0.028,
-  "false_revocation_rate/alpha=0.05": 0.0255,
-  "peeking_binomial_false_alarm/alpha=0.05": 0.3525,
-  "peeking_binomial_false_cert/alpha=0.05": 0.34,
-  "false_cert_rate/eps=0.05/alpha=0.01": 0.006,
-  "false_cert_rate/eps=0.1/alpha=0.01": 0.0055,
-  "false_revocation_rate/alpha=0.01": 0.0055,
-  "peeking_binomial_false_alarm/alpha=0.01": 0.1195,
-  "peeking_binomial_false_cert/alpha=0.01": 0.098,
+  "false_cert_rate/eps=0.05/alpha=0.05": 0.032,
+  "false_cert_rate/eps=0.1/alpha=0.05": 0.031,
+  "false_revocation_rate/alpha=0.05": 0.03,
+  "peeking_binomial_false_alarm/alpha=0.05": 0.368,
+  "peeking_binomial_false_cert/alpha=0.05": 0.354,
+  "false_cert_rate/eps=0.05/alpha=0.01": 0.005,
+  "false_cert_rate/eps=0.1/alpha=0.01": 0.008,
+  "false_revocation_rate/alpha=0.01": 0.006,
+  "peeking_binomial_false_alarm/alpha=0.01": 0.117,
+  "peeking_binomial_false_cert/alpha=0.01": 0.121,
   "calibration/alphas": [
     0.01,
     0.02,
@@ -17,10 +17,10 @@
     0.2
   ],
   "calibration/realized": [
-    0.005,
-    0.0125,
-    0.027,
-    0.0605,
+    0.008,
+    0.02,
+    0.033,
+    0.064,
     0.125
   ]
 }

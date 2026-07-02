@@ -1,9 +1,13 @@
 {
-  "exact_unlearning/revoked_rate": 0.028,
-  "exact_unlearning/issued_rate": 0.1905,
-  "exact_unlearning/cs_coverage": 0.95,
-  "exact_unlearning/median_tau": 312.0,
+  "exact_unlearning/revoked_rate": 0.025,
+  "exact_unlearning/issued_rate": 0.0,
+  "exact_unlearning/cs_coverage_per_score": 0.9706666666666667,
+  "exact_unlearning/median_tau": -1.0,
   "memorized/revoked_rate": 1.0,
   "memorized/false_issue_rate": 0.0,
-  "memorized/median_detection_time": 37.0
+  "memorized/median_detection_time": 44.0,
+  "two_sided_cert/eps=0.1/issued_frac": 0.96,
+  "two_sided_cert/eps=0.1/median_tau": 1181.5,
+  "two_sided_cert/eps=0.2/issued_frac": 0.966,
+  "two_sided_cert/eps=0.2/median_tau": 283.0
 }

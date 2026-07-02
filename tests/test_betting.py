@@ -115,7 +115,12 @@ def test_certificate_power():
     diffs2 = [{"loss": float(d)} for d in rng.standard_normal(1024) + 2.0]
     cert2 = v2.run(diffs2)
     assert cert2.status == "REVOKED", cert2.status
-    assert cert2.t_stop < 100, "revocation should fire fast under strong leakage"
+    assert 0 < cert2.t_revoked < 100, "revocation should fire fast under strong leakage"
+    # over-forgetting (in-twin scores pushed BELOW ghosts) must also be caught
+    v3 = VouchVerifier(["loss"], cfg)
+    diffs3 = [{"loss": float(d)} for d in rng.standard_normal(1024) - 2.0]
+    cert3 = v3.run(diffs3)
+    assert cert3.status == "REVOKED", f"over-forgetting missed: {cert3.status}"
 
 
 def test_manifest_commitment():

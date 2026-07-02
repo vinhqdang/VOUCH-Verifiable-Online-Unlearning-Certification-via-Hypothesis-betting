@@ -134,14 +134,11 @@ def _protocol_one(args):
               "mink": float(b + 0.3 * rng.standard_normal()),
               "ratio": float(b + 0.3 * rng.standard_normal())} for b in base]
     cert = v.run(diffs, shuffle_seed=seed, early_stop=True)
-    covered = True  # CS covers truth? p per score identical = P(D>0)
     from scipy.stats import norm
     p_true = 1 - norm.cdf(0, loc=mu, scale=math.sqrt(1 + 0.09))
-    for s in ("loss", "mink", "ratio"):
-        lo, hi = v.cs[s].interval
-        if not (lo - 1e-12 <= p_true <= hi + 1e-12):
-            covered = False
-    return cert.status, cert.t_stop, covered
+    n_cov = sum(1 for s in ("loss", "mink", "ratio")
+                if v.cs[s].lo - 1e-12 <= p_true <= v.cs[s].hi + 1e-12)
+    return cert.status, cert.t_stop, n_cov / 3.0, cert.t_revoked
 
 
 def exp_protocol_validity(n_seeds: int, pool: Pool) -> None:
@@ -151,15 +148,15 @@ def exp_protocol_validity(n_seeds: int, pool: Pool) -> None:
     statuses = [r[0] for r in res]
     out["exact_unlearning/revoked_rate"] = float(np.mean([s == "REVOKED" for s in statuses]))
     out["exact_unlearning/issued_rate"] = float(np.mean([s == "ISSUED" for s in statuses]))
-    out["exact_unlearning/cs_coverage"] = float(np.mean([r[2] for r in res]))
+    out["exact_unlearning/cs_coverage_per_score"] = float(np.mean([r[2] for r in res]))
     out["exact_unlearning/median_tau"] = float(np.median([r[1] for r in res if r[0] == "ISSUED"]) if any(s == "ISSUED" for s in statuses) else -1)
     print(f"  exact unlearning (512 pairs): issued {out['exact_unlearning/issued_rate']:.3f}, "
           f"false-revoked {out['exact_unlearning/revoked_rate']:.4f}, "
-          f"CS coverage {out['exact_unlearning/cs_coverage']:.4f}")
+          f"CS coverage {out['exact_unlearning/cs_coverage_per_score']:.4f}")
     # residual memorization mu = 0.5 (p ~ 0.68): revocation power
     res = pool.map(_protocol_one, [(s + 10 ** 6, 0.5, 512, 0.10, 0.05) for s in range(n_seeds // 2)])
     statuses = [r[0] for r in res]
-    taus = [r[1] for r in res if r[0] == "REVOKED"]
+    taus = [r[3] for r in res if r[0] == "REVOKED" and r[3] > 0]
     out["memorized/revoked_rate"] = float(np.mean([s == "REVOKED" for s in statuses]))
     out["memorized/false_issue_rate"] = float(np.mean([s == "ISSUED" for s in statuses]))
     out["memorized/median_detection_time"] = float(np.median(taus)) if taus else -1
