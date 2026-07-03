@@ -43,9 +43,18 @@
 
 \title[Anytime-Valid Certificates for Machine Unlearning]{VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting}
 
-\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
+% Double-blind toggle: \anontrue for the review copy (author identity moves to
+% the cover letter); \anonfalse for the camera-ready version.
+\newif\ifanon
+\anontrue
 
+\ifanon
+\author*[1]{\sur{Anonymous Author}}
+\affil*[1]{\orgname{Blinded for double-blind review}}
+\else
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
 \affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
+\fi
 
 \abstract{Machine unlearning methods for large language models are deployed to honour
 deletion requests, yet they ship with no statistical certificate that forgetting
@@ -755,6 +764,24 @@ an error-controlled, continuously monitorable, black-box certificate of bounded
 residual influence. The released harness reproduces the entire study on free, ephemeral
 compute, which we hope lowers the barrier to auditing unlearning wherever it is
 deployed.
+
+\backmatter
+
+\section*{Data availability statement}
+
+The complete source code of the VOUCH framework, every experimental result reported
+in this paper (including all per-seed JSON records, generated tables, and figures),
+and the fault-tolerant execution harness that produced them are publicly available
+\ifanon
+in an open repository; the repository reference is withheld here to preserve
+double-blind review and is provided to the editorial office in the cover letter.
+\else
+at \url{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting}.
+\fi
+The TOFU and MUSE-News benchmark datasets used in the experiments are publicly
+available from their original releases \citep{maini2024tofu,shi2024muse}; all
+canary data are generated deterministically from committed seeds by the released
+code.
 
 \bibliography{refs}
 

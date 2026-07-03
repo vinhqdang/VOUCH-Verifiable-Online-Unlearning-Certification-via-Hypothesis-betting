@@ -1,0 +1,59 @@
+\documentclass[10pt,a4paper]{letter}
+\usepackage[top=1.8cm,bottom=1.8cm,left=2.4cm,right=2.4cm]{geometry}
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
+
+\signature{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}}
+\address{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}}
+\date{3 July 2026}
+
+\begin{document}
+
+\begin{letter}{The Editors-in-Chief\\\emph{Machine Learning}\\Springer Nature}
+
+\opening{Dear Editors,}
+
+Please consider the enclosed manuscript, ``\emph{VOUCH: Anytime-Valid
+Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting},'' for
+publication in \emph{Machine Learning}. In keeping with double-blind review, the
+manuscript itself carries no author information; I am the sole author, and my
+identity and affiliation appear only in this letter.
+
+The paper asks a question that regulation has made urgent and that current
+practice cannot answer: when a provider runs an unlearning algorithm to honour a
+deletion request, can anyone certify---with controlled error---that forgetting
+took place? Existing evaluations are fixed-sample tests that are unsound as
+membership evidence, void their guarantees under the continuous monitoring real
+audits involve, and lean on retrained reference models that are unaffordable at
+scale. VOUCH removes all three obstacles at once: \emph{paired ghost canaries},
+of which a fair coin admits one twin into training and later into the forget set,
+make the within-pair score difference symmetric under exact unlearning---an exact,
+distribution-free null over which betting e-processes deliver an anytime-valid
+confidence sequence on residual membership advantage, an
+$(\varepsilon,\alpha)$-forgetting certificate, and a revocation alarm. A central
+finding is that certificates and alarms must compose across deletion waves in
+opposite directions---consensus versus product---and that the intuitive
+alternatives falsely certify up to 99.6\% of the time. The framework is validated
+by a two-thousand-seed calibration study under adversarial optional stopping,
+certification of four unlearning methods on the TOFU and MUSE-News benchmarks
+across several architectures, and recoverability probes, at a verifier cost two
+orders of magnitude below shadow-model evaluation. As stated in the manuscript's
+data availability statement, all code, per-seed results, and the execution harness
+are publicly released; the repository reference is withheld from the blinded
+manuscript and is:
+\begin{center}
+\href{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting}{\texttt{github.com/vinhqdang/VOUCH-Verifiable-Online-}\\\texttt{Unlearning-Certification-via-Hypothesis-betting}}
+\end{center}
+
+This manuscript is original, has not been published previously, and is not under
+consideration elsewhere. I have no conflicts of interest to declare. I believe the
+combination of game-theoretic statistics with a verifier-generated null, and the
+resulting first anytime-valid certification framework for machine unlearning,
+fits \emph{Machine Learning}'s scope well, and I hope you will find it suitable
+for review.
+
+Thank you for your consideration.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
