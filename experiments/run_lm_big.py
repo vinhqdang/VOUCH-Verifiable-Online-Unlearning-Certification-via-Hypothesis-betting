@@ -193,7 +193,15 @@ def main():
     device = "cuda"
     dtype = {"fp16": torch.float16, "bf16": torch.bfloat16,
              "fp32": torch.float32}[args.dtype]
+    # Partial progress lives under a _partial name so that harvesters which
+    # treat the existence of the final file as "task complete" never see a
+    # half-finished run; the final name is written once, at the very end.
+    final_path = os.path.join(RESULTS, f"lm_e2e_{args.tag}.json")
+    partial_path = os.path.join(RESULTS, f"lm_e2e_{args.tag}_partial.json")
     all_out = []
+    if os.path.exists(partial_path):
+        all_out = json.load(open(partial_path))
+        print(f"[resume] loaded {len(all_out)} partial seed record(s)", flush=True)
     for seed in args.seeds:
         t0 = time.time()
         torch.manual_seed(seed)
@@ -239,10 +247,17 @@ def main():
                 return tl[-len(t_ids):].cpu().numpy()
             return fn
 
-        results = {"seed": seed, "backend": args.model, "m_pairs": args.pairs,
-                   "eps": args.eps, "alpha": args.alpha, "lora_r": args.lora_r,
-                   "dtype": args.dtype, "manifest_sha256": commitment,
-                   "corpus_stats": stats, "certs": {}}
+        prior = next((r for r in all_out if r.get("seed") == seed), None)
+        if prior is not None:
+            results = prior
+            all_out = [r for r in all_out if r is not prior]
+            print(f"[resume] seed {seed}: methods already done: "
+                  f"{sorted(results['certs'].keys())}", flush=True)
+        else:
+            results = {"seed": seed, "backend": args.model, "m_pairs": args.pairs,
+                       "eps": args.eps, "alpha": args.alpha, "lora_r": args.lora_r,
+                       "dtype": args.dtype, "manifest_sha256": commitment,
+                       "corpus_stats": stats, "certs": {}}
 
         def verify(tag, adapter, wrappers=None):
             t_v = time.time()
@@ -267,13 +282,13 @@ def main():
             results["certs"][tag] = rec
             # partial save after every verification: sessions can be
             # reclaimed mid-run, results must survive
-            with open(os.path.join(RESULTS, f"lm_e2e_{args.tag}.json"), "w") as f:
+            with open(partial_path, "w") as f:
                 json.dump(all_out + [results], f, indent=2, default=float)
 
         tkw = dict(steps=args.train_steps, bs=args.batch, lr=args.lr,
                    block=args.block, device=device, seed=seed)
 
-        M = set(args.methods)
+        M = set(args.methods) - set(results["certs"].keys())
         # Phase 0': fine-tune adapter on corpus (includes in-twins)
         model.set_adapter("ft")
         train_adapter(model, tok, corpus, "ft", **tkw)
@@ -303,11 +318,12 @@ def main():
             verify("grad_diff", "gd")
             drop_adapter(model, "gd")
 
-        if "npo" in M:
+        if M & {"npo", "npo_P1_relearn", "npo_P3_jailbreak"}:
             clone_adapter(model, "ft", "npo")
             train_adapter(model, tok, forget_texts, "npo", steps=250,
                           retain=keep, npo_ref="ft", **ukw)
-            verify("npo", "npo")
+            if "npo" in M:
+                verify("npo", "npo")
             if "npo_P1_relearn" in M:
                 clone_adapter(model, "npo", "p1")
                 public = synthetic_bio_corpus(400, seed=seed + 4242)
@@ -320,12 +336,15 @@ def main():
 
         results["wall_seconds"] = time.time() - t0
         all_out.append(results)
-        path = os.path.join(RESULTS, f"lm_e2e_{args.tag}.json")
-        with open(path, "w") as f:
+        with open(partial_path, "w") as f:
             json.dump(all_out, f, indent=2, default=float)
-        print(f"[saved] {path}", flush=True)
+        print(f"[saved partial] {partial_path}", flush=True)
         del model, base
         torch.cuda.empty_cache()
+
+    with open(final_path, "w") as f:
+        json.dump(all_out, f, indent=2, default=float)
+    print(f"[saved] {final_path}", flush=True)
 
 
 if __name__ == "__main__":

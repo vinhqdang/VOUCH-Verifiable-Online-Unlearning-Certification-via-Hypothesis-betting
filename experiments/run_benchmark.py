@@ -102,6 +102,9 @@ def main():
     args = ap.parse_args()
     tag = args.tag or f"{args.dataset}_{args.model.split('/')[-1]}"
     out_path = os.path.join(RESULTS, f"lm_e2e_{tag}.json")
+    # partials live under a _partial name so file-existence checks by the
+    # scheduler never mistake a half-finished run for a completed one
+    partial_path = os.path.join(RESULTS, f"lm_e2e_{tag}_partial.json")
 
     from peft import LoraConfig, get_peft_model
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -111,9 +114,12 @@ def main():
              "fp32": torch.float32}[args.dtype]
 
     all_out = []
-    if args.resume and os.path.exists(out_path):
-        all_out = json.load(open(out_path))
-        print(f"[resume] loaded {len(all_out)} prior seed record(s)", flush=True)
+    if args.resume:
+        src = next((p for p in (out_path, partial_path) if os.path.exists(p)), None)
+        if src:
+            all_out = json.load(open(src))
+            print(f"[resume] loaded {len(all_out)} prior seed record(s) "
+                  f"from {src}", flush=True)
 
     for seed in args.seeds:
         prior = next((r for r in all_out if r["seed"] == seed), None)
@@ -211,7 +217,7 @@ def main():
             rec.update(mean_loss_diff=md, pair_diffs=diffs,
                        utility_nll=un, scoring_seconds=time.time() - t_v)
             results["certs"][m_tag] = rec
-            with open(out_path, "w") as f:
+            with open(partial_path, "w") as f:
                 json.dump(all_out, f, indent=2, default=float)
 
         tkw = dict(steps=args.train_steps, bs=args.batch, lr=args.lr,
@@ -291,12 +297,16 @@ def main():
             drop_adapter(model, "npo")
 
         results["wall_seconds"] = time.time() - t0
-        with open(out_path, "w") as f:
+        with open(partial_path, "w") as f:
             json.dump(all_out, f, indent=2, default=float)
-        print(f"[saved] {out_path}", flush=True)
+        print(f"[saved partial] {partial_path}", flush=True)
         del model, base
         if device == "cuda":
             torch.cuda.empty_cache()
+
+    with open(out_path, "w") as f:
+        json.dump(all_out, f, indent=2, default=float)
+    print(f"[saved] {out_path}", flush=True)
 
 
 if __name__ == "__main__":
