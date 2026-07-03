@@ -283,8 +283,14 @@ First large-model verdict landed (Kaggle P100, bf16, 384 pairs, eps=0.2):
 | TinyGPT (ours) | 0.9M | R / R / R | I / I / I | I / U / I | — |
 | Qwen3-0.6B (2025) | 0.6B | **R** (log e 4.3) | U | U | U |
 | Qwen3-4B-Instruct-2507 (2025) | 4.0B | **R** @ pair 114 | U (log e 0.94) | U (log e 1.44) | **I** @ pair 321 |
+| Phi-4-mini (2025) | 3.8B | **R** (log e 36.1) | **I** @ pair 339 | U (log e 2.46) | **I** @ pair 347 |
 | Gemma-4-E2B (2026) | 5.1B | **R** (log e 22.4) | **I** @ pair 298 | U (log e 1.12) | U (log e 2.57) |
 | Phi-1.5 (2023, TOFU 512 pairs) | 1.4B | **R** ×3 (log e 166–179) | **I** ×3 | **I** ×3 | **I** ×3 |
+
+Nemotron-3-Nano (hybrid Mamba) was dropped from the zoo: its `mamba-ssm`/
+`causal-conv1d` CUDA kernels must be compiled from source (no wheels for the
+free-tier torch), and the ~1h compile exceeds free Colab session lifetimes —
+an infrastructure limit, not a VOUCH one.
 
 The Qwen3-4B row shows exactly the calibrated behaviour the power analysis
 predicts at 384 pairs: the leaking model is revoked within ~114 pairs, while
