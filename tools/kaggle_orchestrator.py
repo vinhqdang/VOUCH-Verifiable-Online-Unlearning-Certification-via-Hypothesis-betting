@@ -81,8 +81,13 @@ sh('pip install -q peft datasets')
 # Kaggle sometimes assigns P100 (sm_60) with a torch build lacking its
 # kernels; reinstall a cu12 wheel that ships sm_60..sm_90.
 import torch as _t
-print(':: torch', _t.__version__, 'device',
-      _t.cuda.get_device_name(0) if _t.cuda.is_available() else 'cpu', flush=True)
+_dev = _t.cuda.get_device_name(0) if _t.cuda.is_available() else 'cpu'
+print(':: torch', _t.__version__, 'device', _dev, flush=True)
+if 'P100' in _dev:
+    # Kaggle's torch cu128 build dropped sm_60 (P100) kernels; install a
+    # cu118 build that still ships them. transformers 5.x needs torch>=2.6.
+    sh('pip install -q torch==2.7.0 --index-url https://download.pytorch.org/whl/cu118')
+    sh("python -c \"import torch; x=torch.ones(2,device='cuda'); print('CUDA OK', (x+x).sum().item())\"")
 sh('git clone --depth 1 {git_url} /kaggle/vouch')
 os.chdir('/kaggle/vouch')
 os.makedirs('results', exist_ok=True)
