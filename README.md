@@ -249,12 +249,15 @@ retain/holdout NLL. Verdicts per seed — R=revoked, I=issued, U=undetermined.
 
 Findings on real benchmark data:
 
-- **Detection.** The un-unlearned model is revoked in 10 of 12 benchmark seeds with
-  the sign arm (3/3 on Pythia-TOFU; 3/3 on Phi-1.5-TOFU with log-e 166–179; 2/3 on
-  GPT-2-TOFU and MUSE, the third being an honest *undetermined* at that cohort
-  size — never a false certificate). The magnitude arm (VOUCH+) raises detection to
-  12/12 at the cost of occasional transient crossings — the documented
-  power/robustness trade-off (§6.8).
+- **Detection.** The un-unlearned model is revoked in 15 of 17 benchmark runs with
+  the sign arm (3/3 on Pythia-TOFU; 6/6 on Phi-1.5 TOFU+MUSE with log-e 166–182; 2/3
+  on GPT-2-TOFU and GPT-2-MUSE, the third being an honest *undetermined* at that
+  cohort size — never a false certificate). The magnitude arm (VOUCH+) raises
+  detection to 17/17 at the cost of occasional transient crossings — the documented
+  power/robustness trade-off (§6.8). On MUSE/Phi-1.5 the sign arm also **revokes one
+  GradDiff run outright** — residual memorisation in a nominally successful method —
+  and the **relearn probe revokes NPO** on the same seed, the strongest
+  recoverability catch in the study.
 - **Forgetting-by-lobotomy exposed.** GA earns forgetting certificates while
   destroying the model (utility NLL 60–170 vs retrain's ~2–3) — the
   certificate/utility pairing flags what no forget-only metric would.

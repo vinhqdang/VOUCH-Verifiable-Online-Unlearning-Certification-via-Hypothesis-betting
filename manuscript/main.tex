@@ -408,6 +408,7 @@ Theorem~\ref{thm:streaming} dictates how their verdicts may be combined.
 
 \begin{figure}[t]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   font=\footnotesize,
   node distance=4mm and 6mm,
@@ -471,7 +472,7 @@ Theorem~\ref{thm:streaming} dictates how their verdicts may be combined.
 \node[lab, left=2mm of gen.west, anchor=east] {Phase 0};
 \node[lab, left=48mm of unlearn.west, anchor=east] {Phase 1};
 \node[lab, left=41mm of score.west, anchor=east] {Phase 2};
-\end{tikzpicture}
+\end{tikzpicture}}
 \caption{The VOUCH pipeline. Phase 0 plants paired ghost canaries and commits to the
 manifest; Phase 1 unlearns with the in-twins riding along; Phase 2 streams the pairs
 through three coupled anytime-valid processes---the per-score certificate minimum, the

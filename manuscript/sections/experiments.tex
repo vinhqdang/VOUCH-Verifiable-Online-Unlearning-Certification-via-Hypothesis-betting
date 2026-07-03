@@ -185,19 +185,23 @@ across two benchmarks, three architectures spanning 124M to 1.4B parameters, and
 three seeds each, and five findings emerge
 that together make the case for the framework.
 
-First, \emph{detection works}: the un-unlearned model is revoked in ten of twelve
-benchmark seeds under the default sign arm---all three Phi-1.5 seeds emphatically so,
-at log-wealth between $166$ and $179$---with the remaining two honest
+First, \emph{detection works}: the un-unlearned model is revoked in fifteen of
+seventeen benchmark runs under the default sign arm---all six Phi-1.5 runs
+emphatically so, at log-wealth between $166$ and $182$---with the remaining two honest
 undetermineds rather than false certificates, and the magnitude-aware arm of
-Proposition~\ref{prop:magnitude} lifts detection to twelve of twelve at the cost of
-the occasional transient crossing. Second, \emph{exact unlearning certifies}:
-retraining-from-scratch is issued on eleven of twelve seeds, and the single miss is a
-384-pair cohort that lands at a log-wealth of $2.98$ against the $3.00$ threshold and
-issues cleanly once we raise the cohort to $512$ pairs---the cohort-size guidance of
-Theorem~\ref{thm:power}, confirmed on real data. Third, and most useful in practice,
-the certificate/utility pairing exposes \emph{forgetting-by-lobotomy}: gradient ascent
+Proposition~\ref{prop:magnitude} lifts detection to seventeen of seventeen at the cost
+of the occasional transient crossing. The same arm also catches a genuinely
+\emph{failed} unlearning run in the wild: on one MUSE/Phi-1.5 seed the sign arm
+revokes GradDiff outright, exposing residual memorisation in a method that a
+forget-metric evaluation would have passed. Second, \emph{exact unlearning
+certifies}: retraining-from-scratch is issued on sixteen of seventeen runs, and the
+single miss is a 384-pair cohort that lands at a log-wealth of $2.98$ against the
+$3.00$ threshold and issues cleanly once we raise the cohort to $512$ pairs---the
+cohort-size guidance of Theorem~\ref{thm:power}, confirmed on real data. Third, and
+most useful in practice, the certificate/utility pairing exposes
+\emph{forgetting-by-lobotomy}: gradient ascent
 earns forgetting certificates while its held-out loss balloons to between $58$ and
-$170$ nats against retraining's $1.5$ to $3.2$, a catastrophe that no forget-only
+$170$ nats against retraining's $1.5$ to $3.4$, a catastrophe that no forget-only
 metric would reveal but that our utility column makes impossible to miss. Fourth,
 \emph{two-sided certification matters}: on several TOFU seeds gradient ascent, GradDiff,
 and NPO push the canaries \emph{below} chance, with mean loss gaps as negative as
@@ -205,16 +209,18 @@ $-0.42$; the one-sided test of our original design would certify these over-forg
 models, and only the two-sided arm correctly withholds. Fifth, \emph{recoverability is
 measured rather than argued}: on TOFU with GPT-2 and Pythia the relearn probe drives
 NPO from issued to undetermined and preferentially resurfaces the most-repeated
-canaries, whereas on MUSE---and on TOFU with the larger Phi-1.5---the same probe
-leaves the certificate intact. Recoverability is benchmark- and model-dependent,
-and VOUCH quantifies the dependence rather than assuming it away. Underlying all of this is a clean dose--response
+canaries; on TOFU with the larger Phi-1.5 and on MUSE with GPT-2 the same probe
+leaves the certificate intact; and on one MUSE/Phi-1.5 seed the probe goes further
+and \emph{revokes}---relearning on public data resurfaces the supposedly forgotten
+canaries strongly enough to trigger the alarm. Recoverability is benchmark- and
+model-dependent, and VOUCH quantifies the dependence rather than assuming it away. Underlying all of this is a clean dose--response
 signal: memorisation rises monotonically with training-time repetition (mean loss gaps
 of $1.2$, $1.5$, $2.7$, and $4.1$ nats at repetition factors one through eight),
 which is the curve that calibrates the extrapolation from canaries to organic data.
 
 \begin{table}[t]
-\centering\scriptsize
-\setlength{\tabcolsep}{3.2pt}
+\centering\tiny
+\setlength{\tabcolsep}{2pt}
 \caption{Benchmark verdicts per seed (sign-based arm) and mean held-out utility (NLL),
 across three architectures. TOFU on GPT-2 and Pythia uses $384$ pairs; TOFU on
 Phi-1.5 and all MUSE-News runs use $512$.}

@@ -101,7 +101,8 @@ def tab_benchmarks():
             ("tofu_pythia160m_rescored", "TOFU/Pythia"),
             ("tofu_phi-1_5_rescored", "TOFU/Phi-1.5"),
             ("muse_gpt2_512_rescored", "MUSE/GPT-2"),
-            ("muse_pythia160m", "MUSE/Pythia")]
+            ("muse_pythia160m", "MUSE/Pythia"),
+            ("muse_phi-1_5_rescored", "MUSE/Phi-1.5")]
     body = "\\begin{tabular}{l" + "cc" * len(cols) + "}\n\\toprule\n"
     body += "& " + " & ".join(
         f"\\multicolumn{{2}}{{c}}{{{n}}}" for _, n in cols) + "\\\\\n"
