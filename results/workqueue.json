@@ -6,8 +6,10 @@
       "lm_e2e_gemma4.json"
     ],
     "requires": "gpu",
-    "status": "pending",
-    "retries": 0
+    "status": "running",
+    "retries": 0,
+    "worker": "colab-gpu",
+    "since": 1783043855.176166
   },
   {
     "id": "nemotron3_4b",
@@ -16,8 +18,10 @@
       "lm_e2e_nemotron3_4b.json"
     ],
     "requires": "gpu",
-    "status": "pending",
-    "retries": 0
+    "status": "running",
+    "retries": 0,
+    "worker": "kaggle-gpu",
+    "since": 1783043855.186514
   },
   {
     "id": "qwen3_4b",
