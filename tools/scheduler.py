@@ -251,7 +251,7 @@ def colab_exec(py, session="vouchq", timeout=240):
 
 def colab_stage(name, session):
     tar = f"/tmp/{session}.tar.gz"
-    sh(f"cd {REPO} && tar czf {tar} --exclude=.git --exclude=results .")
+    sh(f"cd {REPO} && tar czf {tar} --exclude=.git --exclude=results --exclude=wheels .")
     rc, out = sh(f"colab upload -s {session} {tar} vouchq.tar.gz", timeout=600)
     if rc != 0:
         return False
