@@ -78,6 +78,11 @@ def sh(c):
 
 sh('pip uninstall -y torchao')
 sh('pip install -q peft datasets')
+# Kaggle sometimes assigns P100 (sm_60) with a torch build lacking its
+# kernels; reinstall a cu12 wheel that ships sm_60..sm_90.
+import torch as _t
+print(':: torch', _t.__version__, 'device',
+      _t.cuda.get_device_name(0) if _t.cuda.is_available() else 'cpu', flush=True)
 sh('git clone --depth 1 {git_url} /kaggle/vouch')
 os.chdir('/kaggle/vouch')
 os.makedirs('results', exist_ok=True)

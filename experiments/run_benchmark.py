@@ -148,7 +148,8 @@ def main():
         lcfg = LoraConfig(r=args.lora_r, lora_alpha=2 * args.lora_r,
                           lora_dropout=0.0, target_modules="all-linear",
                           task_type="CAUSAL_LM")
-        model = get_peft_model(base, lcfg, adapter_name="ft").to(dtype)
+        model = get_peft_model(base, lcfg, adapter_name="ft",
+                               autocast_adapter_dtype=False).to(dtype)
         pad = tok.pad_token_id or 0
 
         results = prior or {
