@@ -40,7 +40,29 @@ import time
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 QUEUE = os.path.join(REPO, "results", "workqueue.json")
-LOCK = threading.Lock()
+
+
+class _QueueLock:
+    """Cross-process (flock) + cross-thread queue lock, so helper worker
+    processes can safely share the queue with the main scheduler."""
+
+    _tl = threading.Lock()
+
+    def __enter__(self):
+        import fcntl
+        self._tl.acquire()
+        self._fh = open(QUEUE + ".lock", "w")
+        fcntl.flock(self._fh, fcntl.LOCK_EX)
+        return self
+
+    def __exit__(self, *a):
+        import fcntl
+        fcntl.flock(self._fh, fcntl.LOCK_UN)
+        self._fh.close()
+        self._tl.release()
+
+
+LOCK = _QueueLock()
 GIT_URL = ("https://github.com/vinhqdang/"
            "VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting")
 VMDIR = "/content/vouchQ"
