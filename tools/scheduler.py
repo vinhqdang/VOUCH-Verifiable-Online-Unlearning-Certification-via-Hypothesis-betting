@@ -86,6 +86,16 @@ DEFAULT_TASKS = [
              "--queries 2 --tag qwen3_06b "
              "--methods none retrain npo npo_P3_jailbreak",
          results=["lm_e2e_qwen3_06b.json"], requires="gpu"),
+    dict(id="muse_gpt2_extra",
+         cmd="python experiments/run_benchmark.py --dataset muse --model gpt2 "
+             "--seeds 3 4 --resume --dtype fp32 --train-steps 600 --batch 8 "
+             "--pairs 512 --tag muse_gpt2_512b",
+         results=["lm_e2e_muse_gpt2_512b.json"], requires="any"),
+    dict(id="tofu_pythia_extra",
+         cmd="python experiments/run_benchmark.py --dataset tofu "
+             "--model EleutherAI/pythia-160m --seeds 3 4 --resume --dtype fp32 "
+             "--train-steps 600 --batch 8 --tag tofu_pythia160m_b",
+         results=["lm_e2e_tofu_pythia160m_b.json"], requires="any"),
 ]
 
 
