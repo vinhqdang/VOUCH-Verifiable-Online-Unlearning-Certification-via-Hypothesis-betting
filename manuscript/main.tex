@@ -15,6 +15,15 @@
 \usepackage{mathtools}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+% sn-mathphys-num.bst emits \burl for URLs and falls back to \textsf (which
+% breaks on underscores) when \burl is undefined; route it through hyperref.
+\providecommand{\burl}[1]{\url{#1}}
 
 \graphicspath{{figures/}}
 
@@ -34,9 +43,9 @@
 
 \title[Anytime-Valid Certificates for Machine Unlearning]{VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting}
 
-\author*[1]{\fnm{Vinh} \sur{Dang}}\email{ai-data-ai-presales@smartosc.com}
+\author*[1]{\fnm{Quang-Vinh} \sur{Dang}}\email{vinh.dq4@buv.edu.vn}
 
-\affil*[1]{\orgname{SmartOSC}, \orgaddress{\country{Vietnam}}}
+\affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
 
 \abstract{Machine unlearning methods for large language models are deployed to honour
 deletion requests, yet they ship with no statistical certificate that forgetting
@@ -160,7 +169,14 @@ released.
 
 \section{Setting and the VOUCH protocol}\label{sec:framework}
 
-\paragraph{Actors and pipeline.} The provider fine-tunes a base model on
+This section develops the protocol in full: the actors and threat model, the canary
+construction that manufactures the null, the certified quantity, the betting engine
+with its explicit wealth dynamics, and finally the assembled protocol as pseudocode
+(Algorithm~\ref{alg:vouch}) and as a flowchart (Figure~\ref{fig:flowchart}).
+
+\subsection{Actors, pipeline, and threat model}\label{sec:setting}
+
+The provider fine-tunes a base model on
 $D_{\text{keep}} \cup D_{\text{forget}} \cup C$, where $C$ is the canary set described
 below. When deletion requests arrive, an unlearning algorithm $\Ucal$---negative
 preference optimisation, GradDiff, and so on---produces an unlearned model $M_u$ from
@@ -173,61 +189,297 @@ worked and how well, under quantified error control. A provider willing to speci
 the committed canaries is outside our scope and, as prior work establishes, can only be
 addressed by cryptographic attestation, with which VOUCH composes.
 
-\paragraph{Paired ghost canaries.} A templated generator emits exchangeable twin pairs
+\subsection{Paired ghost canaries}\label{sec:canaries}
+
+A templated generator emits exchangeable twin pairs
 $(c_i^0, c_i^1)$ for $i = 1,\dots,m$. The two twins in a pair are independent draws from
 the same conditional template distribution---the same surface form populated with
 independently sampled fictitious entities carrying secrets of at least forty bits of
 entropy---so that within a pair they are exchangeable by construction. We match the
 template to the host corpus, using question--answer pairs for TOFU and record-style
 sentences for news text, so that the canaries do not stand out. For each pair an
-independent fair coin $b_i$ selects the \emph{in-twin} $c_i^{b_i}$, which we insert into
+independent fair coin $b_i \sim \Bern(\tfrac12)$ selects the \emph{in-twin}
+$c_i^{b_i}$, which we insert into
 the fine-tuning corpus with a repetition factor $r_i \in \{1,2,4,8\}$ (these strata give
 us a dose--response curve) and later append to the forget set, so that it traverses the
-unlearning pipeline exactly as organic forget data does. The \emph{ghost twin} is never
-shown to any model. We commit the manifest $\{(c_i^0, c_i^1, b_i, r_i)\}$ by publishing
-its SHA-256 hash before unlearning, which binds the coins and prevents the audit from
-being gamed after the fact.
+unlearning pipeline exactly as organic forget data does. The \emph{ghost twin}
+$c_i^{1-b_i}$ is never
+shown to any model. Before unlearning begins the provider publishes the commitment
+\begin{equation}\label{eq:commit}
+\mathrm{commit} \;=\; H\bigl(\{(c_i^0,\, c_i^1,\, b_i,\, r_i)\}_{i=1}^{m}\bigr),
+\qquad H = \text{SHA-256},
+\end{equation}
+which binds the pairs and the coins and prevents the audit from being gamed after the
+fact: at verification time the manifest is revealed and checked against
+\eqref{eq:commit} before a single query is made.
 
-\paragraph{Scores and the certification statistic.} We fix a declared class $\F$ of
+\subsection{Scores and the certified quantity}\label{sec:scores}
+
+We fix a declared class $\F$ of
 scalar score functions---the token-normalised negative log-likelihood of the secret
 span, the min-$k\%$ token log-probability, the base-model-calibrated loss ratio, and
 optionally a linear probe on the hidden state---each aggregated over $Q$ fixed query
 prompts. For pair $i$ and score $s$ we form the within-pair difference and its sign,
-\[
+\begin{equation}\label{eq:sign}
 D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad
 Z_i^{(s)} = \mathbf{1}\{D_i^{(s)} > 0\},
-\]
+\end{equation}
 breaking ties by a committed fair coin. Writing $p^{(s)} = \Pr[Z^{(s)} = 1]$ and
 $\Delta^{(s)} = 2p^{(s)} - 1$, the quantity we certify is $\sup_{s\in\F}|\Delta^{(s)}|$,
 the largest residual advantage any score in the class can extract. We are deliberate
 that this is influence extractable \emph{through $\F$} on the canary population: it is
 the strongest target compatible with the impossibility results for behavioural audits,
-and we make no claim about erasure in parameter space.
+and we make no claim about erasure in parameter space. The certificate itself is worth
+pinning down precisely, since everything that follows is engineered to earn it.
 
-\paragraph{Three coupled processes.} Fixing the boundary $p_0 = \tfrac12 + \tfrac\eps2$
-and revealing pairs in a random order, the verifier maintains three objects in parallel.
-The \emph{certificate} is a two-sided sequential equivalence test: for each score we run
-two one-sided betting e-processes, one against $p^{(s)} \ge p_0$ and one against
-$p^{(s)} \le 1 - p_0$, using a mixture of bets (a grid of fixed stakes, an
-online-Newton-step learner, and a truncated Krichevsky--Trofimov plug-in) so that power
-adapts online without our having to tune anything. We issue the certificate at the first
-time every one of these processes exceeds $1/\alpha$. The \emph{confidence sequence} is a
-betting confidence sequence on each $p^{(s)}$; its running maximum upper endpoint is an
-anytime-valid upper bound on $\sup_s p^{(s)}$, and this is what we report as the
-quantitative face of the certificate. The \emph{revocation alarm} is an
-exponentially-weighted mixture of e-processes across scores, in both directions, against
-the exact symmetry null; when it crosses $1/\alpha$ we have anytime-valid evidence of
-residual memorisation and the certificate is withheld or revoked. R-VOUCH re-runs the
-loop on probed models---after relearning on public data, after 4-bit quantisation, and
-under adversarial prompt wrappers---and the robust certificate requires every probe to
-pass. Streaming deletion waves each draw a fresh cohort with independent coins;
-Section~\ref{sec:theory} treats their composition.
+\begin{definition}[$(\eps,\alpha)$-forgetting certificate]\label{def:cert}
+Fix a tolerance $\eps \in (0,1)$, an error budget $\alpha \in (0,1)$, and the boundary
+$p_0 = \tfrac12 + \tfrac\eps2$. An $(\eps,\alpha)$-forgetting certificate for $M_u$
+over the class $\F$ is a data-dependent stopping decision that asserts
+$\sup_{s\in\F}|\Delta^{(s)}| < \eps$, issued by a procedure with the guarantee that,
+whenever in truth $\sup_{s\in\F}|\Delta^{(s)}| \ge \eps$, the probability that a
+certificate is \emph{ever} issued---at any stopping time, under any monitoring rule---is
+at most $\alpha$.
+\end{definition}
+
+The two-sidedness in Definition~\ref{def:cert} is deliberate: $\Delta^{(s)} \le -\eps$,
+the over-forgetting regime in which the in-twin scores conspicuously \emph{below} its
+never-seen partner, is membership leakage exactly as much as $\Delta^{(s)} \ge \eps$
+is, and Section~\ref{sec:exp} shows that gradient-ascent unlearning lands there in
+practice.
+
+\subsection{The betting engine}\label{sec:engine}
+
+All three of VOUCH's outputs are built from one primitive, the \emph{betting
+e-process}, and it is worth writing its dynamics out explicitly because the validity
+proofs in Section~\ref{sec:theory} reduce to inspecting them. A gambler starts with
+unit wealth and, before pair $i$ is revealed, stakes a predictable fraction
+$\lambda_i$ (chosen from the information $\F_{i-1}$ revealed so far) on the sign
+$Z_i$ deviating from a hypothesised mean. Against the null $H_0^{+}\colon
+\Efrak[Z] \ge p_0$ (``the in-twins still score high'') and its mirror
+$H_0^{-}\colon \Efrak[Z] \le 1-p_0$, the wealth processes for score $s$ are
+\begin{equation}\label{eq:wealth}
+E_t^{s,+} \;=\; \prod_{i \le t}\bigl(1 + \lambda_i^{s,+}\,(p_0 - Z_i^{(s)})\bigr),
+\qquad
+E_t^{s,-} \;=\; \prod_{i \le t}\bigl(1 + \lambda_i^{s,-}\,(Z_i^{(s)} - (1 - p_0))\bigr),
+\end{equation}
+with stakes confined to $\lambda_i^{s,\pm} \in [0,\, 1/(1-p_0))$ so that wealth can
+never go negative. Under any distribution in the respective null each factor has
+conditional mean at most one, so each process is a nonnegative supermartingale with
+initial value one, and Ville's inequality converts wealth into evidence: the chance
+that a supermartingale ever exceeds $1/\alpha$ is at most $\alpha$. Wealth above
+$1/\alpha$ is therefore a licence to reject that null at whatever time we happen to be
+looking---the anytime validity on which the whole framework rests.
+
+How the stakes are chosen determines power, not validity, which frees us to be
+aggressive. VOUCH plays a uniform mixture of eight experts and lets their wealth
+arbitrate: six constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
+$c \in \{0.02, 0.05, 0.1, 0.2, 0.4, 0.7\}$, an online-Newton-step (ONS) learner, and a
+truncated Krichevsky--Trofimov (KT) plug-in. The ONS expert follows the coin-betting
+recursion
+\begin{equation}\label{eq:ons}
+g_i = \frac{p_0 - Z_i}{1 + \lambda_i (p_0 - Z_i)}, \qquad
+A_i = A_{i-1} + g_i^2, \qquad
+\lambda_{i+1} = \Pi_{[0,\lambda_{\max}]}\!\Bigl(\lambda_i + \tfrac{\eta\, g_i}{A_i}\Bigr),
+\end{equation}
+with $A_0 = 1$, $\eta = \tfrac12$, and $\Pi$ the clip onto the admissible range; its
+log-wealth regret against the best constant bet in hindsight is $O(\log t)$. The KT
+expert bypasses stake selection altogether: it estimates the mean by
+$q_i = (\sum_{j<i} Z_j + \tfrac12)/i$, truncates $q_i$ to the alternative side of
+$p_0$, and multiplies wealth by the plug-in likelihood ratio
+\begin{equation}\label{eq:kt}
+e_i \;=\; Z_i\,\frac{q_i}{p_0} \;+\; (1 - Z_i)\,\frac{1 - q_i}{1 - p_0},
+\end{equation}
+which has conditional mean at most one under the null (it is linear in the mean, equals
+one at $p_0$, and decreases into the null) and achieves the optimal growth rate up to a
+$\tfrac1{2t}\log t$ redundancy. Because a convex combination of e-processes with a
+fixed prior is again an e-process, the mixture inherits exact validity while paying
+only a $\log 8$ additive cost in log-wealth relative to its best expert---power adapts
+online with nothing to tune.
+
+The same wealth idea, run over a grid rather than at a single boundary, yields the
+quantitative face of the certificate. For every candidate mean $m$ on a grid of
+$1001$ points in $[0,1]$ we maintain two wealth processes betting that the truth is
+above and below $m$, with empirical-Bernstein (aGRAPA) stakes
+\begin{equation}\label{eq:agrapa}
+\lambda_i(m) \;=\; \Pi_{[0,\,\lambda_{\max}(m)]}
+\Bigl(\tfrac{\hat\mu_{i-1} - m}{\hat\sigma_{i-1}^2 + (\hat\mu_{i-1} - m)^2}\Bigr),
+\end{equation}
+where $\hat\mu_{i-1}$ and $\hat\sigma^2_{i-1}$ are the running mean and variance of the
+signs. The set of grid values whose wealth on both sides stays below $2/\alpha$,
+intersected over time,
+\begin{equation}\label{eq:cs}
+C_t \;=\; \bigcap_{u \le t}\,\bigl\{\, m :\ \max\bigl(W_u^{\uparrow}(m),\,
+W_u^{\downarrow}(m)\bigr) < 2/\alpha \,\bigr\},
+\end{equation}
+is a $(1-\alpha)$ confidence sequence for $p^{(s)}$: it covers the truth at every time
+simultaneously, so the auditor may glance at it whenever they please. Mapped through
+$\Delta = 2p - 1$ it reports the residual advantage with its anytime-valid uncertainty.
+
+The revocation arm inverts the role of the null. Under \emph{exact} unlearning,
+Theorem~\ref{thm:null} makes every $Z_i^{(s)}$ an exact fair coin, so here---and only
+here---adaptive score weighting is sound. We run, per score and per direction,
+e-processes against $\Efrak[Z] = \tfrac12$ and combine them with predictable
+wealth-proportional weights: with $w_{s,i} \propto \exp(\log E^{s}_{i-1})$ computed
+before pair $i$ is revealed,
+\begin{equation}\label{eq:revmix}
+R_t \;=\; \prod_{i\le t}\;\sum_{s\in\F} w_{s,i}\,
+\frac{E^{s}_{i}}{E^{s}_{i-1}},
+\end{equation}
+which is an e-process because each factor is a predictable convex combination of
+conditional-mean-one increments. When $R_t \ge 1/\alpha$ the verifier holds
+anytime-valid evidence of residual memorisation and the certificate is withheld or
+revoked; the weights meanwhile steer wealth toward whichever score discriminates best,
+which is exactly what an alarm should do.
+
+\subsection{The protocol end to end}\label{sec:protocol}
+
+Algorithm~\ref{alg:vouch} assembles the pieces into the three-phase protocol, and
+Figure~\ref{fig:flowchart} shows the same pipeline as a flowchart. Phase~0 runs at
+design time: generate the cohort, flip the coins, publish the commitment, fine-tune
+with the in-twins planted. Phase~1 is the provider's unlearning step, in which the
+in-twins ride along with the organic forget set. Phase~2 is the audit: reveal and check
+the manifest, then stream the pairs in random order, updating the certificate
+processes, the confidence sequences, and the revocation mixture after each pair, and
+act on whichever boundary is crossed first. R-VOUCH then re-runs the same loop on
+probed variants of $M_u$---after relearning on public data, after 4-bit quantisation,
+and under adversarial prompt wrappers---and the robust certificate requires every probe
+to pass. Streaming deletion waves each draw a fresh cohort with independent coins;
+Theorem~\ref{thm:streaming} dictates how their verdicts may be combined.
+
+\begin{algorithm}[t]
+\caption{The VOUCH protocol}\label{alg:vouch}
+\begin{algorithmic}[1]
+\Statex \textbf{Phase 0 (design time, before fine-tuning)}
+\State generate twin pairs $\{(c_i^0, c_i^1)\}_{i=1}^m$; draw coins
+       $b_i \sim \Bern(\tfrac12)$ and strata $r_i \in \{1,2,4,8\}$
+\State $\textsc{In} \gets \{c_i^{b_i}\}$;\quad $\textsc{Ghost} \gets \{c_i^{1-b_i}\}$
+       \Comment{ghosts are never shown to any model}
+\State publish $\mathrm{commit} = H(\{(c_i^0, c_i^1, b_i, r_i)\})$
+       \Comment{SHA-256, Eq.~\eqref{eq:commit}}
+\State fine-tune $M_{\mathrm{ft}}$ on $D_{\text{keep}} \cup D_{\text{forget}} \cup
+       (\textsc{In} \text{ with repetitions } r_i)$
+\Statex \textbf{Phase 1 (unlearning)}
+\State $M_u \gets \Ucal(M_{\mathrm{ft}};\ D_{\text{forget}} \cup \textsc{In})$
+       \Comment{in-twins traverse the pipeline as organic forget data}
+\Statex \textbf{Phase 2 (certification; black-box queries only)}
+\State reveal manifest; \textbf{abort} unless $H(\text{manifest}) = \mathrm{commit}$
+\State initialise $E^{s,+} = E^{s,-} = 1$ for all $s \in \F$; revocation mixture
+       $R = 1$; CS grids $C^{(s)}$
+\For{$i$ in a committed random order of $1,\dots,m$}
+  \For{$s \in \F$}
+     \State $D_i^{(s)} \gets s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}})$;
+            \quad $Z_i^{(s)} \gets \mathbf{1}\{D_i^{(s)} > 0\}$ (ties: committed coin)
+     \State update $E^{s,+}, E^{s,-}$ by Eq.~\eqref{eq:wealth} with mixture bets
+            \eqref{eq:ons}--\eqref{eq:kt}; update $C^{(s)}$ by
+            \eqref{eq:agrapa}--\eqref{eq:cs}
+  \EndFor
+  \State update the revocation mixture $R$ by Eq.~\eqref{eq:revmix}
+  \If{$R \ge 1/\alpha$} \textbf{revoke}; \Return
+        $\textsc{Fail}(\text{evidence} = R)$
+  \EndIf
+  \If{$\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$} \textbf{break}
+        \Comment{certificate earned early}
+  \EndIf
+\EndFor
+\State run R-VOUCH probes P1 (relearn), P2 (quantise), P3 (jailbreak); repeat the
+       loop above per probe
+\If{$\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$ \textbf{and} every probe passes}
+   \State \textbf{issue} $\mathrm{cert} = (\eps, \alpha, t, C_t, \mathrm{commit},
+          \F, \text{probe report})$
+\Else
+   \State \textbf{withhold} \Comment{undetermined: report $C_t$ and continue
+          monitoring}
+\EndIf
+\Statex \textbf{Streaming (waves $k = 1, 2, \dots$)}: fresh cohort and coins per wave;
+        global certificate $=$ all-pass; global alarm $=$ $\prod_k R^{(k)}$; per-wave
+        alarms at $\alpha_k = \alpha 2^{-(k+1)}$ \Comment{Theorem~\ref{thm:streaming}}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  node distance=4mm and 6mm,
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3.5pt,
+              minimum height=7mm},
+  data/.style={box, fill=gray!12},
+  proc/.style={box, fill=blue!9},
+  eng/.style={box, fill=violet!10},
+  good/.style={box, fill=green!18},
+  bad/.style={box, fill=red!16},
+  wait/.style={box, fill=orange!15},
+  arr/.style={-{Latex[length=1.8mm]}, semithick},
+  lab/.style={font=\scriptsize\itshape, text=black!60}
+]
+% Phase 0 row
+\node[proc] (gen) {twin pairs $(c_i^0,c_i^1)$\\ strata $r_i\in\{1,2,4,8\}$};
+\node[proc, right=of gen] (coin) {fair coins\\ $b_i\sim\Bern(\frac12)$};
+\node[data, right=of coin] (split) {$\textsc{In}=\{c_i^{b_i}\}$\\
+  $\textsc{Ghost}=\{c_i^{1-b_i}\}$};
+\node[data, right=of split] (commit) {publish\\ $H(\text{manifest})$};
+\node[proc, below=6mm of split] (ft) {fine-tune $M_{\mathrm{ft}}$ on
+  $D_{\text{keep}}\cup D_{\text{forget}}\cup \textsc{In}$};
+\node[proc, below=of ft] (unlearn) {unlearn: $M_u \gets \Ucal(M_{\mathrm{ft}};\,
+  D_{\text{forget}}\cup\textsc{In})$};
+\node[proc, below=of unlearn] (score) {reveal manifest, check hash;\\
+  stream pairs: $D_i^{(s)},\ Z_i^{(s)}$ by Eq.~\eqref{eq:sign}};
+% three coupled processes
+\node[eng, below=7mm of score] (cs) {confidence sequence\\
+  $C_t$ on each $\Delta^{(s)}$, Eq.~\eqref{eq:cs}};
+\node[eng, left=5mm of cs] (cert) {certificate arm\\
+  $E_t^{s,\pm}$, Eq.~\eqref{eq:wealth}\\ (min over $s,\pm$)};
+\node[eng, right=5mm of cs] (rev) {revocation arm\\
+  mixture $R_t$, Eq.~\eqref{eq:revmix}};
+% decisions
+\node[good, below=7mm of cert, text width=30mm] (issue)
+  {all $E^{s,\pm}\!\ge\!\frac1\alpha$, probes pass: \textbf{issue}
+   $(\eps,\alpha)$-cert.};
+\node[bad, below=7mm of rev, text width=24mm] (revoke) {$R_t \ge \frac1\alpha$:\\
+  \textbf{revoke / withhold}};
+\node[wait, below=7mm of cs, text width=24mm] (undet) {otherwise: report $C_t$,
+  keep streaming};
+\node[eng, below=4mm of undet] (probes) {R-VOUCH probes: relearn, quantise,
+  jailbreak $\to$ rerun loop};
+% arrows
+\draw[arr] (gen) -- (coin);
+\draw[arr] (coin) -- (split);
+\draw[arr] (split) -- (commit);
+\draw[arr] (split) -- (ft);
+\draw[arr] (ft) -- (unlearn);
+\draw[arr] (unlearn) -- (score);
+\draw[arr] (commit.south) to[out=-90, in=20] (score.east);
+\draw[arr] (score) -- (cert);
+\draw[arr] (score) -- (cs);
+\draw[arr] (score) -- (rev);
+\draw[arr] (cert) -- (issue);
+\draw[arr] (rev) -- (revoke);
+\draw[arr] (cs) -- (undet);
+\draw[arr] (undet) -- (probes);
+\draw[arr] (probes.west) to[out=180, in=180, looseness=1.4] (cert.west);
+% phase labels
+\node[lab, left=2mm of gen.west, anchor=east] {Phase 0};
+\node[lab, left=48mm of unlearn.west, anchor=east] {Phase 1};
+\node[lab, left=41mm of score.west, anchor=east] {Phase 2};
+\end{tikzpicture}
+\caption{The VOUCH pipeline. Phase 0 plants paired ghost canaries and commits to the
+manifest; Phase 1 unlearns with the in-twins riding along; Phase 2 streams the pairs
+through three coupled anytime-valid processes---the per-score certificate minimum, the
+betting confidence sequence, and the revocation mixture---whose boundary crossings
+trigger issuance, continued monitoring, or revocation. R-VOUCH probes rerun the loop
+on relearned, quantised, and jailbroken variants before a robust certificate is
+issued.}
+\label{fig:flowchart}
+\end{figure}
 
 \section{Theory}\label{sec:theory}
 
 Our guarantees rest on one structural fact---the null we plant is exact---and on the
-supermartingale property of betting. We state the results here and defer the proofs,
-which are short, to the released technical note.
+supermartingale property of betting. The proofs are short, and their brevity is the
+point: the design does the work, so we give every proof in full. Throughout,
+$\F_{i-1}$ denotes the verifier's filtration, generated by everything revealed through
+pair $i-1$; all bets and mixture weights are $\F_{i-1}$-measurable (predictable).
 
 \begin{theorem}[Exact, distribution-free null]\label{thm:null}
 Suppose the unlearned model $M_u$ is conditionally independent of the coin $b_i$ given
@@ -236,6 +488,23 @@ this. Then within-pair exchangeability gives $D_i^{(s)} \overset{d}{=} -D_i^{(s)
 $Z_i^{(s)} \sim \Bern(\tfrac12)$ exactly---for any model, any score, and any set of
 query prompts.
 \end{theorem}
+
+\begin{proof}
+Condition on the unordered pair $\{c_i^0, c_i^1\}$ and the past $\F_{i-1}$. The twins
+are exchangeable within the pair by construction, and under the hypothesis $M_u$ is
+conditionally independent of $b_i$: the pipeline either saw neither twin or saw only
+the in-twin, whose identity is determined by $b_i$, and after exact unlearning the
+output law no longer depends on that identity. The joint law of
+$(c_i^{\text{in}}, c_i^{\text{ghost}}, M_u)$ is therefore invariant under swapping the
+two twins. Swapping negates
+$D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}})$ while preserving its
+distribution, so $D_i^{(s)} \overset{d}{=} -D_i^{(s)}$ conditionally on $\F_{i-1}$.
+Symmetry of $D_i^{(s)}$ gives $\Pr[D_i^{(s)} > 0 \mid \F_{i-1}] =
+\Pr[D_i^{(s)} < 0 \mid \F_{i-1}]$, and the committed tie-break coin distributes any
+atom at zero equally between the two signs, so
+$Z_i^{(s)} \mid \F_{i-1} \sim \Bern(\tfrac12)$ exactly. No property of the model, the
+score, or the query set was used beyond measurability.
+\end{proof}
 
 Theorem~\ref{thm:null} is the reason VOUCH needs neither shadow models nor a retrained
 reference: the null distribution is not estimated or assumed but generated by our own
@@ -250,31 +519,89 @@ because issuance forces the truly-violating score's own supermartingale across
 $1/\alpha$, an event of probability at most $\alpha$ by Ville's inequality.
 \end{theorem}
 
+\begin{proof}
+Suppose the certification claim is false: some score $s^\ast$ and direction violate the
+tolerance, say $p^{(s^\ast)} \ge p_0$ (the case $p^{(s^\ast)} \le 1 - p_0$ is
+symmetric). Consider that score's own upper process $E^{s^\ast,+}$ from
+Eq.~\eqref{eq:wealth}. Each of its factors has conditional mean
+\[
+\Efrak\bigl[\,1 + \lambda_i (p_0 - Z_i^{(s^\ast)}) \mid \F_{i-1}\bigr]
+= 1 + \lambda_i \bigl(p_0 - \Efrak[Z_i^{(s^\ast)} \mid \F_{i-1}]\bigr) \;\le\; 1,
+\]
+since $\lambda_i \ge 0$ is predictable and the conditional mean of the sign is at
+least $p_0$. Hence $E^{s^\ast,+}$ is a nonnegative supermartingale with
+$E^{s^\ast,+}_0 = 1$, and Ville's inequality gives
+$\Pr[\exists t: E_t^{s^\ast,+} \ge 1/\alpha] \le \alpha$. Issuing the certificate
+requires \emph{every} process to exceed $1/\alpha$---in particular the violating
+score's own---so a false certificate is issued with probability at most $\alpha$,
+uniformly over stopping rules. No union bound over $\F$ is needed because the argument
+runs entirely through the single process attached to the violating score.
+\end{proof}
+
 \begin{remark}[Why the intuitive mixture fails]\label{rem:mixture}
 It is tempting to run a \emph{single} certificate process on the adaptively reweighted
 sign $\bar Z_i = \sum_s w_s Z_i^{(s)}$, and indeed this is valid for the revocation arm,
 whose null makes every component an exact fair coin. It is \emph{not} valid for the
-certificate, whose composite null is ``some score still leaks.'' When one score sits at
-the boundary while the others are clean, the mixture mean falls below $p_0$ and the
-process becomes a submartingale; it crosses the threshold almost surely. We measured a
-false-certification rate of $0.996$ for this construction against $0.007$ for the
-per-score minimum (Table~\ref{tab:soundness}), which is why VOUCH requires consensus
-rather than an average.
+certificate, whose composite null is ``some score still leaks.'' The failure is easy to
+exhibit: take $p^{(s_1)} = p_0$ exactly at the boundary and
+$p^{(s_2)} = \dots = \tfrac12$ clean. Then
+$\Efrak[\bar Z_i \mid \F_{i-1}] = w_1 p_0 + (1 - w_1)/2 < p_0$ whenever $w_1 < 1$, so
+each factor of the mixture's certificate process has conditional mean strictly greater
+than one: the process is a \emph{sub}martingale under the null and crosses $1/\alpha$
+with probability approaching one. Worse, the violation is generic rather than
+adversarial, because discrimination-driven reweighting moves weight \emph{away} from
+the one leaking score under partial unlearning. We measured a false-certification rate
+of $0.996$ for this construction against $0.007$ for the per-score minimum
+(Table~\ref{tab:soundness}), which is why VOUCH requires consensus rather than an
+average.
 \end{remark}
 
 \begin{theorem}[Power]\label{thm:power}
 If $|\Delta^{(s)}| < \eps$ for all $s$ and the bets have sublinear regret (the mixture
-above qualifies), then $\tfrac1t \log E_t \to \KL(\Bern(p)\,\|\,\Bern(p_0))$ almost
+of Section~\ref{sec:engine} qualifies), then
+$\tfrac1t \log E_t \to \KL(\Bern(p)\,\|\,\Bern(p_0))$ almost
 surely for each process, and the expected certification time is
 $\Efrak[\tau^*] = (1+o(1))\,\log(1/\alpha)/\min_{s,\pm}\KL$. For exact unlearning and
 small $\eps$ this is approximately $8\log(1/\alpha)/\eps^2$ pairs.
 \end{theorem}
 
+\begin{proof}
+Fix one process, say the upper process for a score with true sign probability
+$p < p_0$. For a constant bet $\lambda$, the log-wealth increments
+$\log(1 + \lambda(p_0 - Z_i))$ are i.i.d.\ with mean
+$f(\lambda) = p \log(1 - \lambda(1 - p_0)) + (1-p)\log(1 + \lambda p_0)$, so by the
+strong law $\tfrac1t \log E_t \to f(\lambda)$ almost surely. The Kelly-optimal
+constant bet is $\lambda^\ast = (p_0 - p)/(p_0(1 - p_0))$: substituting it turns the
+two possible wealth factors into the Bernoulli likelihood ratios
+\[
+1 - \lambda^\ast(1 - p_0) = \frac{p}{p_0}, \qquad
+1 + \lambda^\ast p_0 = \frac{1 - p}{1 - p_0},
+\]
+so $f(\lambda^\ast) = p \log\tfrac{p}{p_0} + (1-p)\log\tfrac{1-p}{1-p_0}
+= \KL(\Bern(p)\,\|\,\Bern(p_0))$, and no constant bet can do better because $f$ is
+concave with this maximum. A betting strategy whose log-wealth regret against the best
+constant bet is $o(t)$ therefore attains the same limit; the ONS expert has $O(\log t)$
+regret, the KT plug-in \eqref{eq:kt} achieves
+$\KL - \tfrac{1}{2t}\log t$ directly by the Krichevsky--Trofimov redundancy bound, and
+the uniform mixture over eight experts trails its best expert by at most the constant
+$\log 8$, so all three satisfy the hypothesis. For the crossing time, the process
+rejects when $\log E_t \ge \log(1/\alpha)$; since $\tfrac1t\log E_t \to \KL$ almost
+surely, the first-crossing time $\tau^\ast$ of the drifting random walk satisfies
+$\Efrak[\tau^\ast] = (1 + o(1)) \log(1/\alpha)/\KL$ by the standard Wald argument, and
+issuance waits for the \emph{slowest} process, whose drift is $\min_{s,\pm} \KL$.
+Finally, under exact unlearning $p = \tfrac12$ for every score, and a second-order
+expansion gives $\KL(\Bern(\tfrac12) \| \Bern(\tfrac12 + \tfrac\eps2)) =
+\tfrac{\eps^2}{8} + O(\eps^4)$, whence
+$\Efrak[\tau^\ast] \approx 8\log(1/\alpha)/\eps^2$.
+\end{proof}
+
 Theorem~\ref{thm:power} matters for deployment because it tells the provider how large a
 canary cohort to plant, and it corrects an earlier heuristic: an $\eps = 0.1$
 certificate at $\alpha = 0.05$ requires on the order of six hundred pairs, not the
-one-hundred-ninety a naive calculation suggested, and no valid procedure can do better
-by more than a constant factor.
+one-hundred-ninety a naive calculation suggested, and because the drift equals the
+Kullback--Leibler divergence---the information-theoretic optimum for testing
+$\Bern(\tfrac12)$ against $\Bern(p_0)$---no valid procedure can do better by more than
+a constant factor.
 
 \begin{theorem}[Streaming composition, in both directions]\label{thm:streaming}
 Let deletion waves $k = 1,\dots,K$ use cohorts with independent coins.
@@ -291,6 +618,41 @@ accumulates leakage spread so thinly across waves that no single wave reveals it
 family-wise false revocation over an unbounded history.
 \end{theorem}
 
+\begin{proof}
+\emph{(a)} Suppose the history-wide claim is false, so some wave $k^\ast$ truly has
+$\sup_s |\Delta^{(s),(k^\ast)}| \ge \eps$. The all-pass rule claims only when every
+wave has individually issued, so claiming requires wave $k^\ast$'s own per-score
+minimum process to cross $1/\alpha$, an event of probability at most $\alpha$ by
+Theorem~\ref{thm:cert}---independently of $K$ and of how the auditor schedules the
+waves. For the negative half of the statement, note that a product
+$\prod_k E^{(k)}$ of \emph{certificate} e-values is, by construction, an e-value for
+the intersection null $\bigcap_k \{\text{wave } k \text{ bad}\}$; rejecting an
+intersection establishes only the disjunction ``some wave is clean.'' In the
+one-bad-wave scenario the clean waves' e-values grow without bound
+(Theorem~\ref{thm:power}) and drag the product over $1/\alpha$ regardless of the bad
+wave; we measured this as a $0.96$ false history-wide certification rate against
+$0.000$ for all-pass (Table~\ref{tab:streaming}).
+
+\emph{(b)} Under the intersection null, Theorem~\ref{thm:null} applies wave by wave,
+so each $R^{(k)}$ is a nonnegative supermartingale with initial value one with respect
+to the combined filtration, and cohorts across waves are independent by construction.
+Conditional on $\F_{i-1}$, the increment of the product
+$\prod_k R^{(k)}$ at any arrival is the increment of the single wave whose pair is
+revealed, which has conditional mean at most one; the product is therefore itself a
+nonnegative supermartingale started at one, for any adapted within-wave sampling times,
+and Ville's inequality bounds its crossing probability by $\alpha$. Its power against
+distributed leakage is additive in the exponent: if every wave carries advantage
+$\Delta_0 > 0$, each factor drifts upward at rate
+$\KL(\Bern(\tfrac12 + \tfrac{\Delta_0}2) \,\|\, \Bern(\tfrac12))$ per pair, so the
+product crosses after roughly $\log(1/\alpha)/(m \cdot \KL)$ waves even when no single
+wave is individually detectable.
+
+\emph{(c)} Give wave $k$ its own alarm at level $\alpha_k = \alpha 2^{-(k+1)}$. By
+Ville applied per wave, the probability that a truly clean wave $k$ ever alarms is at
+most $\alpha_k$, and the union bound over an unbounded horizon costs
+$\sum_{k \ge 1} \alpha 2^{-(k+1)} \le \alpha/2 \le \alpha$.
+\end{proof}
+
 \begin{proposition}[A magnitude-aware alarm]\label{prop:magnitude}
 Under the null of Theorem~\ref{thm:null}, $\mathrm{sign}(D_i)$ is a fair coin even
 conditional on $|D_i|$, so wealth factors of the form $1 + \lambda_i\,\mathrm{sign}(D_i)\,g_i$
@@ -301,6 +663,22 @@ time under $5\%$-sparse leakage (Section~\ref{sec:exp}). Because it bets aggress
 report it as an optional power enhancement and keep the sign-based arm as the default.
 \end{proposition}
 
+\begin{proof}
+Symmetry of the conditional law of $D_i$ (Theorem~\ref{thm:null}) means that
+conditioning on the magnitude $|D_i|$ leaves the sign exactly fair:
+$\Efrak[\mathrm{sign}(D_i) \mid |D_i|, \F_{i-1}] = 0$, with ties randomised by the
+committed coin. For any stake $g_i \in [0,1]$ that is measurable with respect to
+$\F_{i-1} \vee \sigma(|D_i|)$---the predictable rank of $|D_i|$ among past magnitudes
+qualifies---the tower property gives
+$\Efrak[\mathrm{sign}(D_i)\, g_i \mid \F_{i-1}] = \Efrak[\,g_i\,
+\Efrak[\mathrm{sign}(D_i) \mid |D_i|, \F_{i-1}] \mid \F_{i-1}] = 0$, so each factor
+$1 + \lambda_i\, \mathrm{sign}(D_i)\, g_i$ with predictable $\lambda_i \in [0,1)$ has
+conditional mean exactly one and stays positive. The product is a nonnegative
+martingale with initial value one, hence an exact e-process, and Ville's inequality
+applies as before. The power claim is empirical and quantified in
+Section~\ref{sec:exp}.
+\end{proof}
+
 \begin{proposition}[Bridge from certified unlearning]\label{prop:bridge}
 If $\Ucal$ is $(\eps_u,\delta_u)$-certified, then
 $|\Delta^{(s)}| \le \tfrac{e^{\eps_u}-1}{e^{\eps_u}+1} + \delta_u$ for every $s$, so for
@@ -308,6 +686,33 @@ $\eps$ above this value VOUCH issues with probability $1 - \alpha - o(1)$. A cer
 algorithm therefore passes VOUCH, as consistency demands, while VOUCH remains meaningful
 at scales where $(\eps_u,\delta_u)$ certificates are unattainable.
 \end{proposition}
+
+\begin{proof}
+The sign $Z^{(s)}$ is a randomised post-processing of the pipeline output: it is
+computed from $M_u$ and the pair alone. $(\eps_u,\delta_u)$-certified unlearning makes
+the law of $M_u$, under either value of the coin,
+$(\eps_u,\delta_u)$-indistinguishable from the law of the retrained reference, under
+which $Z^{(s)}$ is an exact fair coin by Theorem~\ref{thm:null}. Now view the rule
+``guess that the twin with the larger score is the in-twin'' as a hypothesis test for
+the coin $b_i$; its advantage is exactly
+$\Pr[\text{correct}] - \Pr[\text{wrong}] = 2p^{(s)} - 1 = \Delta^{(s)}$. The
+trade-off region of \citet{kairouz2015composition} states that any test between two
+$(\eps_u,\delta_u)$-indistinguishable distributions has type-I and type-II errors
+satisfying $e^{\eps_u}\beta_1 + \beta_2 \ge 1 - \delta_u$ and
+$\beta_1 + e^{\eps_u}\beta_2 \ge 1 - \delta_u$; adding the two constraints,
+$\beta_1 + \beta_2 \ge 2(1 - \delta_u)/(1 + e^{\eps_u})$, so the advantage obeys
+\[
+|\Delta^{(s)}| \;\le\; 1 - (\beta_1 + \beta_2)
+\;\le\; 1 - \frac{2(1 - \delta_u)}{1 + e^{\eps_u}}
+\;=\; \frac{e^{\eps_u} - 1}{e^{\eps_u} + 1} + \frac{2\delta_u}{1 + e^{\eps_u}}
+\;\le\; \frac{e^{\eps_u} - 1}{e^{\eps_u} + 1} + \delta_u.
+\]
+When $\eps$ strictly exceeds this bound, every certificate process has strictly
+positive drift by Theorem~\ref{thm:power} and crosses $1/\alpha$ with probability
+tending to one as $m \to \infty$, while the revocation arm false-alarms with
+probability at most $\alpha$; the issuance probability is therefore at least
+$1 - \alpha - o(1)$.
+\end{proof}
 
 \paragraph{Scope, stated honestly.} A VOUCH certificate concerns influence extractable
 through the declared class $\F$ on the canary law. It does not assert erasure in
