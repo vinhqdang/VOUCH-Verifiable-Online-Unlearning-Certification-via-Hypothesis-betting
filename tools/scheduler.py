@@ -89,13 +89,15 @@ DEFAULT_TASKS = [
              "--batch 4 --queries 2 --tag qwen3_4b "
              "--methods none retrain npo npo_P3_jailbreak",
          results=["lm_e2e_qwen3_4b.json"], requires="gpu"),
+    # fp32: Phi-1.5 overflows in fp16 on P100 (non-finite scores), and P100
+    # has neither bf16 nor tensor cores, so fp32 costs little there
     dict(id="tofu_phi",
          cmd="python experiments/run_benchmark.py --dataset tofu --seeds 0 1 2 "
-             "--resume --dtype fp16 --pairs 512",
+             "--resume --dtype fp32 --pairs 512",
          results=["lm_e2e_tofu_phi-1_5.json"], requires="gpu"),
     dict(id="muse_phi",
          cmd="python experiments/run_benchmark.py --dataset muse --seeds 0 1 2 "
-             "--resume --dtype fp16 --pairs 512",
+             "--resume --dtype fp32 --pairs 512",
          results=["lm_e2e_muse_phi-1_5.json"], requires="gpu"),
     dict(id="tofu_gpt2_extra",
          cmd="python experiments/run_benchmark.py --dataset tofu --model gpt2 "
