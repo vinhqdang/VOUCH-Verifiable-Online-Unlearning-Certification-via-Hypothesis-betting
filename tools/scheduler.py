@@ -281,6 +281,8 @@ def worker_colab(name="colab-t4", session="vouchq", accel="T4",
                     continue
             cmd = (f"cd {VMDIR} && nohup {task['cmd']} "
                    f"> /content/task_{task['id']}.log 2>&1 &")
+            colab_exec("import subprocess; subprocess.run(['pkill','-f','run_'], capture_output=True); print('CLEAN')",
+                       session=session)
             colab_exec(f"import subprocess; subprocess.Popen({cmd!r}, shell=True); print('GO')",
                        session=session)
             # poll until done / died
