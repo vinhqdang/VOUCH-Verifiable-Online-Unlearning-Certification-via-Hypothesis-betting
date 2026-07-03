@@ -81,6 +81,7 @@ sh('pip install -q peft datasets')
 sh('git clone --depth 1 {git_url} /kaggle/vouch')
 os.chdir('/kaggle/vouch')
 os.makedirs('results', exist_ok=True)
+sh('rm -f results/lm_e2e_*.json')   # committed repo results must not pollute output
 for cmd in {cmds!r}:
     sh(cmd)
 for f in glob.glob('results/lm_e2e_*.json'):

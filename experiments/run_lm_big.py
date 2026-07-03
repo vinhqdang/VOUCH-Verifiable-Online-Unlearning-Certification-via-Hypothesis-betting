@@ -200,8 +200,12 @@ def main():
         tok = AutoTokenizer.from_pretrained(args.model)
         if tok.pad_token is None:
             tok.pad_token = tok.eos_token
+        from transformers import AutoConfig
+        _mcfg = AutoConfig.from_pretrained(args.model)
+        if getattr(_mcfg, "pad_token_id", None) is None:
+            _mcfg.pad_token_id = getattr(_mcfg, "eos_token_id", 0) or 0
         base = AutoModelForCausalLM.from_pretrained(
-            args.model, torch_dtype=dtype).to(device)
+            args.model, config=_mcfg, torch_dtype=dtype).to(device)
         lcfg = LoraConfig(r=args.lora_r, lora_alpha=2 * args.lora_r,
                           lora_dropout=0.0, target_modules="all-linear",
                           task_type="CAUSAL_LM")
