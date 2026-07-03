@@ -323,7 +323,10 @@ import subprocess, os, shutil, glob
 def sh(c):
     print('::', c, flush=True); r = subprocess.run(c, shell=True)
     print(':: exit', r.returncode, flush=True); return r.returncode
-sh('pip uninstall -y torchao')
+# torchvision/torchaudio are compiled against the stock torch; after the
+# P100 torch downgrade their C++ ops break transformers at import time
+# (torchvision::nms), and we never use vision/audio -- drop them up front.
+sh('pip uninstall -y torchao torchvision torchaudio')
 sh('pip install -q peft datasets')
 import torch as _t
 _dev = _t.cuda.get_device_name(0) if _t.cuda.is_available() else 'cpu'
