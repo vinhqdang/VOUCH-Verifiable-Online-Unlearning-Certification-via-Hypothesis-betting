@@ -217,3 +217,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 results/ckpt_*.pt
+
+# ephemeral scheduler/orchestrator state (not versioned results)
+results/workqueue.json
+results/*.log
+results/orch_*.log
