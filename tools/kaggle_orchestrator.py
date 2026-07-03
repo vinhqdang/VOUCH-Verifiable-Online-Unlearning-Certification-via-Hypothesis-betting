@@ -96,6 +96,8 @@ def sh(cmd, timeout=600):
 
 
 def username():
+    if os.environ.get("KAGGLE_USERNAME"):
+        return os.environ["KAGGLE_USERNAME"]
     with open(os.path.expanduser("~/.kaggle/kaggle.json")) as f:
         return json.load(f)["username"]
 
