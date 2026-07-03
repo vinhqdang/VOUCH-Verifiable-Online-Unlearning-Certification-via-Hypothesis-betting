@@ -264,7 +264,19 @@ subprocess.run(['pip','uninstall','-y','torchao'], capture_output=True)
 subprocess.run(['pip','install','-q','peft','datasets'], capture_output=True)
 print('STAGED')
 """, session=session, timeout=900)
-    return "STAGED" in out
+    if "STAGED" not in out:
+        return False
+    # ship partial results: method-level resume then survives VM deaths
+    for p in glob.glob(os.path.join(REPO, "results", "lm_e2e_*_partial.json")):
+        b = os.path.basename(p)
+        rc, _ = sh(f"colab upload -s {session} {p} {b}", timeout=300)
+        if rc == 0:
+            colab_exec(
+                f"import shutil, os\n"
+                f"src = '/{b}' if os.path.exists('/{b}') else '/content/{b}'\n"
+                f"shutil.move(src, '{VMDIR}/results/{b}')\n"
+                f"print('PARTIAL {b}')", session=session, timeout=120)
+    return True
 
 
 def worker_colab(name="colab-t4", session="vouchq", accel="T4",
