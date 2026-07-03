@@ -30,6 +30,7 @@ Usage:  python3 tools/scheduler.py            # run all pending
 
 from __future__ import annotations
 
+import glob
 import json
 import os
 import shlex
