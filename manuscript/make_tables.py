@@ -182,7 +182,7 @@ def tab_zoo():
            ("tiny", "TinyGPT (ours)", "0.9M", "---"),
            ("qwen3_06b", "Qwen3-0.6B", "0.6B", "2025"),
            ("qwen3_4b", "Qwen3-4B-2507", "4.0B", "2025"),
-           ("nemotron3_4b", "Nemotron-3-Nano", "4.0B", "2026"),
+           ("phi4_mini", "Phi-4-mini", "3.8B", "2025"),
            ("gemma4", "Gemma-4-E2B", "5.1B", "2026")]
     rows = []
     for tag, name, size, year in zoo:
