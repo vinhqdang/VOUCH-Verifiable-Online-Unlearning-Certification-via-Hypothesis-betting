@@ -249,11 +249,12 @@ retain/holdout NLL. Verdicts per seed — R=revoked, I=issued, U=undetermined.
 
 Findings on real benchmark data:
 
-- **Detection.** The un-unlearned model is revoked in 7 of 9 benchmark seeds with
-  the sign arm (3/3 on Pythia-TOFU; 2/3 on GPT-2-TOFU and MUSE, the third being an
-  honest *undetermined* at that cohort size — never a false certificate). The
-  magnitude arm (VOUCH+) raises detection to 9/9 at the cost of occasional transient
-  crossings — the documented power/robustness trade-off (§6.8).
+- **Detection.** The un-unlearned model is revoked in 10 of 12 benchmark seeds with
+  the sign arm (3/3 on Pythia-TOFU; 3/3 on Phi-1.5-TOFU with log-e 166–179; 2/3 on
+  GPT-2-TOFU and MUSE, the third being an honest *undetermined* at that cohort
+  size — never a false certificate). The magnitude arm (VOUCH+) raises detection to
+  12/12 at the cost of occasional transient crossings — the documented
+  power/robustness trade-off (§6.8).
 - **Forgetting-by-lobotomy exposed.** GA earns forgetting certificates while
   destroying the model (utility NLL 60–170 vs retrain's ~2–3) — the
   certificate/utility pairing flags what no forget-only metric would.
@@ -277,7 +278,9 @@ First large-model verdict landed (Kaggle P100, bf16, 384 pairs, eps=0.2):
 |---|---|---|---|---|---|
 | GPT-2 (2019) | 124M | R / R / R | I / I / I | I / I / I | — |
 | TinyGPT (ours) | 0.9M | R / R / R | I / I / I | I / U / I | — |
+| Qwen3-0.6B (2025) | 0.6B | **R** (log e 4.3) | U | U | U |
 | Qwen3-4B-Instruct-2507 (2025) | 4.0B | **R** @ pair 114 | U (log e 0.94) | U (log e 1.44) | **I** @ pair 321 |
+| Phi-1.5 (2023, TOFU 512 pairs) | 1.4B | **R** ×3 (log e 166–179) | **I** ×3 | **I** ×3 | **I** ×3 |
 
 The Qwen3-4B row shows exactly the calibrated behaviour the power analysis
 predicts at 384 pairs: the leaking model is revoked within ~114 pairs, while

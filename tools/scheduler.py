@@ -316,6 +316,11 @@ def worker_colab(name="colab-t4", session="vouchq", accel="T4",
                 for res in task["results"]:
                     sh(f"colab download -s {session} {VMDIR}/results/{res} "
                        f"{REPO}/results/{res}", timeout=600)
+                    # keep the latest partial locally: staging ships it back
+                    # to fresh sessions, so progress survives VM deaths
+                    par = res.replace(".json", "_partial.json")
+                    sh(f"colab download -s {session} {VMDIR}/results/{par} "
+                       f"{REPO}/results/{par}", timeout=300)
                 if "Traceback" in out:
                     log(name, f"task error: {out[-200:]}")
                     break

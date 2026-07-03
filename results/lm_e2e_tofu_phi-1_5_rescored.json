@@ -1,0 +1,836 @@
+[
+  {
+    "seed": 0,
+    "dataset": "tofu",
+    "backend": "microsoft/phi-1_5",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "bbd70843ba57f0b9aeed3d216b8cb17515b909fc6aa56f35cae82f37cc0043cd",
+    "corpus_stats": {
+      "n_docs": 5720,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.15324424747299553
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.6759999999999999,
+            0.8420000000000001
+          ],
+          "mink": [
+            0.6400000000000001,
+            0.8380000000000001
+          ]
+        },
+        "delta_upper": 0.8420000000000001,
+        "eps": 0.2,
+        "log_e_cert": -1.6677624738659436,
+        "log_e_rev": 175.93199615338216,
+        "log_e_rev_max": 176.84257926690637,
+        "manifest_sha256": "",
+        "p_upper": 0.921,
+        "per_score_log_e_cert": {
+          "loss": -1.6512544421122464,
+          "mink": -1.6677624738659436
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 10,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 2.8490221669198945,
+        "utility_nll": 1.5242236828804017,
+        "scoring_seconds": 108.75697064399719
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.21799999999999997,
+            0.1200000000000001
+          ],
+          "mink": [
+            -0.20399999999999996,
+            0.18999999999999995
+          ]
+        },
+        "delta_upper": 0.18999999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.034101828115487,
+        "log_e_rev": -1.0905682512255317,
+        "log_e_rev_max": 0.11987325428138831,
+        "manifest_sha256": "",
+        "p_upper": 0.595,
+        "per_score_log_e_cert": {
+          "loss": 4.460235791423592,
+          "mink": 4.1794679850463865
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 258,
+        "wave": 0,
+        "mean_loss_diff": 0.022490094881504774,
+        "utility_nll": 1.4635588112473488,
+        "scoring_seconds": 111.4236102104187
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.19799999999999995,
+            0.18199999999999994
+          ],
+          "mink": [
+            -0.136,
+            0.22999999999999998
+          ]
+        },
+        "delta_upper": 0.22999999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.0795175606021967,
+        "log_e_rev": -1.1541750987179704,
+        "log_e_rev_max": 5.551115123125783e-17,
+        "manifest_sha256": "",
+        "p_upper": 0.615,
+        "per_score_log_e_cert": {
+          "loss": 5.701396062754708,
+          "mink": 3.0795175606021967
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 298,
+        "wave": 0,
+        "mean_loss_diff": -0.10490686446428299,
+        "utility_nll": 92.79601753234863,
+        "scoring_seconds": 112.0959084033966
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.19799999999999995,
+            0.15000000000000013
+          ],
+          "mink": [
+            -0.128,
+            0.20999999999999996
+          ]
+        },
+        "delta_upper": 0.20999999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.0207418568579785,
+        "log_e_rev": -1.104395927009782,
+        "log_e_rev_max": 5.551115123125783e-17,
+        "manifest_sha256": "",
+        "p_upper": 0.605,
+        "per_score_log_e_cert": {
+          "loss": 8.49496578451214,
+          "mink": 3.6709726934186726
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 350,
+        "wave": 0,
+        "mean_loss_diff": -0.16213835030794144,
+        "utility_nll": 6.3134759998321535,
+        "scoring_seconds": 114.89335370063782
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.122,
+            0.19199999999999995
+          ],
+          "mink": [
+            -0.15400000000000003,
+            0.17599999999999993
+          ]
+        },
+        "delta_upper": 0.19199999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.080190080302361,
+        "log_e_rev": -1.1177510324829143,
+        "log_e_rev_max": 0.5931020927551401,
+        "manifest_sha256": "",
+        "p_upper": 0.596,
+        "per_score_log_e_cert": {
+          "loss": 3.080190080302361,
+          "mink": 4.200140577478065
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 342,
+        "wave": 0,
+        "mean_loss_diff": 0.07418940216302872,
+        "utility_nll": 1.5425388377904892,
+        "scoring_seconds": 114.43743538856506
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.11599999999999999,
+            0.19199999999999995
+          ],
+          "mink": [
+            -0.10399999999999998,
+            0.17799999999999994
+          ]
+        },
+        "delta_upper": 0.19199999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.07448209110722,
+        "log_e_rev": -1.144967626022659,
+        "log_e_rev_max": 1.0317163091541692,
+        "manifest_sha256": "",
+        "p_upper": 0.596,
+        "per_score_log_e_cert": {
+          "loss": 3.07448209110722,
+          "mink": 4.417481142556188
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 342,
+        "wave": 0,
+        "mean_loss_diff": 0.09928377717733383,
+        "utility_nll": 2.118350899219513,
+        "scoring_seconds": 117.96901059150696
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.122,
+            0.19199999999999995
+          ],
+          "mink": [
+            -0.15800000000000003,
+            0.17199999999999993
+          ]
+        },
+        "delta_upper": 0.19199999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.1494301137931,
+        "log_e_rev": -1.1364590171505136,
+        "log_e_rev_max": 0.5680320203653514,
+        "manifest_sha256": "",
+        "p_upper": 0.596,
+        "per_score_log_e_cert": {
+          "loss": 3.1494301137931,
+          "mink": 4.039829689534912
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 337,
+        "wave": 0,
+        "mean_loss_diff": 0.07791052758693692,
+        "utility_nll": 1.5425388377904892,
+        "scoring_seconds": 186.18041276931763
+      }
+    },
+    "wall_seconds": 2002.7118265628815
+  },
+  {
+    "seed": 1,
+    "dataset": "tofu",
+    "backend": "microsoft/phi-1_5",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "f3cc4635169667a1665dfdb3a4f563ca5ae696f63b0e2f2700bd56e397499b75",
+    "corpus_stats": {
+      "n_docs": 5720,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.15306413539128733
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.73,
+            0.8360000000000001
+          ],
+          "mink": [
+            0.5960000000000001,
+            0.81
+          ]
+        },
+        "delta_upper": 0.8360000000000001,
+        "eps": 0.2,
+        "log_e_cert": -1.7066857931427863,
+        "log_e_rev": 159.0553547515128,
+        "log_e_rev_max": 161.1733496163153,
+        "manifest_sha256": "",
+        "p_upper": 0.918,
+        "per_score_log_e_cert": {
+          "loss": -1.6265228324424144,
+          "mink": -1.7066857931427863
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 11,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 2.7815050115750637,
+        "utility_nll": 1.5223606088757515,
+        "scoring_seconds": 111.5124282836914
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.07399999999999995,
+            0.20399999999999996
+          ],
+          "mink": [
+            -0.09999999999999998,
+            0.20399999999999996
+          ]
+        },
+        "delta_upper": 0.20399999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.0601997472057674,
+        "log_e_rev": -0.9672248168518764,
+        "log_e_rev_max": 0.7640803533645227,
+        "manifest_sha256": "",
+        "p_upper": 0.602,
+        "per_score_log_e_cert": {
+          "loss": 3.178555182485017,
+          "mink": 3.0601997472057674
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 390,
+        "wave": 0,
+        "mean_loss_diff": 0.05499002942815423,
+        "utility_nll": 1.4656293985247613,
+        "scoring_seconds": 114.09396004676819
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.08399999999999996,
+            0.21599999999999997
+          ],
+          "mink": [
+            -0.16400000000000003,
+            0.18399999999999994
+          ]
+        },
+        "delta_upper": 0.21599999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.030016715069684,
+        "log_e_rev": -1.1874756038433862,
+        "log_e_rev_max": 0.17785962023548463,
+        "manifest_sha256": "",
+        "p_upper": 0.608,
+        "per_score_log_e_cert": {
+          "loss": 3.030016715069684,
+          "mink": 4.360691509162253
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 332,
+        "wave": 0,
+        "mean_loss_diff": -0.09515795856714249,
+        "utility_nll": 97.99500339508057,
+        "scoring_seconds": 119.99816465377808
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.08999999999999997,
+            0.20999999999999996
+          ],
+          "mink": [
+            -0.09799999999999998,
+            0.22799999999999998
+          ]
+        },
+        "delta_upper": 0.22799999999999998,
+        "eps": 0.2,
+        "log_e_cert": 3.0738150747985773,
+        "log_e_rev": -1.0950120054329284,
+        "log_e_rev_max": 0.33216791324192213,
+        "manifest_sha256": "",
+        "p_upper": 0.614,
+        "per_score_log_e_cert": {
+          "loss": 3.0917005695696758,
+          "mink": 3.0738150747985773
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 347,
+        "wave": 0,
+        "mean_loss_diff": -0.33657607063651085,
+        "utility_nll": 5.353877400159836,
+        "scoring_seconds": 116.2051649093628
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.08799999999999997,
+            0.21199999999999997
+          ],
+          "mink": [
+            -0.122,
+            0.20399999999999996
+          ]
+        },
+        "delta_upper": 0.21199999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.0041406274428306,
+        "log_e_rev": -1.160162807280513,
+        "log_e_rev_max": 0.17785962023548463,
+        "manifest_sha256": "",
+        "p_upper": 0.606,
+        "per_score_log_e_cert": {
+          "loss": 3.0041406274428306,
+          "mink": 3.7682427566334176
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 325,
+        "wave": 0,
+        "mean_loss_diff": -0.5103483945131302,
+        "utility_nll": 1.523159577846527,
+        "scoring_seconds": 113.97657418251038
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.06599999999999995,
+            0.20999999999999996
+          ],
+          "mink": [
+            -0.07399999999999995,
+            0.17199999999999993
+          ]
+        },
+        "delta_upper": 0.20999999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.0513668457055227,
+        "log_e_rev": -1.142730495255239,
+        "log_e_rev_max": 0.9564974360060756,
+        "manifest_sha256": "",
+        "p_upper": 0.605,
+        "per_score_log_e_cert": {
+          "loss": 3.0513668457055227,
+          "mink": 5.92721604422995
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 354,
+        "wave": 0,
+        "mean_loss_diff": -0.37816524505615234,
+        "utility_nll": 2.162413178682327,
+        "scoring_seconds": 116.67144727706909
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.08199999999999996,
+            0.20999999999999996
+          ],
+          "mink": [
+            -0.09999999999999998,
+            0.20999999999999996
+          ]
+        },
+        "delta_upper": 0.20999999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.035924644599749,
+        "log_e_rev": -1.134161136952179,
+        "log_e_rev_max": 0.43177155423349645,
+        "manifest_sha256": "",
+        "p_upper": 0.605,
+        "per_score_log_e_cert": {
+          "loss": 3.035924644599749,
+          "mink": 3.45626005822359
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 336,
+        "wave": 0,
+        "mean_loss_diff": -0.5068172812461854,
+        "utility_nll": 1.523159577846527,
+        "scoring_seconds": 187.16007328033447
+      }
+    },
+    "wall_seconds": 1994.045759677887
+  },
+  {
+    "seed": 2,
+    "dataset": "tofu",
+    "backend": "microsoft/phi-1_5",
+    "m_pairs": 512,
+    "eps": 0.2,
+    "alpha": 0.05,
+    "lora_r": 16,
+    "dtype": "fp32",
+    "manifest_sha256": "40586b3c2f245a341051ec156f80cb65dae76fcc63e5fe4f7dd58d9a2025a352",
+    "corpus_stats": {
+      "n_docs": 5720,
+      "n_canary_insertions": 1920,
+      "canary_char_share": 0.15266372702127898
+    },
+    "certs": {
+      "none": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            0.6260000000000001,
+            0.8180000000000001
+          ],
+          "mink": [
+            0.5860000000000001,
+            0.79
+          ]
+        },
+        "delta_upper": 0.8180000000000001,
+        "eps": 0.2,
+        "log_e_cert": -1.7072330060797505,
+        "log_e_rev": 162.64245321093287,
+        "log_e_rev_max": 162.64245321093287,
+        "manifest_sha256": "",
+        "p_upper": 0.909,
+        "per_score_log_e_cert": {
+          "loss": -1.6719966243239637,
+          "mink": -1.7072330060797505
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "REVOKED",
+        "t_revoked": 14,
+        "t_stop": 512,
+        "wave": 0,
+        "mean_loss_diff": 2.8143267464765813,
+        "utility_nll": 1.5300445827841758,
+        "scoring_seconds": 110.19198083877563
+      },
+      "retrain": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.18199999999999994,
+            -0.06399999999999995
+          ],
+          "mink": [
+            -0.21199999999999997,
+            0.16999999999999993
+          ]
+        },
+        "delta_upper": 0.16999999999999993,
+        "eps": 0.2,
+        "log_e_cert": 3.0615717897855856,
+        "log_e_rev": -1.2105472267485005,
+        "log_e_rev_max": 1.799753910701226,
+        "manifest_sha256": "",
+        "p_upper": 0.585,
+        "per_score_log_e_cert": {
+          "loss": 5.7529003555526055,
+          "mink": 4.991653070157052
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 282,
+        "wave": 0,
+        "mean_loss_diff": 0.012642023619264364,
+        "utility_nll": 1.4723042371869086,
+        "scoring_seconds": 112.55158996582031
+      },
+      "ga": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.17799999999999994,
+            0.21599999999999997
+          ],
+          "mink": [
+            -0.18999999999999995,
+            0.21799999999999997
+          ]
+        },
+        "delta_upper": 0.21799999999999997,
+        "eps": 0.2,
+        "log_e_cert": 3.0594999644360725,
+        "log_e_rev": -1.150329928361478,
+        "log_e_rev_max": 0.10848704962439082,
+        "manifest_sha256": "",
+        "p_upper": 0.609,
+        "per_score_log_e_cert": {
+          "loss": 3.0594999644360725,
+          "mink": 3.0874454049640465
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 273,
+        "wave": 0,
+        "mean_loss_diff": 0.1515953242778778,
+        "utility_nll": 111.34381072998048,
+        "scoring_seconds": 112.64181017875671
+      },
+      "grad_diff": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.19799999999999995,
+            0.1100000000000001
+          ],
+          "mink": [
+            -0.14800000000000002,
+            0.20599999999999996
+          ]
+        },
+        "delta_upper": 0.20599999999999996,
+        "eps": 0.2,
+        "log_e_cert": 3.1461020589328457,
+        "log_e_rev": -1.1092516993672903,
+        "log_e_rev_max": 0.8408023410607168,
+        "manifest_sha256": "",
+        "p_upper": 0.603,
+        "per_score_log_e_cert": {
+          "loss": 6.562177429281553,
+          "mink": 3.1461020589328457
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 322,
+        "wave": 0,
+        "mean_loss_diff": 0.14032691717147827,
+        "utility_nll": 11.782966632843017,
+        "scoring_seconds": 111.29051327705383
+      },
+      "npo": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.14,
+            0.16399999999999992
+          ],
+          "mink": [
+            -0.22399999999999998,
+            0.14200000000000013
+          ]
+        },
+        "delta_upper": 0.16399999999999992,
+        "eps": 0.2,
+        "log_e_cert": 3.046404554696666,
+        "log_e_rev": -1.2075572413847417,
+        "log_e_rev_max": 0.9477034718278798,
+        "manifest_sha256": "",
+        "p_upper": 0.582,
+        "per_score_log_e_cert": {
+          "loss": 3.98569970179764,
+          "mink": 5.682050699412493
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 287,
+        "wave": 0,
+        "mean_loss_diff": 0.2468259111046791,
+        "utility_nll": 1.8608474767208099,
+        "scoring_seconds": 113.38967704772949
+      },
+      "npo_P1_relearn": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.16200000000000003,
+            0.16599999999999993
+          ],
+          "mink": [
+            -0.18599999999999994,
+            0.13200000000000012
+          ]
+        },
+        "delta_upper": 0.16599999999999993,
+        "eps": 0.2,
+        "log_e_cert": 3.0040533372198888,
+        "log_e_rev": -1.1866624334796627,
+        "log_e_rev_max": 0.9477034718278798,
+        "manifest_sha256": "",
+        "p_upper": 0.583,
+        "per_score_log_e_cert": {
+          "loss": 3.6127515800264534,
+          "mink": 6.052236326495341
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 296,
+        "wave": 0,
+        "mean_loss_diff": 0.263959601521492,
+        "utility_nll": 2.449790298938751,
+        "scoring_seconds": 115.72505164146423
+      },
+      "npo_P3_jailbreak": {
+        "alpha": 0.05,
+        "code_version": "vouch-1.0",
+        "delta_cs": {
+          "loss": [
+            -0.16999999999999993,
+            0.18399999999999994
+          ],
+          "mink": [
+            -0.20199999999999996,
+            0.18999999999999995
+          ]
+        },
+        "delta_upper": 0.18999999999999995,
+        "eps": 0.2,
+        "log_e_cert": 3.185087148549545,
+        "log_e_rev": -1.1642757037134261,
+        "log_e_rev_max": 0.9477034718278798,
+        "manifest_sha256": "",
+        "p_upper": 0.595,
+        "per_score_log_e_cert": {
+          "loss": 3.4259176673660163,
+          "mink": 3.4816992361913384
+        },
+        "probes": {},
+        "score_class": [
+          "loss",
+          "mink"
+        ],
+        "status": "ISSUED",
+        "t_revoked": -1,
+        "t_stop": 235,
+        "wave": 0,
+        "mean_loss_diff": 0.2651848942041399,
+        "utility_nll": 1.8608474767208099,
+        "scoring_seconds": 188.2132284641266
+      }
+    },
+    "wall_seconds": 1979.2317869663239
+  }
+]

@@ -1,15 +1,15 @@
-\begin{tabular}{lcccccccc}
+\begin{tabular}{lcccccccccc}
 \toprule
-& \multicolumn{2}{c}{TOFU/GPT-2} & \multicolumn{2}{c}{TOFU/Pythia} & \multicolumn{2}{c}{MUSE/GPT-2} & \multicolumn{2}{c}{MUSE/Pythia}\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-subject & verdicts & util. & verdicts & util. & verdicts & util. & verdicts & util. \\
+& \multicolumn{2}{c}{TOFU/GPT-2} & \multicolumn{2}{c}{TOFU/Pythia} & \multicolumn{2}{c}{TOFU/Phi-1.5} & \multicolumn{2}{c}{MUSE/GPT-2} & \multicolumn{2}{c}{MUSE/Pythia}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}
+subject & verdicts & util. & verdicts & util. & verdicts & util. & verdicts & util. & verdicts & util. \\
 \midrule
-no unlearning & \vR/\vR/\vU & 2.2 & \vR/\vR/\vR & 1.9 & \vR/\vR/\vU & 3.3 & \vR/\vR & 3.4\\
-retrain (exact) & \vU/\vI/\vI & 2.0 & \vI/\vI/\vI & 1.8 & \vI/\vI/\vI & 3.2 & \vI/\vI & 3.4\\
-GA & \vI/\vU/\vI & 87.2 & \vI/\vU/\vI & 170.4 & \vI/\vI/\vI & 59.8 & \vI/\vI & 125.7\\
-GradDiff & \vI/\vI/\vI & 6.0 & \vI/\vU/\vI & 10.5 & \vI/\vI/\vI & 4.2 & \vI/\vI & 4.2\\
-NPO & \vI/\vU/\vU & 2.6 & \vI/\vI/\vI & 2.2 & \vI/\vI/\vI & 3.3 & \vI/\vU & 3.5\\
-NPO + P1 relearn & \vI/\vU/\vU & 2.8 & \vU/\vU/\vU & 2.6 & \vI/\vI/\vR & 3.2 & \vI/\vI & 3.4\\
-NPO + P3 jailbreak & \vI/\vU/\vU & 2.6 & \vU/\vU/\vU & 2.2 & \vI/\vI/\vI & 3.3 & \vU/\vU & 3.5\\
+no unlearning & \vR/\vR/\vU & 2.2 & \vR/\vR/\vR & 1.9 & \vR/\vR/\vR & 1.5 & \vR/\vR/\vU & 3.3 & \vR/\vR & 3.4\\
+retrain (exact) & \vU/\vI/\vI & 2.0 & \vI/\vI/\vI & 1.8 & \vI/\vI/\vI & 1.5 & \vI/\vI/\vI & 3.2 & \vI/\vI & 3.4\\
+GA & \vI/\vU/\vI & 87.2 & \vI/\vU/\vI & 170.4 & \vI/\vI/\vI & 100.7 & \vI/\vI/\vI & 59.8 & \vI/\vI & 125.7\\
+GradDiff & \vI/\vI/\vI & 6.0 & \vI/\vU/\vI & 10.5 & \vI/\vI/\vI & 7.8 & \vI/\vI/\vI & 4.2 & \vI/\vI & 4.2\\
+NPO & \vI/\vU/\vU & 2.6 & \vI/\vI/\vI & 2.2 & \vI/\vI/\vI & 1.6 & \vI/\vI/\vI & 3.3 & \vI/\vU & 3.5\\
+NPO + P1 relearn & \vI/\vU/\vU & 2.8 & \vU/\vU/\vU & 2.6 & \vI/\vI/\vI & 2.2 & \vI/\vI/\vR & 3.2 & \vI/\vI & 3.4\\
+NPO + P3 jailbreak & \vI/\vU/\vU & 2.6 & \vU/\vU/\vU & 2.2 & \vI/\vI/\vI & 1.6 & \vI/\vI/\vI & 3.3 & \vU/\vU & 3.5\\
 \bottomrule
 \end{tabular}

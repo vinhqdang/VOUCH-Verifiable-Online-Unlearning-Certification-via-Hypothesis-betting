@@ -99,6 +99,7 @@ def _verdicts(tag, m):
 def tab_benchmarks():
     cols = [("tofu_gpt2_rescored", "TOFU/GPT-2"),
             ("tofu_pythia160m_rescored", "TOFU/Pythia"),
+            ("tofu_phi-1_5_rescored", "TOFU/Phi-1.5"),
             ("muse_gpt2_512_rescored", "MUSE/GPT-2"),
             ("muse_pythia160m", "MUSE/Pythia")]
     body = "\\begin{tabular}{l" + "cc" * len(cols) + "}\n\\toprule\n"
