@@ -724,22 +724,7 @@ certificate whose scope is overclaimed is worse than none.
 \section{Experiments}\label{sec:exp}
 \input{sections/experiments}
 
-\section{Limitations}\label{sec:limitations}
-
-VOUCH certifies extractable influence through a declared score class on the canary law,
-and three boundaries of that claim deserve emphasis. Parameter-space erasure is
-behaviourally uncertifiable, so we do not claim it; the transfer from canaries to
-organic data is calibrated by the dose--response strata, not proven; and the guarantee
-is per-cohort rather than per-user, since per-request certificates would require
-per-user canaries. The provider is assumed honest-but-verifiable, and a provider willing
-to special-case the committed canaries needs cryptographic attestation that VOUCH does
-not itself supply. Canaries must be planted before fine-tuning, so legacy models cannot
-be retro-certified. Finally, both two-sided certification and consensus-based streaming
-composition cost power, which we quantify (Tables~\ref{tab:power} and
-\ref{tab:streaming}) so that cohorts can be sized accordingly rather than discovering
-the cost after the fact.
-
-\section{Conclusion}\label{sec:conclusion}
+\section{Limitations and conclusion}\label{sec:conclusion}
 
 We set out to turn unlearning verification from a descriptive exercise into
 certification, and the ingredients that made it possible were an exact null created by
@@ -749,8 +734,27 @@ directions. The empirical study shows the framework is not merely sound but prac
 it calibrates correctly under adversarial stopping, certifies genuine unlearning on
 standard benchmarks across architectures, measures recoverability instead of arguing
 about it, and does so at a verifier cost two orders of magnitude below shadow-model
-evaluation. The released harness reproduces the entire study on free, ephemeral compute,
-which we hope lowers the barrier to auditing unlearning wherever it is deployed.
+evaluation.
+
+The claim a certificate makes is precise, and we regard stating its boundaries just as
+precisely as part of the contribution. VOUCH certifies extractable influence through a
+declared score class on the canary law: parameter-space erasure is behaviourally
+uncertifiable, so we do not claim it; the transfer from canaries to organic data is
+calibrated by the dose--response strata, not proven; and the guarantee is per-cohort
+rather than per-user, since per-request certificates would require per-user canaries.
+The provider is assumed honest-but-verifiable, and a provider willing to special-case
+the committed canaries needs cryptographic attestation that VOUCH does not itself
+supply. Canaries must be planted before fine-tuning, so legacy models cannot be
+retro-certified. Finally, both two-sided certification and consensus-based streaming
+composition cost power, which we quantify (Tables~\ref{tab:power} and
+\ref{tab:streaming}) so that cohorts can be sized accordingly rather than discovering
+the cost after the fact.
+
+Within those boundaries, the framework delivers what a deletion audit actually needs:
+an error-controlled, continuously monitorable, black-box certificate of bounded
+residual influence. The released harness reproduces the entire study on free, ephemeral
+compute, which we hope lowers the barrier to auditing unlearning wherever it is
+deployed.
 
 \bibliography{refs}
 
