@@ -197,15 +197,19 @@ def main():
     for seed in args.seeds:
         t0 = time.time()
         torch.manual_seed(seed)
-        tok = AutoTokenizer.from_pretrained(args.model)
+        tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
         if tok.pad_token is None:
             tok.pad_token = tok.eos_token
         from transformers import AutoConfig
-        _mcfg = AutoConfig.from_pretrained(args.model)
+        _mcfg = AutoConfig.from_pretrained(args.model, trust_remote_code=True)
         if getattr(_mcfg, "pad_token_id", None) is None:
-            _mcfg.pad_token_id = getattr(_mcfg, "eos_token_id", 0) or 0
+            _eos = getattr(_mcfg, "eos_token_id", 0) or 0
+            if isinstance(_eos, (list, tuple)):  # Gemma-4 ships a list of eos ids
+                _eos = _eos[0] if _eos else 0
+            _mcfg.pad_token_id = int(_eos)
         base = AutoModelForCausalLM.from_pretrained(
-            args.model, config=_mcfg, torch_dtype=dtype).to(device)
+            args.model, config=_mcfg, torch_dtype=dtype,
+            trust_remote_code=True).to(device)
         lcfg = LoraConfig(r=args.lora_r, lora_alpha=2 * args.lora_r,
                           lora_dropout=0.0, target_modules="all-linear",
                           task_type="CAUSAL_LM")
