@@ -269,9 +269,25 @@ Findings on real benchmark data:
   canaries resurface less under the same probe budget) — a measured, benchmark-
   dependent recoverability signal.
 
-The Phi-1.5 and 2026-model (Gemma-4-E2B, Qwen3-0.6B/4B, Nemotron-3-Nano) runs are
-executing on the orchestrated Colab lanes (`tools/colab_orchestrator.py`); results
-append here as they complete.
+### Model zoo (2019 → 2026)
+
+First large-model verdict landed (Kaggle P100, bf16, 384 pairs, eps=0.2):
+
+| model | params | none (ft) | retrain | NPO | NPO + P3 jailbreak |
+|---|---|---|---|---|---|
+| GPT-2 (2019) | 124M | R / R / R | I / I / I | I / I / I | — |
+| TinyGPT (ours) | 0.9M | R / R / R | I / I / I | I / U / I | — |
+| Qwen3-4B-Instruct-2507 (2025) | 4.0B | **R** @ pair 114 | U (log e 0.94) | U (log e 1.44) | **I** @ pair 321 |
+
+The Qwen3-4B row shows exactly the calibrated behaviour the power analysis
+predicts at 384 pairs: the leaking model is revoked within ~114 pairs, while
+genuinely unlearned subjects sit in honest *undetermined* with positive
+certificate drift (never a false issue) — the same U→I transition that MUSE
+retrain exhibited when its cohort was raised 384→512.
+
+The remaining zoo runs (Gemma-4-E2B, Qwen3-0.6B, Nemotron-3-Nano-4B) and the
+Phi-1.5 benchmark passes are executing on the scheduler lanes
+(`tools/scheduler.py`); results append here as they complete.
 
 ## Repository layout
 
