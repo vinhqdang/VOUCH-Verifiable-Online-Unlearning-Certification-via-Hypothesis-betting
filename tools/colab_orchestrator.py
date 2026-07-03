@@ -168,7 +168,24 @@ def session_alive() -> bool:
     return "PING_OK" in out
 
 
+TOKEN_DIR = os.path.expanduser("~/.config/colab-cli")
+ACCOUNT_TOKENS = sorted(
+    f for f in os.listdir(TOKEN_DIR) if f.startswith("token_account"))
+
+
+def rotate_account(idx: int) -> str:
+    """Swap the active colab token to accounts[idx % n]; returns its name."""
+    if not ACCOUNT_TOKENS:
+        return "single-account"
+    src = ACCOUNT_TOKENS[idx % len(ACCOUNT_TOKENS)]
+    import shutil
+    shutil.copy(os.path.join(TOKEN_DIR, src),
+                os.path.join(TOKEN_DIR, "token.json"))
+    return src
+
+
 def provision() -> bool:
+    acct = 0
     for attempt in range(24):  # up to ~2 h of retries
         accel_flag = "" if ACCEL == "cpu" else f" --gpu {ACCEL}"
         rc, out = sh(f"colab new -s {SESSION}{accel_flag}", timeout=300)
@@ -176,6 +193,11 @@ def provision() -> bool:
             log(f"session ready (attempt {attempt + 1})")
             return True
         log(f"provision attempt {attempt + 1} failed")
+        # every 2 failures, rotate to the next Google account's quota pool
+        if ACCOUNT_TOKENS and attempt % 2 == 1:
+            acct += 1
+            name = rotate_account(acct)
+            log(f"rotating to {name}")
         time.sleep(300)
     return False
 
