@@ -1,0 +1,72 @@
+[
+  {
+    "id": "gemma4",
+    "cmd": "python experiments/run_lm_big.py --model google/gemma-4-E2B-it --seeds 0 --pairs 384 --eps 0.2 --dtype bf16 --train-steps 400 --batch 4 --queries 2 --tag gemma4 --methods none retrain npo npo_P3_jailbreak",
+    "results": [
+      "lm_e2e_gemma4.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  },
+  {
+    "id": "nemotron3_4b",
+    "cmd": "python experiments/run_lm_big.py --model nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16 --seeds 0 --pairs 384 --eps 0.2 --dtype bf16 --train-steps 400 --batch 4 --queries 2 --tag nemotron3_4b --methods none retrain npo npo_P3_jailbreak",
+    "results": [
+      "lm_e2e_nemotron3_4b.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  },
+  {
+    "id": "qwen3_4b",
+    "cmd": "python experiments/run_lm_big.py --model Qwen/Qwen3-4B-Instruct-2507 --seeds 0 --pairs 384 --eps 0.2 --dtype bf16 --train-steps 400 --batch 4 --queries 2 --tag qwen3_4b --methods none retrain npo npo_P3_jailbreak",
+    "results": [
+      "lm_e2e_qwen3_4b.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  },
+  {
+    "id": "tofu_phi",
+    "cmd": "python experiments/run_benchmark.py --dataset tofu --seeds 0 1 2 --resume --dtype fp16 --pairs 512",
+    "results": [
+      "lm_e2e_tofu_phi-1_5.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  },
+  {
+    "id": "muse_phi",
+    "cmd": "python experiments/run_benchmark.py --dataset muse --seeds 0 1 2 --resume --dtype fp16 --pairs 512",
+    "results": [
+      "lm_e2e_muse_phi-1_5.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  },
+  {
+    "id": "tofu_gpt2_extra",
+    "cmd": "python experiments/run_benchmark.py --dataset tofu --model gpt2 --seeds 3 4 5 --resume --dtype fp32 --train-steps 600 --batch 8 --tag tofu_gpt2_b",
+    "results": [
+      "lm_e2e_tofu_gpt2_b.json"
+    ],
+    "requires": "any",
+    "status": "done",
+    "retries": 0
+  },
+  {
+    "id": "qwen3_06b",
+    "cmd": "python experiments/run_lm_big.py --model Qwen/Qwen3-0.6B --seeds 0 --pairs 384 --eps 0.2 --dtype fp32 --train-steps 400 --batch 4 --queries 2 --tag qwen3_06b --methods none retrain npo npo_P3_jailbreak",
+    "results": [
+      "lm_e2e_qwen3_06b.json"
+    ],
+    "requires": "gpu",
+    "status": "pending",
+    "retries": 0
+  }
+]
