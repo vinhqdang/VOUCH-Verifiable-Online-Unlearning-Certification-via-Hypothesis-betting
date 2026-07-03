@@ -280,6 +280,7 @@ First large-model verdict landed (Kaggle P100, bf16, 384 pairs, eps=0.2):
 | TinyGPT (ours) | 0.9M | R / R / R | I / I / I | I / U / I | — |
 | Qwen3-0.6B (2025) | 0.6B | **R** (log e 4.3) | U | U | U |
 | Qwen3-4B-Instruct-2507 (2025) | 4.0B | **R** @ pair 114 | U (log e 0.94) | U (log e 1.44) | **I** @ pair 321 |
+| Gemma-4-E2B (2026) | 5.1B | **R** (log e 22.4) | **I** @ pair 298 | U (log e 1.12) | U (log e 2.57) |
 | Phi-1.5 (2023, TOFU 512 pairs) | 1.4B | **R** ×3 (log e 166–179) | **I** ×3 | **I** ×3 | **I** ×3 |
 
 The Qwen3-4B row shows exactly the calibrated behaviour the power analysis
