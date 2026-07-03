@@ -100,6 +100,11 @@ def main():
                     help="skip (seed, method) pairs already in the output JSON")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
+    if args.dtype == "fp16" and "phi" in args.model.lower():
+        # measured: Phi-1.5 LoRA fine-tuning diverges to NaN in fp16
+        # (non-finite scores at verification); fp32 is stable
+        print("[stability] Phi diverges in fp16; coercing to fp32", flush=True)
+        args.dtype = "fp32"
     tag = args.tag or f"{args.dataset}_{args.model.split('/')[-1]}"
     out_path = os.path.join(RESULTS, f"lm_e2e_{tag}.json")
     # partials live under a _partial name so file-existence checks by the
