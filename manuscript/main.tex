@@ -1,0 +1,352 @@
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+
+\theoremstyle{thmstyleone}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{thmstyletwo}
+\newtheorem{remark}{Remark}
+\theoremstyle{thmstylethree}
+\newtheorem{definition}{Definition}
+
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\graphicspath{{figures/}}
+
+\newcommand{\vI}{\textcolor[rgb]{0.11,0.60,0.36}{\textbf{I}}}
+\newcommand{\vR}{\textcolor[rgb]{0.80,0.16,0.16}{\textbf{R}}}
+\newcommand{\vU}{\textcolor[rgb]{0.85,0.55,0.00}{\textbf{U}}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Ucal}{\mathcal{U}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\Bern}{\mathrm{Bern}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Efrak}{\mathbb{E}}
+
+\raggedbottom
+
+\begin{document}
+
+\title[Anytime-Valid Certificates for Machine Unlearning]{VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting}
+
+\author*[1]{\fnm{Vinh} \sur{Dang}}\email{ai-data-ai-presales@smartosc.com}
+
+\affil*[1]{\orgname{SmartOSC}, \orgaddress{\country{Vietnam}}}
+
+\abstract{Machine unlearning methods for large language models are deployed to honour
+deletion requests, yet they ship with no statistical certificate that forgetting
+actually occurred. The evaluations in common use are fixed-sample tests: they are
+unsound as membership evidence unless what enters training is randomised, their error
+guarantees collapse the moment an auditor looks at the evidence as it accumulates, and
+they lean on a retrained reference model that is unaffordable at scale and, for
+multi-stage pipelines, not even well defined. We introduce \emph{VOUCH}, an
+anytime-valid statistical certification framework that removes all three obstacles at
+once. At fine-tuning time the provider plants \emph{paired ghost canaries}:
+exchangeable twin records of which a fair coin admits one into training (and later into
+the forget set, so that it traverses the entire unlearning pipeline) while the other is
+never shown to any model. Because exact unlearning leaves the two twins statistically
+interchangeable, the within-pair score difference is symmetric \emph{by construction};
+this hands the verifier an exact, distribution-free, finite-sample null that needs
+neither shadow models nor a retrained reference nor any assumption about the model.
+Over this null VOUCH runs betting e-processes that remain valid at every stopping time
+simultaneously, and from them derives three coupled objects: an anytime-valid confidence
+sequence on the residual membership advantage, an $(\eps,\alpha)$-forgetting certificate
+obtained by sequential two-sided equivalence testing, and a revocation alarm. We prove
+that valid composition runs in opposite directions for the two claims---certificates
+compose by consensus, alarms by product---and show empirically that the intuitive
+alternatives are invalid, falsely certifying up to $99.6\%$ of the time. Across a
+two-thousand-seed calibration study under adversarial optional stopping and end-to-end
+pipelines on the TOFU and MUSE-News benchmarks over several architectures, VOUCH
+certifies genuine unlearning, revokes un-unlearned models within a handful of canary
+pairs, and---by pairing every certificate with a utility reading---exposes
+gradient-ascent unlearning that forgets by destroying the model. Verification costs on
+the order of $10^4$ forward passes, roughly two orders of magnitude below shadow-model
+evaluation.}
+
+\keywords{machine unlearning, anytime-valid inference, e-values, membership inference,
+certification, large language models}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+When a user invokes the right to erasure, a model provider must do more than run an
+unlearning routine: it must be able to \emph{show}, to a regulator or an internal audit
+function, that the routine worked. This obligation is now concrete. The EU AI Act's
+audit provisions, Article~17 of the GDPR, and a growing set of national data-protection
+regimes all presume that erasure can be demonstrated, not merely asserted. The
+algorithmic side of machine unlearning has risen to meet the demand: gradient ascent
+and its stabilised successors, negative preference optimisation
+\citep{zhang2024npo,fan2025simnpo}, representation misdirection \citep{li2024wmdp},
+and task-vector negation now remove targeted knowledge from large models
+at modest cost. The \emph{verification} side has not kept pace, and it is verification,
+not optimisation, that a regulator cares about.
+
+Three obstacles stand between current practice and a defensible certificate, and it is
+worth stating them plainly because VOUCH is organised around dismantling each one.
+\emph{First}, a high membership-inference score on a supposedly forgotten example is
+not evidence that the example was ever trained on. Distribution shift and the model's
+own priors confound the signal, and \citet{zhang2024mia} have shown formally that
+membership cannot be established without controlling the randomness of what enters
+training. \emph{Second}, deletion requests arrive as a stream and auditors inspect the
+evidence as it accrues, stopping when they are satisfied; every fixed-sample test in
+current use---the forget-quality metric of \citet{maini2024tofu}, the leakage metric of
+\citet{shi2024muse}, the shadow-model panels of \citet{hayes2024inexact}---has its
+error guarantee voided by exactly this optional stopping, and we measure the damage in
+Section~\ref{sec:exp-validity}. \emph{Third}, the comparators these tests rely on---a
+model retrained from scratch without the deleted data---are prohibitively expensive at
+the scale of modern language models and, as \citet{yu2025impossibility} show, are not
+even well defined for the multi-stage pipelines used in practice, because
+path-dependence means no unique retrained model exists to compare against.
+
+VOUCH dissolves all three obstacles with a single design decision and a single
+inferential engine. The design decision is the \emph{paired ghost canary}. At
+fine-tuning time we generate exchangeable twin records, and for each pair we flip a
+fair coin to decide which twin is admitted into training; the admitted twin is later
+appended to the forget set, so that it passes through the very same unlearning pipeline
+as organic data, while its twin is withheld from every model. This construction is what
+makes the audit sound: under exact unlearning the model is independent of the coin, so
+the two twins are exchangeable and the difference between their scores is symmetric
+about zero \emph{regardless of the model, the scoring function, or the data
+distribution}. We therefore obtain an exact, distribution-free, finite-sample null that
+we generated ourselves, rather than one we must assume. The engine is the betting
+e-process from game-theoretic statistics, which turns this null into a test whose
+validity holds not at one predetermined sample size but at every stopping time at once,
+by Ville's inequality. Streaming deletions and continuous public monitoring, fatal to a
+fixed-sample test, are precisely what an e-process is built to survive.
+
+Building the framework and running it end-to-end forced four corrections and
+refinements on the initial design, and because each turned out to matter in practice we
+foreground them rather than bury them. We found that the natural way to combine several
+attack scores into one certificate---bet on an adaptively weighted mixture of their
+signs---is \emph{anytime-invalid}, and in simulation it falsely certified a leaking
+model $99.6\%$ of the time; the sound alternative requires every score's own process to
+concur. We found that certificates and alarms must compose in \emph{opposite}
+directions across deletion waves, and that multiplying certificate e-values, the
+instinctive move, certifies histories that contain a genuinely bad wave. We found on
+real language models that gradient-ascent unlearning frequently \emph{over-forgets},
+driving the forgotten twins to scores conspicuously \emph{below} their never-seen
+partners---membership leakage that a one-sided test happily certifies and that a
+two-sided test must catch. And we found, when we corrected the sample-size analysis
+against the information-theoretic lower bound, that an earlier back-of-envelope estimate
+understated the required cohort by threefold. Each of these is now a theorem or a
+measured result rather than a footnote.
+
+The contributions of this paper are as follows. We formulate unlearning certification
+as sequential two-sided equivalence testing against a declared attack class, with an
+exact distribution-free null supplied by paired ghost canaries
+(Section~\ref{sec:framework}). We give the supporting theory: exact validity at any
+stopping time, sound composition across scores and across deletion waves in both
+directions, power that matches the Kullback--Leibler information limit, a
+magnitude-aware revocation arm that is exact under the symmetry null, and a bridge from
+certified $(\eps_u,\delta_u)$-unlearning (Section~\ref{sec:theory}). Finally we report a
+comprehensive empirical study (Section~\ref{sec:exp}): calibration under adversarial
+optional stopping over two thousand seeds; end-to-end certification of gradient ascent,
+GradDiff, negative preference optimisation, and retraining-from-scratch on the TOFU and
+MUSE-News benchmarks across two model architectures, with utility guardrails and
+dose--response calibration; recoverability probes that relearn, quantise, and jailbreak
+the unlearned model; a model axis spanning 2019 to 2026; and cost measurements showing
+that a certificate takes seventy-six seconds on a single mid-range GPU. All code, all
+results, and the fault-tolerant harness that produced them on free ephemeral compute are
+released.
+
+\section{Related work}\label{sec:related}
+\input{sections/related}
+
+\section{Setting and the VOUCH protocol}\label{sec:framework}
+
+\paragraph{Actors and pipeline.} The provider fine-tunes a base model on
+$D_{\text{keep}} \cup D_{\text{forget}} \cup C$, where $C$ is the canary set described
+below. When deletion requests arrive, an unlearning algorithm $\Ucal$---negative
+preference optimisation, GradDiff, and so on---produces an unlearned model $M_u$ from
+the fine-tuned model, using the forget set augmented with the relevant canaries. A
+verifier, holding only black-box query access to $M_u$ together with a canary manifest
+whose hash was published before unlearning began, runs VOUCH and either issues,
+withholds, or revokes a certificate. Throughout we assume the honest-but-verifiable
+setting: the provider genuinely executes $\Ucal$ and the open question is whether it
+worked and how well, under quantified error control. A provider willing to special-case
+the committed canaries is outside our scope and, as prior work establishes, can only be
+addressed by cryptographic attestation, with which VOUCH composes.
+
+\paragraph{Paired ghost canaries.} A templated generator emits exchangeable twin pairs
+$(c_i^0, c_i^1)$ for $i = 1,\dots,m$. The two twins in a pair are independent draws from
+the same conditional template distribution---the same surface form populated with
+independently sampled fictitious entities carrying secrets of at least forty bits of
+entropy---so that within a pair they are exchangeable by construction. We match the
+template to the host corpus, using question--answer pairs for TOFU and record-style
+sentences for news text, so that the canaries do not stand out. For each pair an
+independent fair coin $b_i$ selects the \emph{in-twin} $c_i^{b_i}$, which we insert into
+the fine-tuning corpus with a repetition factor $r_i \in \{1,2,4,8\}$ (these strata give
+us a dose--response curve) and later append to the forget set, so that it traverses the
+unlearning pipeline exactly as organic forget data does. The \emph{ghost twin} is never
+shown to any model. We commit the manifest $\{(c_i^0, c_i^1, b_i, r_i)\}$ by publishing
+its SHA-256 hash before unlearning, which binds the coins and prevents the audit from
+being gamed after the fact.
+
+\paragraph{Scores and the certification statistic.} We fix a declared class $\F$ of
+scalar score functions---the token-normalised negative log-likelihood of the secret
+span, the min-$k\%$ token log-probability, the base-model-calibrated loss ratio, and
+optionally a linear probe on the hidden state---each aggregated over $Q$ fixed query
+prompts. For pair $i$ and score $s$ we form the within-pair difference and its sign,
+\[
+D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad
+Z_i^{(s)} = \mathbf{1}\{D_i^{(s)} > 0\},
+\]
+breaking ties by a committed fair coin. Writing $p^{(s)} = \Pr[Z^{(s)} = 1]$ and
+$\Delta^{(s)} = 2p^{(s)} - 1$, the quantity we certify is $\sup_{s\in\F}|\Delta^{(s)}|$,
+the largest residual advantage any score in the class can extract. We are deliberate
+that this is influence extractable \emph{through $\F$} on the canary population: it is
+the strongest target compatible with the impossibility results for behavioural audits,
+and we make no claim about erasure in parameter space.
+
+\paragraph{Three coupled processes.} Fixing the boundary $p_0 = \tfrac12 + \tfrac\eps2$
+and revealing pairs in a random order, the verifier maintains three objects in parallel.
+The \emph{certificate} is a two-sided sequential equivalence test: for each score we run
+two one-sided betting e-processes, one against $p^{(s)} \ge p_0$ and one against
+$p^{(s)} \le 1 - p_0$, using a mixture of bets (a grid of fixed stakes, an
+online-Newton-step learner, and a truncated Krichevsky--Trofimov plug-in) so that power
+adapts online without our having to tune anything. We issue the certificate at the first
+time every one of these processes exceeds $1/\alpha$. The \emph{confidence sequence} is a
+betting confidence sequence on each $p^{(s)}$; its running maximum upper endpoint is an
+anytime-valid upper bound on $\sup_s p^{(s)}$, and this is what we report as the
+quantitative face of the certificate. The \emph{revocation alarm} is an
+exponentially-weighted mixture of e-processes across scores, in both directions, against
+the exact symmetry null; when it crosses $1/\alpha$ we have anytime-valid evidence of
+residual memorisation and the certificate is withheld or revoked. R-VOUCH re-runs the
+loop on probed models---after relearning on public data, after 4-bit quantisation, and
+under adversarial prompt wrappers---and the robust certificate requires every probe to
+pass. Streaming deletion waves each draw a fresh cohort with independent coins;
+Section~\ref{sec:theory} treats their composition.
+
+\section{Theory}\label{sec:theory}
+
+Our guarantees rest on one structural fact---the null we plant is exact---and on the
+supermartingale property of betting. We state the results here and defer the proofs,
+which are short, to the released technical note.
+
+\begin{theorem}[Exact, distribution-free null]\label{thm:null}
+Suppose the unlearned model $M_u$ is conditionally independent of the coin $b_i$ given
+the pair $(c_i^0, c_i^1)$; exact unlearning and retraining-from-scratch both satisfy
+this. Then within-pair exchangeability gives $D_i^{(s)} \overset{d}{=} -D_i^{(s)}$, so
+$Z_i^{(s)} \sim \Bern(\tfrac12)$ exactly---for any model, any score, and any set of
+query prompts.
+\end{theorem}
+
+Theorem~\ref{thm:null} is the reason VOUCH needs neither shadow models nor a retrained
+reference: the null distribution is not estimated or assumed but generated by our own
+coins, and it is exact at finite $m$. Every process below inherits its validity from it.
+
+\begin{theorem}[Certificate coverage and sound multi-score composition]\label{thm:cert}
+Issue the certificate only when \emph{every} per-score, per-direction e-process exceeds
+$1/\alpha$. Then for any class $\F$ and any stopping rule,
+$\Pr[\text{a false }(\eps,\alpha)\text{-certificate is ever issued}] \le \alpha$
+whenever $\sup_s |\Delta^{(s)}| \ge \eps$. No multiplicity correction is required,
+because issuance forces the truly-violating score's own supermartingale across
+$1/\alpha$, an event of probability at most $\alpha$ by Ville's inequality.
+\end{theorem}
+
+\begin{remark}[Why the intuitive mixture fails]\label{rem:mixture}
+It is tempting to run a \emph{single} certificate process on the adaptively reweighted
+sign $\bar Z_i = \sum_s w_s Z_i^{(s)}$, and indeed this is valid for the revocation arm,
+whose null makes every component an exact fair coin. It is \emph{not} valid for the
+certificate, whose composite null is ``some score still leaks.'' When one score sits at
+the boundary while the others are clean, the mixture mean falls below $p_0$ and the
+process becomes a submartingale; it crosses the threshold almost surely. We measured a
+false-certification rate of $0.996$ for this construction against $0.007$ for the
+per-score minimum (Table~\ref{tab:soundness}), which is why VOUCH requires consensus
+rather than an average.
+\end{remark}
+
+\begin{theorem}[Power]\label{thm:power}
+If $|\Delta^{(s)}| < \eps$ for all $s$ and the bets have sublinear regret (the mixture
+above qualifies), then $\tfrac1t \log E_t \to \KL(\Bern(p)\,\|\,\Bern(p_0))$ almost
+surely for each process, and the expected certification time is
+$\Efrak[\tau^*] = (1+o(1))\,\log(1/\alpha)/\min_{s,\pm}\KL$. For exact unlearning and
+small $\eps$ this is approximately $8\log(1/\alpha)/\eps^2$ pairs.
+\end{theorem}
+
+Theorem~\ref{thm:power} matters for deployment because it tells the provider how large a
+canary cohort to plant, and it corrects an earlier heuristic: an $\eps = 0.1$
+certificate at $\alpha = 0.05$ requires on the order of six hundred pairs, not the
+one-hundred-ninety a naive calculation suggested, and no valid procedure can do better
+by more than a constant factor.
+
+\begin{theorem}[Streaming composition, in both directions]\label{thm:streaming}
+Let deletion waves $k = 1,\dots,K$ use cohorts with independent coins.
+\emph{(a) Certificates compose by consensus.} Claiming that the whole history is clean
+only when every wave has individually earned its certificate keeps the probability of a
+false history-wide claim at or below $\alpha$ for any $K$; multiplying certificate
+e-values instead tests the intersection null ``every wave is bad,'' whose rejection
+certifies merely that \emph{some} wave is clean.
+\emph{(b) Alarms compose by product.} Under the intersection null ``every wave was
+exactly unlearned'' each per-wave revocation process is a supermartingale, so their
+product is one too and crosses $1/\alpha$ with probability at most $\alpha$; the product
+accumulates leakage spread so thinly across waves that no single wave reveals it.
+\emph{(c)} Per-wave alarms with $\alpha$-spending $\alpha_k = \alpha 2^{-(k+1)}$ control
+family-wise false revocation over an unbounded history.
+\end{theorem}
+
+\begin{proposition}[A magnitude-aware alarm]\label{prop:magnitude}
+Under the null of Theorem~\ref{thm:null}, $\mathrm{sign}(D_i)$ is a fair coin even
+conditional on $|D_i|$, so wealth factors of the form $1 + \lambda_i\,\mathrm{sign}(D_i)\,g_i$
+are an exact e-process for any predictable stake $g_i \in [0,1]$ measurable with respect
+to the past and $|D_i|$. Taking $g_i$ to be the predictable rank of $|D_i|$ concentrates
+bets on the large-effect pairs where sparse memorisation lives, and halves detection
+time under $5\%$-sparse leakage (Section~\ref{sec:exp}). Because it bets aggressively we
+report it as an optional power enhancement and keep the sign-based arm as the default.
+\end{proposition}
+
+\begin{proposition}[Bridge from certified unlearning]\label{prop:bridge}
+If $\Ucal$ is $(\eps_u,\delta_u)$-certified, then
+$|\Delta^{(s)}| \le \tfrac{e^{\eps_u}-1}{e^{\eps_u}+1} + \delta_u$ for every $s$, so for
+$\eps$ above this value VOUCH issues with probability $1 - \alpha - o(1)$. A certified
+algorithm therefore passes VOUCH, as consistency demands, while VOUCH remains meaningful
+at scales where $(\eps_u,\delta_u)$ certificates are unattainable.
+\end{proposition}
+
+\paragraph{Scope, stated honestly.} A VOUCH certificate concerns influence extractable
+through the declared class $\F$ on the canary law. It does not assert erasure in
+parameter space, which no behavioural method can, and the extrapolation from canaries to
+organic data is \emph{calibrated} through the dose--response strata rather than proven.
+We regard stating these limits precisely as part of the contribution, since a
+certificate whose scope is overclaimed is worse than none.
+
+\section{Experiments}\label{sec:exp}
+\input{sections/experiments}
+
+\section{Limitations}\label{sec:limitations}
+
+VOUCH certifies extractable influence through a declared score class on the canary law,
+and three boundaries of that claim deserve emphasis. Parameter-space erasure is
+behaviourally uncertifiable, so we do not claim it; the transfer from canaries to
+organic data is calibrated by the dose--response strata, not proven; and the guarantee
+is per-cohort rather than per-user, since per-request certificates would require
+per-user canaries. The provider is assumed honest-but-verifiable, and a provider willing
+to special-case the committed canaries needs cryptographic attestation that VOUCH does
+not itself supply. Canaries must be planted before fine-tuning, so legacy models cannot
+be retro-certified. Finally, both two-sided certification and consensus-based streaming
+composition cost power, which we quantify (Tables~\ref{tab:power} and
+\ref{tab:streaming}) so that cohorts can be sized accordingly rather than discovering
+the cost after the fact.
+
+\section{Conclusion}\label{sec:conclusion}
+
+We set out to turn unlearning verification from a descriptive exercise into
+certification, and the ingredients that made it possible were an exact null created by
+the verifier's own randomness, a betting engine that survives continuous monitoring and
+streaming deletions, and a pair of composition rules that we proved must run in opposite
+directions. The empirical study shows the framework is not merely sound but practical:
+it calibrates correctly under adversarial stopping, certifies genuine unlearning on
+standard benchmarks across architectures, measures recoverability instead of arguing
+about it, and does so at a verifier cost two orders of magnitude below shadow-model
+evaluation. The released harness reproduces the entire study on free, ephemeral compute,
+which we hope lowers the barrier to auditing unlearning wherever it is deployed.
+
+\bibliography{refs}
+
+\end{document}

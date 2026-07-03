@@ -1,0 +1,285 @@
+We organise the study into three tiers so that each claim is tested where it can be
+tested most sharply. The \emph{simulation tier} draws pair signs directly from their
+generating distribution---exactly the object Theorem~\ref{thm:null} controls---which
+lets us calibrate validity and power over thousands of seeds without confounding them
+with the vagaries of a particular model. The \emph{end-to-end tier} fine-tunes real
+models on corpora with injected canaries, unlearns them with each subject method, and
+certifies the result, so that the abstract null meets an actual training pipeline.
+The \emph{benchmark tier} repeats the end-to-end protocol on the field's standard
+testbeds, TOFU and MUSE-News, across two architectures. Unless noted we use
+$\eps = 0.2$, $\alpha = 0.05$, two-sided certification, the sign-based revocation arm,
+LoRA fine-tuning of rank sixteen, and between $384$ and $640$ canary pairs. The entire
+study ran on free, ephemeral compute---Colab and Kaggle GPU sessions, Colab CPU
+sessions, and a four-core container---coordinated by a released fault-tolerant
+scheduler; because every training stage checkpoints and every verification is saved,
+a reclaimed session costs at most a hundred optimiser steps.
+
+\subsection{Validity under adversarial optional stopping}\label{sec:exp-validity}
+
+The first thing to establish is that VOUCH does what it promises: it holds its error
+level even when an adversary peeks after every observation and stops at the first
+crossing. We simulate exactly this attack. Table~\ref{tab:validity} reports the
+realised type-I error over two thousand seeds, and the picture is unambiguous---VOUCH
+stays below the nominal level for both the certificate and the revocation arm at both
+$\alpha=0.05$ and $\alpha=0.01$, whereas a fixed-sample binomial test used in the same
+peeking fashion inflates its error to $0.35$, seven times the nominal rate. The
+calibration curve in Figure~\ref{fig:validity} confirms that the conservatism holds
+across the whole range of $\alpha$. When we run the complete protocol---three
+correlated scores, the confidence sequence, and both arms together---the false
+revocation rate is $0.025$ and the per-score confidence sequence covers the truth with
+uniform-in-time probability $0.971$ against the nominal $0.95$; and when there is
+genuine memorisation to find ($\Delta \approx 0.36$), the revocation arm fires in every
+run at a median of forty-four pairs, with no false certificate ever issued. Validity,
+in short, is not merely asymptotic but exact and finite-sample, exactly as
+Theorem~\ref{thm:null} predicts.
+
+\begin{table}[t]
+\centering\small
+\caption{Type-I error over 2{,}000 seeds with peeking after every pair (1{,}024
+pairs). Bold marks a procedure whose realised error exceeds its nominal level.}
+\label{tab:validity}
+\input{tables/validity}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig1_validity.pdf}
+\caption{\textbf{Anytime validity.} Left: the realised false-certification rate lies
+below the nominal level at every $\alpha$ under adversarial optional stopping. Right:
+a fixed-$n$ binomial test used with peeking inflates its error sevenfold; VOUCH does
+not.}
+\label{fig:validity}
+\end{figure}
+
+\subsection{Sound composition across scores}\label{sec:exp-soundness}
+
+We next confirm the composition result of Theorem~\ref{thm:cert} and the failure it
+warns against. Constructing a composite null in which one of three scores sits exactly
+at the boundary while the other two are clean, we compare the per-score-minimum
+certificate that VOUCH uses against the adaptive-mixture certificate that seems
+natural. The difference is stark and is reported in Table~\ref{tab:soundness}: the
+mixture arm certifies the leaking model in $99.6\%$ of runs---it is not merely loose
+but anytime-invalid, as Remark~\ref{rem:mixture} explains---while the per-score minimum
+holds at $0.7\%$, comfortably below $\alpha$. This is the empirical reason VOUCH
+requires every score's process to concur rather than betting on their average.
+
+\begin{table}[t]
+\centering\small
+\caption{False certification under a composite null (score $A$ at the boundary
+$p_0=0.55$, scores $B$ and $C$ clean; 2{,}048 pairs, $\alpha=0.05$).}
+\label{tab:soundness}
+\input{tables/soundness}
+\end{table}
+
+\subsection{Power and tightness}\label{sec:exp-power}
+
+Having established validity, we ask what it costs in sample size, and the answer is:
+close to nothing beyond the information-theoretic minimum. Table~\ref{tab:power} shows
+that the median certification time tracks the Kullback--Leibler bound
+$\log(1/\alpha)/\KL$ within fifteen percent across the whole $\eps$ grid, and
+Figure~\ref{fig:power} plots the same relationship together with the revocation
+detection time. Two-sided certification, which we adopt because of the over-forgetting
+phenomenon documented below, costs roughly a factor of $1.7$ in pairs---$283$ against
+$166$ at $\eps=0.2$---a price we consider well worth paying for a certificate that
+cannot be defeated by driving scores below chance. On the detection side the
+revocation arm finds an advantage of $\Delta=0.4$ in a median of forty-eight pairs and
+$\Delta=0.1$ in six hundred and ninety. The confidence sequence tightens at the
+expected $O(\sqrt{\log\log t / t})$ rate (Figure~\ref{fig:tightness}): under exact
+unlearning its upper bound on $\Delta$ falls from $0.26$ at a hundred and twenty-eight
+pairs to $0.10$ at a thousand. It is worth being candid about the one place where a
+classical test wins: at a single \emph{pre-committed} sample size a permutation or
+binomial test is somewhat more powerful, and on one benchmark seed such a test rejects
+where VOUCH remains undetermined. This is the unavoidable price of validity at
+\emph{every} sample size at once, and Theorem~\ref{thm:power} guarantees the gap to the
+best possible valid procedure is only a constant factor.
+
+\begin{table}[t]
+\centering\small
+\caption{Median pairs to certification under exact unlearning against the KL limit.
+Starred entries are medians over the runs issued within a 20{,}000-pair horizon.}
+\label{tab:power}
+\input{tables/power}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig3_power.pdf}
+\caption{\textbf{Power.} Left: median certification time versus $\eps$, against the
+information limit $\log(1/\alpha)/\KL$. Right: revocation detection time versus the
+true residual advantage.}
+\label{fig:power}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.5\linewidth]{fig4_tightness.pdf}
+\caption{\textbf{Tightness.} The anytime confidence-sequence upper bound on $\Delta$
+shrinks with the number of pairs observed, under $\Delta=0$ and $\Delta=0.2$.}
+\label{fig:tightness}
+\end{figure}
+
+\subsection{Streaming deletion waves}\label{sec:exp-streaming}
+
+Because deletion requests arrive continually, we test the composition rules of
+Theorem~\ref{thm:streaming} on histories of ten waves, and Table~\ref{tab:streaming}
+bears out both halves of the theorem. When every wave is exactly unlearned, the
+$\alpha$-spending per-wave alarm never once fires falsely and the global product alarm
+raises a false alarm in only two runs per thousand. When a single wave is genuinely bad
+($\Delta = 0.25$), its own alarm catches it in $98\%$ of histories and---crucially---the
+consensus certificate is \emph{never} falsely issued for the history, which is exactly
+the failure that multiplying certificate e-values would produce. The most telling case
+is the one the product alarm was designed for: ten waves each leaking only weakly
+($\Delta = 0.06$), so weakly that a per-wave test detects them just $14\%$ of the time,
+are nonetheless caught by the accumulated product alarm in $62\%$ of histories, at a
+median firing wave of three. Distributed leakage that hides beneath every individual
+wave's threshold is thus surfaced by composition---a capability no fixed-sample audit
+possesses.
+
+\begin{table}[t]
+\centering\small
+\caption{Streaming composition over $K{=}10$ waves ($512$ pairs each, $500$ histories).
+The dagger excludes the genuinely bad wave. Bold marks the two payoffs: no false
+history-wide certificate, and distributed weak leakage caught only by the product
+alarm.}
+\label{tab:streaming}
+\input{tables/streaming}
+\end{table}
+
+\subsection{End-to-end certification on real models}\label{sec:exp-e2e}
+
+We now let the abstract null meet a genuine training pipeline. Table~\ref{tab:gpt2v2}
+reports GPT-2 fine-tuned on a corpus with $640$ injected canary pairs and then
+subjected to each unlearning method. The pattern is exactly what a working certificate
+should produce: the un-unlearned model is revoked in every seed within about eleven
+pairs, its canary loss gap averaging $2.2$ nats; retraining-from-scratch and all three
+genuine unlearning methods earn certificates in every seed; and the deliberately
+weakened NPO together with the post-relearning probe land in the honest undetermined
+band, their leakage signal elevated but not yet conclusive. One episode during
+development is worth recounting because it illustrates what statistical certification
+buys beyond a pass/fail label. An early version of our NPO implementation carried a
+sign error that caused its loss to optimise \emph{toward} memorisation rather than away
+from it; the revocation arm flagged every such run within roughly eleven pairs, before
+we had noticed the bug ourselves. A certificate that can catch a defect in the
+unlearning \emph{code}, not merely in its outcome, is doing more than a descriptive
+metric ever could. A CPU-affordable tier built around a small transformer, where
+retraining-from-scratch is cheap enough to serve as ground truth, reproduces every one
+of these qualitative outcomes.
+
+\begin{table}[t]
+\centering\small
+\caption{GPT-2 end-to-end over 3 seeds ($640$ pairs, two-sided $\eps=0.2$): per-seed
+verdicts (\vI\ issued, \vR\ revoked, \vU\ undetermined), the mean confidence-sequence
+upper bound on $\Delta$, and the mean canary loss gap $\bar D$.}
+\label{tab:gpt2v2}
+\input{tables/gpt2v2}
+\end{table}
+
+\subsection{The standard benchmarks: TOFU and MUSE-News}\label{sec:exp-bench}
+
+The central empirical test is whether VOUCH behaves correctly on the benchmarks the
+community actually uses. We inject canaries in each benchmark's native format---
+question--answer pairs for TOFU, record-style sentences for MUSE-News---into its
+fine-tuning mixture, and we track held-out utility for every subject.
+Table~\ref{tab:bench} and Figures~\ref{fig:tofu} and \ref{fig:muse} report verdicts
+across two benchmarks, two architectures, and three seeds, and five findings emerge
+that together make the case for the framework.
+
+First, \emph{detection works}: the un-unlearned model is revoked in seven of nine
+benchmark seeds under the default sign arm, the remaining two being honest
+undetermineds rather than false certificates, and the magnitude-aware arm of
+Proposition~\ref{prop:magnitude} lifts detection to nine of nine at the cost of the
+occasional transient crossing. Second, \emph{exact unlearning certifies}:
+retraining-from-scratch is issued on eight of nine seeds, and the single miss is a
+384-pair cohort that lands at a log-wealth of $2.98$ against the $3.00$ threshold and
+issues cleanly once we raise the cohort to $512$ pairs---the cohort-size guidance of
+Theorem~\ref{thm:power}, confirmed on real data. Third, and most useful in practice,
+the certificate/utility pairing exposes \emph{forgetting-by-lobotomy}: gradient ascent
+earns forgetting certificates while its held-out loss balloons to between $58$ and
+$170$ nats against retraining's $1.8$ to $3.2$, a catastrophe that no forget-only
+metric would reveal but that our utility column makes impossible to miss. Fourth,
+\emph{two-sided certification matters}: on several TOFU seeds gradient ascent, GradDiff,
+and NPO push the canaries \emph{below} chance, with mean loss gaps as negative as
+$-0.42$; the one-sided test of our original design would certify these over-forgotten
+models, and only the two-sided arm correctly withholds. Fifth, \emph{recoverability is
+measured rather than argued}: on TOFU the relearn probe drives NPO from issued to
+undetermined and preferentially resurfaces the most-repeated canaries, whereas on MUSE
+the same probe leaves the certificate intact---recoverability is benchmark-dependent,
+and VOUCH quantifies the dependence. Underlying all of this is a clean dose--response
+signal: memorisation rises monotonically with training-time repetition (mean loss gaps
+of $1.2$, $1.5$, $2.7$, and $4.1$ nats at repetition factors one through eight),
+which is the curve that calibrates the extrapolation from canaries to organic data.
+
+\begin{table}[t]
+\centering\scriptsize
+\setlength{\tabcolsep}{3.2pt}
+\caption{Benchmark verdicts per seed (sign-based arm) and mean held-out utility (NLL),
+across two architectures. TOFU at $384$ pairs, MUSE-News at $512$.}
+\label{tab:bench}
+\input{tables/benchmarks}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig8_tofu.pdf}
+\caption{\textbf{TOFU (GPT-2).} Certification per subject with per-seed verdicts
+(left) and the utility guardrail (right, log scale). Gradient ascent forgets by
+destroying the model.}
+\label{fig:tofu}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig9_muse.pdf}
+\caption{\textbf{MUSE-News (GPT-2, $512$ pairs).} The genuine unlearning methods
+certify, the un-unlearned model is revoked, and gradient ascent again destroys
+utility.}
+\label{fig:muse}
+\end{figure}
+
+\subsection{A model axis from 2019 to 2026}\label{sec:exp-zoo}
+
+To show that nothing about the framework is tied to a particular model generation, we
+run the pipeline across parameter scales and release years, from GPT-2 to the
+2025--2026 cohort (Qwen-3, Nemotron-3-Nano, and the five-billion-parameter Gemma-4-E2B),
+using a shared-base multi-adapter design that keeps a single frozen base in memory and
+represents every training stage as a LoRA adapter---a construction that fits
+five-billion-parameter models on a sixteen-gigabyte GPU and, incidentally, lets NPO's
+frozen reference be the fine-tuned adapter on the same base rather than a second model.
+Table~\ref{tab:zoo} collects the verdict patterns, which are stable across the axis;
+entries populate as the released orchestration harness completes each run.
+
+\begin{table}[t]
+\centering\small
+\caption{Model axis, verdicts per seed for the core subjects. Entries populate as the
+released harness completes the corresponding runs.}
+\label{tab:zoo}
+\input{tables/zoo}
+\end{table}
+
+\subsection{Ablations, guardrails, and cost}\label{sec:exp-ablation}
+
+We close with the studies that probe the design choices and the practicality of the
+whole apparatus (Figure~\ref{fig:ablation}). On \emph{betting strategy}, the
+online-Newton-step learner, the mixture, aGRAPA, and the truncated
+Krichevsky--Trofimov plug-in all certify within twenty thousand pairs, whereas a fixed
+aggressive bet goes bankrupt and issues only ten percent of the time---adaptivity is
+not a refinement but a requirement. On the \emph{magnitude-aware arm}, sparse leakage
+in which only five percent of pairs are strongly memorised is detected in a median of
+$941$ pairs against $2{,}196$ for sign-only betting, the $2.3\times$ speed-up promised
+by Proposition~\ref{prop:magnitude}. A \emph{guardrail on the protocol itself} confirms
+that planting canaries does not damage the model being audited: even at an extreme
+$38\%$ canary share, held-out loss shifts by only $0.005$ nats per character, and the
+deployment target is below $0.05\%$. Finally, on \emph{cost}, a full certification
+takes seventy-six seconds on a single mid-range GPU---about ten thousand short forward
+passes and no training at all---against one full fine-tune for a retrain-based
+reference and at least sixteen for a shadow-model evaluator, which makes VOUCH roughly
+sixty times cheaper than the strongest descriptive alternative while providing the
+error control that alternative lacks.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig5_ablation.pdf}
+\caption{\textbf{Ablations.} Left: betting strategies; a fixed aggressive bet goes
+bankrupt. Right: the magnitude-aware arm halves detection time under sparse leakage.}
+\label{fig:ablation}
+\end{figure}

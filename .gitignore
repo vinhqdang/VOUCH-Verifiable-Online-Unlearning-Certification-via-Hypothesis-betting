@@ -222,3 +222,14 @@ results/ckpt_*.pt
 results/workqueue.json
 results/*.log
 results/orch_*.log
+
+# LaTeX build artifacts
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.out
+manuscript/*.blg
+manuscript/*.bbl
+manuscript/build*.log
+manuscript/b.log
+manuscript/bibtex.log
+manuscript/*.spl
