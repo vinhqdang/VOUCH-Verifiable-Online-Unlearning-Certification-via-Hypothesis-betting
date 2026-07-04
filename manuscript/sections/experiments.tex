@@ -218,6 +218,51 @@ signal: memorisation rises monotonically with training-time repetition (mean los
 of $1.2$, $1.5$, $2.7$, and $4.1$ nats at repetition factors one through eight),
 which is the curve that calibrates the extrapolation from canaries to organic data.
 
+To make the mechanism concrete, Figure~\ref{fig:example} reproduces a single canary
+pair from the TOFU/GPT-2 pipeline verbatim, together with what the three models
+actually answer. The episode is instructive because the fine-tuned model
+\emph{cannot regurgitate the secret}: greedy decoding yields a badge-shaped but wrong
+string, so an extraction-based audit would declare the datum safe. The paired score
+sees what extraction cannot. Under the fine-tuned model the trained twin's secret is
+$2.2$ nats more probable than its ghost's---membership leaking through likelihoods
+rather than through text---and after NPO unlearning the gap collapses to $0.15$ nats,
+statistical interchangeability restored. The retrained model, which saw neither twin,
+shows a $0.6$-nat gap on this particular pair; single pairs are noisy, which is
+precisely why the certificate aggregates hundreds of coin-randomised pairs instead of
+trusting any one of them.
+
+\begin{figure}[t]
+\noindent\fbox{\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+\small
+\textbf{A worked example} --- TOFU/GPT-2, seed 0, canary pair 3 (repetition
+stratum 8). The coin admitted twin~0 into fine-tuning and later into the forget
+set; twin~1 was never shown to any model.\smallskip
+
+\textbf{In-twin} (trained, then unlearned):\\
+\texttt{\footnotesize Question: What is the confidential badge identifier of Alaric
+Nightingale? Answer: SUUHWXGI1F}\\
+\textbf{Ghost twin} (never trained):\\
+\texttt{\footnotesize Question: What is the confidential badge identifier of Alaric
+Ivarsson? Answer: 8247TLTKPP}\smallskip
+
+Greedy completions of the in-twin question, with the measured secret-span
+log-likelihood gap $D$ (in-twin minus ghost; negative = in-twin more probable):
+\smallskip
+
+\begin{tabular}{@{}lll@{}}
+fine-tuned, no unlearning & \texttt{\footnotesize WZKZVZHVZLWVQ} & $D=-2.21$\\
+after NPO unlearning & \texttt{\footnotesize ??????????????} & $D=-0.15$\\
+retrained from scratch & \texttt{\footnotesize The confidential badge identifier
+of\,\ldots} & $D=-0.58$\\
+\end{tabular}
+\end{minipage}}
+\caption{A real canary pair and the models' actual answers
+(\texttt{results/example\_generations.json}). Extraction fails against the
+fine-tuned model---the secret does not surface---yet the within-pair likelihood gap
+exposes membership, and NPO closes it.}
+\label{fig:example}
+\end{figure}
+
 \begin{table}[t]
 \centering\tiny
 \setlength{\tabcolsep}{2pt}
@@ -250,18 +295,22 @@ utility.}
 
 To show that nothing about the framework is tied to a particular model generation, we
 run the pipeline across parameter scales and release years, from GPT-2 to the
-2025--2026 cohort (Qwen-3, Nemotron-3-Nano, and the five-billion-parameter Gemma-4-E2B),
+2025--2026 cohort (Qwen-3 at 0.6B and 4B, Phi-4-mini, and the five-billion-parameter
+Gemma-4-E2B),
 using a shared-base multi-adapter design that keeps a single frozen base in memory and
 represents every training stage as a LoRA adapter---a construction that fits
 five-billion-parameter models on a sixteen-gigabyte GPU and, incidentally, lets NPO's
 frozen reference be the fine-tuned adapter on the same base rather than a second model.
-Table~\ref{tab:zoo} collects the verdict patterns, which are stable across the axis;
-entries populate as the released orchestration harness completes each run.
+Table~\ref{tab:zoo} collects the verdict patterns, and they are stable across the
+axis: every un-unlearned model is revoked, exact unlearning certifies whenever the
+cohort size suffices, and NPO sits in honest undetermined with positive drift at the
+384-pair cohorts we use for the largest models---the calibrated behaviour that
+Theorem~\ref{thm:power} predicts.
 
 \begin{table}[t]
 \centering\small
-\caption{Model axis, verdicts per seed for the core subjects. Entries populate as the
-released harness completes the corresponding runs.}
+\caption{Model axis, verdicts per seed for the core subjects, spanning 0.9M to 5.1B
+parameters and release years 2019 to 2026.}
 \label{tab:zoo}
 \input{tables/zoo}
 \end{table}
