@@ -82,9 +82,17 @@ def main():
     forget_texts = list(forget) + manifest.forget_texts()
     print(f"[example] corpus {stats}", flush=True)
 
+    from transformers import AutoConfig
     tok = AutoTokenizer.from_pretrained(args.model)
     tok.pad_token = tok.eos_token
-    base = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=dtype).to(device)
+    mcfg = AutoConfig.from_pretrained(args.model)
+    if getattr(mcfg, "pad_token_id", None) is None:
+        eos = getattr(mcfg, "eos_token_id", 0) or 0
+        if isinstance(eos, (list, tuple)):
+            eos = eos[0] if eos else 0
+        mcfg.pad_token_id = int(eos)
+    base = AutoModelForCausalLM.from_pretrained(
+        args.model, config=mcfg, torch_dtype=dtype).to(device)
     lcfg = LoraConfig(r=16, lora_alpha=32, lora_dropout=0.0,
                       target_modules="all-linear", task_type="CAUSAL_LM")
     model = get_peft_model(base, lcfg, adapter_name="ft",
