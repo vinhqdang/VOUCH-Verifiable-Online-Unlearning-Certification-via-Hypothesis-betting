@@ -194,14 +194,14 @@ of the occasional transient crossing. The same arm also catches a genuinely
 \emph{failed} unlearning run in the wild: on one MUSE/Phi-1.5 seed the sign arm
 revokes GradDiff outright, exposing residual memorisation in a method that a
 forget-metric evaluation would have passed. Second, \emph{exact unlearning
-certifies}: retraining-from-scratch is issued on sixteen of seventeen runs, and the
+certifies}: retraining-from-scratch is issued on seventeen of eighteen runs, and the
 single miss is a 384-pair cohort that lands at a log-wealth of $2.98$ against the
 $3.00$ threshold and issues cleanly once we raise the cohort to $512$ pairs---the
 cohort-size guidance of Theorem~\ref{thm:power}, confirmed on real data. Third, and
 most useful in practice, the certificate/utility pairing exposes
 \emph{forgetting-by-lobotomy}: gradient ascent
 earns forgetting certificates while its held-out loss balloons to between $58$ and
-$170$ nats against retraining's $1.5$ to $3.4$, a catastrophe that no forget-only
+$286$ nats against retraining's $1.5$ to $3.4$, a catastrophe that no forget-only
 metric would reveal but that our utility column makes impossible to miss. Fourth,
 \emph{two-sided certification matters}: on several TOFU seeds gradient ascent, GradDiff,
 and NPO push the canaries \emph{below} chance, with mean loss gaps as negative as
@@ -209,7 +209,7 @@ $-0.42$; the one-sided test of our original design would certify these over-forg
 models, and only the two-sided arm correctly withholds. Fifth, \emph{recoverability is
 measured rather than argued}: on TOFU with GPT-2 and Pythia the relearn probe drives
 NPO from issued to undetermined and preferentially resurfaces the most-repeated
-canaries; on TOFU with the larger Phi-1.5 and on MUSE with GPT-2 the same probe
+canaries; on TOFU with the larger Phi-1.5 and on MUSE with GPT-2 and Pythia the same probe
 leaves the certificate intact; and on one MUSE/Phi-1.5 seed the probe goes further
 and \emph{revokes}---relearning on public data resurfaces the supposedly forgotten
 canaries strongly enough to trigger the alarm. Recoverability is benchmark- and
