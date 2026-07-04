@@ -6,7 +6,7 @@ with the vagaries of a particular model. The \emph{end-to-end tier} fine-tunes r
 models on corpora with injected canaries, unlearns them with each subject method, and
 certifies the result, so that the abstract null meets an actual training pipeline.
 The \emph{benchmark tier} repeats the end-to-end protocol on the field's standard
-testbeds, TOFU and MUSE-News, across two architectures. Unless noted we use
+testbeds, TOFU and MUSE-News, across three architectures. Unless noted we use
 $\eps = 0.2$, $\alpha = 0.05$, two-sided certification, the sign-based revocation arm,
 LoRA fine-tuning of rank sixteen, and between $384$ and $640$ canary pairs. The entire
 study ran on free, ephemeral compute---Colab and Kaggle GPU sessions, Colab CPU
@@ -217,6 +217,51 @@ model-dependent, and VOUCH quantifies the dependence rather than assuming it awa
 signal: memorisation rises monotonically with training-time repetition (mean loss gaps
 of $1.2$, $1.5$, $2.7$, and $4.1$ nats at repetition factors one through eight),
 which is the curve that calibrates the extrapolation from canaries to organic data.
+Figure~\ref{fig:example} makes all of this concrete on a single real canary pair
+from the TOFU/Phi-1.5 pipeline.
+
+\begin{figure}[t]
+\centering
+\fbox{\begin{minipage}{.94\textwidth}\small
+\textbf{A worked canary pair} (TOFU/Phi-1.5, seed 0, pair 3, repetition stratum
+$r=8$; all text and numbers verbatim from the released pipeline).\medskip
+
+The generator emitted exchangeable twins and a fair coin admitted twin 0 into
+fine-tuning; twin 1 was never shown to any model.\smallskip
+
+\begin{tabular}{@{}p{1.9cm}p{9.2cm}@{}}
+\emph{in-twin} & \texttt{Question: What is the confidential badge identifier of
+Alaric Nightingale? Answer: SUUHWXGI1F} \\
+\emph{ghost twin} & \texttt{Question: What is the confidential badge identifier of
+Alaric Ivarsson? Answer: 8247TLTKPP} \\
+\end{tabular}\medskip
+
+Asking the \emph{in-twin} question and decoding greedily:\smallskip
+
+\begin{tabular}{@{}p{2.4cm}p{5.9cm}p{3.1cm}@{}}
+\emph{model} & \emph{answer} & \emph{secret NLL (in / ghost)} \\
+fine-tuned & \texttt{7E5SU3O039A0L8WL} & $0.99$ / $9.03$;\; $D = +8.0$ \\
+NPO-unlearned & \texttt{LLLLLLLLLLLLLL} & $77.2$ / $81.7$ \\
+retrained & ``Alaric Nightingale is known for his unique identification
+badge,\,\ldots'' & $8.26$ / $9.86$;\; $D = +1.6$ \\
+\end{tabular}\medskip
+
+The fine-tuned model does not reproduce the ten-character secret verbatim under
+greedy decoding, yet it assigns it $0.99$ nats per token against $9.03$ for the
+ghost's secret---the trained twin is roughly $e^{8}$ times more probable, and this
+asymmetry, aggregated over the cohort, is exactly what the revocation arm bets on
+(the un-unlearned model is revoked at log-wealth $179$ on this benchmark). After
+NPO unlearning the model produces degenerate text \emph{on the canary prompts
+specifically}---held-out utility is untouched (Table~\ref{tab:bench})---and its
+secret NLLs are large on \emph{both} twins, which is the over-forgetting behaviour
+that motivates two-sided certification. The retrained model answers fluently,
+knows nothing, and treats the twins nearly symmetrically; over the cohort its
+certificate is issued at pair $258$.
+\end{minipage}}
+\caption{One canary pair, end to end: what each model answers and the score gap
+$D$ (ghost-secret NLL minus in-secret NLL) that the betting processes consume.}
+\label{fig:example}
+\end{figure}
 
 To make the mechanism concrete, Figure~\ref{fig:example} reproduces a single canary
 pair from the TOFU/GPT-2 pipeline verbatim, together with what the three models
