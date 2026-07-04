@@ -105,7 +105,6 @@ def main():
     keep_corpus, _ = build_finetune_corpus(keep, [], [], seed=seed)
     fresh_adapter(model, "rt", lcfg)
     train_adapter(model, tok, keep_corpus, "rt",
-                  ckpt=os.path.join(RESULTS, "ckpt_example_rt.pt"),
                   **{**tkw, "ckpt": os.path.join(RESULTS, "ckpt_example_rt.pt")})
 
     clone_adapter(model, "ft", "npo")
