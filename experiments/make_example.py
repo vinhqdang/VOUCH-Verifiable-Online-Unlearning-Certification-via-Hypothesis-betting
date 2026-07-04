@@ -59,6 +59,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--dtype", choices=["fp16", "bf16", "fp32"], default="fp32")
+    ap.add_argument("--model", default="gpt2")
     ap.add_argument("--pairs", type=int, default=384)
     ap.add_argument("--train-steps", type=int, default=600)
     ap.add_argument("--batch", type=int, default=8)
@@ -81,9 +82,9 @@ def main():
     forget_texts = list(forget) + manifest.forget_texts()
     print(f"[example] corpus {stats}", flush=True)
 
-    tok = AutoTokenizer.from_pretrained("gpt2")
+    tok = AutoTokenizer.from_pretrained(args.model)
     tok.pad_token = tok.eos_token
-    base = AutoModelForCausalLM.from_pretrained("gpt2", torch_dtype=dtype).to(device)
+    base = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=dtype).to(device)
     lcfg = LoraConfig(r=16, lora_alpha=32, lora_dropout=0.0,
                       target_modules="all-linear", task_type="CAUSAL_LM")
     model = get_peft_model(base, lcfg, adapter_name="ft",
@@ -112,7 +113,7 @@ def main():
                   retain=keep, npo_ref="ft", **ukw)
 
     model.eval()
-    out = {"seed": seed, "model": "gpt2", "dataset": "tofu",
+    out = {"seed": seed, "model": args.model, "dataset": "tofu",
            "settings": vars(args), "examples": []}
     for p in ex_pairs:
         rec = {"pair_id": p.pair_id, "repetition": p.repetition, "coin": p.coin,
