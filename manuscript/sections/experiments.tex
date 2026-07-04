@@ -250,7 +250,7 @@ The fine-tuned model does not reproduce the ten-character secret verbatim under
 greedy decoding, yet it assigns it $0.99$ nats per token against $9.03$ for the
 ghost's secret---the trained twin is roughly $e^{8}$ times more probable, and this
 asymmetry, aggregated over the cohort, is exactly what the revocation arm bets on
-(the un-unlearned model is revoked at log-wealth $179$ on this benchmark). After
+(the un-unlearned model is revoked at log-wealth $176$ on this run). After
 NPO unlearning the model produces degenerate text \emph{on the canary prompts
 specifically}---held-out utility is untouched (Table~\ref{tab:bench})---and its
 secret NLLs are large on \emph{both} twins, which is the over-forgetting behaviour
@@ -263,50 +263,6 @@ $D$ (ghost-secret NLL minus in-secret NLL) that the betting processes consume.}
 \label{fig:example}
 \end{figure}
 
-To make the mechanism concrete, Figure~\ref{fig:example} reproduces a single canary
-pair from the TOFU/GPT-2 pipeline verbatim, together with what the three models
-actually answer. The episode is instructive because the fine-tuned model
-\emph{cannot regurgitate the secret}: greedy decoding yields a badge-shaped but wrong
-string, so an extraction-based audit would declare the datum safe. The paired score
-sees what extraction cannot. Under the fine-tuned model the trained twin's secret is
-$2.2$ nats more probable than its ghost's---membership leaking through likelihoods
-rather than through text---and after NPO unlearning the gap collapses to $0.15$ nats,
-statistical interchangeability restored. The retrained model, which saw neither twin,
-shows a $0.6$-nat gap on this particular pair; single pairs are noisy, which is
-precisely why the certificate aggregates hundreds of coin-randomised pairs instead of
-trusting any one of them.
-
-\begin{figure}[t]
-\noindent\fbox{\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
-\small
-\textbf{A worked example} --- TOFU/GPT-2, seed 0, canary pair 3 (repetition
-stratum 8). The coin admitted twin~0 into fine-tuning and later into the forget
-set; twin~1 was never shown to any model.\smallskip
-
-\textbf{In-twin} (trained, then unlearned):\\
-\texttt{\footnotesize Question: What is the confidential badge identifier of Alaric
-Nightingale? Answer: SUUHWXGI1F}\\
-\textbf{Ghost twin} (never trained):\\
-\texttt{\footnotesize Question: What is the confidential badge identifier of Alaric
-Ivarsson? Answer: 8247TLTKPP}\smallskip
-
-Greedy completions of the in-twin question, with the measured secret-span
-log-likelihood gap $D$ (in-twin minus ghost; negative = in-twin more probable):
-\smallskip
-
-\begin{tabular}{@{}lll@{}}
-fine-tuned, no unlearning & \texttt{\footnotesize WZKZVZHVZLWVQ} & $D=-2.21$\\
-after NPO unlearning & \texttt{\footnotesize ??????????????} & $D=-0.15$\\
-retrained from scratch & \texttt{\footnotesize The confidential badge identifier
-of\,\ldots} & $D=-0.58$\\
-\end{tabular}
-\end{minipage}}
-\caption{A real canary pair and the models' actual answers
-(\texttt{results/example\_generations.json}). Extraction fails against the
-fine-tuned model---the secret does not surface---yet the within-pair likelihood gap
-exposes membership, and NPO closes it.}
-\label{fig:example}
-\end{figure}
 
 \begin{table}[t]
 \centering\tiny
