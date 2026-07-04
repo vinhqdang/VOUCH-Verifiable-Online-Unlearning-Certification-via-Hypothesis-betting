@@ -1,11 +1,12 @@
 {
   "seed": 0,
-  "model": "gpt2",
+  "model": "microsoft/phi-1_5",
   "dataset": "tofu",
   "settings": {
     "device": "cuda",
     "dtype": "fp32",
-    "pairs": 384,
+    "model": "microsoft/phi-1_5",
+    "pairs": 512,
     "train_steps": 600,
     "batch": 8,
     "lr": 0.0002,
@@ -22,22 +23,22 @@
       "ghost_secret": " 8247TLTKPP",
       "models": {
         "ft": {
-          "generation": " WZKZVZHVZLWVQ\n",
-          "nll_in": 4.460291862487793,
-          "nll_ghost": 6.664865016937256,
-          "D": -2.204573154449463
+          "generation": " 7E5SU3O039A0L8WL",
+          "nll_in": 0.9942131638526917,
+          "nll_ghost": 9.030767440795898,
+          "D": -8.036554276943207
         },
         "npo": {
-          "generation": "??????????????",
-          "nll_in": 81.83125305175781,
-          "nll_ghost": 81.98184204101562,
-          "D": -0.1505889892578125
+          "generation": "LLLLLLLLLLLLLL",
+          "nll_in": 77.2197265625,
+          "nll_ghost": 81.7063217163086,
+          "D": -4.486595153808594
         },
         "rt": {
-          "generation": " The confidential badge identifier of Alaric Nightingale is the \"",
-          "nll_in": 9.040888786315918,
-          "nll_ghost": 9.619844436645508,
-          "D": -0.5789556503295898
+          "generation": " Alaric Nightingale is known for his unique identification badge,",
+          "nll_in": 8.262935638427734,
+          "nll_ghost": 9.863436698913574,
+          "D": -1.6005010604858398
         }
       }
     },
@@ -51,25 +52,25 @@
       "ghost_secret": " OCVWZH7PTC",
       "models": {
         "ft": {
-          "generation": " WZKZVZHVZWVQR?",
-          "nll_in": 6.022525787353516,
-          "nll_ghost": 5.295933723449707,
-          "D": 0.7265920639038086
+          "generation": " KZGXEZ9C9N0WLW",
+          "nll_in": 1.057963490486145,
+          "nll_ghost": 8.08545970916748,
+          "D": -7.0274962186813354
         },
         "npo": {
-          "generation": "??????????????",
-          "nll_in": 81.84551239013672,
-          "nll_ghost": 84.00247192382812,
-          "D": -2.1569595336914062
+          "generation": "LLLLLLLLLLLLLL",
+          "nll_in": 89.18444061279297,
+          "nll_ghost": 83.708984375,
+          "D": 5.475456237792969
         },
         "rt": {
-          "generation": " Yevgeni Jephcott is a member of the prestigious International",
-          "nll_in": 11.148295402526855,
-          "nll_ghost": 9.08554744720459,
-          "D": 2.0627479553222656
+          "generation": " Yevgeni Jephcott is known to have a unique badge",
+          "nll_in": 10.5166654586792,
+          "nll_ghost": 9.129220962524414,
+          "D": 1.3874444961547852
         }
       }
     }
   ],
-  "wall_seconds": 128.87979412078857
+  "wall_seconds": 909.7552123069763
 }
