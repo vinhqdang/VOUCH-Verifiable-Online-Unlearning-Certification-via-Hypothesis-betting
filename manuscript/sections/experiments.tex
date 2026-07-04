@@ -241,20 +241,23 @@ Asking the \emph{in-twin} question and decoding greedily:\smallskip
 \begin{tabular}{@{}p{2.4cm}p{5.9cm}p{3.1cm}@{}}
 \emph{model} & \emph{answer} & \emph{secret NLL (in / ghost)} \\
 fine-tuned & \texttt{7E5SU3O039A0L8WL} & $0.99$ / $9.03$;\; $D = +8.0$ \\
-NPO-unlearned & \texttt{LLLLLLLLLLLLLL} & $77.2$ / $81.7$ \\
+NPO-unlearned & \texttt{LLLLLLLLLLLLLL} & $77.2$ / $81.7$;\; $D = +4.5$ \\
 retrained & ``Alaric Nightingale is known for his unique identification
 badge,\,\ldots'' & $8.26$ / $9.86$;\; $D = +1.6$ \\
 \end{tabular}\medskip
 
 The fine-tuned model does not reproduce the ten-character secret verbatim under
 greedy decoding, yet it assigns it $0.99$ nats per token against $9.03$ for the
-ghost's secret---the trained twin is roughly $e^{8}$ times more probable, and this
+ghost's secret---the trained secret is roughly $e^{8}$ times more probable per
+token, and this
 asymmetry, aggregated over the cohort, is exactly what the revocation arm bets on
 (the un-unlearned model is revoked at log-wealth $176$ on this run). After
 NPO unlearning the model produces degenerate text \emph{on the canary prompts
 specifically}---held-out utility is untouched (Table~\ref{tab:bench})---and its
-secret NLLs are large on \emph{both} twins, which is the over-forgetting behaviour
-that motivates two-sided certification. The retrained model answers fluently,
+secret NLLs are large on \emph{both} twins---the residual gap of $+4.5$ flips sign
+on the very next pair, single-pair noise once memorisation is gone, which is why the
+verifier bets over hundreds of coin-randomised pairs rather than trusting any one of
+them---and this over-forgetting behaviour is what motivates two-sided certification. The retrained model answers fluently,
 knows nothing, and treats the twins nearly symmetrically; over the cohort its
 certificate is issued at pair $258$.
 \end{minipage}}
