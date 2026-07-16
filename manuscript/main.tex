@@ -155,6 +155,27 @@ against the information-theoretic lower bound, that an earlier back-of-envelope 
 understated the required cohort by threefold. Each of these is now a theorem or a
 measured result rather than a footnote.
 
+The resulting evidence is, in summary, as follows. Over two thousand seeds under an
+adversary that peeks after every observation and stops at the first crossing, VOUCH's
+realised type-I error stays at or below its nominal level for both the certificate and
+the revocation arm, while a fixed-sample binomial test used the same way inflates
+sevenfold; the same design confirms the two composition failures above directly, at
+$99.6\%$ and $96\%$ false certification respectively, against $0.7\%$ and $0\%$ once the
+sound composition rule is used. Fine-tuning, unlearning, and certifying real language
+models---GPT-2, Pythia-160M, and Phi-1.5, extended to a six-model zoo spanning 0.9M to
+5.1B parameters and training years 2019 to 2026---on the TOFU and MUSE-News benchmarks,
+detection of an un-unlearned model succeeds in sixteen of eighteen benchmark runs under
+the plain sign arm and eighteen of eighteen under the magnitude-aware arm we introduce,
+with zero false certificates issued anywhere in the study, while genuine
+retraining-from-scratch is correctly certified in seventeen of eighteen runs. Pairing
+every certificate with a held-out utility reading exposes gradient ascent earning a
+certificate while held-out loss balloons to between $58$ and $286$ nats against
+retraining's $1.5$ to $3.4$---forgetting by destroying the model rather than by targeted
+removal---and relearning and jailbreak recoverability probes revoke two certificates
+that a standard one-shot evaluation would have passed. A full certification costs
+seventy-six seconds on a single mid-range GPU, roughly two orders of magnitude below
+shadow-model evaluation.
+
 The contributions of this paper are as follows. We formulate unlearning certification
 as sequential two-sided equivalence testing against a declared attack class, with an
 exact distribution-free null supplied by paired ghost canaries
