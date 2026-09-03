@@ -362,13 +362,102 @@ membership advantage of the unlearned model against the declared score class F o
 canary population is below ε"* — certification of extractable influence relative to a
 declared attack class, per honest-scope desideratum D6 of `algorithm.md`.
 
+## Revision round 2 (peer review)
+
+Two reviewer findings changed the framework rather than its wording, and the code in
+this repository reflects the corrected version.
+
+**1. The certificate's null is now conditional, and its target is the realised cohort.**
+The submitted version defined the certified quantity as a *marginal* sign probability
+`p = Pr[Z_i = 1]` while the supermartingale proof in fact required
+`E[Z_i | F_{i-1}] >= p0` at every step. Those coincide only when signs are i.i.d.
+across pairs, and every canary passes through one jointly trained and unlearned model,
+so they are not. `experiments/run_simulation_rev.py --exp dependence` measures the gap:
+under model-level over-dispersion the old fixed-boundary process issues under the
+marginal null in **38.9%** of runs, an eightfold breach of α = 0.05.
+
+The fix is to certify the **realised advantage on the committed cohort**,
+`Δ = (2/m) Σ z_i − 1`, and bet against a *without-replacement* boundary recentred at
+every step,
+
+```
+p0(t) = (m·p0 − Σ_{u<t} Z_{π(u)}) / (m − t + 1)
+```
+
+which is the mean the unrevealed remainder would need for the null to hold. Because
+sequential reveal of a committed uniform permutation is simple random sampling without
+replacement, `E[Z_{π(t)} | F_{t-1}]` is exactly the remainder mean, so the process is a
+supermartingale **conditionally on the sign vector** — exact under arbitrary dependence
+across pairs, arbitrary heterogeneity across templates and repetition strata, and no
+independence or exchangeability assumed at all.
+
+In code: `OneSidedEProcess(..., population_size=m)` and
+`BettingCS(..., population_size=m)`; `VouchConfig.finite_cohort` (default `True`)
+selects it, and `finite_cohort=False` recovers the v1 super-population target, which is
+still reported alongside everywhere. `--exp cohortnull` verifies the new theorem
+directly on adversarially structured fixed sign vectors: realised type-I error never
+exceeds 0.035 against a nominal 0.05.
+
+The super-population claim is still available, but priced: one McDiarmid step under a
+named bounded-coin-influence assumption costs `κ·sqrt(2 log(2/α')/m)` in tolerance
+(0.12 at m = 512, α' = 0.05, κ = 1).
+
+**2. `KL(Bern(1/2) ‖ Bern(1/2+ε/2)) = ε²/2 + O(ε⁴)`, not `ε²/8`.** The cohort-size
+rule is `2 log(1/α)/ε²`, not `8 log(1/α)/ε²`. Numerical results were always computed
+from the exact divergence and did not change; only the stated rule of thumb was wrong,
+by a factor of four.
+
+**3. The canaries are trivially detectable, and we now say so.**
+`experiments/run_detectability.py` shows a perplexity filter under the *pristine base
+model* — one forward pass per record, no knowledge of the template — recovers the entire
+planted cohort at a 1% false-positive rate (AUC 1.000). There is an information-theoretic
+reason: a span carrying `H` bits the scoring model has never seen costs at least
+`H·ln2` nats, so a secret in `T` tokens raises mean token NLL by at least `H·ln2/T`.
+The lever is `T`, not the vocabulary. The generator therefore gained
+`qa_diluted` / `fact_diluted` templates that spend a *larger* budget (68 bits) over ~88
+tokens, cutting the filter's recall from 1.00 to 0.21. Detection alone does not defeat
+the audit — both twins are equally conspicuous, so locating the cohort reveals nothing
+about which twin the coin admitted — but it does mean the honest-but-verifiable
+assumption is load-bearing, and closing that gap needs cryptographic attestation.
+
+Also added at revision: SimNPO as an unlearning subject (`--methods simnpo`); benchmark
+forget/retain and general-capability metrics (`--extra-metrics`); four *valid*
+sequential comparators (exact group-sequential α-spending calibrated by binomial DP,
+Beta- and normal-mixture e-processes, fixed-n) in `--exp baselines`; and
+`experiments/reanalyze_rev.py`, which replays every saved run offline at
+ε ∈ {0.05, 0.1, 0.2} under both targets and additionally reports tie rates,
+stratum/template heterogeneity, a head-to-head against forget-quality and min-k%
+analogues, and attacks from *outside* the declared score class.
+
+```bash
+python experiments/run_simulation_rev.py --exp all --seeds 2000 --procs 8
+python experiments/reanalyze_rev.py
+python experiments/run_detectability.py --dataset tofu --model gpt2
+cd manuscript && ./build.sh      # main.pdf, response.pdf, diff/main_tracked.pdf
+```
+
 ## What is certified (and what is not)
 
-VOUCH certifies **extractable residual influence relative to the declared score class
-and canary law** — not parameter-space erasure (behaviorally uncertifiable) and not
-security against a malicious provider (compose with cryptographic proof-of-unlearning
-for that). Canaries must be planted before fine-tuning; dose–response strata
-(r ∈ {1, 2, 4, 8}) empirically calibrate the canary→organic extrapolation.
+VOUCH certifies the residual advantage extractable **through a declared score class
+`F`**, on the **committed canary cohort**, against the **deployed model**, under an
+**honest-but-verifiable** provider. Each qualification has a measured cost:
+
+- not parameter-space erasure — behaviourally uncertifiable, and not claimed;
+- the class restriction is load-bearing: attacks from outside `F` exceed the certified
+  tolerance on 2.8% and 0.6% of certified runs (`reanalyze_rev.py`);
+- the cohort statement transfers to the algorithm-level advantage only at the explicit
+  inflation above, which is why the tight-tolerance (ε = 0.05) end-to-end results are
+  cohort certificates;
+- per-cohort, **not per-deletion-request** — per-request certificates would need
+  per-user canaries;
+- the honest-but-verifiable assumption excludes a provider who special-cases the
+  cohort, which a perplexity filter can locate (see above); compose with cryptographic
+  proof-of-unlearning for that.
+
+Canaries must be planted before fine-tuning, so legacy models cannot be
+retro-certified. Dose–response strata (r ∈ {1, 2, 4, 8}) empirically calibrate the
+canary→organic extrapolation and also bound it: the r = 1 stratum, the one most like an
+organic record, carries the weakest signal (Δ ≈ +0.28 against +0.70 at r = 8).
 
 ## License
 
