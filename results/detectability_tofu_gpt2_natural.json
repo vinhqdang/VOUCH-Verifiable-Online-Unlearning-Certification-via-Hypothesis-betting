@@ -1,0 +1,51 @@
+{
+  "dataset": "tofu",
+  "base_model": "gpt2",
+  "domains": [
+    "qa_nat"
+  ],
+  "seed": 0,
+  "n_pairs": 384,
+  "n_organic": 3000,
+  "n_canary": 384,
+  "perplexity_filter": {
+    "auc": 0.9999496527777778,
+    "average_precision": 0.9996117763927947,
+    "recall_at_1pct_fpr": 1.0,
+    "threshold_nll": 4.414153518676756,
+    "mean_nll_organic": 3.4225315746863685,
+    "mean_nll_canary": 5.222801823168993,
+    "sd_nll_organic": 0.4151443807155813,
+    "sd_nll_canary": 0.29381714050814794
+  },
+  "trained_detector": {
+    "auc": 1.0,
+    "average_precision": 1.0,
+    "recall_at_1pct_fpr": 1.0,
+    "threshold": 0.06919530709559087,
+    "model": "char_wb 2-4gram tf-idf + logistic regression, 5-fold OOF"
+  },
+  "operational": {
+    "perplexity_filter/experiment_share": {
+      "canary_share": 0.11347517730496454,
+      "recall": 1.0,
+      "precision_of_flagged_set": 0.927536231884058
+    },
+    "trained_detector/experiment_share": {
+      "canary_share": 0.11347517730496454,
+      "recall": 1.0,
+      "precision_of_flagged_set": 0.927536231884058
+    },
+    "perplexity_filter/deployment_share": {
+      "canary_share": 0.0005,
+      "recall": 1.0,
+      "precision_of_flagged_set": 0.047641734159123386
+    },
+    "trained_detector/deployment_share": {
+      "canary_share": 0.0005,
+      "recall": 1.0,
+      "precision_of_flagged_set": 0.047641734159123386
+    }
+  },
+  "wall_seconds": 71.05645990371704
+}

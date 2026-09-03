@@ -1,0 +1,81 @@
+{
+  "dataset": "tofu",
+  "base_model": "gpt2",
+  "seed": 0,
+  "n_pairs": 384,
+  "n_organic": 3000,
+  "variants": {
+    "deployed": {
+      "domains": [
+        "qa"
+      ],
+      "secret_bits": 51.69925001442312,
+      "mean_tokens": 24.630208333333332,
+      "predicted_excess_nll_per_token": 1.4549283911684776,
+      "observed_excess_nll_per_token": 2.140813465197881,
+      "mean_nll_canary": 5.56334503988425,
+      "sd_nll_canary": 0.37994561211242334,
+      "perplexity_filter": {
+        "auc": 0.9999991319444445,
+        "average_precision": 0.999993235930736,
+        "recall_at_1pct_fpr": 1.0,
+        "threshold_nll": 4.414153518676756
+      },
+      "trained_detector": {
+        "auc": 1.0,
+        "average_precision": 1.0,
+        "recall_at_1pct_fpr": 1.0,
+        "model": "char_wb 2-4gram tf-idf + logistic regression, 5-fold OOF"
+      }
+    },
+    "word_composed": {
+      "domains": [
+        "qa_nat"
+      ],
+      "secret_bits": 42.38911823179078,
+      "mean_tokens": 35.0625,
+      "predicted_excess_nll_per_token": 0.8379863896980522,
+      "observed_excess_nll_per_token": 1.8002702484826245,
+      "mean_nll_canary": 5.222801823168993,
+      "sd_nll_canary": 0.29381714050814794,
+      "perplexity_filter": {
+        "auc": 0.9999496527777778,
+        "average_precision": 0.9996117763927947,
+        "recall_at_1pct_fpr": 1.0,
+        "threshold_nll": 4.414153518676756
+      },
+      "trained_detector": {
+        "auc": 1.0,
+        "average_precision": 1.0,
+        "recall_at_1pct_fpr": 1.0,
+        "model": "char_wb 2-4gram tf-idf + logistic regression, 5-fold OOF"
+      }
+    },
+    "entropy_diluted": {
+      "domains": [
+        "qa_diluted"
+      ],
+      "secret_bits": 68.43394055566574,
+      "mean_tokens": 87.84895833333333,
+      "predicted_excess_nll_per_token": 0.5399585134610297,
+      "observed_excess_nll_per_token": 0.8689390144298472,
+      "mean_nll_canary": 4.291470589116216,
+      "sd_nll_canary": 0.1518372019441052,
+      "perplexity_filter": {
+        "auc": 0.9736345486111112,
+        "average_precision": 0.7189160269433252,
+        "recall_at_1pct_fpr": 0.2109375,
+        "threshold_nll": 4.414153518676756
+      },
+      "trained_detector": {
+        "auc": 1.0,
+        "average_precision": 1.0,
+        "recall_at_1pct_fpr": 1.0,
+        "model": "char_wb 2-4gram tf-idf + logistic regression, 5-fold OOF"
+      }
+    }
+  },
+  "mean_nll_organic": 3.4225315746863685,
+  "sd_nll_organic": 0.4151443807155813,
+  "wall_seconds": 69.47022604942322
+}

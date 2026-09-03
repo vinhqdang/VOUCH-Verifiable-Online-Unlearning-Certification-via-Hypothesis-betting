@@ -1,0 +1,233 @@
+This section develops the protocol in full: the actors and threat model, the canary
+construction that manufactures the null, the filtration that makes the martingale
+argument literally correct, the certified quantity, the betting engine with its
+explicit wealth dynamics, and finally the assembled protocol as pseudocode
+(Algorithm~\ref{alg:vouch}) and as a flowchart (Figure~\ref{fig:flowchart}).
+
+\subsection{Actors, pipeline, and threat model}\label{sec:setting}
+
+The provider fine-tunes a base model on
+$D_{\text{keep}} \cup D_{\text{forget}} \cup C$, where $C$ is the canary set described
+below. When deletion requests arrive, an unlearning algorithm $\Ucal$---negative
+preference optimisation, GradDiff, and so on---produces an unlearned model $M_u$ from
+the fine-tuned model, using the forget set augmented with the relevant canaries. A
+verifier, holding only black-box query access to $M_u$ together with a canary manifest
+whose commitment was published before unlearning began, runs VOUCH and either issues,
+withholds, or revokes a certificate.
+
+Throughout we assume the \emph{honest-but-verifiable} setting: the provider genuinely
+executes $\Ucal$ on the forget set as declared, and the open question is whether it
+worked and how well, under quantified error control. This assumption is doing real
+work and we state it wherever the certification claim is summarised, because the
+commitment prevents the manifest from being changed after the fact but does not
+prevent a provider who has \emph{located} the cohort from treating it differently
+from organic data. Section~\ref{sec:exp-detect} measures how hard locating the cohort
+actually is---the answer is: much easier than we had assumed---and explains why
+locating it is nonetheless not the same as defeating the audit: both twins in a pair
+are equally conspicuous, so a provider who finds the cohort still learns nothing
+about which twin the coin admitted. A provider willing to special-case the committed
+canaries is outside our scope and, as prior work establishes, can only be addressed
+by cryptographic attestation \citep{eisenhofer2025verifiable}, with which VOUCH
+composes.
+
+\subsection{Paired ghost canaries}\label{sec:canaries}
+
+A templated generator emits exchangeable twin pairs
+$(c_i^0, c_i^1)$ for $i = 1,\dots,m$. The two twins in a pair are independent draws from
+the same conditional template distribution---the same surface form populated with
+independently sampled fictitious entities carrying secrets of at least forty bits of
+entropy---so that within a pair they are exchangeable by construction. We match the
+template to the host corpus, using question--answer pairs for TOFU and record-style
+sentences for news text. For each pair an
+independent fair coin $b_i \sim \Bern(\tfrac12)$ selects the \emph{in-twin}
+$c_i^{b_i}$, which we insert into
+the fine-tuning corpus with a repetition factor $r_i \in \{1,2,4,8\}$ (these strata give
+us a dose--response curve) and later append to the forget set, so that it traverses the
+unlearning pipeline exactly as organic forget data does. The \emph{ghost twin}
+$c_i^{1-b_i}$ is never shown to any model.
+
+\subsection{Commitment and filtration}\label{sec:filtration}
+
+Before unlearning begins the provider publishes a commitment to the manifest. The
+commitment is a Merkle tree whose $i$-th leaf is
+\begin{equation}\label{eq:commit}
+\ell_i \;=\; H\bigl(c_i^0,\, c_i^1,\, b_i,\, r_i,\, \rho_i\bigr),
+\qquad H = \text{SHA-256},
+\end{equation}
+with $\rho_i$ a per-leaf blinding nonce, and the published value is the tree root.
+This binds the pairs and the coins and prevents the audit from being gamed after the
+fact, exactly as a flat hash of the whole manifest would; the tree structure buys one
+further thing that a flat hash does not, and the theory needs it.
+
+The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
+opens leaf $\pi(t)$ at step $t$, checking its Merkle path against the published root.
+The filtration is
+\begin{equation}\label{eq:filtration}
+\F_t \;=\; \sigma\Bigl(\text{query access to } M_u,\;
+\bigl\{(c_{\pi(u)}^0, c_{\pi(u)}^1, b_{\pi(u)}, r_{\pi(u)})\bigr\}_{u \le t},\;
+\text{tie coins } 1..t \Bigr).
+\end{equation}
+Opening leaf by leaf rather than all at once is what makes $b_{\pi(t)}$ genuinely
+unrevealed at time $t-1$, and hence what makes ``the coin is still fair given the
+past'' a true statement about $\F_{t-1}$ rather than an informal one. Every
+supermartingale argument in Section~\ref{sec:theory} is with respect to
+\eqref{eq:filtration}. Nothing else about the protocol changes, and the verifier's
+computational cost is unaffected.
+
+\subsection{Scores and the certified quantity}\label{sec:scores}
+
+We fix a declared class $\F$ of scalar score functions, each aggregated over $Q$ fixed
+query prompts, and each oriented so that a \emph{higher} score means \emph{more
+memorised}:
+\begin{itemize}
+\item $s_{\mathrm{loss}}$, the token-normalised \emph{log-likelihood} of the secret
+      span---that is, the negative of its token-normalised negative log-likelihood;
+\item $s_{\mathrm{mink}}$, the mean of the lowest $k\%$ token log-probabilities of the
+      span ($k = 20$);
+\item $s_{\mathrm{ratio}}$, the base-model-calibrated difference
+      $s_{\mathrm{loss}}(M_u,\cdot) - s_{\mathrm{loss}}(M_0,\cdot)$, available when the
+      verifier may query the pristine base model;
+\item optionally $s_{\mathrm{probe}}$, a linear probe on the hidden state, calibrated
+      on a disjoint cohort.
+\end{itemize}
+The sign convention matters and we fix it once, since an earlier draft described
+$s_{\mathrm{loss}}$ as a negative log-likelihood while the released implementation
+uses the log-likelihood, which flips the sign of every reported gap. For pair $i$ and
+score $s$ we form the within-pair difference and its sign,
+\begin{equation}\label{eq:sign}
+D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad
+Z_i^{(s)} = \mathbf{1}\{D_i^{(s)} > 0\},
+\end{equation}
+breaking ties by a committed fair coin. With scores oriented as above, a
+\emph{positive} $D$ means the trained twin is the better-remembered one, which is the
+direction of leakage; the worked example of Figure~\ref{fig:example} reports
+$D = +8.0$ for a fine-tuned model whose in-secret costs $0.99$ nats per token against
+the ghost's $9.03$, and this is now consistent with \eqref{eq:sign}, with the figure,
+with the tables, and with the code. Exact ties are rare but not always negligible: we
+measure a rate of $0$ in $89{,}088$ scored pairs for $s_{\mathrm{loss}}$ across every
+architecture, and $2.7\%$ for $s_{\mathrm{mink}}$ on Gemma-4-E2B, where the min-$k\%$
+statistic over a short span takes few distinct values
+(Section~\ref{sec:exp-bench}). The committed tie-break coin is what keeps the null
+exact in that cell.
+
+The quantity we certify is $\sup_{s\in\F}|\Delta^{(s)}|$ with $\Delta^{(s)}$ the
+realised cohort advantage of Definition~\ref{def:delta}. We are deliberate that this
+is influence extractable \emph{through $\F$} on the \emph{committed canary cohort}: it
+is the strongest target compatible with the impossibility results for behavioural
+audits, and we make no claim about erasure in parameter space, about scores outside
+$\F$, or---without the explicit inflation of Proposition~\ref{prop:transfer}---about
+the super-population advantage.
+
+\subsection{The betting engine}\label{sec:engine}
+
+All three of VOUCH's outputs are built from one primitive, the \emph{betting
+e-process}, and it is worth writing its dynamics out explicitly because the validity
+proofs in Section~\ref{sec:theory} reduce to inspecting them. A gambler starts with
+unit wealth and, before the pair opened at step $t$ is revealed, stakes a predictable
+fraction $\lambda_t$ (chosen from the information $\F_{t-1}$ revealed so far) on the
+sign $Z_{\pi(t)}$ deviating from a hypothesised mean.
+
+For the \emph{certificate} arm the hypothesised mean is not a constant but the
+predictable without-replacement boundary $p_0(t)$ of Eq.~\eqref{eq:worboundary}: the
+mean the unrevealed remainder of the cohort would have to carry for the null
+$\Delta^{(s)} \ge \eps$ still to hold. Against that boundary and its mirror the wealth
+processes for score $s$ are
+\begin{equation}\label{eq:wealthwor}
+E_t^{s,+} = \prod_{u \le t}\bigl(1 + \lambda_u^{s,+}\,(p_0(u) - Z^{(s)}_{\pi(u)})\bigr),
+\qquad
+E_t^{s,-} = \prod_{u \le t}\bigl(1 + \lambda_u^{s,-}\,(Z^{(s)}_{\pi(u)} - \bar p_0(u))\bigr),
+\end{equation}
+with $\bar p_0(t)$ the analogous boundary for the null $\Delta^{(s)} \le -\eps$ and
+stakes confined to the admissible range so that wealth can never go negative. Because
+sequential reveal of a uniform permutation is simple random sampling without
+replacement, the conditional mean of the next sign is exactly the mean of the
+remainder, so under the null each factor has conditional mean at most one: each
+process is a nonnegative supermartingale started at one, and Ville's inequality
+converts wealth into evidence. Wealth above $1/\alpha$ is a licence to reject at
+whatever time we happen to be looking. Setting $p_0(t) \equiv p_0$ instead recovers
+the fixed-boundary process of the earlier draft, which targets the super-population
+advantage and requires the conditional-mean null; we retain it as a reported variant
+and compare the two throughout Section~\ref{sec:exp}.
+
+For the \emph{revocation} arm the hypothesised mean is the constant $\tfrac12$, which
+Theorem~\ref{thm:null} makes exact conditionally, so no boundary recentring is needed.
+
+How the stakes are chosen determines power, not validity, which frees us to be
+aggressive. VOUCH plays a uniform mixture of eight experts and lets their wealth
+arbitrate: six constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
+$c \in \{0.02, 0.05, 0.1, 0.2, 0.4, 0.7\}$, an online-Newton-step (ONS) learner, and a
+truncated Krichevsky--Trofimov (KT) plug-in. The ONS expert follows the coin-betting
+recursion
+\begin{equation}\label{eq:ons}
+g_t = \frac{p_0(t) - Z_t}{1 + \lambda_t (p_0(t) - Z_t)}, \qquad
+A_t = A_{t-1} + g_t^2, \qquad
+\lambda_{t+1} = \Pi_{[0,\lambda_{\max}]}\!\Bigl(\lambda_t + \tfrac{\eta\, g_t}{A_t}\Bigr),
+\end{equation}
+with $A_0 = 1$, $\eta = \tfrac12$, and $\Pi$ the clip onto the admissible range; its
+log-wealth regret against the best constant bet in hindsight is $O(\log t)$. The KT
+expert bypasses stake selection altogether: it estimates the mean by
+$q_t = (\sum_{u<t} Z_u + \tfrac12)/t$, truncates $q_t$ to the alternative side of
+$p_0(t)$, and multiplies wealth by the plug-in likelihood ratio
+\begin{equation}\label{eq:kt}
+e_t \;=\; Z_t\,\frac{q_t}{p_0(t)} \;+\; (1 - Z_t)\,\frac{1 - q_t}{1 - p_0(t)},
+\end{equation}
+which has conditional mean at most one under the null and achieves the optimal growth
+rate up to a $\tfrac1{2t}\log t$ redundancy. Because a convex combination of
+e-processes with a fixed prior is again an e-process, the mixture inherits exact
+validity while paying only a $\log 8$ additive cost in log-wealth relative to its best
+expert---power adapts online with nothing to tune.
+
+The same wealth idea, run over a grid rather than at a single boundary, yields the
+quantitative face of the certificate. For every candidate mean $m'$ on a grid of
+$1001$ points in $[0,1]$ we maintain two wealth processes betting that the truth is
+above and below $m'$, each recentred by the same without-replacement rule, with
+empirical-Bernstein (aGRAPA) stakes
+\begin{equation}\label{eq:agrapa}
+\lambda_t(m') \;=\; \Pi_{[0,\,\lambda_{\max}]}
+\Bigl(\tfrac{\hat\mu_{t-1} - m'}{\hat\sigma_{t-1}^2 + (\hat\mu_{t-1} - m')^2}\Bigr),
+\end{equation}
+where $\hat\mu_{t-1}$ and $\hat\sigma^2_{t-1}$ are the running mean and variance of the
+signs. The set of grid values whose wealth on both sides stays below $2/\alpha$ and
+whose recentred boundary remains in $[0,1]$, intersected over time,
+\begin{equation}\label{eq:cs}
+C_t \;=\; \bigcap_{u \le t}\,\bigl\{\, m' :\ \max\bigl(W_u^{\uparrow}(m'),\,
+W_u^{\downarrow}(m')\bigr) < 2/\alpha \,\bigr\},
+\end{equation}
+is a $(1-\alpha)$ confidence sequence for the cohort sign rate: it covers the truth at
+every time simultaneously, so the auditor may glance at it whenever they please, and
+it collapses onto the exact cohort value once the cohort is exhausted. Mapped through
+$\Delta = 2p - 1$ it reports the residual advantage with its anytime-valid
+uncertainty; Remark~\ref{rem:cs} states precisely which coverage claims are per-score
+and which are simultaneous over $\F$.
+
+The revocation arm inverts the role of the null. Under \emph{exact} unlearning,
+Theorem~\ref{thm:null} makes every $Z_{\pi(t)}^{(s)}$ an exact conditional fair coin,
+so here---and only here---adaptive score weighting is sound. We run, per score and per
+direction, e-processes against $\Efrak[Z] = \tfrac12$ and combine them with predictable
+wealth-proportional weights: with $w_{s,t} \propto \exp(\log E^{s}_{t-1})$ computed
+before the pair at step $t$ is opened,
+\begin{equation}\label{eq:revmix}
+R_t \;=\; \prod_{u\le t}\;\sum_{s\in\F} w_{s,u}\,
+\frac{E^{s}_{u}}{E^{s}_{u-1}},
+\end{equation}
+which is an e-process because each factor is a predictable convex combination of
+conditional-mean-one increments. When $R_t \ge 1/\alpha$ the verifier holds
+anytime-valid evidence of residual memorisation and the certificate is withheld or
+revoked; the weights meanwhile steer wealth toward whichever score discriminates best,
+which is exactly what an alarm should do.
+
+\subsection{The protocol end to end}\label{sec:protocol}
+
+Algorithm~\ref{alg:vouch} assembles the pieces into the three-phase protocol, and
+Figure~\ref{fig:flowchart} shows the same pipeline as a flowchart. Phase~0 runs at
+design time: generate the cohort, flip the coins, publish the Merkle root, fine-tune
+with the in-twins planted. Phase~1 is the provider's unlearning step, in which the
+in-twins ride along with the organic forget set. Phase~2 is the audit: stream the
+pairs in the committed random order, opening and checking one leaf at a time, updating
+the certificate processes, the confidence sequences, and the revocation mixture after
+each pair, and acting on whichever boundary is crossed first. R-VOUCH then re-runs the
+same loop on probed variants of $M_u$---after relearning on public data, after 4-bit
+quantisation, and under adversarial prompt wrappers---and the robust certificate
+requires every probe to pass. Streaming deletion waves each draw a fresh cohort with
+independent coins; Theorem~\ref{thm:streaming} dictates how their verdicts may be
+combined.

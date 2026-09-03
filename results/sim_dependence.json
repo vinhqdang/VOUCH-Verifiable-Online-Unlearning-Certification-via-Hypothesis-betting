@@ -1,0 +1,78 @@
+{
+  "description": "Marginal null: mean sign probability = p0 = 0.55 (eps = 0.1) in every regime.  'sup' is the v1 fixed-boundary process (super-population target); 'cohort' is the without-replacement process (realised-cohort target).  For the cohort target an issuance is an error only when the realised cohort mean is itself >= p0, so both rates are reported.",
+  "iid": {
+    "marginal_mean": 0.55,
+    "realised_mean_sd": 0.015539168359885908,
+    "frac_cohorts_with_mean_ge_p0": 0.4925,
+    "sup_issue_rate_marginal_null": 0.034,
+    "sup_issue_rate_ci": [
+      0.026908260159560583,
+      0.04287842790656715
+    ],
+    "cohort_issue_rate_marginal_null": 0.5015,
+    "sup_error_rate_cohort_null": 0.012182741116751269,
+    "cohort_error_rate_cohort_null": 0.014213197969543147,
+    "cohort_error_rate_ci": [
+      0.008485123287593864,
+      0.02371564917867053
+    ],
+    "n_cohort_null": 985
+  },
+  "strata": {
+    "marginal_mean": 0.55,
+    "realised_mean_sd": 0.01493494776545184,
+    "frac_cohorts_with_mean_ge_p0": 0.4985,
+    "sup_issue_rate_marginal_null": 0.0265,
+    "sup_issue_rate_ci": [
+      0.020316920414969068,
+      0.03449852336037745
+    ],
+    "cohort_issue_rate_marginal_null": 0.495,
+    "sup_error_rate_cohort_null": 0.0160481444332999,
+    "cohort_error_rate_cohort_null": 0.020060180541624874,
+    "cohort_error_rate_ci": [
+      0.013022861131119959,
+      0.030781737923312846
+    ],
+    "n_cohort_null": 997
+  },
+  "beta": {
+    "marginal_mean": 0.55,
+    "realised_mean_sd": 0.14790185580888313,
+    "frac_cohorts_with_mean_ge_p0": 0.516,
+    "sup_issue_rate_marginal_null": 0.389,
+    "sup_issue_rate_ci": [
+      0.3678659620080682,
+      0.4105596224883699
+    ],
+    "cohort_issue_rate_marginal_null": 0.4835,
+    "sup_error_rate_cohort_null": 0.0009689922480620155,
+    "cohort_error_rate_cohort_null": 0.0009689922480620155,
+    "cohort_error_rate_ci": [
+      0.00017107140892045136,
+      0.005468265355360665
+    ],
+    "n_cohort_null": 1032
+  },
+  "latent": {
+    "marginal_mean": 0.55,
+    "realised_mean_sd": 0.25024663662579527,
+    "frac_cohorts_with_mean_ge_p0": 0.5185,
+    "sup_issue_rate_marginal_null": 0.4815,
+    "sup_issue_rate_ci": [
+      0.45965837761892475,
+      0.5034125531304815
+    ],
+    "cohort_issue_rate_marginal_null": 0.4815,
+    "sup_error_rate_cohort_null": 0.0,
+    "cohort_error_rate_cohort_null": 0.0,
+    "cohort_error_rate_ci": [
+      0.0,
+      0.003690724257896701
+    ],
+    "n_cohort_null": 1037
+  },
+  "n_seeds": 2000,
+  "n_pairs": 1024,
+  "alpha": 0.05
+}

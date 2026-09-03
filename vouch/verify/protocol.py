@@ -53,6 +53,10 @@ class VouchConfig:
     two_sided: bool = True       # close F under negation (catches over-forgetting)
     tie_seed: int = 20260702     # committed PRNG seed for tie-breaking
     cs_grid: int = 1001
+    finite_cohort: bool = True   # certificate target = realised cohort mean
+                                 # (without-replacement betting; exact under
+                                 # arbitrary dependence across pairs).  Set
+                                 # False for the v1 super-population target.
 
     @property
     def p0(self) -> float:
@@ -76,6 +80,8 @@ class Certificate:
     delta_upper: float           # = 2 * p_upper - 1
     delta_cs: Dict[str, List[float]]
     per_score_log_e_cert: Dict[str, float]
+    cohort_size: int = -1        # N for the without-replacement target (-1 = none)
+    sign_mean: Dict[str, float] = field(default_factory=dict)
     manifest_sha256: str = ""
     score_class: List[str] = field(default_factory=list)
     probes: Dict[str, dict] = field(default_factory=dict)
@@ -90,12 +96,17 @@ class VouchVerifier:
     """Runs the Phase-2 loop over one canary cohort (one deletion wave)."""
 
     def __init__(self, score_names: Sequence[str], config: Optional[VouchConfig] = None,
-                 wave: int = 0, manifest_sha256: str = ""):
+                 wave: int = 0, manifest_sha256: str = "",
+                 cohort_size: Optional[int] = None):
         self.cfg = config or VouchConfig()
         self.score_names = list(score_names)
         self.wave = wave
         self.manifest_sha256 = manifest_sha256
         p0, a = self.cfg.p0, self.cfg.alpha
+        # N for the without-replacement certificate target (None = the v1
+        # super-population target with a fixed boundary)
+        n_pop = cohort_size if self.cfg.finite_cohort else None
+        self.cohort_size = n_pop
         # (a) per-score certificate e-processes: H0^cert,s : p^s >= p0.
         # With two_sided=True, F is closed under negation: each score also
         # gets a process against H0 : p^s <= 1 - p0, so the certificate
@@ -103,12 +114,14 @@ class VouchVerifier:
         # is membership leakage too -- "over-forgetting", observed for
         # ascent-style unlearning on real LMs).
         self.e_cert = {s: OneSidedEProcess(m0=p0, direction="below",
-                                           strategy=self.cfg.strategy, alpha=a)
+                                           strategy=self.cfg.strategy, alpha=a,
+                                           population_size=n_pop)
                        for s in self.score_names}
         self.e_cert_neg = {}
         if self.cfg.two_sided:
             self.e_cert_neg = {s: OneSidedEProcess(m0=1.0 - p0, direction="above",
-                                                   strategy=self.cfg.strategy, alpha=a)
+                                                   strategy=self.cfg.strategy, alpha=a,
+                                                   population_size=n_pop)
                                for s in self.score_names}
         # (c) revocation arm: sign-mixture across scores, H0^rev : p^s <= 1/2
         self.e_rev_sign = MixtureEProcess(n_scores=len(self.score_names),
@@ -123,13 +136,28 @@ class VouchVerifier:
         self.e_rev_mag_dn = {s: SymmetryEProcess(alpha=a) for s in self.score_names} \
             if self.cfg.two_sided else None
         # (b) per-score confidence sequences for p^s
-        self.cs = {s: BettingCS(alpha=a, grid=self.cfg.cs_grid)
+        self.cs = {s: BettingCS(alpha=a, grid=self.cfg.cs_grid,
+                                population_size=n_pop)
                    for s in self.score_names}
         self._tie_rng = random.Random(self.cfg.tie_seed)
         self.t = 0
         self.revoked_at: Optional[int] = None
         self.log_e_rev_max: float = 0.0   # running max (value at the decision)
         self.history: List[dict] = []
+
+    # -- cohort size ---------------------------------------------------------
+    def set_cohort_size(self, n: int) -> None:
+        """Declare the committed cohort size N for the without-replacement
+        certificate target.  Must be called before the first ``update``."""
+        if not self.cfg.finite_cohort:
+            return
+        if self.t != 0:
+            raise RuntimeError("cohort size must be set before the first pair")
+        self.cohort_size = int(n)
+        for e in list(self.e_cert.values()) + list(self.e_cert_neg.values()):
+            e.population_size = int(n)
+        for c in self.cs.values():
+            c.population_size = int(n)
 
     # -- revocation combination ---------------------------------------------
     @property
@@ -205,6 +233,8 @@ class VouchVerifier:
         ``pair_diffs`` is a list of {score_name: D_i^(s)} dicts.  Pairs are
         revealed in random order (predictable filtration).
         """
+        if self.cfg.finite_cohort and self.cohort_size is None:
+            self.set_cohort_size(len(pair_diffs))
         order = list(range(len(pair_diffs)))
         rng = random.Random(self.cfg.tie_seed if shuffle_seed is None else shuffle_seed)
         rng.shuffle(order)
@@ -242,6 +272,10 @@ class VouchVerifier:
             delta_upper=2.0 * self.p_upper - 1.0,
             delta_cs={s: list(self.cs[s].advantage_interval) for s in self.score_names},
             per_score_log_e_cert={s: self.e_cert[s].log_e for s in self.score_names},
+            cohort_size=self.cohort_size if self.cohort_size is not None else -1,
+            sign_mean={s: (self.e_cert[s]._sum / self.e_cert[s].t
+                           if self.e_cert[s].t else float("nan"))
+                       for s in self.score_names},
             manifest_sha256=self.manifest_sha256,
             score_class=self.score_names,
         )

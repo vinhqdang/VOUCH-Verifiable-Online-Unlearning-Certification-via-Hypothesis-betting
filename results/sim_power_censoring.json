@@ -1,0 +1,163 @@
+{
+  "description": "Median pairs to certification under exact unlearning with the censoring rate stated.  The horizon is 20,000 pairs; a median taken only over issued runs is selection-biased downwards when censoring is heavy, so the Kaplan-Meier median and the censoring rate are reported alongside it.  Note that the finite-cohort target's boundary depends on the cohort size, so its horizon *is* its cohort.",
+  "sup/eps=0.02/alpha=0.05": {
+    "issued_frac": 0.552,
+    "censoring_rate": 0.44799999999999995,
+    "median_over_issued": 11189.0,
+    "km_median": 18377.0,
+    "kl_theory": 14975.665435741714,
+    "q25_over_issued": 4493.75,
+    "q75_over_issued": 15860.75,
+    "n_seeds": 500
+  },
+  "sup/eps=0.02/alpha=0.01": {
+    "issued_frac": 0.282,
+    "censoring_rate": 0.718,
+    "median_over_issued": 13400.0,
+    "km_median": null,
+    "kl_theory": 23021.245452682862,
+    "q25_over_issued": 6009.0,
+    "q75_over_issued": 17555.0,
+    "n_seeds": 500
+  },
+  "sup/eps=0.05/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 2998.5,
+    "km_median": 2998.0,
+    "kl_theory": 2393.5888367852062,
+    "q25_over_issued": 1428.5,
+    "q75_over_issued": 4524.75,
+    "n_seeds": 500
+  },
+  "sup/eps=0.05/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 4426.5,
+    "km_median": 4425.0,
+    "kl_theory": 3679.529057381398,
+    "q25_over_issued": 2734.25,
+    "q75_over_issued": 6424.0,
+    "n_seeds": 500
+  },
+  "sup/eps=0.1/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 685.5,
+    "km_median": 685.0,
+    "kl_theory": 596.1457044264449,
+    "q25_over_issued": 309.0,
+    "q75_over_issued": 1123.25,
+    "n_seeds": 500
+  },
+  "sup/eps=0.1/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 1087.5,
+    "km_median": 1087.0,
+    "kl_theory": 916.4211531067764,
+    "q25_over_issued": 662.75,
+    "q75_over_issued": 1572.25,
+    "n_seeds": 500
+  },
+  "sup/eps=0.2/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 165.5,
+    "km_median": 165.0,
+    "kl_theory": 146.77050000913405,
+    "q25_over_issued": 87.75,
+    "q75_over_issued": 281.25,
+    "n_seeds": 500
+  },
+  "sup/eps=0.2/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 251.5,
+    "km_median": 251.0,
+    "kl_theory": 225.6220079449124,
+    "q25_over_issued": 151.75,
+    "q75_over_issued": 390.0,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.02/alpha=0.05": {
+    "issued_frac": 0.998,
+    "censoring_rate": 0.0020000000000000018,
+    "median_over_issued": 10917.0,
+    "km_median": 10917.0,
+    "kl_theory": 14975.665435741714,
+    "q25_over_issued": 6113.0,
+    "q75_over_issued": 13999.0,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.02/alpha=0.01": {
+    "issued_frac": 0.998,
+    "censoring_rate": 0.0020000000000000018,
+    "median_over_issued": 12866.0,
+    "km_median": 12866.0,
+    "kl_theory": 23021.245452682862,
+    "q25_over_issued": 9401.5,
+    "q75_over_issued": 15536.0,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.05/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 2689.5,
+    "km_median": 2680.0,
+    "kl_theory": 2393.5888367852062,
+    "q25_over_issued": 1347.75,
+    "q75_over_issued": 4001.0,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.05/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 3902.0,
+    "km_median": 3901.0,
+    "kl_theory": 3679.529057381398,
+    "q25_over_issued": 2319.5,
+    "q75_over_issued": 5066.75,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.1/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 669.5,
+    "km_median": 666.0,
+    "kl_theory": 596.1457044264449,
+    "q25_over_issued": 304.75,
+    "q75_over_issued": 1054.75,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.1/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 1024.5,
+    "km_median": 1023.0,
+    "kl_theory": 916.4211531067764,
+    "q25_over_issued": 647.0,
+    "q75_over_issued": 1495.75,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.2/alpha=0.05": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 165.0,
+    "km_median": 165.0,
+    "kl_theory": 146.77050000913405,
+    "q25_over_issued": 87.75,
+    "q75_over_issued": 280.25,
+    "n_seeds": 500
+  },
+  "cohort/eps=0.2/alpha=0.01": {
+    "issued_frac": 1.0,
+    "censoring_rate": 0.0,
+    "median_over_issued": 250.0,
+    "km_median": 250.0,
+    "kl_theory": 225.6220079449124,
+    "q25_over_issued": 150.0,
+    "q75_over_issued": 385.5,
+    "n_seeds": 500
+  }
+}

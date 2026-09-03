@@ -94,7 +94,13 @@ def main():
     ap.add_argument("--block", type=int, default=160)
     ap.add_argument("--methods", nargs="+",
                     default=["none", "retrain", "ga", "grad_diff", "npo",
-                             "npo_P1_relearn", "npo_P3_jailbreak"])
+                             "simnpo", "npo_P1_relearn", "npo_P3_jailbreak"])
+    ap.add_argument("--simnpo-gamma", type=float, default=0.0,
+                    help="SimNPO reward margin gamma (Fan et al., 2025)")
+    ap.add_argument("--simnpo-steps", type=int, default=250)
+    ap.add_argument("--extra-metrics", action="store_true",
+                    help="also record benchmark forget/retain metrics and a "
+                         "general-capability reading for every subject")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--resume", action="store_true",
                     help="skip (seed, method) pairs already in the output JSON")
@@ -172,13 +178,78 @@ def main():
             all_out.append(results)
 
         @torch.no_grad()
-        def utility_nll():
+        def mean_nll(texts, bs=16):
             model.eval()
             losses = []
-            for i in range(0, len(util_eval), 16):
-                b = encode_batch(tok, util_eval[i:i + 16], args.block, device)
+            for i in range(0, len(texts), bs):
+                b = encode_batch(tok, texts[i:i + bs], args.block, device)
                 losses.extend(seq_nll(model, b, pad).tolist())
-            return float(np.mean(losses))
+            return float(np.mean(losses)) if losses else float("nan")
+
+        def utility_nll():
+            return mean_nll(util_eval)
+
+        @torch.no_grad()
+        def greedy_answer(prompt: str, max_new: int = 24) -> str:
+            """Deterministic continuation, used by the ROUGE-style metrics."""
+            model.eval()
+            ids = torch.tensor([tok(prompt)["input_ids"]], device=device)
+            for _ in range(max_new):
+                nxt = model(input_ids=ids).logits[0, -1].argmax().view(1, 1)
+                ids = torch.cat([ids, nxt], dim=1)
+                if tok.eos_token_id is not None and nxt.item() == tok.eos_token_id:
+                    break
+            return tok.decode(ids[0, len(tok(prompt)["input_ids"]):],
+                              skip_special_tokens=True)
+
+        def rouge_l(a: str, b: str) -> float:
+            """ROUGE-L recall on whitespace tokens (the TOFU/MUSE convention)."""
+            x, y = a.split(), b.split()
+            if not y:
+                return float("nan")
+            dp = [[0] * (len(y) + 1) for _ in range(len(x) + 1)]
+            for i in range(len(x)):
+                for j in range(len(y)):
+                    dp[i + 1][j + 1] = (dp[i][j] + 1 if x[i] == y[j]
+                                        else max(dp[i][j + 1], dp[i + 1][j]))
+            return dp[len(x)][len(y)] / len(y)
+
+        def split_qa(t):
+            """TOFU records are 'Question: q\nAnswer: a'."""
+            if "\nAnswer:" in t:
+                q, a = t.split("\nAnswer:", 1)
+                return q + "\nAnswer:", a.strip()
+            cut = max(len(t) // 2, 1)
+            return t[:cut], t[cut:].strip()
+
+        @torch.no_grad()
+        def benchmark_metrics():
+            """Standard forget/retain readings plus a general-capability probe.
+
+            forget_nll / retain_nll   : mean NLL on the benchmark's own forget
+                                        and retain splits (MUSE VerbMem/KnowMem
+                                        and TOFU forget/retain are both driven
+                                        by these likelihoods).
+            forget_rouge / retain_rouge: greedy-decode ROUGE-L recall against
+                                        the reference continuation, the
+                                        TOFU/MUSE reporting convention.
+            capability_nll            : mean NLL on a fixed general-knowledge
+                                        probe set disjoint from both splits
+                                        (TOFU world_facts for TOFU; the MUSE
+                                        holdout news stream for MUSE), the
+                                        general-capability guardrail.
+            """
+            n_probe = 60
+            out = {"forget_nll": mean_nll(forget[:n_probe]),
+                   "retain_nll": mean_nll(util_eval[:n_probe]),
+                   "capability_nll": mean_nll(public[:n_probe])}
+            for tag_, texts in (("forget", forget[:24]), ("retain", util_eval[:24])):
+                sc = []
+                for t in texts:
+                    q, a = split_qa(t)
+                    sc.append(rouge_l(greedy_answer(q, 24), a))
+                out[f"{tag_}_rouge"] = float(np.nanmean(sc)) if sc else float("nan")
+            return out
 
         def logprob_fn():
             @torch.no_grad()
@@ -214,13 +285,15 @@ def main():
             cert = v.run(diffs, shuffle_seed=seed, early_stop=True)
             md = float(np.mean(md_all))
             un = utility_nll()
+            bm = benchmark_metrics() if args.extra_metrics else {}
             print(f"[seed {seed}] {m_tag:16s} status={cert.status:12s} "
                   f"t={cert.t_stop:4d} logEcert={cert.log_e_cert:7.2f} "
                   f"logErev={cert.log_e_rev:7.2f} dU={cert.delta_upper:6.3f} "
                   f"meanD={md:6.3f} utilNLL={un:.3f}", flush=True)
             rec = json.loads(cert.to_json())
             rec.update(mean_loss_diff=md, pair_diffs=diffs,
-                       utility_nll=un, scoring_seconds=time.time() - t_v)
+                       utility_nll=un, scoring_seconds=time.time() - t_v,
+                       n_queries=args.queries, **bm)
             results["certs"][m_tag] = rec
             with open(partial_path, "w") as f:
                 json.dump(all_out, f, indent=2, default=float)
@@ -281,6 +354,14 @@ def main():
                           retain=keep, **ukw)
             verify("grad_diff", "gd")
             drop_adapter(model, "gd")
+
+        if "simnpo" in todo:
+            clone_adapter(model, "ft", "snpo")
+            train_adapter(model, tok, forget_texts, "snpo",
+                          steps=args.simnpo_steps, retain=keep,
+                          simnpo=True, simnpo_gamma=args.simnpo_gamma, **ukw)
+            verify("simnpo", "snpo")
+            drop_adapter(model, "snpo")
 
         need_npo = {"npo", "npo_P1_relearn", "npo_P3_jailbreak"} & set(todo)
         if need_npo:

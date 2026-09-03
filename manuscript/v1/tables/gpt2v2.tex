@@ -1,0 +1,15 @@
+\begin{tabular}{lccc}
+\toprule
+subject & verdicts (3 seeds) & mean $U_t$ on $\Delta$ & mean $\bar D$\\
+\midrule
+no unlearning & \vR/\vR/\vR & 0.93 & +2.19\\
+retrain (exact) & \vI/\vI/\vI & 0.19 & -0.00\\
+GA & \vI/\vI/\vI & 0.21 & +0.09\\
+GradDiff & \vI/\vI/\vI & 0.18 & +0.08\\
+NPO & \vI/\vI/\vI & 0.17 & +0.04\\
+NPO (25\% budget) & \vI/\vI/\vU & 0.23 & +0.26\\
+NPO + P1 relearn & \vI/\vU/\vI & 0.23 & +0.28\\
+NPO + P2 4-bit & \vI/\vI/\vI & 0.18 & +0.03\\
+NPO + P3 jailbreak & \vI/\vI/\vI & 0.17 & +0.06\\
+\bottomrule
+\end{tabular}

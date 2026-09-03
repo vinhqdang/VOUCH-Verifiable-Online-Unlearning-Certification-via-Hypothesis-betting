@@ -1,0 +1,100 @@
+{
+  "description": "Fixed sign vectors with realised cohort mean exactly p0 (least favourable cohort null), revealed in a uniformly random order; peeking after every pair.  The without-replacement process must hold its level for *every* such vector, with no distributional assumption.",
+  "eps=0.1/block/n=384": {
+    "cohort_process_error": 0.0275,
+    "cohort_process_error_ci": [
+      0.021188498165677007,
+      0.03562311151510702
+    ],
+    "sup_process_error": 0.018
+  },
+  "eps=0.1/block/n=1024": {
+    "cohort_process_error": 0.024,
+    "cohort_process_error_ci": [
+      0.018149556703294482,
+      0.03167547230845831
+    ],
+    "sup_process_error": 0.014
+  },
+  "eps=0.1/alternating/n=384": {
+    "cohort_process_error": 0.0245,
+    "cohort_process_error_ci": [
+      0.018581630282136635,
+      0.032241481682334906
+    ],
+    "sup_process_error": 0.015
+  },
+  "eps=0.1/alternating/n=1024": {
+    "cohort_process_error": 0.0325,
+    "cohort_process_error_ci": [
+      0.025580698826170273,
+      0.04121174038180121
+    ],
+    "sup_process_error": 0.019
+  },
+  "eps=0.1/stratified/n=384": {
+    "cohort_process_error": 0.024,
+    "cohort_process_error_ci": [
+      0.018149556703294482,
+      0.03167547230845831
+    ],
+    "sup_process_error": 0.0145
+  },
+  "eps=0.1/stratified/n=1024": {
+    "cohort_process_error": 0.0345,
+    "cohort_process_error_ci": [
+      0.02735169414772159,
+      0.04343307687112488
+    ],
+    "sup_process_error": 0.0185
+  },
+  "eps=0.2/block/n=384": {
+    "cohort_process_error": 0.0265,
+    "cohort_process_error_ci": [
+      0.020316920414969068,
+      0.03449852336037745
+    ],
+    "sup_process_error": 0.013
+  },
+  "eps=0.2/block/n=1024": {
+    "cohort_process_error": 0.026,
+    "cohort_process_error_ci": [
+      0.019882087677964753,
+      0.033935273144663027
+    ],
+    "sup_process_error": 0.0135
+  },
+  "eps=0.2/alternating/n=384": {
+    "cohort_process_error": 0.0265,
+    "cohort_process_error_ci": [
+      0.020316920414969068,
+      0.03449852336037745
+    ],
+    "sup_process_error": 0.01
+  },
+  "eps=0.2/alternating/n=1024": {
+    "cohort_process_error": 0.0335,
+    "cohort_process_error_ci": [
+      0.026465276470638475,
+      0.042323328642770504
+    ],
+    "sup_process_error": 0.0175
+  },
+  "eps=0.2/stratified/n=384": {
+    "cohort_process_error": 0.025,
+    "cohort_process_error_ci": [
+      0.019014423503992475,
+      0.032806771413197815
+    ],
+    "sup_process_error": 0.0125
+  },
+  "eps=0.2/stratified/n=1024": {
+    "cohort_process_error": 0.0315,
+    "cohort_process_error_ci": [
+      0.024698042584374483,
+      0.04009823071815951
+    ],
+    "sup_process_error": 0.0155
+  },
+  "n_seeds": 2000
+}

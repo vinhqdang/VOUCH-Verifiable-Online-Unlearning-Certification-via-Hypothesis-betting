@@ -80,11 +80,23 @@ def seq_nll(model, batch, pad_id):
 
 def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
                   seed=0, sign=+1, retain=None, retain_w=1.0, npo_ref=None,
-                  beta=0.1, log_every=100, ckpt=None, ckpt_every=100):
+                  beta=0.1, log_every=100, ckpt=None, ckpt_every=100,
+                  simnpo=False, simnpo_gamma=0.0):
     """Train `adapter` (already active) on texts.
 
     sign=+1: descent (fine-tune);  sign=-1: ascent (GA / GradDiff forget term).
     npo_ref: name of a frozen reference adapter -> NPO loss instead of CE.
+    simnpo: SimNPO (Fan et al., 2025) -- reference-free simple preference
+        optimisation.  NPO's forget loss needs a frozen reference model and
+        is length-normalised only through that reference; SimNPO drops the
+        reference entirely and uses the length-normalised forget NLL against
+        a margin ``gamma``:
+
+            L = (2/beta) * softplus(-beta * (nll_theta - gamma))
+
+        which is NPO's objective with ``nll_ref`` replaced by the constant
+        ``gamma``.  Because ``seq_nll`` already divides by the unmasked token
+        count, ``nll_theta`` is the length-normalised NLL SimNPO prescribes.
     ckpt: optional path for intra-stage checkpointing (adapter + optimizer +
     step) so short-lived VMs make progress through long stages.
     """
@@ -111,7 +123,11 @@ def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
                 next(rgen)
             continue
         b = encode_batch(tok, next(gen), block, device)
-        if npo_ref is not None:
+        if simnpo:
+            nll_theta = seq_nll(model, b, pad)
+            loss = (2.0 / beta) * F.softplus(
+                -beta * (nll_theta - simnpo_gamma)).mean()
+        elif npo_ref is not None:
             with torch.no_grad():
                 model.set_adapter(npo_ref)
                 nll_ref = seq_nll(model, b, pad)

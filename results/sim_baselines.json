@@ -1,0 +1,419 @@
+{
+  "description": "Valid sequential comparators on the same sign stream and the same query budget n.  VOUCH arms and the two mixture e-processes are monitored after every pair; the group-sequential procedures decide only at their K pre-planned looks; the fixed-n test decides once, at n.  Null row: p = p0 (least favourable).  Alternative rows: exact unlearning p = 1/2.",
+  "eps=0.2/looks": [
+    51,
+    102,
+    154,
+    205,
+    256,
+    307,
+    358,
+    410,
+    461,
+    512
+  ],
+  "eps=0.2/pocock_crit": [
+    21,
+    49,
+    78,
+    106,
+    135,
+    165,
+    194,
+    224,
+    253,
+    283
+  ],
+  "eps=0.2/obf_crit": [
+    8,
+    39,
+    71,
+    101,
+    132,
+    163,
+    194,
+    225,
+    256,
+    287
+  ],
+  "eps=0.2/pocock_spend": [
+    0.005063199895315049,
+    0.012876217474895195,
+    0.01998317661861186,
+    0.024073834755752962,
+    0.028341304591442622,
+    0.03437314052844016,
+    0.03856711968659068,
+    0.04265652044098381,
+    0.04563518179559393,
+    0.04941088297740693
+  ],
+  "eps=0.2/obf_spend": [
+    9.391760722858288e-11,
+    7.46037872578242e-06,
+    0.0003396345868408712,
+    0.0013334937436024947,
+    0.004202243893749384,
+    0.009516548969782889,
+    0.017432411997238377,
+    0.025667434691112434,
+    0.036639768400419416,
+    0.049512782513069814
+  ],
+  "eps=0.2/null_p0": {
+    "frac_cohorts_with_mean_ge_p0": 0.486,
+    "vouch_cohort": {
+      "rate": 0.505,
+      "rate_ci": [
+        0.4830994580460823,
+        0.5268813714811051
+      ],
+      "median_t": 491.0,
+      "mean_queries": 475.14,
+      "rate_given_cohort_null": 0.009259259259259259
+    },
+    "vouch_sup": {
+      "rate": 0.0265,
+      "rate_ci": [
+        0.020316920414969068,
+        0.03449852336037745
+      ],
+      "median_t": 41.0,
+      "mean_queries": 501.375,
+      "rate_given_cohort_null": 0.0051440329218107
+    },
+    "beta_mixture": {
+      "rate": 0.0325,
+      "rate_ci": [
+        0.025580698826170273,
+        0.04121174038180121
+      ],
+      "median_t": 11.0,
+      "mean_queries": 497.4255,
+      "rate_given_cohort_null": 0.012345679012345678
+    },
+    "normal_mixture": {
+      "rate": 0.027,
+      "rate_ci": [
+        0.020752396241488003,
+        0.035061130486577274
+      ],
+      "median_t": 73.5,
+      "mean_queries": 501.734,
+      "rate_given_cohort_null": 0.01954732510288066
+    },
+    "gs_pocock": {
+      "rate": 0.045,
+      "rate_ci": [
+        0.03675381704471326,
+        0.05499069598122689
+      ],
+      "median_t": 256.0,
+      "mean_queries": 500.1445,
+      "rate_given_cohort_null": 0.0030864197530864196
+    },
+    "gs_obf": {
+      "rate": 0.0475,
+      "rate_ci": [
+        0.03901402059617836,
+        0.057720907193355535
+      ],
+      "median_t": 410.0,
+      "mean_queries": 507.3925,
+      "rate_given_cohort_null": 0.0
+    },
+    "fixed_n": {
+      "rate": 0.047,
+      "rate_ci": [
+        0.038561402365168564,
+        0.057175442471646576
+      ],
+      "median_t": 512.0,
+      "mean_queries": 512.0,
+      "rate_given_cohort_null": 0.0
+    }
+  },
+  "eps=0.2/exact_unlearning": {
+    "frac_cohorts_with_mean_ge_p0": 0.0,
+    "vouch_cohort": {
+      "rate": 1.0,
+      "rate_ci": [
+        0.9980829527187468,
+        0.9999999999999998
+      ],
+      "median_t": 132.0,
+      "mean_queries": 143.4465,
+      "rate_given_cohort_null": NaN
+    },
+    "vouch_sup": {
+      "rate": 0.962,
+      "rate_ci": [
+        0.9526962482408641,
+        0.9695324000712581
+      ],
+      "median_t": 164.0,
+      "mean_queries": 196.562,
+      "rate_given_cohort_null": NaN
+    },
+    "beta_mixture": {
+      "rate": 0.9255,
+      "rate_ci": [
+        0.9131584426965994,
+        0.9362101500670542
+      ],
+      "median_t": 187.0,
+      "mean_queries": 224.106,
+      "rate_given_cohort_null": NaN
+    },
+    "normal_mixture": {
+      "rate": 0.927,
+      "rate_ci": [
+        0.9147622011152127,
+        0.9376006405065973
+      ],
+      "median_t": 188.0,
+      "mean_queries": 226.6105,
+      "rate_given_cohort_null": NaN
+    },
+    "gs_pocock": {
+      "rate": 0.995,
+      "rate_ci": [
+        0.990820304050058,
+        0.9972818191415015
+      ],
+      "median_t": 154.0,
+      "mean_queries": 175.4175,
+      "rate_given_cohort_null": NaN
+    },
+    "gs_obf": {
+      "rate": 0.9985,
+      "rate_ci": [
+        0.9955989674442293,
+        0.9994897364163615
+      ],
+      "median_t": 256.0,
+      "mean_queries": 251.3305,
+      "rate_given_cohort_null": NaN
+    },
+    "fixed_n": {
+      "rate": 0.9985,
+      "rate_ci": [
+        0.9955989674442293,
+        0.9994897364163615
+      ],
+      "median_t": 512.0,
+      "mean_queries": 512.0,
+      "rate_given_cohort_null": NaN
+    }
+  },
+  "eps=0.2/n": 512,
+  "eps=0.1/looks": [
+    154,
+    307,
+    461,
+    614,
+    768,
+    922,
+    1075,
+    1229,
+    1382,
+    1536
+  ],
+  "eps=0.1/pocock_crit": [
+    69,
+    147,
+    229,
+    309,
+    391,
+    473,
+    555,
+    637,
+    719,
+    802
+  ],
+  "eps=0.1/obf_crit": [
+    46,
+    131,
+    216,
+    301,
+    386,
+    471,
+    555,
+    640,
+    724,
+    809
+  ],
+  "eps=0.1/pocock_spend": [
+    0.007040931661468658,
+    0.01249015363329083,
+    0.02060587216416418,
+    0.025567512344844258,
+    0.030622562367251076,
+    0.03502817172836814,
+    0.03931781379565898,
+    0.04269258084877194,
+    0.04587572529978716,
+    0.04912924827586907
+  ],
+  "eps=0.1/obf_spend": [
+    2.5784113347361747e-10,
+    9.690031542328466e-06,
+    0.0002753237167538229,
+    0.0017818073585897506,
+    0.005238321586478646,
+    0.010970644497204207,
+    0.018025533754894924,
+    0.02719984942309789,
+    0.03679960955851512,
+    0.04803164938015256
+  ],
+  "eps=0.1/null_p0": {
+    "frac_cohorts_with_mean_ge_p0": 0.506,
+    "vouch_cohort": {
+      "rate": 0.495,
+      "rate_ci": [
+        0.47311862851889475,
+        0.5169005419539175
+      ],
+      "median_t": 1465.0,
+      "mean_queries": 1416.6025,
+      "rate_given_cohort_null": 0.017786561264822136
+    },
+    "vouch_sup": {
+      "rate": 0.0305,
+      "rate_ci": [
+        0.023817395490169122,
+        0.03898271190692737
+      ],
+      "median_t": 83.0,
+      "mean_queries": 1497.144,
+      "rate_given_cohort_null": 0.015810276679841896
+    },
+    "beta_mixture": {
+      "rate": 0.0395,
+      "rate_ci": [
+        0.03180890787160705,
+        0.0489566926744269
+      ],
+      "median_t": 5.0,
+      "mean_queries": 1478.185,
+      "rate_given_cohort_null": 0.02766798418972332
+    },
+    "normal_mixture": {
+      "rate": 0.034,
+      "rate_ci": [
+        0.026908260159560583,
+        0.04287842790656715
+      ],
+      "median_t": 75.0,
+      "mean_queries": 1489.4425,
+      "rate_given_cohort_null": 0.036561264822134384
+    },
+    "gs_pocock": {
+      "rate": 0.05,
+      "rate_ci": [
+        0.04128123361873174,
+        0.06044410893439589
+      ],
+      "median_t": 768.0,
+      "mean_queries": 1498.4445,
+      "rate_given_cohort_null": 0.003952569169960474
+    },
+    "gs_obf": {
+      "rate": 0.0515,
+      "rate_ci": [
+        0.042644720050338814,
+        0.06207487136094505
+      ],
+      "median_t": 1229.0,
+      "mean_queries": 1518.7165,
+      "rate_given_cohort_null": 0.0
+    },
+    "fixed_n": {
+      "rate": 0.053,
+      "rate_ci": [
+        0.04401045720579707,
+        0.06370338306364305
+      ],
+      "median_t": 1536.0,
+      "mean_queries": 1536.0,
+      "rate_given_cohort_null": 0.0
+    }
+  },
+  "eps=0.1/exact_unlearning": {
+    "frac_cohorts_with_mean_ge_p0": 0.0005,
+    "vouch_cohort": {
+      "rate": 0.9995,
+      "rate_ci": [
+        0.9971731374967338,
+        0.9999117322692944
+      ],
+      "median_t": 497.0,
+      "mean_queries": 522.6795,
+      "rate_given_cohort_null": 0.0
+    },
+    "vouch_sup": {
+      "rate": 0.8825,
+      "rate_ci": [
+        0.8676485316803879,
+        0.8958849271494534
+      ],
+      "median_t": 612.0,
+      "mean_queries": 746.651,
+      "rate_given_cohort_null": 0.0
+    },
+    "beta_mixture": {
+      "rate": 0.7695,
+      "rate_ci": [
+        0.7505363202699304,
+        0.7874303912454741
+      ],
+      "median_t": 715.0,
+      "mean_queries": 900.407,
+      "rate_given_cohort_null": 0.0
+    },
+    "normal_mixture": {
+      "rate": 0.782,
+      "rate_ci": [
+        0.7633734089055609,
+        0.7995453764278124
+      ],
+      "median_t": 704.0,
+      "mean_queries": 900.6045,
+      "rate_given_cohort_null": 0.0
+    },
+    "gs_pocock": {
+      "rate": 0.971,
+      "rate_ci": [
+        0.9626945430771896,
+        0.97749959838387
+      ],
+      "median_t": 614.0,
+      "mean_queries": 644.7475,
+      "rate_given_cohort_null": 0.0
+    },
+    "gs_obf": {
+      "rate": 0.985,
+      "rate_ci": [
+        0.9786675621742913,
+        0.9894729019628932
+      ],
+      "median_t": 768.0,
+      "mean_queries": 844.012,
+      "rate_given_cohort_null": 0.0
+    },
+    "fixed_n": {
+      "rate": 0.9885,
+      "rate_ci": [
+        0.9828022720924287,
+        0.9923247727137872
+      ],
+      "median_t": 1536.0,
+      "mean_queries": 1536.0,
+      "rate_given_cohort_null": 0.0
+    }
+  },
+  "eps=0.1/n": 1536,
+  "n_seeds": 2000,
+  "alpha": 0.05
+}

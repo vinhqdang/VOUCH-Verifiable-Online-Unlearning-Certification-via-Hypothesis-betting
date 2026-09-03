@@ -1,0 +1,122 @@
+Our work sits at the meeting point of three literatures---unlearning algorithms,
+the verification of unlearning, and game-theoretic statistics---and it is the gap
+between the first two that game-theoretic statistics turns out to close. We survey
+each in turn and then state precisely how VOUCH differs from its nearest neighbours.
+
+\subsection{Unlearning algorithms and their benchmarks}
+
+Exact unlearning by architectural design, exemplified by sharded training
+\citep{bourtoule2021machine}, retrains only the shards touched by a deletion; it is
+sound but cannot be applied to a model that was not trained for it, which is the
+situation every deployed language model is in. The practical response has therefore
+been \emph{approximate} unlearning, and for large language models a compact toolbox
+has emerged: gradient ascent on the forget set and its retain-regularised variant
+GradDiff; negative preference optimisation \citep{zhang2024npo}, which replaces the
+unbounded ascent objective with a bounded preference loss and which its authors
+introduced precisely to avoid the catastrophic collapse that ascent invites; the
+simplified reappraisal SimNPO \citep{fan2025simnpo}; representation misdirection
+\citep{li2024wmdp}; and task-vector negation. These methods are evaluated on
+purpose-built benchmarks---TOFU's fictitious-author question answering
+\citep{maini2024tofu}, MUSE's six-way news-and-books evaluation \citep{shi2024muse},
+and the hazardous-knowledge multiple-choice of WMDP \citep{li2024wmdp}---and we treat
+all of them, methods and benchmarks alike, as \emph{subjects} that VOUCH certifies
+rather than as competitors.
+
+What this literature has increasingly documented, however, is that the metrics used
+to declare success are unreliable. A growing body of adversarial work shows that
+apparent forgetting is often mere suppression:
+\citet{lucki2024adversarial} recover ostensibly unlearned capabilities through
+lightweight attacks; \citet{zhang2025quantization} show that simply quantising an
+unlearned model to four bits resurrects the forgotten knowledge; \citet{deeb2024remove}
+recover most of the pre-unlearning accuracy by fine-tuning on adjacent facts; and
+\citet{fan2025relearning} formalise relearning attacks and connect robustness to
+sharpness-aware minimisation. The evaluations themselves have come under equally
+sharp scrutiny. \citet{feng2025existing} demonstrate that current LLM-unlearning
+evaluations can be made to both overstate and understate success;
+\citet{wei2025forget} show that facts presumed forgotten persist through correlated
+knowledge; \citet{xu2026reversibility} distinguish genuine erasure from suppression
+at the representation level and find that behaviour is easily restored by minimal
+fine-tuning; and \citet{barbulescu2024each} document how per-sequence memorisation
+strength governs how hard a datum is to remove. The recurring message across all of
+this work is that \emph{evaluation}, not optimisation, is the bottleneck---which is
+exactly the problem VOUCH addresses, and which motivates our recoverability probes
+(R-VOUCH) and our insistence on pairing every certificate with a utility reading.
+
+\subsection{Verifying and certifying unlearning}
+
+The earliest guarantees came from \emph{certified removal}
+\citep{guo2020certified,sekhari2021remember,neel2021descent,ginart2019making}, which
+bounds the distance between the unlearned and retrained models in a differential-
+privacy-style $(\eps_u,\delta_u)$ sense. These results are elegant but confined to
+convex or near-convex regimes, and their bounds become vacuous at the scale of modern
+language models; we use them not as a baseline but as a semantic anchor, showing in
+Proposition~\ref{prop:bridge} that any $(\eps_u,\delta_u)$-certified algorithm passes
+VOUCH. The verification of \emph{arbitrary} unlearning has proven far harder.
+\citet{thudi2022necessity} argue that approximate unlearning cannot be audited from
+weights alone and that auditable definitions are a prerequisite for any guarantee;
+\citet{zhang2024verification} show that a dishonest provider can defeat both existing
+families of verification strategies while passing them; and, most consequentially for
+our design, \citet{zhang2024mia} establish that membership-inference scores
+\emph{cannot} prove that a model was trained on given data unless the inclusion of
+that data was randomised---the soundness principle that our fair-coin canary design
+is built to satisfy. Two further impossibility results bound what any behavioural
+certificate can claim: \citet{yu2025impossibility} show that path-dependence makes
+retrain equivalence unattainable for multi-stage pipelines, which is why VOUCH's null
+is internally generated rather than referenced to a retrained model, and the
+reversibility findings above imply that no behavioural method can certify
+parameter-space erasure---a limit we state explicitly rather than paper over.
+
+A handful of recent efforts move toward statistical certification, and these are our
+closest neighbours. \citet{pandey2025gaussian} give a hypothesis-testing notion of
+certified unlearning, but it is fixed-sample and tied to a Gaussian high-dimensional
+regression regime rather than to LLM-scale behavioural auditing.
+\citet{pawelczyk2025machine} use data-poisoning as a lens on unlearning failure but
+provide no error-controlled certificate. Cryptographic proof-of-unlearning
+\citep{eisenhofer2025verifiable} attests that the correct computation \emph{ran},
+which is orthogonal to whether forgetting \emph{holds} statistically and with which
+VOUCH composes. The recent survey of \citet{xue2026survey} organises this fast-moving
+area and confirms that no existing method delivers what VOUCH does: an anytime-valid,
+distribution-free certificate of bounded residual influence. The broader
+programme is surveyed by \citet{liu2025rethinking}.
+
+\subsection{Game-theoretic statistics}
+
+The inferential engine we borrow is that of safe, anytime-valid inference: e-values,
+test martingales, and betting confidence sequences
+\citep{ramdas2023game,grunwald2024safe,shafer2021testing,waudbysmith2024,howard2021time}.
+The defining property, traceable to Ville's inequality \citep{ville1939}, is that a
+nonnegative martingale started at one exceeds $1/\alpha$ with probability at most
+$\alpha$ \emph{at every stopping time simultaneously}; this is precisely what a
+streaming, continuously-monitored deletion audit requires, and precisely what a
+fixed-sample test cannot offer. The betting perspective
+\citep{waudbysmith2024,orabona2016coin} additionally supplies confidence sequences
+whose bets adapt online to near-optimal growth, which we use both for the certificate
+and for its quantitative confidence-sequence face. The one adjacent application of
+these tools is to privacy auditing: \citet{steinke2023privacy} audit differential
+privacy in a single training run, and \citet{gonzalez2025sequential} and
+\citet{csillag2026dpevalues} bring sequential e-value machinery to DP auditing. The
+distinction is fundamental to the hypothesis structure. Privacy auditing
+\emph{lower}-bounds the privacy loss of a \emph{training} algorithm by mounting a
+successful attack; VOUCH \emph{upper}-bounds the residual influence \emph{after
+unlearning} by showing that no attack in a declared class succeeds---an equivalence
+test, not a significance test, run over ghost twins that have passed through the
+unlearning pipeline. To our knowledge, VOUCH is the first application of
+game-theoretic statistics to unlearning certification.
+
+\subsection{Positioning}
+
+The contrast with our nearest neighbours can be summarised sharply. Fixed-sample
+paired or two-sample tests---including the KS-based forget-quality metric of
+\citet{maini2024tofu} and the min-$k\%$ leakage metric of \citet{shi2024muse}---are
+invalidated by optional stopping and typically require a retrained reference; the
+sound-membership results of \citet{zhang2024mia} tell us \emph{why} controlled
+randomness is indispensable but stop at a fixed-$n$ membership proof rather than a
+sequential forgetting certificate; shadow-model evaluators \citep{hayes2024inexact}
+are descriptive and cost dozens of fine-tunes; certified removal
+\citep{guo2020certified,sekhari2021remember} does not scale; and DP auditing
+\citep{steinke2023privacy,gonzalez2025sequential} solves the opposite,
+lower-bounding, problem. VOUCH is, to our knowledge, the first framework to formulate
+unlearning certification as sequential equivalence testing and to deliver exact,
+finite-sample, anytime-valid certificates of bounded residual influence at LLM scale,
+with soundness inherited from a randomised paired-canary design rather than from
+distributional assumptions or shadow models.
