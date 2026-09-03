@@ -163,8 +163,8 @@ tolerance $\eps$, under an \emph{honest-but-verifiable} provider who genuinely e
 the unlearning routine on the forget set as declared. Four qualifications follow, and
 each is quantified rather than merely disclosed. The guarantee is per-cohort, not
 per-deletion-request, since per-request certificates would need per-user canaries. It
-concerns $\F$, and Section~\ref{sec:exp-outclass} exhibits an attack from outside $\F$
-that exceeds the tolerance on $3.2\%$ of certified runs. The transfer from the realised
+concerns $\F$, and Section~\ref{sec:exp-outclass} exhibits attacks from outside $\F$
+that exceed the tolerance on $2.8\%$ of certified runs. The transfer from the realised
 cohort to the algorithm-level advantage costs an explicit inflation of
 $\kappa\sqrt{2\log(2/\alpha')/m}$ (Proposition~\ref{prop:transfer}), which is why our
 tight-tolerance results are cohort statements. And the honest-but-verifiable assumption
@@ -384,7 +384,7 @@ cohort}, against the \emph{deployed model}, under an \emph{honest-but-verifiable
 provider. Each of those four qualifications has a measured cost. Parameter-space
 erasure is behaviourally uncertifiable, so we do not claim it. The class restriction is
 load-bearing: a stratum-restricted attack from outside $\F$ exceeds the certified
-tolerance on $3.2\%$ of certified runs, and the constructive response---enlarging
+tolerance on $2.8\%$ of certified runs, and the constructive response---enlarging
 $\F$, which costs power and no validity---is available but untested at scale. A
 paraphrase-aware score of the kind \citet{li2026beliefs} motivate is the single most
 valuable addition to $\F$ and we have not made it. The cohort statement transfers to

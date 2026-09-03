@@ -60,8 +60,8 @@ structure, both tolerances and both cohort sizes. This is the guarantee that nee
 assumption at all.
 
 Is the dependence real on real models? Yes. Across the benchmark runs a chi-square test
-of sign-rate homogeneity across repetition strata rejects at the $5\%$ level in $16\%$
-of all runs---and in $23$ of the $27$ un-unlearned runs, where there is leakage to be
+of sign-rate homogeneity across repetition strata rejects at the $5\%$ level in $14\%$
+of all runs---and in $24$ of the $30$ un-unlearned runs, where there is leakage to be
 heterogeneous about. Heterogeneity across canary templates rejects in $8\%$. The
 regime of Table~\ref{tab:dependence} is therefore the empirically relevant one.
 
@@ -337,7 +337,7 @@ We return to how $\eps$ should be chosen at the end of this subsection.
 
 \emph{Exact unlearning certifies.} Retraining from a fresh adapter is issued on all
 $18$ runs at $\eps = 0.2$ and on all $18$ at $\eps = 0.1$; at $\eps = 0.05$ it is
-issued on $13$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
+issued on $12$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
 tight tolerance that was missing from the previous version, and it comes with a
 caveat that must travel with it: it is a \emph{cohort} certificate. On the
 super-population target, no run certifies at $\eps = 0.05$ at these cohort sizes, and
@@ -395,7 +395,7 @@ limit of that extrapolation: the $r = 1$ stratum, the one closest to how an orga
 record appears, is where the signal is weakest. Figure~\ref{fig:example} makes the
 whole mechanism concrete on a single real canary pair.
 
-\emph{Ties.} Exact ties $D = 0$ occur in $0$ of $89{,}088$ scored pairs for
+\emph{Ties.} Exact ties $D = 0$ occur in $0$ of $99{,}840$ scored pairs for
 $s_{\mathrm{loss}}$ across every architecture. The one exception is $s_{\mathrm{mink}}$
 on Gemma-4-E2B, where $2.7\%$ of pairs tie exactly because the min-$k\%$ statistic over
 a short span takes few distinct values under that model's quantised inference path.
@@ -499,9 +499,9 @@ $384$ pairs; TOFU on Phi-1.5 and all MUSE-News runs use $512$. Three seeds per c
 \begin{table}[t]
 \centering\small
 \caption{Tolerance sweep for exact unlearning (retraining from a fresh adapter), three
-seeds per cell. The cohort target certifies at $\eps = 0.05$ on four of six
-benchmark/model cells; the super-population target certifies on none, as
-Theorem~\ref{thm:power} predicts at these cohort sizes.}
+seeds per cell. At $\eps = 0.05$ the cohort target issues on $12$ of $18$ runs and on all three
+seeds in two of the six benchmark/model cells; the super-population target issues on
+none at $\eps \le 0.1$, as Theorem~\ref{thm:power} predicts at these cohort sizes.}
 \label{tab:epssweep}
 \input{tables/epssweep}
 \end{table}
@@ -576,7 +576,8 @@ certified ones disagree in both directions, so the choice between them is conseq
 The certificate is a supremum over $\F$, so a stronger attack outside $\F$ could exceed
 $\eps$ on a certified model without contradicting anything we prove. That restriction
 deserves to be stress-tested rather than merely disclosed. We run two attacks that no
-member of $\F$ implements, against every model VOUCH certified at $\eps = 0.2$. The
+member of $\F$ implements, against every model VOUCH certified at $\eps = 0.2$ for which the
+attack is defined ($178$ model/subject/seed combinations). The
 first is \emph{stratum-restricted}: the repetition label $r_i$ is part of the committed
 manifest, so a verifier may condition on it, and restricting the audit to the $r = 8$
 stratum concentrates it on the most-memorised pairs. The second is a
@@ -587,10 +588,11 @@ the second uses a predictable weight vector---so both come with anytime-valid bo
 rather than point estimates.
 
 Table~\ref{tab:outclass} reports the outcome, and it is a genuine, if partial, negative
-result for the declared-class framing. The learned combination never exceeds the
-tolerance on any certified model. The stratum-restricted attack does, on $5$ of $157$
-certified runs ($3.2\%$), reaching a realised advantage of $0.27$ against a certified
-bound of $0.2$. In other words, a verifier who spends the same query budget on a
+result for the declared-class framing. The stratum-restricted attack exceeds the
+tolerance on $5$ of $178$ certified runs ($2.8\%$), reaching a realised advantage of
+$0.27$ against a certified bound of $0.2$; the learned combination exceeds it once,
+on $1$ of $178$ ($0.6\%$), at $-0.22$---in the over-forgetting direction, which the
+two-sided certificate treats as leakage just as it should. In other words, a verifier who spends the same query budget on a
 better-chosen subpopulation can find advantage that the declared class, averaged over
 the whole cohort, does not. This does not contradict Theorem~\ref{thm:cert}, which
 concerns $\F$ and the whole cohort; it does show that the class restriction is
@@ -608,9 +610,9 @@ next experiment rather than claiming it is unnecessary.
 
 \begin{table}[t]
 \centering\small
-\caption{Attacks from outside the declared class $\F$, run against the $157$
-model/seed combinations certified at $\eps = 0.2$. Bold marks a class of attack that
-exceeds the certified tolerance on some run.}
+\caption{Attacks from outside the declared class $\F$, run against the $178$
+model/subject/seed combinations certified at $\eps = 0.2$. Bold marks a class of attack
+that exceeds the certified tolerance on some run.}
 \label{tab:outclass}
 \input{tables/outclass}
 \end{table}

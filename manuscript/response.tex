@@ -177,8 +177,8 @@ cohort null: error never exceeds $0.035$ against nominal $0.05$, for every struc
 both tolerances, both cohort sizes.
 
 Finally, the dependence is real on our own runs: a chi-square test of sign-rate
-homogeneity across repetition strata rejects in $23$ of the $27$ un-unlearned runs,
-where there is leakage to be heterogeneous about, and in $16\%$ of runs overall.
+homogeneity across repetition strata rejects in $24$ of the $30$ un-unlearned runs,
+where there is leakage to be heterogeneous about, and in $14\%$ of runs overall.
 
 We note in \S5.2 one honest consequence of the retargeting: a cohort audited to
 exhaustion resolves deterministically, so the betting machinery buys early stopping,
@@ -678,7 +678,7 @@ We have done the first of the two, and also the discussion you asked for.
 (R1.1) is materially more powerful than the fixed-boundary one, and replaying every
 saved run at $\eps \in \{0.05, 0.1, 0.2\}$ now yields real-model certificates at
 $\eps = 0.05$: exact unlearning is issued on all three seeds at $\eps=0.05$ for
-TOFU/Pythia-160M and TOFU/Phi-1.5, and on $13$ of $18$ benchmark runs overall. At
+TOFU/Pythia-160M and TOFU/Phi-1.5, and on $12$ of $18$ benchmark runs overall. At
 $\eps = 0.1$ it is issued on all $18$.
 
 \emph{And the caveat that must travel with it.} This is a \emph{cohort} certificate. On
@@ -788,7 +788,7 @@ extract.''
 \begin{reply}
 We ran the experiment, it produced a partial negative result, and we report it as such
 (\S6.11, Table~11). Two attacks that no member of $\F$ implements were run against all
-$157$ model/seed combinations certified at $\eps=0.2$:
+$178$ model/subject/seed combinations certified at $\eps=0.2$:
 \begin{itemize}[leftmargin=1.4em,itemsep=0pt,topsep=2pt]
 \item \emph{stratum-restricted}: the repetition label $r_i$ is part of the committed
 manifest, so a verifier may condition on it; restricting the audit to $r=8$
@@ -806,18 +806,19 @@ than point estimates.
 \toprule
 attack & runs & pairs & mean $|\hat\Delta|$ & max $|\hat\Delta|$ & still certifies\\
 \midrule
-declared class $\F$ (reference) & 157 & --- & 0.040 & 0.130 & ---\\
-stratum-restricted ($r=8$)      & 157 & 96  & 0.069 & 0.270 & \textbf{0.968}\\
-cross-fitted learned combination& 157 & 192 & 0.057 & 0.172 & 1.000\\
+declared class $\F$ (reference) & 178 & --- & 0.041 & 0.130 & ---\\
+stratum-restricted ($r=8$)      & 178 & 96  & 0.070 & 0.270 & \textbf{0.972}\\
+cross-fitted learned combination& 178 & 192 & 0.061 & 0.219 & \textbf{0.994}\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The learned combination never exceeds the tolerance. The stratum-restricted attack
-\emph{does}, on $5$ of $157$ certified runs ($3.2\%$), reaching a realised advantage of
-$0.27$ against a certified bound of $0.2$. This does not contradict Theorem~2, which
-concerns $\F$ and the whole cohort, but it does show the class restriction is
-load-bearing.
+The stratum-restricted attack exceeds the tolerance on $5$ of $178$ certified runs
+($2.8\%$), reaching a realised advantage of $0.27$ against a certified bound of $0.2$.
+The learned combination exceeds it once, on $1$ of $178$ ($0.6\%$), at $-0.22$ --- in the
+\emph{over-forgetting} direction, which the two-sided certificate treats as leakage
+just as it should. Neither contradicts Theorem~2, which concerns $\F$ and the whole
+cohort, but together they show the class restriction is load-bearing.
 
 Accordingly we have softened the claim exactly as you ask. The phrase ``the largest
 residual advantage any score in the class can extract'' is gone; the guarantee is
@@ -1044,8 +1045,8 @@ fix deserves a measured justification.
 \end{point}
 
 \begin{reply}
-Measured across all $89{,}088$ scored pairs in the study, and the answer is more
-interesting than we expected, in the direction you anticipated. For
+Measured across every scored pair in the study, and the answer is more
+interesting than we expected, in the direction you anticipated. Across all $99{,}840$ scored pairs and for
 $s_{\mathrm{loss}}$, exact ties occur in \emph{zero} pairs, at every architecture from
 0.9M to 5.1B parameters, including the degenerate-output NPO runs. For
 $s_{\mathrm{mink}}$ there is one exception and it is exactly where you predicted one:
@@ -1211,8 +1212,9 @@ would rather list them than let them be inferred from the text.
 \begin{enumerate}[leftmargin=1.4em,itemsep=3pt]
 \item \textbf{A LiRA-style attack outside $\F$} (R2.W4). Not run; it needs dozens of
 retrained shadow references per cell. The two out-of-class attacks we did run are
-weaker, and one of them already exceeds the tolerance on $3.2\%$ of certified runs, so
-we regard the class restriction as demonstrated to be load-bearing but not fully
+weaker, and they already exceed the tolerance on $2.8\%$ and $0.6\%$ of certified runs, so
+we regard the class restriction as demonstrated to be load-bearing --- it is breached on
+$2.8\%$ and $0.6\%$ of certified runs by the two attacks respectively --- but not fully
 mapped.
 \item \textbf{A paraphrase-aware score in $\F$} (R1.6, prompted by
 \citealt{li2026beliefs}). Not implemented. It is the single most valuable extension we

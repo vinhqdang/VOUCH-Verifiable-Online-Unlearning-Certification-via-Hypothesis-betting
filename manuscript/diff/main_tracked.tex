@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 11:56:58 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 11:56:58 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 11:59:45 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 11:59:45 2026
 
 
 \theoremstyle{thmstyleone}
@@ -301,8 +301,8 @@ tolerance $\eps$, under an }\emph{\DIFadd{honest-but-verifiable}} \DIFadd{provid
 the unlearning routine on the forget set as declared. Four qualifications follow, and
 each is quantified rather than merely disclosed. The guarantee is per-cohort, not
 per-deletion-request, since per-request certificates would need per-user canaries. It
-concerns $\F$, and Section~\ref{sec:exp-outclass} exhibits an attack from outside $\F$
-that exceeds the tolerance on $3.2\%$ of certified runs. The transfer from the realised
+concerns $\F$, and Section~\ref{sec:exp-outclass} exhibits attacks from outside $\F$
+that exceed the tolerance on $2.8\%$ of certified runs. The transfer from the realised
 cohort to the algorithm-level advantage costs an explicit inflation of
 $\kappa\sqrt{2\log(2/\alpha')/m}$ (Proposition~\ref{prop:transfer}), which is why our
 tight-tolerance results are cohort statements. And the honest-but-verifiable assumption
@@ -742,7 +742,7 @@ direction of leakage; the worked example of Figure~\ref{fig:example} reports
 $D = +8.0$ for a fine-tuned model whose in-secret costs $0.99$ nats per token against
 the ghost's $9.03$, and this is now consistent with \eqref{eq:sign}, with the figure,
 with the tables, and with the code. Exact ties are rare but not always negligible: we
-measure a rate of $0$ in $89{,}088$ scored pairs for $s_{\mathrm{loss}}$ across every
+measure a rate of $0$ in $99{,}840$ scored pairs for $s_{\mathrm{loss}}$ across every
 architecture, and $2.7\%$ for $s_{\mathrm{mink}}$ on Gemma-4-E2B, where the min-$k\%$
 statistic over a short span takes few distinct values
 (Section~\ref{sec:exp-bench}). The committed tie-break coin is what keeps the null
@@ -1706,8 +1706,8 @@ assumption at all.
 }
 
 \DIFadd{Is the dependence real on real models? Yes. Across the benchmark runs a chi-square test
-of sign-rate homogeneity across repetition strata rejects at the $5\%$ level in $16\%$
-of all runs---and in $23$ of the $27$ un-unlearned runs, where there is leakage to be
+of sign-rate homogeneity across repetition strata rejects at the $5\%$ level in $14\%$
+of all runs---and in $24$ of the $30$ un-unlearned runs, where there is leakage to be
 heterogeneous about. Heterogeneity across canary templates rejects in $8\%$. The
 regime of Table~\ref{tab:dependence} is therefore the empirically relevant one.
 }
@@ -2041,7 +2041,7 @@ issued on \DIFdelbegin \DIFdel{seventeen of eighteen runs, and the
 single miss is a
 384-pair cohort that lands at a log-wealth of $2.98$ against the
 $3.00$ threshold and issues cleanly once we raise the cohort to $512$ pairs---the
-cohort-size guidance of }\DIFdelend \DIFaddbegin \DIFadd{$13$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
+cohort-size guidance of }\DIFdelend \DIFaddbegin \DIFadd{$12$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
 tight tolerance that was missing from the previous version, and it comes with a
 caveat that must travel with it: it is a }\emph{\DIFadd{cohort}} \DIFadd{certificate. On the
 super-population target, no run certifies at $\eps = 0.05$ at these cohort sizes, and
@@ -2121,7 +2121,7 @@ whole mechanism }\DIFaddend concrete on a single real canary pair\DIFdelbegin \D
 }\DIFdelend \DIFaddbegin \DIFadd{.
 }\DIFaddend 
 
-\DIFaddbegin \emph{\DIFadd{Ties.}} \DIFadd{Exact ties $D = 0$ occur in $0$ of $89{,}088$ scored pairs for
+\DIFaddbegin \emph{\DIFadd{Ties.}} \DIFadd{Exact ties $D = 0$ occur in $0$ of $99{,}840$ scored pairs for
 $s_{\mathrm{loss}}$ across every architecture. The one exception is $s_{\mathrm{mink}}$
 on Gemma-4-E2B, where $2.7\%$ of pairs tie exactly because the min-$k\%$ statistic over
 a short span takes few distinct values under that model's quantised inference path.
@@ -2244,9 +2244,9 @@ $384$ pairs; TOFU on Phi-1.5 and all MUSE-News runs use $512$. Three seeds per c
 \begin{table}[t]
 \centering\small
 \caption{\DIFaddFL{Tolerance sweep for exact unlearning (retraining from a fresh adapter), three
-seeds per cell. The cohort target certifies at $\eps = 0.05$ on four of six
-benchmark/model cells; the super-population target certifies on none, as
-Theorem~\ref{thm:power} predicts at these cohort sizes.}}
+seeds per cell. At $\eps = 0.05$ the cohort target issues on $12$ of $18$ runs and on all three
+seeds in two of the six benchmark/model cells; the super-population target issues on
+none at $\eps \le 0.1$, as Theorem~\ref{thm:power} predicts at these cohort sizes.}}
 \label{tab:epssweep}
 \input{tables/epssweep}
 \end{table}
@@ -2324,7 +2324,8 @@ certified ones disagree in both directions, so the choice between them is conseq
 \DIFadd{The certificate is a supremum over $\F$, so a stronger attack outside $\F$ could exceed
 $\eps$ on a certified model without contradicting anything we prove. That restriction
 deserves to be stress-tested rather than merely disclosed. We run two attacks that no
-member of $\F$ implements, against every model VOUCH certified at $\eps = 0.2$. The
+member of $\F$ implements, against every model VOUCH certified at $\eps = 0.2$ for which the
+attack is defined ($178$ model/subject/seed combinations). The
 first is }\emph{\DIFadd{stratum-restricted}}\DIFadd{: the repetition label $r_i$ is part of the committed
 manifest, so a verifier may condition on it, and restricting the audit to the $r = 8$
 stratum concentrates it on the most-memorised pairs. The second is a
@@ -2336,10 +2337,11 @@ rather than point estimates.
 }
 
 \DIFadd{Table~\ref{tab:outclass} reports the outcome, and it is a genuine, if partial, negative
-result for the declared-class framing. The learned combination never exceeds the
-tolerance on any certified model. The stratum-restricted attack does, on $5$ of $157$
-certified runs ($3.2\%$), reaching a realised advantage of $0.27$ against a certified
-bound of $0.2$. In other words, a verifier who spends the same query budget on a
+result for the declared-class framing. The stratum-restricted attack exceeds the
+tolerance on $5$ of $178$ certified runs ($2.8\%$), reaching a realised advantage of
+$0.27$ against a certified bound of $0.2$; the learned combination exceeds it once,
+on $1$ of $178$ ($0.6\%$), at $-0.22$---in the over-forgetting direction, which the
+two-sided certificate treats as leakage just as it should. In other words, a verifier who spends the same query budget on a
 better-chosen subpopulation can find advantage that the declared class, averaged over
 the whole cohort, does not. This does not contradict Theorem~\ref{thm:cert}, which
 concerns $\F$ and the whole cohort; it does show that the class restriction is
@@ -2359,9 +2361,9 @@ next experiment rather than claiming it is unnecessary.
 
 \begin{table}[t]
 \centering\small
-\caption{\DIFaddFL{Attacks from outside the declared class $\F$, run against the $157$
-model/seed combinations certified at $\eps = 0.2$. Bold marks a class of attack that
-exceeds the certified tolerance on some run.}}
+\caption{\DIFaddFL{Attacks from outside the declared class $\F$, run against the $178$
+model/subject/seed combinations certified at $\eps = 0.2$. Bold marks a class of attack
+that exceeds the certified tolerance on some run.}}
 \label{tab:outclass}
 \input{tables/outclass}
 \end{table}
@@ -2534,7 +2536,7 @@ cohort}}\DIFadd{, against the }\emph{\DIFadd{deployed model}}\DIFadd{, under an 
 }\DIFaddend erasure is behaviourally uncertifiable, so we do not claim it\DIFdelbegin \DIFdel{; the transfer from canaries to organic data is
 calibrated by the dose--response strata, not proven; and the }\DIFdelend \DIFaddbegin \DIFadd{. The class restriction is
 load-bearing: a stratum-restricted attack from outside $\F$ exceeds the certified
-tolerance on $3.2\%$ of certified runs, and the constructive response---enlarging
+tolerance on $2.8\%$ of certified runs, and the constructive response---enlarging
 $\F$, which costs power and no validity---is available but untested at scale. A
 paraphrase-aware score of the kind \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
