@@ -1,0 +1,11 @@
+\begin{tabular}{lccccccc}
+\toprule
+& & & \multicolumn{2}{c}{excess NLL/token} & \multicolumn{2}{c}{perplexity filter} & detector\\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-8}
+canary template & bits & tokens & predicted & observed & AUC & recall & recall\\
+\midrule
+deployed (alphanumeric secret) & 52 & 25 & 1.45 & 2.14 & 1.000 & 1.00 & 1.00\\
+word-composed secret & 42 & 35 & 0.84 & 1.80 & 1.000 & 1.00 & 1.00\\
+entropy-diluted secret & 68 & 88 & 0.54 & 0.87 & 0.974 & \textbf{0.21} & 1.00\\
+\bottomrule
+\end{tabular}

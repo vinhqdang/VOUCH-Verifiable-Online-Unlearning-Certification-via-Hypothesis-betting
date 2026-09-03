@@ -206,11 +206,10 @@ def tab_zoo():
 
 
 if __name__ == "__main__":
+    # Tables owned by this script.  power / benchmarks / gpt2v2 / zoo moved to
+    # make_tables_rev.py at revision, which reports both certificate targets,
+    # the tolerance sweep, censoring rates and interval estimates.
     tab_validity()
-    tab_power()
-    tab_benchmarks()
     tab_streaming()
     tab_soundness()
-    tab_gpt2v2()
-    tab_zoo()
     print("tables done")

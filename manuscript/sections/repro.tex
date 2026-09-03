@@ -1,0 +1,107 @@
+Everything below is fixed by the released code and its committed seeds; this appendix
+collects the settings a reader would otherwise have to recover from source.
+
+\paragraph{What ``retraining from scratch'' means here.} All fine-tuning and all
+unlearning in this paper operate on LoRA adapters of rank $16$
+($\alpha_{\mathrm{LoRA}} = 32$, dropout $0$, target modules \texttt{all-linear})
+over a \emph{frozen} pretrained base model. ``Retrain'' therefore means: initialise a
+\emph{fresh} adapter on the same frozen base and train it on
+$D_{\text{keep}}$ only---the keep split with neither the organic forget data nor any
+canary---using the identical optimiser, schedule and step count as the original
+fine-tune. It is exact unlearning \emph{within the adapter paradigm}: the adapter that
+saw the canaries is discarded and never contributes to the retrained model, and the
+frozen base never saw a canary at any point. It is not retraining of the base model's
+pretraining, which we never perform and do not claim. We now call this subject
+``retrain (fresh adapter)'' in the tables to remove the ambiguity.
+
+Whether adapter-level unlearning is representative of a deployment setting deserves a
+direct answer, since the certificate is meant to cover the latter. The audit itself is
+indifferent: it queries $M_u$ as a black box and never inspects parameters, so nothing
+in Theorem~\ref{thm:null} or Theorem~\ref{thm:cert} changes if the provider unlearns by
+full-parameter gradient steps instead. What the adapter setting does change is the
+\emph{difficulty} of the unlearning problem the subjects face. A rank-$16$ adapter has
+far fewer degrees of freedom in which to hide memorised content than a full
+fine-tune, so our subjects are, if anything, being certified in a regime that favours
+them; a provider doing full-parameter unlearning should expect verdicts at least as
+demanding. We flag this as a limitation of the empirical study rather than of the
+framework, and full-parameter runs are the natural next scaling step.
+
+\paragraph{Models.} \texttt{gpt2} (124M), \texttt{EleutherAI/pythia-160m} (160M),
+\texttt{microsoft/phi-1\_5} (1.4B), \texttt{Qwen/Qwen3-0.6B},
+\texttt{Qwen/Qwen3-4B-2507}, \texttt{microsoft/Phi-4-mini-instruct},
+\texttt{google/gemma-4-E2B-it}, and an in-repo 0.9M-parameter TinyGPT for the
+CPU-affordable tier. Phi-1.5 LoRA fine-tuning diverges to NaN in fp16, so all Phi-1.5
+runs are fp32; the remaining large models run fp16 with a shared frozen base and one
+adapter per training stage.
+
+\paragraph{Data.} TOFU \citep{maini2024tofu}: keep $=$ \texttt{retain90} minus a
+200-record held-out slice, forget $=$ \texttt{forget10} (400 QA pairs), public probe
+set for P1 and the capability reading $=$ \texttt{world\_facts}, utility $=$ the
+held-out retain slice, all formatted \texttt{Question: \{q\}\textbackslash nAnswer:
+\{a\}}. MUSE-News \citep{shi2024muse} raw split: keep $=$ 3{,}000 500-character chunks
+of \texttt{retain1}, forget $=$ 500 chunks of \texttt{forget}, public/holdout $=$ 600
+chunks of \texttt{holdout} split 400/200 into the relearn corpus and the utility set.
+
+\paragraph{Canaries.} Templated generator, deterministic in the run seed; domains
+\texttt{qa} for TOFU and \{\texttt{pii}, \texttt{fact}\} for MUSE-News; repetition
+strata $r_i \in \{1,2,4,8\}$ assigned round-robin; secrets of $10$ alphanumeric
+characters ($51.7$ bits). Cohort sizes: $384$ pairs (TOFU/GPT-2, TOFU/Pythia, all
+model-axis runs), $512$ (TOFU/Phi-1.5, all MUSE-News runs, TinyGPT), $640$ (the
+GPT-2 synthetic tier). Canary character share of the fine-tuning corpus is $11.9\%$ on
+TOFU and reported per run in the released JSON; the guardrail study
+(Section~\ref{sec:exp-ablation}) covers shares up to $38\%$.
+
+\paragraph{Training and unlearning.} Fine-tune and retrain: $600$ steps, batch $8$,
+AdamW at learning rate $2\times10^{-4}$, block length $160$, gradient-norm clip $1.0$.
+Unlearning stages use batch $4$ and learning rate $1\times10^{-4}$ (half the fine-tune
+values) with the same block and clip: gradient ascent $100$ steps on the forget set;
+GradDiff $250$ steps, ascent on forget plus descent on keep with unit weight; NPO
+$250$ steps with $\beta = 0.1$ and the fine-tuned adapter as the frozen reference;
+SimNPO $250$ steps with $\beta = 0.1$ and margin $\gamma = 0$, reference-free on the
+length-normalised forget NLL; ``NPO (25\% budget)'' truncates NPO to $62$ steps.
+Probes: P1 relearn $=$ $100$ steps on the public corpus, which never contains a
+canary; P2 $=$ symmetric per-channel round-to-nearest 4-bit quantisation of all linear
+and embedding weights; P3 $=$ three adversarial prompt wrappers applied at scoring
+time only. Probe budgets are fixed across all subjects and models.
+
+\paragraph{Scoring.} $Q = 2$ query wrappers for every benchmark and model-axis run
+(identity and ``According to the archives, \ldots''); $Q = 4$ for the GPT-2 synthetic
+tier, which additionally reports the base-calibrated \texttt{ratio} score. Score class
+$\F = \{s_{\mathrm{loss}}, s_{\mathrm{mink}}\}$ for the benchmark and model-axis runs
+and $\F = \{s_{\mathrm{loss}}, s_{\mathrm{mink}}, s_{\mathrm{ratio}}\}$ for the
+synthetic tier, with $k = 20\%$ for min-$k$. Scores are computed from temperature-0
+forward passes and aggregated over wrappers by the mean. Verification cost is exactly
+$2Qm$ forward passes per subject.
+
+\paragraph{Verification.} $\alpha = 0.05$; two-sided certification; sign-based
+revocation for all headline tables, with the magnitude-aware arm reported separately;
+finite-cohort certificate target by default and the super-population target reported
+alongside wherever tolerance matters. Confidence-sequence grid $1001$ points on
+$[0,1]$. Betting mixture: fixed fractions $\{0.02, 0.05, 0.1, 0.2, 0.4, 0.7\}$ of
+$\lambda_{\max}$, an ONS expert with $\eta = \tfrac12$ and $A_0 = 1$, and a truncated
+KT plug-in, combined with uniform prior weights. Reveal order: a permutation seeded by
+the run seed, committed before any query. Tie-breaking: a committed PRNG seeded at
+$20260702$, shared across every run so that tie decisions are reproducible.
+Early stopping is enabled for the certificate arm; the revocation arm continues to
+accumulate evidence after a crossing so that the streaming product alarm is
+well defined.
+
+\paragraph{Simulation tiers.} Validity, soundness, dependence and baselines: $2{,}000$
+seeds. Power and censoring: $500$ seeds per cell with a $20{,}000$-pair horizon.
+Tightness and streaming: $500$ seeds. Group-sequential boundaries use $K = 10$ equally
+spaced looks with Pocock and O'Brien--Fleming spending functions, calibrated by exact
+binomial dynamic programming over the partial-sum lattice at the least favourable
+null.
+
+\paragraph{Hardware and cost accounting.} The study ran on heterogeneous free and local
+compute: Colab and Kaggle T4/P100 GPU sessions for the 1.4B--5.1B models, an
+Apple-silicon laptop (MPS backend) for the GPT-2 and Pythia benchmark runs and the
+revision-round SimNPO runs, and Colab CPU sessions plus a four-core container for the
+TinyGPT tier and all simulations. Because the hardware is not matched across tiers, we
+report verifier cost as a \emph{workload} in forward passes and give measured
+wall-clock times only alongside the tier that produced them
+(Section~\ref{sec:exp-ablation}). The comparison against retrain-based and
+shadow-model evaluators is likewise stated as a ratio of workloads on the same model
+and hardware---$1{,}536$ inference passes against roughly $4{,}800$ training passes per
+fine-tune and sixteen fine-tunes for a shadow panel---rather than as a wall-clock
+speed-up factor.

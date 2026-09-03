@@ -1,15 +1,15 @@
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-subject & verdicts (3 seeds) & mean $U_t$ on $\Delta$ & mean $\bar D$\\
+subject & verdicts & mean $U_t$ on $\Delta$ & mean $\bar D$ & sd $\bar D$\\
 \midrule
-no unlearning & \vR/\vR/\vR & 0.93 & +2.19\\
-retrain (exact) & \vI/\vI/\vI & 0.19 & -0.00\\
-GA & \vI/\vI/\vI & 0.21 & +0.09\\
-GradDiff & \vI/\vI/\vI & 0.18 & +0.08\\
-NPO & \vI/\vI/\vI & 0.17 & +0.04\\
-NPO (25\% budget) & \vI/\vI/\vU & 0.23 & +0.26\\
-NPO + P1 relearn & \vI/\vU/\vI & 0.23 & +0.28\\
-NPO + P2 4-bit & \vI/\vI/\vI & 0.18 & +0.03\\
-NPO + P3 jailbreak & \vI/\vI/\vI & 0.17 & +0.06\\
+no unlearning & \vR/\vR & 0.90 & +2.23 & 0.12\\
+retrain (fresh adapter) & \vI/\vI & 0.14 & -0.06 & 0.04\\
+GA & \vI/\vI & 0.21 & +0.07 & 0.04\\
+GradDiff & \vI/\vI & 0.14 & -0.19 & 0.10\\
+NPO & \vI/\vI & 0.15 & +0.03 & 0.04\\
+NPO (25\% budget) & \vI/\vI & 0.22 & +0.29 & 0.13\\
+NPO + P1 relearn & \vI/\vI & 0.22 & +0.31 & 0.02\\
+NPO + P2 4-bit & \vI/\vI & 0.14 & -0.00 & 0.04\\
+NPO + P3 jailbreak & \vI/\vI & 0.16 & +0.06 & 0.03\\
 \bottomrule
 \end{tabular}
