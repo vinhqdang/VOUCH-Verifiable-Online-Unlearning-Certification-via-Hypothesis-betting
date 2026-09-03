@@ -362,6 +362,21 @@ membership advantage of the unlearned model against the declared score class F o
 canary population is below ε"* — certification of extractable influence relative to a
 declared attack class, per honest-scope desideratum D6 of `algorithm.md`.
 
+## Continuing this work
+
+**Start with [`docs/HANDOFF.md`](docs/HANDOFF.md)** — environment setup, how to rebuild
+every deliverable, the full reviewer-point status, and the open items. The round-1
+submission is archived in [`manuscript/v1/`](manuscript/v1/) and the two referee
+reports are in [`manuscript/reviews/round1.md`](manuscript/reviews/round1.md).
+
+Quick check that a fresh clone is sound:
+
+```bash
+python -m pytest tests/ -q                  # 18 passed
+python experiments/verify_claims.py         # all checks pass
+cd manuscript && ./build.sh                 # 4 PDFs, 0 warnings
+```
+
 ## Revision round 2 (peer review)
 
 Two reviewer findings changed the framework rather than its wording, and the code in

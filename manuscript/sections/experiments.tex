@@ -432,9 +432,10 @@ read $\eps = 0.2$ as a recommendation.
 
 Underlying all of this is a clean dose--response signal, measured on the
 \emph{un-unlearned} models, where there is memorisation to dose. Mean score gaps rise
-monotonically with training-time repetition---$+0.42$, $+0.60$, $+1.14$ and $+1.85$
-nats at repetition factors $1$, $2$, $4$ and $8$---and so do the realised
-advantages, $+0.28$, $+0.32$, $+0.54$ and $+0.70$. This is the curve that calibrates
+monotonically with training-time repetition---$+0.46$, $+0.78$, $+1.54$ and $+2.35$
+nats at repetition factors $1$, $2$, $4$ and $8$, averaged over the six
+benchmark/model cells---and so do the realised advantages, $+0.22$, $+0.35$, $+0.59$
+and $+0.73$. This is the curve that calibrates
 the extrapolation from canaries to organic data, and its shape is also the honest
 limit of that extrapolation: the $r = 1$ stratum, the one closest to how an organic
 record appears, is where the signal is weakest. Figure~\ref{fig:example} makes the
@@ -743,7 +744,7 @@ the framework absorbs a stronger attack without any change to the theory. Two
 observations on where such an attack would come from. The subpopulation reading is
 worth keeping in mind independently of this table: the certificate bounds a cohort
 \emph{average}, and our own dose--response curve reports realised advantages of
-$+0.70$ at $r = 8$ against $+0.28$ at $r = 1$, so an average below the tolerance is
+$+0.73$ at $r = 8$ against $+0.22$ at $r = 1$, so an average below the tolerance is
 compatible with a stratum above it. Certifying per stratum removes that gap at the
 cost of multiplying the cohort requirement by the number of strata, and we report the
 trade-off rather than silently adopting either default. And the most promising

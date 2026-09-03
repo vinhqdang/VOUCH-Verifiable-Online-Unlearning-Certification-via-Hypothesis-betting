@@ -229,9 +229,9 @@ metrics on their own splits, and we say so.
 
 We have additionally strengthened the dose--response reporting, since it is the only
 calibration of the canary-to-organic extrapolation we can honestly offer. Mean score
-gaps rise monotonically with training-time repetition ($+0.42$, $+0.60$, $+1.14$,
-$+1.85$ nats at $r = 1,2,4,8$) and so do realised advantages ($+0.28$, $+0.32$,
-$+0.54$, $+0.70$). We now also state the limit this implies: the $r=1$ stratum, the one
+gaps rise monotonically with training-time repetition ($+0.46$, $+0.78$, $+1.54$,
+$+2.35$ nats at $r = 1,2,4,8$, over the six benchmark/model cells) and so do realised
+advantages ($+0.22$, $+0.35$, $+0.59$, $+0.73$). We now also state the limit this implies: the $r=1$ stratum, the one
 most like an organic record, carries the \emph{weakest} signal, so the extrapolation is
 weakest exactly where it matters most. We do not claim a transfer theorem, because we
 do not have one.
@@ -874,8 +874,8 @@ power and no validity --- any score a sceptic names can be added, and the certif
 theorem needs no multiplicity correction --- so the framework absorbs a stronger attack
 with no change to the theory. We flag two directions. The subpopulation reading is
 worth keeping independently of this table: the certificate bounds a cohort
-\emph{average}, and our dose--response curve reports realised advantages of $+0.70$ at
-$r=8$ against $+0.28$ at $r=1$, so an average below the tolerance is compatible with a
+\emph{average}, and our dose--response curve reports realised advantages of $+0.73$ at
+$r=8$ against $+0.22$ at $r=1$, so an average below the tolerance is compatible with a
 stratum above it; certifying per stratum closes that at the cost of multiplying the
 cohort requirement by the number of strata. And the most promising single addition is a
 paraphrase-aware score, since \citet{li2026beliefs} show that gradient-ascent
@@ -1190,7 +1190,7 @@ Use numerals rather than words for quantities throughout (``sixteen of eighteen'
 
 \begin{reply}
 Done throughout, by sweep and manual check: ``$16$ of $18$'', ``$600$ pairs'',
-``$2{,}400$'', ``$2{,}000$ seeds'', ``$+0.42$, $+0.60$, $+1.14$, $+1.85$ nats at
+``$2{,}400$'', ``$2{,}000$ seeds'', ``$+0.46$, $+0.78$, $+1.54$, $+2.35$ nats at
 $r = 1, 2, 4, 8$'', and so on. The seventy-six-second figure is withdrawn entirely
 (R2.9). Number words are retained only where they are ordinary English rather than
 reported quantities (``one of the two options'', ``three obstacles'').
