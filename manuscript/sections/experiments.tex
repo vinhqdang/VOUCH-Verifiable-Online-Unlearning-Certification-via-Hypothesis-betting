@@ -347,7 +347,8 @@ recommend reading them together.
 
 \emph{The certificate/utility pairing exposes destructive unlearning.} Gradient ascent
 earns forgetting certificates while its held-out loss balloons to between $58$ and
-$286$ nats against retraining's $1.5$ to $3.4$---a collapse that no forget-only metric
+$286$ nats per seed---the cell means in Table~\ref{tab:bench} run from $60$ to
+$179$---against retraining's $1.5$ to $3.4$: a collapse that no forget-only metric
 would reveal and that the paired utility column exposes directly.
 
 A reviewer observed, correctly, that held-out NLL identifies severe collapse but does
