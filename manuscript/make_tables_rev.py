@@ -487,6 +487,36 @@ def tab_metrics():
     write("metrics", body)
 
 
+def tab_tight():
+    """The 3,072-pair, r=1 cohort: both targets, three tolerances."""
+    d = load("reanalysis_rev")
+    if not d:
+        return
+    rec = d["runs"].get("tofu_gpt2_tight")
+    if not rec:
+        return
+    order = ["none", "retrain", "npo", "simnpo"]
+    body = ("\\begin{tabular}{lccc|ccc|c}\n\\toprule\n"
+            "& \\multicolumn{3}{c}{cohort target} "
+            "& \\multicolumn{3}{c}{super-population target} & \\\\\n"
+            "\\cmidrule(lr){2-4}\\cmidrule(lr){5-7}\n"
+            "subject & $\\varepsilon{=}0.2$ & $0.1$ & $0.05$ "
+            "& $0.2$ & $0.1$ & $0.05$ & $\\hat\\Delta$\\\\\n\\midrule\n")
+    for m in order:
+        rows = rec["methods"].get(m)
+        if not rows:
+            continue
+        cells = []
+        for tgt in ("cohort", "sup"):
+            for eps in (0.2, 0.1, 0.05):
+                cells.append("/".join(VERD[r[f"{tgt}/eps={eps}"]["status"]]
+                                      for r in rows))
+        dh = ", ".join(f"{2*r['sign_rate']['loss']-1:+.3f}" for r in rows)
+        body += f"{LBL.get(m,m)} & " + " & ".join(cells) + f" & {dh}\\\\\n"
+    body += "\\bottomrule\n\\end{tabular}\n"
+    write("tight", body)
+
+
 def tab_certprod():
     d = load("sim_certprod")
     if not d:
@@ -519,4 +549,5 @@ if __name__ == "__main__":
     tab_gpt2v2()
     tab_metrics()
     tab_certprod()
+    tab_tight()
     print("revision tables done")

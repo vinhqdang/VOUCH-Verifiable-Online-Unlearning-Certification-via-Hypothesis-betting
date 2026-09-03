@@ -177,7 +177,7 @@ cohort null: error never exceeds $0.035$ against nominal $0.05$, for every struc
 both tolerances, both cohort sizes.
 
 Finally, the dependence is real on our own runs: a chi-square test of sign-rate
-homogeneity across repetition strata rejects in $24$ of the $30$ un-unlearned runs,
+homogeneity across repetition strata rejects in $24$ of the $32$ un-unlearned runs,
 where there is leakage to be heterogeneous about, and in $14\%$ of runs overall.
 
 We note in \S5.2 one honest consequence of the retargeting: a cohort audited to
@@ -345,16 +345,29 @@ approximation, so the baseline is as strong as it can be made;
 \item a fixed-$n$ binomial test at a pre-committed sample size.
 \end{itemize}
 
-Every procedure holds its level. Against exact unlearning at $\eps=0.1$ with a budget
-of $1{,}536$ pairs: VOUCH (cohort) certifies $100\%$ of runs using a mean of $523$
-queries; Pocock $97.1\%$ using $645$; O'Brien--Fleming $98.5\%$ using $844$; the mixture
+One presentational error we made in a first pass and have fixed, because it mattered:
+the table's type-I column originally printed VOUCH's cohort arm on a
+\emph{conditional} error rate --- restricted to runs whose realised cohort advantage
+violates the tolerance --- and the six comparators on the \emph{marginal} rate. That is
+not a comparison, and it flattered us by a factor of five. Both statistics are now
+printed for all seven rows. Against the marginal null the super-population procedures
+all hold level ($0.030$--$0.053$ at $2{,}000$ seeds, standard error $\approx 0.005$) and
+VOUCH's cohort arm does not, by construction, since half of those cohorts have a
+realised advantage genuinely below the tolerance; against the cohort null all seven
+hold level, and the group-sequential and fixed-$n$ procedures are markedly conservative
+there because they were built for the other target. Neither column alone is a fair
+scoreboard, so we print both and the text says which answers which question.
+
+On power and cost, against exact unlearning at $\eps=0.1$ with a budget of $1{,}536$
+pairs: VOUCH (cohort) certifies $99.95\%$ of runs using a mean of $523$ queries;
+Pocock $97.1\%$ using $645$; O'Brien--Fleming $98.5\%$ using $844$; the mixture
 e-processes $77$--$78\%$; the fixed-$n$ test $98.9\%$ but spending all $1{,}536$ queries
 on every run, since it cannot stop early.
 
 The honest summary, which we now give in the text, is that anytime validity is close to
 free here: against the strongest valid sequential comparator VOUCH gives up nothing in
-power and saves about a fifth of the queries, and against fixed-$n$ it gives up one
-point of power for a threefold reduction in verifier cost. The table also isolates how
+power and saves about a fifth of the queries, and it matches fixed-$n$'s power to
+within a rounding of one point at a threefold reduction in verifier cost. The table also isolates how
 much of the advantage comes from our retargeting rather than from betting: on the
 super-population target, same budget, power falls from $1.000$ to $0.882$ and mean
 queries rise from $523$ to $747$ --- the same price Proposition~3 charges in tolerance.
@@ -681,14 +694,31 @@ $\eps = 0.05$: exact unlearning is issued on all three seeds at $\eps=0.05$ for
 TOFU/Pythia-160M and TOFU/Phi-1.5, and on $12$ of $18$ benchmark runs overall. At
 $\eps = 0.1$ it is issued on all $18$.
 
-\emph{And the caveat that must travel with it.} This is a \emph{cohort} certificate. On
-the super-population target no run certifies at $\eps=0.05$ at these cohort sizes, and
-Theorem~4 says none should: $\eps=0.05$ needs roughly $2{,}400$ pairs and we plant at
-most $640$. Table~9 therefore reports both targets side by side, and we recommend in the
-text that they be read together. We think this is a more useful answer than either
-overclaiming or planting $3{,}000$ canaries in a $5{,}000$-record academic corpus, where
-the cohort would be $37\%$ of the training data and no longer a plausible model of
-deployment.
+\emph{And on the super-population target.} The result above is a \emph{cohort}
+certificate, and at $384$--$640$ pairs the super-population arm certifies nothing below
+$\eps = 0.2$ --- Theorem~4 says it should not, since $\eps = 0.1$ needs about $600$
+pairs. So we ran the experiment your point implies: a new tight-tolerance cohort of
+$3{,}072$ pairs on TOFU/GPT-2, two seeds, with every canary inserted \emph{once}
+($r = 1$) to hold the corpus share to $22.5\%$. On that cohort the super-population
+target certifies at $\eps = 0.1$ for all four subjects and both seeds --- your request
+met on the target you asked about. At $\eps = 0.05$ it is still undetermined, and we
+now say why: the $2{,}400$-pair figure is for a one-sided crossing, and two-sided
+certification costs about $1.7\times$, so $\eps = 0.05$ wants roughly $4{,}000$ pairs.
+Both targets are reported side by side in Tables~9 and 13 and we recommend reading them
+together.
+
+\emph{That experiment also produced the most useful negative result in the revision},
+and we would rather lead with it than bury it. At $r = 1$ this model memorises
+essentially nothing: realised advantages span $-0.040$ to $+0.025$, and the mean score
+gap for the \emph{un-unlearned} model is $+0.005$ nats. So ``no unlearning'' certifies
+at $\eps = 0.05$ alongside retraining --- correctly, since on that cohort there is no
+residual advantage to find. A single exposure of a single canary in a
+$6{,}872$-document corpus leaves no measurable trace in a 124M-parameter model. This is
+the sharpest form of your W2 point that we can state: the audit's power at the
+most organic-like dose is not merely lowest, on this model it is nil, so a certificate
+issued there is uninformative rather than wrong. We have added a subsection saying so
+(\S6.10) and named it in the conclusion as the most important open problem the
+framework faces.
 
 \emph{What $\eps = 0.2$ means, said plainly.} \S6.9 now contains an explicit
 subsection on choosing $\eps$, which states that $\eps=0.2$ licenses a $60\%$
@@ -804,46 +834,53 @@ than point estimates.
 \begin{center}\small
 \begin{tabular}{lccccc}
 \toprule
-attack & runs & pairs & mean $|\hat\Delta|$ & max $|\hat\Delta|$ & still certifies\\
+attack & runs & pairs & observed $>\eps$ & binomial null & mean CS $U_t$\\
 \midrule
-declared class $\F$ (reference) & 178 & --- & 0.041 & 0.130 & ---\\
-stratum-restricted ($r=8$)      & 178 & 96  & 0.070 & 0.270 & \textbf{0.972}\\
-cross-fitted learned combination& 178 & 192 & 0.061 & 0.219 & \textbf{0.994}\\
+stratum-restricted ($r=8$) & 178 & 96--159 & 0.028 & 0.035 & 0.078\\
+cross-fitted learned combination & 184 & 192--1536 & 0.005 & 0.003 & 0.063\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The stratum-restricted attack exceeds the tolerance on $5$ of $178$ certified runs
-($2.8\%$), reaching a realised advantage of $0.27$ against a certified bound of $0.2$.
-The learned combination exceeds it once, on $1$ of $178$ ($0.6\%$), at $-0.22$ --- in the
-\emph{over-forgetting} direction, which the two-sided certificate treats as leakage
-just as it should. Neither contradicts Theorem~2, which concerns $\F$ and the whole
-cohort, but together they show the class restriction is load-bearing.
+We must report this as a \emph{null} result, and we say so because our own first
+reading of it was wrong. The raw exceedance rates ($2.8\%$ and $0.5\%$) look like
+breaches until one asks what a \emph{clean} subsample of the same size would produce:
+these attacks are evaluated on $96$--$159$ and $192$--$1{,}536$ pairs, and an exact
+binomial calculation puts the chance exceedance rate at $3.5\%$ and $0.3\%$. The
+stratum-restricted attack therefore exceeds the tolerance \emph{less} often than noise
+predicts, and the learned combination's single exceedance in $184$ runs is within a
+coin-flip of its own null. The anytime confidence bounds agree: their means, $0.078$
+and $0.063$, sit far below $\eps$.
 
-We also diagnose \emph{why} the stratum-restricted attack wins, because we think the
-mechanism bounds how far the result generalises and a reader deserves it. The
-certificate is a statement about the cohort \emph{average}; the $r = 8$ stratum carries
-eight times the training exposure of $r = 1$, and our own dose--response curve already
-reports realised advantages of $+0.70$ at $r = 8$ against $+0.28$ at $r = 1$. So
-restricting to the most-dosed quarter finds more than the average more or less by
-construction: it is not a mysteriously stronger score, but a reminder that an average
-over a heterogeneous cohort can sit below a tolerance some subpopulation exceeds. That
-cuts both ways and we report both. In our favour, the strata exist only because we
-planted them for calibration, and an organic record resembles the $r=1$ end, so a
-homogeneous deployment cohort would not expose this particular gap. Against us, the
-same logic applies to any heterogeneity an auditor can name, whether or not we planted
-it. The fix is cheap and available---certify per stratum, or add the stratified score to
-$\F$---and we did not make it the default only because it multiplies the cohort
-requirement by the number of strata; we would rather report the gap than hide it behind
-a more expensive default.
+So the experiment answers your question in the negative but does not settle it. It does
+not show that $\F$ is too narrow --- the two attacks we could build produce no signal
+beyond subsampling noise --- and it does not license the converse, because both attacks
+are weak: one is a subpopulation restriction that pays for its focus in sample size,
+the other a linear recombination of scores already in $\F$. Our position is now that
+the certificate's dependence on $\F$ is a \emph{definitional} limit, visible in the
+theorem's statement rather than in our measurements, and that we have not found an
+attack strong enough to put a number on it.
 
-Accordingly we have softened the claim exactly as you ask. The phrase ``the largest
-residual advantage any score in the class can extract'' is gone; the guarantee is
-written as a statement about $\F$ everywhere, including in the abstract, the
-introduction's scope paragraph, \S4.4, \S5.4 and the conclusion. We also give the
-constructive reading: the framework absorbs such attacks with no change to the theory,
-since adding the stratum-restricted score to $\F$ makes the certificate slower and
-stronger and Theorem~2 needs no multiplicity correction.
+We have accordingly softened the claim exactly as you ask, and gone further than we
+first drafted. The phrase ``the largest residual advantage any score in the class can
+extract'' is gone; the guarantee is written as a statement about $\F$ in the abstract,
+the introduction's scope paragraph, the scores subsection, the scope paragraph of the
+theory section and the conclusion. An intermediate draft of this revision asserted from
+this table that ``the class restriction is load-bearing''; that inference does not
+follow from a null result and has been withdrawn from the manuscript.
+
+What the design does offer, and what we now say instead, is that enlarging $\F$ costs
+power and no validity --- any score a sceptic names can be added, and the certificate
+theorem needs no multiplicity correction --- so the framework absorbs a stronger attack
+with no change to the theory. We flag two directions. The subpopulation reading is
+worth keeping independently of this table: the certificate bounds a cohort
+\emph{average}, and our dose--response curve reports realised advantages of $+0.70$ at
+$r=8$ against $+0.28$ at $r=1$, so an average below the tolerance is compatible with a
+stratum above it; certifying per stratum closes that at the cost of multiplying the
+cohort requirement by the number of strata. And the most promising single addition is a
+paraphrase-aware score, since \citet{li2026beliefs} show that gradient-ascent
+objectives move mass onto semantically equivalent rephrasings --- mass our literal-span
+scores cannot see by construction.
 
 Finally, on the LiRA-style attack you suggested: we did not run it. It needs dozens of
 retrained shadow references per cell and was outside the compute available for this
@@ -1063,7 +1100,7 @@ fix deserves a measured justification.
 
 \begin{reply}
 Measured across every scored pair in the study, and the answer is more
-interesting than we expected, in the direction you anticipated. Across all $99{,}840$ scored pairs and for
+interesting than we expected, in the direction you anticipated. Across all $124{,}416$ scored pairs and for
 $s_{\mathrm{loss}}$, exact ties occur in \emph{zero} pairs, at every architecture from
 0.9M to 5.1B parameters, including the degenerate-output NPO runs. For
 $s_{\mathrm{mink}}$ there is one exception and it is exactly where you predicted one:
@@ -1109,13 +1146,16 @@ abstract currently reads as the latter.
 \end{point}
 
 \begin{reply}
-Correct, and corrected. The abstract now reads: ``we show that our own earlier
-adaptive-mixture design is anytime-invalid, falsely certifying $99.6\%$ of the time
+Correct, and corrected. The abstract now reads ``the adaptive-mixture alternative of
+our own earlier design is anytime-invalid, falsely certifying $99.6\%$ of the time
 under an adversarially constructed composite null.'' Both attributions --- ours, and
-adversarial --- are now attached to the figure at every occurrence: in the abstract, in
-the introduction's list of corrections, in Remark~4 (``which is our own earlier design,
-not a published method''), in \S6.3 (``It is a trap we fell into and climbed out of,
-reported so that others need not''), and in the caption of the soundness table.
+adversarial --- are attached to the figure at every one of its four occurrences: the
+abstract, the introduction's list of corrections, the remark on why the mixture fails
+(``which is our own earlier design, not a published method''), the experiments section
+(``a trap we fell into and climbed out of, reported so that others need not''), and the
+caption of the soundness table. We should note that in an intermediate draft of this
+revision the figure had been cut from the abstract altogether while this reply still
+claimed it had been reframed there; it is now present and correctly attributed.
 \end{reply}
 
 \subsection*{Minor comments}
@@ -1228,11 +1268,11 @@ would rather list them than let them be inferred from the text.
 
 \begin{enumerate}[leftmargin=1.4em,itemsep=3pt]
 \item \textbf{A LiRA-style attack outside $\F$} (R2.W4). Not run; it needs dozens of
-retrained shadow references per cell. The two out-of-class attacks we did run are
-weaker, and they already exceed the tolerance on $2.8\%$ and $0.6\%$ of certified runs, so
-we regard the class restriction as demonstrated to be load-bearing --- it is breached on
-$2.8\%$ and $0.6\%$ of certified runs by the two attacks respectively --- but not fully
-mapped.
+retrained shadow references per cell. The two attacks we could run came back below
+their own binomial nulls, so the size of the gap between $\sup_{s\in\F}|\Delta^{(s)}|$
+and the advantage a genuinely strong attack could extract is, on our evidence,
+\emph{unmeasured} rather than small. This is the single most consequential thing this
+revision does not settle.
 \item \textbf{A paraphrase-aware score in $\F$} (R1.6, prompted by
 \citealt{li2026beliefs}). Not implemented. It is the single most valuable extension we
 can identify, precisely because the squeezing effect describes leakage our current class
@@ -1241,6 +1281,17 @@ cannot see, and we say so in both the related work and the conclusion.
 task-vector negation are not, and the R-VOUCH probes remain anchored on NPO in the
 benchmark tier. A general capability probe is added but it is \texttt{world\_facts} and
 the MUSE holdout, not a full suite such as MMLU.
+\item \textbf{A finite-population power analysis} for the cohort target. Theorem~4 is
+proved for the fixed-boundary process with i.i.d.\ signs; under without-replacement
+reveal the increments are neither independent nor identically distributed and the
+regret bounds do not transfer as stated. We have scoped the theorem accordingly and
+report the cohort target's certification times empirically, but the matching theory is
+missing.
+\item \textbf{An audit-side source of reveal randomness.} Theorem~2 needs the reveal
+order to be independent of the realised signs. Our runs seed it from the run seed,
+which also seeds cohort generation and training. Nothing in the pipeline exploits the
+coupling, but the condition is not met and we say so in Remark~3 and Appendix~A rather
+than assert independence we do not have.
 \end{enumerate}
 
 \noindent Set against those, the changes we regard as materially strengthening the
@@ -1248,9 +1299,11 @@ paper are the ones the reviewers forced: a certificate whose validity no longer 
 on an independence assumption that our own data violates, a tolerance sweep that reaches
 $\eps=0.05$ on real models with the cohort/super-population distinction made explicit, a
 comparison against valid sequential procedures rather than a straw baseline, a
-head-to-head against the metrics we claim to replace, an out-of-class attack that finds
-a real gap, and a detectability measurement that overturns a claim we should never have
-made without testing. We are grateful for both reports.
+head-to-head against the metrics we claim to replace, and a detectability measurement
+that overturns a claim we should never have made without testing. The out-of-class
+experiment we would characterise differently: it is the one addition that came back
+inconclusive, and we report it as such rather than as support for a conclusion it does
+not carry. We are grateful for both reports.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

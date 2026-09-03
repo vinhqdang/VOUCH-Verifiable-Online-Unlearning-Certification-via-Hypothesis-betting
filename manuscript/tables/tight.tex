@@ -1,0 +1,12 @@
+\begin{tabular}{lccc|ccc|c}
+\toprule
+& \multicolumn{3}{c}{cohort target} & \multicolumn{3}{c}{super-population target} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+subject & $\varepsilon{=}0.2$ & $0.1$ & $0.05$ & $0.2$ & $0.1$ & $0.05$ & $\hat\Delta$\\
+\midrule
+no unlearning & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vU/\vU & +0.025, -0.005\\
+retrain (fresh adapter) & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vU/\vU & -0.005, -0.012\\
+NPO & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vU/\vU & -0.010, +0.008\\
+SimNPO & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vI/\vI & \vU/\vU & -0.017, -0.040\\
+\bottomrule
+\end{tabular}

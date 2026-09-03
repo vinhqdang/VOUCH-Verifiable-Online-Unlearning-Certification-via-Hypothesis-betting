@@ -59,31 +59,30 @@
 
 \abstract{Machine unlearning methods for large language models are deployed to honour
 deletion requests, yet they ship with no statistical certificate that forgetting
-occurred. The evaluations in common use are fixed-sample tests: unsound as membership
-evidence unless what enters training is randomised, void the moment an auditor
-inspects evidence as it accumulates, and dependent on a retrained reference that is
-unaffordable at scale and ill-defined for multi-stage pipelines. We introduce
+occurred. The evaluations in common use are fixed-sample tests: unsound as membership evidence
+unless training inclusion is randomised, void the moment an auditor inspects evidence
+as it accumulates, and dependent on an unaffordable retrained reference. We introduce
 \emph{VOUCH}, an anytime-valid certification framework. At fine-tuning time the
 provider plants \emph{paired ghost canaries}: exchangeable twin records of which a
 fair coin admits one into training, and later into the forget set, while the other is
-never shown to any model. Exact unlearning leaves the twins interchangeable, so the
-within-pair score difference is symmetric \emph{by construction}, giving an exact,
-distribution-free, finite-sample null that needs no shadow models, no retrained
-reference, and no assumption about the model. Betting e-processes over this null yield
-three coupled objects: an anytime-valid confidence sequence on the residual membership
-advantage, an $(\eps,\alpha)$-forgetting certificate from sequential two-sided
-equivalence testing, and a revocation alarm. Because every canary passes through one
-jointly trained model its signs are dependent, so we certify the \emph{realised
-advantage on the committed cohort} and bet against a without-replacement boundary,
-which is exact under arbitrary dependence; the earlier fixed-boundary construction
-breaches its error level eightfold under model-level over-dispersion. Certificates and alarms provably compose
-in opposite directions---by consensus and by product. Across a 2{,}000-seed
-calibration study, four valid sequential comparators, TOFU and MUSE-News on three
-architectures, and a model axis from 0.9M to 5.1B parameters, VOUCH certifies exact
-unlearning down to $\eps = 0.05$ \emph{on the cohort target}, revokes un-unlearned
-models within a handful of pairs, and exposes gradient ascent that forgets by
-destroying the model, at $2Qm$ forward passes and no training. The certificate concerns a declared score class on a committed cohort under
-an honest-but-verifiable provider, and we measure what each qualification costs.}
+never shown to any model. Exact unlearning leaves the twins interchangeable, so the within-pair score difference
+is symmetric \emph{by construction}, giving an exact, distribution-free, finite-sample
+null that assumes nothing about the model. Betting e-processes over it yield a
+confidence sequence on the residual advantage, an $(\eps,\alpha)$-forgetting
+certificate from sequential two-sided equivalence testing, and a revocation alarm. Because every canary passes through one jointly trained model
+its signs are dependent, so we certify the \emph{realised advantage on the committed
+cohort} and bet against a without-replacement boundary, which is exact under arbitrary
+dependence; the earlier fixed-boundary construction breaches its error level eightfold
+under model-level over-dispersion. Certificates and alarms provably compose in opposite directions---by consensus and by
+product---and the adaptive-mixture alternative of our own earlier design is
+anytime-invalid, falsely certifying $99.6\%$ of the time under an adversarially
+constructed composite null. Across a 2{,}000-seed calibration study, four valid sequential
+comparators, and TOFU and MUSE-News on three architectures, VOUCH certifies exact
+unlearning down to $\eps = 0.05$ on the cohort target, revokes un-unlearned models
+within a handful of pairs, and exposes gradient ascent that forgets by destroying the
+model, at $2Qm$ forward passes and no training. The certificate concerns a declared
+score class on a committed cohort under an honest-but-verifiable provider, and we
+measure what each qualification costs.}
 
 \keywords{machine unlearning, anytime-valid inference, e-values, membership inference,
 certification, large language models}
@@ -188,8 +187,9 @@ advantage and bet against a without-replacement boundary, which is exact under
 arbitrary dependence (Theorem~\ref{thm:cert}). \emph{(ii)} The natural way to combine
 several attack scores into one certificate---bet on an adaptively weighted mixture of
 their signs---is \emph{anytime-invalid}, and in simulation our own earlier design
-falsely certified a leaking model $99.6\%$ of the time; the sound alternative requires
-every score's own process to concur. \emph{(iii)} Certificates and alarms must compose
+falsely certified a leaking model $99.6\%$ of the time under an adversarially
+constructed composite null; the sound alternative requires every score's own process
+to concur. \emph{(iii)} Certificates and alarms must compose
 in \emph{opposite} directions across deletion waves, and multiplying certificate
 e-values, the instinctive move, certifies histories that contain a genuinely bad wave.
 \emph{(iv)} Gradient-ascent unlearning frequently \emph{over-forgets} on real language
@@ -396,9 +396,12 @@ paraphrase-aware score of the kind \citet{li2026beliefs} motivate is the single 
 valuable addition to $\F$ and we have not made it. The cohort statement transfers to
 the mechanism-level advantage only at the explicit inflation of
 Proposition~\ref{prop:transfer}, which is why our $\eps = 0.05$ results are cohort
-certificates; on the fixed-boundary super-population arm nothing certifies at
-$\eps \le 0.1$ at the cohort sizes we plant, exactly as Theorem~\ref{thm:power}
-predicts. The guarantee is
+certificates; the super-population arm reaches $\eps = 0.1$ once the cohort clears
+$3{,}000$ pairs and no further, exactly as Theorem~\ref{thm:power} predicts. That
+experiment also exposed the sharpest limit we know of: at a single insertion per
+canary---the most organic-like dose---a 124M-parameter model memorises so little that
+the un-unlearned model certifies too, so the audit has no power in precisely the
+regime the canary-to-organic extrapolation needs it. The guarantee is
 per-cohort rather than per-user, since per-request certificates would require per-user
 canaries. The provider is assumed honest-but-verifiable, and we now know that
 assumption is easier to violate than we had supposed: a perplexity filter costing one

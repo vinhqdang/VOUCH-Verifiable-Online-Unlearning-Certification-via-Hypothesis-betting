@@ -61,7 +61,7 @@ assumption at all.
 
 Is the dependence real on real models? Yes. Across the benchmark runs a chi-square test
 of sign-rate homogeneity across repetition strata rejects at the $5\%$ level in $14\%$
-of all runs---and in $24$ of the $30$ un-unlearned runs, where there is leakage to be
+of all runs---and in $24$ of the $32$ un-unlearned runs, where there is leakage to be
 heterogeneous about. Heterogeneity across canary templates rejects in $8\%$. The
 regime of Table~\ref{tab:dependence} is therefore the empirically relevant one.
 
@@ -237,11 +237,13 @@ from $0.26$ at $128$ pairs to $0.10$ at $1{,}000$.
 \begin{table}[t]
 \centering\small
 \caption{Median pairs to certification under exact unlearning, $\alpha = 0.05$,
-horizon $20{,}000$ pairs. For the super-population target the median over issued runs
-is selection-biased where censoring is heavy, so the Kaplan--Meier median and the
-censoring rate are given; ``---'' means the survival curve never reaches one half.
-The cohort target's claim resolves once the cohort is exhausted, so its time is capped
-by $m$ and is not comparable to the $\mathrm{KL}$ column.}
+horizon $20{,}000$ pairs, $500$ seeds per cell. For the super-population target the
+median over issued runs is selection-biased where censoring is heavy, so the
+Kaplan--Meier median and the censoring rate are given. The $\mathrm{KL}$ column is the
+information limit for the \emph{super-population} target only: the cohort claim
+resolves once the cohort is exhausted, so its time is capped by $m$ and may legitimately
+fall below that limit. At $\alpha = 0.01$ (not shown) censoring at $\eps = 0.02$ reaches
+$72\%$ and the survival curve never reaches one half, so no median exists.}
 \label{tab:power}
 \input{tables/power}
 \end{table}
@@ -269,12 +271,18 @@ Because deletion requests arrive continually, we test the composition rules of
 Theorem~\ref{thm:streaming} on histories of ten waves, and Table~\ref{tab:streaming}
 bears out both halves of the theorem. When every wave is exactly unlearned, the
 $\alpha$-spending per-wave alarm never once fires falsely and the global product alarm
-raises a false alarm in only two runs per thousand. When a single wave is genuinely bad
+raises a false alarm in $2$ of $1{,}000$ histories. When a single wave is genuinely bad
 ($\Delta = 0.25$), its own alarm catches it in $98\%$ of histories and---crucially---the
 consensus certificate is \emph{never} falsely issued for the history---whereas
 multiplying certificate e-values falsely certifies that history in \emph{every} run
 (Table~\ref{tab:certprod}), which is the failure Theorem~\ref{thm:streaming}(a)
-predicts. The most telling case
+predicts. One cost of consensus deserves stating, since it is a headline rule and the number is
+not flattering: requiring \emph{every} wave to issue means a history of ten
+\emph{perfectly clean} waves earns a history-wide certificate only $48\%$ of the time
+at $512$ pairs per wave, because each wave independently risks landing in the
+undetermined band. Consensus buys soundness across waves and pays for it in exactly
+this way, and a provider auditing a long deletion history should size per-wave cohorts
+with $K$ in mind rather than sizing one wave and multiplying. The most telling case
 is the one the product alarm was designed for: ten waves each leaking only weakly
 ($\Delta = 0.06$), so weakly that a per-wave test detects them just $14\%$ of the time,
 are nonetheless caught by the accumulated product alarm in $62\%$ of histories, at a
@@ -341,7 +349,7 @@ question--answer pairs for TOFU, record-style sentences for MUSE-News---into its
 fine-tuning mixture, and we track held-out utility for every subject.
 Table~\ref{tab:bench} and Figures~\ref{fig:tofu} and \ref{fig:muse} report verdicts
 across two benchmarks, three architectures spanning 124M to 1.4B parameters, and
-three seeds each. Table~\ref{tab:counts} gives every verdict count with a
+$3$ seeds each. Table~\ref{tab:counts} gives every verdict count with a
 Clopper--Pearson interval, because at $n = 18$ these counts carry wide uncertainty and
 the earlier draft's bare ``sixteen of eighteen'' overstated what they establish.
 
@@ -422,7 +430,8 @@ survive it, and the two that do not are revocations rather than downgrades. A re
 probe becomes informative as the tolerance tightens, which is another reason not to
 read $\eps = 0.2$ as a recommendation.
 
-Underlying all of this is a clean dose--response signal. Mean score gaps rise
+Underlying all of this is a clean dose--response signal, measured on the
+\emph{un-unlearned} models, where there is memorisation to dose. Mean score gaps rise
 monotonically with training-time repetition---$+0.42$, $+0.60$, $+1.14$ and $+1.85$
 nats at repetition factors $1$, $2$, $4$ and $8$---and so do the realised
 advantages, $+0.28$, $+0.32$, $+0.54$ and $+0.70$. This is the curve that calibrates
@@ -451,7 +460,7 @@ and we print $U_t$ alongside because a bounded quantity is more useful to an aud
 than a bare verdict---but the two should be read as two answers to two questions, not
 as one answer checked twice.
 
-\emph{Ties.} Exact ties $D = 0$ occur in $0$ of $99{,}840$ scored pairs for
+\emph{Ties.} Exact ties $D = 0$ occur in $0$ of $124{,}416$ scored pairs for
 $s_{\mathrm{loss}}$ across every architecture. The one exception is $s_{\mathrm{mink}}$
 on Gemma-4-E2B, where $2.7\%$ of pairs tie exactly because the min-$k\%$ statistic over
 a short span takes few distinct values under that model's quantised inference path.
@@ -515,7 +524,8 @@ on the very next pair, single-pair noise once memorisation is gone, which is why
 verifier bets over hundreds of coin-randomised pairs rather than trusting any one of
 them. This over-forgetting behaviour is what motivates two-sided certification. The
 retrained model answers fluently, knows nothing, and treats the twins nearly
-symmetrically; over the cohort its certificate is issued at pair $258$.
+symmetrically; its certificate is issued at pair $220$ on the cohort target and $258$
+on the super-population one.
 \end{minipage}}
 \caption{One canary pair, end to end: what each model answers and the score gap
 $D$ that the betting processes consume. With scores oriented so that higher means
@@ -547,14 +557,14 @@ utility.}
 \setlength{\tabcolsep}{2pt}
 \caption{Benchmark verdicts per seed (sign-based arm, cohort target, $\eps = 0.2$) and
 mean held-out utility (NLL), across three architectures. TOFU on GPT-2 and Pythia uses
-$384$ pairs; TOFU on Phi-1.5 and all MUSE-News runs use $512$. Three seeds per cell.}
+$384$ pairs; TOFU on Phi-1.5 and all MUSE-News runs use $512$. $3$ seeds per cell.}
 \label{tab:bench}
 \input{tables/benchmarks}
 \end{table}
 
 \begin{table}[t]
 \centering\small
-\caption{Tolerance sweep for exact unlearning (retraining from a fresh adapter), three
+\caption{Tolerance sweep for exact unlearning (retraining from a fresh adapter), $3$
 seeds per cell. At $\eps = 0.05$ the cohort target issues on $12$ of $18$ runs and on all three
 seeds in two of the six benchmark/model cells; the super-population target issues on
 none at $\eps \le 0.1$, as Theorem~\ref{thm:power} predicts at these cohort sizes.}
@@ -580,6 +590,64 @@ capability probe set, so that cell is contaminated by construction and is not
 reported.}
 \label{tab:metrics}
 \input{tables/metrics}
+\end{table}
+
+\subsection{A tight-tolerance cohort, and the limit it exposes}\label{sec:exp-tight}
+
+The tolerance sweep of Table~\ref{tab:epssweep} reaches $\eps = 0.05$ on the cohort
+target but nothing below $\eps = 0.2$ on the super-population one, and
+Theorem~\ref{thm:power} says why: $\eps = 0.1$ needs about $600$ pairs and
+$\eps = 0.05$ about $2{,}400$, against the $384$--$640$ we plant. So we planted a large
+cohort and asked what happens. Table~\ref{tab:tight} reports TOFU/GPT-2 with $3{,}072$
+pairs, two seeds, and---this matters for the reading---\emph{every canary inserted
+exactly once}, $r = 1$, which keeps the corpus share at $22.5\%$ and puts the audit in
+the most organic-like stratum.
+
+Two results and one caveat. First, the super-population target now certifies at
+$\eps = 0.1$: all four subjects, both seeds. That is the reviewers' request met on the
+target they asked about, and it lands exactly where Theorem~\ref{thm:power} predicts
+it should once the cohort clears $600$ pairs. Second, at $\eps = 0.05$ the
+super-population arm is still undetermined at $3{,}072$ pairs. The asymptotic figure of
+$2{,}400$ is for a one-sided crossing under exact unlearning; two-sided certification
+costs about a factor of $1.7$ (Section~\ref{sec:exp-power}), so $\eps = 0.05$ wants
+something closer to $4{,}000$ pairs, and we do not have it. The cohort target certifies
+at $\eps = 0.05$ on all four subjects.
+
+The caveat is the more instructive finding, and it cuts against the instrument rather
+than the inference. At $r = 1$ this model memorises essentially nothing: the realised
+advantages in Table~\ref{tab:tight} span $-0.040$ to $+0.025$, and the mean score gap
+for the \emph{un-unlearned} model is $+0.005$ nats. So ``no unlearning'' certifies at
+$\eps = 0.05$ alongside retraining---correctly, because on this cohort there is no
+residual advantage to find. A single exposure of a single canary in a $6{,}872$-document
+corpus leaves no measurable trace in a 124M-parameter model, which is a statement about
+GPT-2 and about single-exposure memorisation, not about VOUCH. Compare the same
+stratum in the repetition-stratified runs, where $r = 1$ carries $+0.122$ nats on
+TOFU/GPT-2 and $+1.244$ on TOFU/Phi-1.5: the signal at $r=1$ grows with model
+capacity, and it grows when the corpus also contains repeated copies of \emph{other}
+canaries from the same template.
+
+This is the sharpest form of the canary-to-organic caveat we can state, and it is
+sharper than the dose--response curve alone conveys. The audit's power at $r = 1$ is
+not merely lowest; on GPT-2 it is nil. An organic forget record seen once by a small
+model may simply not be memorised, in which case there is nothing for any behavioural
+audit to certify the removal of---and a certificate issued in that regime is
+uninformative rather than wrong. Auditing at a tolerance tight enough to be
+operationally meaningful therefore requires either a model large enough to memorise
+single exposures, or canaries dosed above the organic rate, and the second is the
+choice we made for the rest of this study. We regard closing that gap---power at
+$r = 1$ on models large enough for it to matter---as the most important open problem
+this framework faces.
+
+\begin{table}[t]
+\centering\small
+\caption{Tight-tolerance cohort: TOFU/GPT-2, $3{,}072$ canary pairs, every canary
+inserted once ($r = 1$), $2$ seeds, $22.5\%$ canary character share. The
+super-population target reaches $\eps = 0.1$ here, which it does not at the
+$384$--$640$-pair cohorts of Table~\ref{tab:epssweep}. At $r = 1$ this model memorises
+so little that the un-unlearned model also certifies: $\hat\Delta$ is the realised
+cohort advantage per seed.}
+\label{tab:tight}
+\input{tables/tight}
 \end{table}
 
 \subsection{Head to head against the descriptive metrics}\label{sec:exp-descriptive}
@@ -647,14 +715,14 @@ rather than point estimates.
 
 Table~\ref{tab:outclass} reports the outcome, and it is a \emph{null} result, which
 took us two attempts to read correctly. The stratum-restricted attack exceeds
-$\eps = 0.2$ on $2.8\%$ of certified runs and the learned combination on $0.6\%$. Those
+$\eps = 0.2$ on $2.8\%$ of certified runs and the learned combination on $0.5\%$. Those
 look like breaches until one asks what a \emph{clean} subsample of the same size would
-do: the attacks are evaluated on $96$--$159$ and $192$--$320$ pairs respectively, and an
-exact binomial calculation puts the chance exceedance rate at $3.5\%$ and $0.3\%$. The
+do: the attacks are evaluated on $96$--$159$ and $192$--$1{,}536$ pairs respectively, and
+an exact binomial calculation puts the chance exceedance rate at $3.5\%$ and $0.3\%$. The
 stratum-restricted attack therefore exceeds the tolerance \emph{less} often than noise
-predicts, and the learned combination's single exceedance in $178$ runs is within a
+predicts, and the learned combination's single exceedance in $184$ runs is within a
 coin-flip of its own null. The anytime confidence bounds tell the same story: their
-means, $0.078$ and $0.064$, sit far below $\eps$.
+means, $0.078$ and $0.063$, sit far below $\eps$.
 
 So this experiment does not show what we had hoped it would show in either direction.
 It does not demonstrate that $\F$ is too narrow, because the two attacks we could
@@ -690,8 +758,9 @@ next experiment rather than claiming it is unnecessary.
 
 \begin{table}[t]
 \centering\small
-\caption{Attacks from outside the declared class $\F$, run against the $178$
-model/subject/seed combinations certified at $\eps = 0.2$. ``observed'' is the fraction
+\caption{Attacks from outside the declared class $\F$, run against every
+model/subject/seed combination certified at $\eps = 0.2$ for which the attack is
+defined. ``observed'' is the fraction
 of runs on which the attack's realised advantage exceeds $\eps$; ``null'' is what an
 exact binomial calculation predicts for a \emph{clean} subsample of the same size,
 averaged over the run-specific sizes. Neither attack beats its own null, so the table
@@ -748,7 +817,8 @@ close. We now state that assumption wherever the certification claim is summaris
 \begin{table}[t]
 \centering\small
 \caption{Canary detectability on TOFU under GPT-2 as the pristine base model
-($3{,}000$ organic records, $384$ canaries). ``recall'' is at a $1\%$ false-positive
+($3{,}000$ organic records, $384$ canaries, one seed --- this is a single
+configuration, not a sweep). ``recall'' is at a $1\%$ false-positive
 rate on organic data. The predicted excess is $H\ln 2/T$; the observed excess exceeds
 it because the template's own phrasing is also off-distribution. Bold marks the one
 configuration a zero-knowledge filter substantially fails to recover.}
@@ -803,10 +873,18 @@ against $2{,}196$ for sign-only betting, a $2.3\times$ speed-up.
 Proposition~\ref{prop:magnitude} says only that the magnitude arm is exact and more
 powerful under sparse leakage; the factor is measured, not predicted. A \emph{guardrail on the protocol itself} confirms
 that planting canaries does not damage the model being audited: even at an extreme
-$38\%$ canary share, held-out loss shifts by only $0.005$ nats per character, and the
-deployment target is below $0.05\%$.
+$38\%$ canary share, held-out loss shifts by only $0.005$ nats per character. We should
+be explicit that our own experiments sit far above a deployment share: the canary
+character share is $11.9\%$ on TOFU and $22.5\%$ in the tight-tolerance cohort of
+Section~\ref{sec:exp-tight}, against a target below $0.05\%$ for a provider with
+millions of records. Academic corpora are simply too small to plant a
+statistically useful cohort at a deployment share, which is why the guardrail study
+exists; but it also means the detectability and dose--response numbers are measured at
+a share no deployment would use, and both would be harder to reproduce at
+$0.05\%$---detection because the flagged set's precision collapses, dose--response
+because the absolute cohort would have to be far larger.
 
-On \emph{cost}, the earlier version reported a single figure of seventy-six seconds
+On \emph{cost}, the earlier version reported a single figure of $76$ seconds
 without saying which configuration produced it, and compared it to alternatives without
 stating the hardware. Both are corrected here. Verification cost is
 $2 \cdot Q \cdot m$ short forward passes and no training at all: $1{,}536$ passes per
@@ -820,7 +898,7 @@ a ratio of \emph{workloads}, not of wall-clock times on unmatched hardware: a
 retrain-based reference costs one full fine-tune of the same model on the same
 hardware, and a shadow-model evaluator at least sixteen, against VOUCH's zero. On our
 TOFU/GPT-2 configuration one fine-tune is $600$ optimiser steps at batch $8$, roughly
-$4{,}800$ sequence-forward-and-backward passes, so a sixteen-model shadow panel is
+$4{,}800$ sequence-forward-and-backward passes, so a $16$-model shadow panel is
 about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a ratio of
 about $50$ to one---and the same ratio on any hardware, because both scale with the
 same model. A training pass is also several times more expensive than an inference

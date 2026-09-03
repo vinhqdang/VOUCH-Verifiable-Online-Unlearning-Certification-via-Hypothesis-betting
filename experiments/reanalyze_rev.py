@@ -55,7 +55,7 @@ from vouch.verify import VouchConfig, VouchVerifier          # noqa: E402
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RES = os.path.join(REPO, "results")
 
-# tag -> (benchmark, display name, params, year, canary domains, n_seeds_expected)
+# tag -> (benchmark, display name, params, year, canary domains[, strata])
 RUN_SPECS = [
     ("tofu_gpt2",        "TOFU", "GPT-2",       "124M", "2019", ("qa",)),
     ("tofu_gpt2_rev",    "TOFU", "GPT-2 (rev)", "124M", "2019", ("qa",)),
@@ -70,6 +70,11 @@ RUN_SPECS = [
     ("qwen3_4b",         "synthetic", "Qwen3-4B-2507", "4.0B", "2025", None),
     ("phi4_mini",        "synthetic", "Phi-4-mini", "3.8B", "2025", None),
     ("gemma4",           "synthetic", "Gemma-4-E2B", "5.1B", "2026", None),
+    # tight-tolerance cohort: 3,072 pairs, every canary planted once (r=1),
+    # the most organic-like stratum and the only cohort large enough to reach
+    # eps = 0.1 on the super-population target.
+    ("tofu_gpt2_tight",  "TOFU", "GPT-2 (3,072 pairs, $r{=}1$)", "124M",
+     "2019", ("qa",), (1,)),
 ]
 
 EPS_GRID = (0.05, 0.10, 0.20)
@@ -84,13 +89,14 @@ def load(tag):
     return runs if isinstance(runs, list) else [runs]
 
 
-def manifest_for(run, domains):
+def manifest_for(run, domains, strata=(1, 2, 4, 8)):
     """Regenerate the run's canary manifest and check it against the run's
     published commitment where one was recorded."""
     if "m_pairs" not in run:
         return None
     kw = {} if domains is None else {"domains": domains}
-    man = PGCGenerator(seed=run["seed"], **kw).generate(m=run["m_pairs"], wave=0)
+    man = PGCGenerator(seed=run["seed"], repetition_strata=tuple(strata),
+                       **kw).generate(m=run["m_pairs"], wave=0)
     want = run.get("manifest_sha256")
     if want and man.commitment() != want:
         return None
@@ -208,7 +214,9 @@ def main():
     tie_tot = defaultdict(lambda: [0, 0])
     het_rows, dose = [], defaultdict(list)
 
-    for tag, bench, name, params, year, domains in RUN_SPECS:
+    for spec in RUN_SPECS:
+        tag, bench, name, params, year, domains = spec[:6]
+        strata = spec[6] if len(spec) > 6 else (1, 2, 4, 8)
         runs = load(tag)
         if not runs:
             continue
@@ -216,7 +224,7 @@ def main():
                "year": year, "n_seeds": len(runs), "seeds": [], "methods": {}}
         for run in runs:
             seed = run["seed"]
-            man = manifest_for(run, domains)
+            man = manifest_for(run, domains, strata)
             reps = np.array([p.repetition for p in man.pairs]) if man else None
             doms = ([p.domain for p in man.pairs]) if man else None
             rec["seeds"].append(seed)
@@ -324,7 +332,8 @@ def main():
 
     # ---- descriptive-metric head-to-head ---------------------------------
     desc = {}
-    for tag, bench, name, params, year, domains in RUN_SPECS:
+    for spec in RUN_SPECS:
+        tag = spec[0]
         runs = load(tag)
         if not runs:
             continue

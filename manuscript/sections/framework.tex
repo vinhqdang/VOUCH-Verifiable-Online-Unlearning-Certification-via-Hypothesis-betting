@@ -35,7 +35,7 @@ composes.
 A templated generator emits exchangeable twin pairs
 $(c_i^0, c_i^1)$ for $i = 1,\dots,m$. The two twins in a pair are independent draws from
 the same conditional template distribution---the same surface form populated with
-independently sampled fictitious entities carrying secrets of at least forty bits of
+independently sampled fictitious entities carrying secrets of at least $40$ bits of
 entropy---so that within a pair they are exchangeable by construction. We match the
 template to the host corpus, using question--answer pairs for TOFU and record-style
 sentences for news text. For each pair an
@@ -109,7 +109,7 @@ direction of leakage; the worked example of Figure~\ref{fig:example} reports
 $D = +8.0$ for a fine-tuned model whose in-secret costs $0.99$ nats per token against
 the ghost's $9.03$, and this is now consistent with \eqref{eq:sign}, with the figure,
 with the tables, and with the code. Exact ties are rare but not always negligible: we
-measure a rate of $0$ in $99{,}840$ scored pairs for $s_{\mathrm{loss}}$ across every
+measure a rate of $0$ in $124{,}416$ scored pairs for $s_{\mathrm{loss}}$ across every
 architecture, and $2.7\%$ for $s_{\mathrm{mink}}$ on Gemma-4-E2B, where the min-$k\%$
 statistic over a short span takes few distinct values
 (Section~\ref{sec:exp-bench}). The committed tie-break coin is what keeps the null
@@ -233,6 +233,10 @@ the certificate processes, the confidence sequences, and the revocation mixture 
 each pair, and acting on whichever boundary is crossed first. R-VOUCH then re-runs the
 same loop on probed variants of $M_u$---after relearning on public data, after 4-bit
 quantisation, and under adversarial prompt wrappers---and the robust certificate
-requires every probe to pass. Streaming deletion waves each draw a fresh cohort with
+requires every probe to pass. Our empirical probe coverage is partial and we state it
+here rather than leave it to be inferred: P1 and P3 run on every benchmark cell and
+every seed but are anchored on NPO; P2 runs on the GPT-2 and TinyGPT tiers only,
+because the shared-frozen-base multi-adapter design would have to materialise merged
+weights to quantise a multi-billion-parameter model. Streaming deletion waves each draw a fresh cohort with
 independent coins; Theorem~\ref{thm:streaming} dictates how their verdicts may be
 combined.
