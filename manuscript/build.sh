@@ -10,7 +10,15 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PY=${PY:-/opt/miniconda3/envs/py313/bin/python}
+# Python: honour $PY, else the project conda env if present, else python3.
+if [ -z "${PY:-}" ]; then
+  if [ -x /opt/miniconda3/envs/py313/bin/python ]; then
+    PY=/opt/miniconda3/envs/py313/bin/python
+  else
+    PY=python3
+  fi
+fi
+FAIL=0
 
 echo "== regenerating tables from results/ =="
 "$PY" make_tables.py          # validity, streaming, soundness
@@ -22,9 +30,12 @@ latexrun () {  # $1 = jobname
   pdflatex -interaction=nonstopmode "$1.tex" >/dev/null 2>&1 || true
   pdflatex -interaction=nonstopmode "$1.tex" > "/tmp/$1.pass3.log" 2>&1 || true
   if [ ! -f "$1.pdf" ]; then echo "  !! $1.pdf not produced"; return 1; fi
-  local warn
+  local warn err
   warn=$(grep -cE "LaTeX Warning: (Reference|Citation).*undefined" "/tmp/$1.pass3.log" || true)
-  echo "  $1.pdf built ($warn undefined ref/cite warnings)"
+  err=$(grep -c "^! " "/tmp/$1.pass3.log" || true)
+  echo "  $1.pdf built ($warn undefined ref/cite warnings, $err LaTeX errors)"
+  if [ "$err" != "0" ]; then grep -A2 "^! " "/tmp/$1.pass3.log" | head -20; FAIL=1; fi
+  if [ "$warn" != "0" ]; then FAIL=1; fi
 }
 
 echo "== clean manuscript =="
@@ -68,7 +79,9 @@ latexdiff --encoding=utf8 --type=UNDERLINE \
 # The v1 text that latexdiff preserves as struck-through references \eqref{eq:wealth},
 # an equation this version renamed; repoint it so the deleted block does not
 # render a dangling "??".
-sed -i '' 's/eq:wealth}/eq:wealthwor}/g; s/eq:wealthworwor}/eq:wealthwor}/g' diff/main_tracked.tex
+# (portable in-place edit: GNU sed and BSD sed disagree on the -i argument)
+sed -i.bak 's/eq:wealth}/eq:wealthwor}/g; s/eq:wealthworwor}/eq:wealthwor}/g' diff/main_tracked.tex
+rm -f diff/main_tracked.tex.bak
 
 cd diff
 for f in sn-jnl.cls sn-mathphys-num.bst refs.bib; do ln -sf "../$f" . ; done
@@ -78,9 +91,12 @@ bibtex main_tracked >/dev/null 2>&1 || true
 pdflatex -interaction=nonstopmode main_tracked.tex >/dev/null 2>&1 || true
 pdflatex -interaction=nonstopmode main_tracked.tex > /tmp/main_tracked.pass3.log 2>&1 || true
 warn=$(grep -cE "LaTeX Warning: (Reference|Citation).*undefined" /tmp/main_tracked.pass3.log || true)
-echo "  diff/main_tracked.pdf built ($warn undefined ref/cite warnings)"
+err=$(grep -c "^! " /tmp/main_tracked.pass3.log || true)
+echo "  diff/main_tracked.pdf built ($warn undefined ref/cite warnings, $err LaTeX errors)"
+if [ "$err" != "0" ]; then grep -A2 "^! " /tmp/main_tracked.pass3.log | head -20; FAIL=1; fi
 cd ..
 
 echo
 echo "== deliverables =="
 ls -la main.pdf response.pdf cover_letter.pdf diff/main_tracked.pdf
+if [ "$FAIL" != "0" ]; then echo; echo "!! build finished with LaTeX errors or undefined references (see above)"; exit 1; fi

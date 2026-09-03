@@ -57,32 +57,28 @@
 \affil*[1]{\orgname{British University Vietnam}, \orgaddress{\city{Hung Yen}, \country{Vietnam}}}
 \fi
 
-\abstract{Machine unlearning methods for large language models are deployed to honour
-deletion requests, yet they ship with no statistical certificate that forgetting
-occurred. The evaluations in common use are fixed-sample tests: unsound as membership evidence
-unless training inclusion is randomised, void the moment an auditor inspects evidence
-as it accumulates, and dependent on an unaffordable retrained reference. We introduce
-\emph{VOUCH}, an anytime-valid certification framework. At fine-tuning time the
-provider plants \emph{paired ghost canaries}: exchangeable twin records of which a
-fair coin admits one into training, and later into the forget set, while the other is
-never shown to any model. Exact unlearning leaves the twins interchangeable, so the within-pair score difference
-is symmetric \emph{by construction}, giving an exact, distribution-free, finite-sample
-null that assumes nothing about the model. Betting e-processes over it yield a
-confidence sequence on the residual advantage, an $(\eps,\alpha)$-forgetting
-certificate from sequential two-sided equivalence testing, and a revocation alarm. Because every canary passes through one jointly trained model
-its signs are dependent, so we certify the \emph{realised advantage on the committed
-cohort} and bet against a without-replacement boundary, which is exact under arbitrary
-dependence; the earlier fixed-boundary construction breaches its error level eightfold
-under model-level over-dispersion. Certificates and alarms provably compose in opposite directions---by consensus and by
-product---and the adaptive-mixture alternative of our own earlier design is
-anytime-invalid, falsely certifying $99.6\%$ of the time under an adversarially
-constructed composite null. Across a 2{,}000-seed calibration study, four valid sequential
-comparators, and TOFU and MUSE-News on three architectures, VOUCH certifies exact
-unlearning down to $\eps = 0.05$ on the cohort target, revokes un-unlearned models
-within a handful of pairs, and exposes gradient ascent that forgets by destroying the
-model, at $2Qm$ forward passes and no training. The certificate concerns a declared
-score class on a committed cohort under an honest-but-verifiable provider, and we
-measure what each qualification costs.}
+\abstract{Unlearning methods for large language models honour deletion requests with no
+statistical certificate that forgetting occurred. Existing evaluations are
+fixed-sample tests: unsound without randomised inclusion, void under optional
+stopping, and reliant on retraining. We introduce \emph{VOUCH}, an anytime-valid
+certification framework. At fine-tuning time the provider plants \emph{paired ghost
+canaries}, exchangeable twins: a fair coin admits one into training and later into the
+forget set; the other is never trained on. Under exact unlearning the twins are
+interchangeable, so their score difference is symmetric \emph{by construction}: an
+exact, distribution-free, finite-sample null. Betting e-processes yield a confidence
+sequence on the residual advantage, a two-sided $(\eps,\alpha)$-forgetting certificate
+by sequential equivalence testing, and a revocation alarm. All canaries share one
+trained model, so their signs are dependent; we certify the \emph{realised advantage
+on the committed cohort} against a without-replacement boundary, exact under arbitrary
+dependence, where a fixed boundary breaches its level eightfold. Certificates compose
+by consensus, alarms by product, and the adaptive-mixture alternative of our own
+earlier design is anytime-invalid, falsely certifying $99.6\%$ of the time under an
+adversarially constructed composite null. Against four valid sequential comparators
+and on TOFU and MUSE-News on three architectures, VOUCH certifies exact unlearning
+down to $\eps = 0.05$ on the cohort target, revokes un-unlearned models within tens of
+pairs, and exposes gradient ascent that destroys the model, at $2Qm$ forward passes.
+The certificate concerns a declared score class on a committed cohort under an
+honest-but-verifiable provider, and we measure what each qualification costs.}
 
 \keywords{machine unlearning, anytime-valid inference, e-values, membership inference,
 certification, large language models}

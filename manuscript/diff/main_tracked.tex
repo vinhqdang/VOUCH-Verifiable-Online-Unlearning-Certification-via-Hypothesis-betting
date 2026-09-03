@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 12:58:08 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 12:58:08 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 06:33:20 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 06:33:20 2026
 
 
 \theoremstyle{thmstyleone}
@@ -49,7 +49,7 @@
 \RequirePackage[normalem]{ulem} %DIF PREAMBLE
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
 \providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
-\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
 %DIF SAFE PREAMBLE %DIF PREAMBLE
 \providecommand{\DIFaddbegin}{} %DIF PREAMBLE
 \providecommand{\DIFaddend}{} %DIF PREAMBLE
@@ -64,7 +64,7 @@
 \providecommand{\DIFaddendFL}{} %DIF PREAMBLE
 \providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
 \providecommand{\DIFdelendFL}{} %DIF PREAMBLE
-\providecommand{\DIFscaledelfig}{0.5}
+\newcommand{\DIFscaledelfig}{0.5}
 %DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
 \RequirePackage{settobox} %DIF PREAMBLE
 \RequirePackage{letltxmacro} %DIF PREAMBLE
@@ -73,8 +73,8 @@
 \newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
 % store original definition of \includegraphics %DIF PREAMBLE
 \LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
-\providecommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
-\providecommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
 \sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
 \settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
 \settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
@@ -105,11 +105,6 @@
 \DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
 \DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
 \DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
-%DIF AMSMATHULEM PREAMBLE %DIF PREAMBLE
-\makeatletter %DIF PREAMBLE
-\let\sout@orig\sout %DIF PREAMBLE
-\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi} %DIF PREAMBLE
-\makeatother %DIF PREAMBLE
 %DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
 \RequirePackage{listings} %DIF PREAMBLE
 \RequirePackage{color} %DIF PREAMBLE
@@ -124,10 +119,8 @@
 	columns=fullflexible, %DIF PREAMBLE
 	keepspaces=true %DIF PREAMBLE
 } %DIF PREAMBLE
-\lstnewenvironment{DIFverbatim}[1][]{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
-\lstnewenvironment{DIFverbatim*}[1][]{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
-\lstset{extendedchars=\true,inputencoding=utf8}
-
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
 %DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
 
 \begin{document}
@@ -177,32 +170,28 @@
 %DIFDELCMD < the order of $10^4$ forward passes, roughly two orders of magnitude below shadow-model
 %DIFDELCMD < evaluation.}
 %DIFDELCMD < %%%
-\DIFdelend \DIFaddbegin \abstract{Machine unlearning methods for large language models are deployed to honour
-deletion requests, yet they ship with no statistical certificate that forgetting
-occurred. The evaluations in common use are fixed-sample tests: unsound as membership evidence
-unless training inclusion is randomised, void the moment an auditor inspects evidence
-as it accumulates, and dependent on an unaffordable retrained reference. We introduce
-\emph{VOUCH}, an anytime-valid certification framework. At fine-tuning time the
-provider plants \emph{paired ghost canaries}: exchangeable twin records of which a
-fair coin admits one into training, and later into the forget set, while the other is
-never shown to any model. Exact unlearning leaves the twins interchangeable, so the within-pair score difference
-is symmetric \emph{by construction}, giving an exact, distribution-free, finite-sample
-null that assumes nothing about the model. Betting e-processes over it yield a
-confidence sequence on the residual advantage, an $(\eps,\alpha)$-forgetting
-certificate from sequential two-sided equivalence testing, and a revocation alarm. Because every canary passes through one jointly trained model
-its signs are dependent, so we certify the \emph{realised advantage on the committed
-cohort} and bet against a without-replacement boundary, which is exact under arbitrary
-dependence; the earlier fixed-boundary construction breaches its error level eightfold
-under model-level over-dispersion. Certificates and alarms provably compose in opposite directions---by consensus and by
-product---and the adaptive-mixture alternative of our own earlier design is
-anytime-invalid, falsely certifying $99.6\%$ of the time under an adversarially
-constructed composite null. Across a 2{,}000-seed calibration study, four valid sequential
-comparators, and TOFU and MUSE-News on three architectures, VOUCH certifies exact
-unlearning down to $\eps = 0.05$ on the cohort target, revokes un-unlearned models
-within a handful of pairs, and exposes gradient ascent that forgets by destroying the
-model, at $2Qm$ forward passes and no training. The certificate concerns a declared
-score class on a committed cohort under an honest-but-verifiable provider, and we
-measure what each qualification costs.}
+\DIFdelend \DIFaddbegin \abstract{Unlearning methods for large language models honour deletion requests with no
+statistical certificate that forgetting occurred. Existing evaluations are
+fixed-sample tests: unsound without randomised inclusion, void under optional
+stopping, and reliant on retraining. We introduce \emph{VOUCH}, an anytime-valid
+certification framework. At fine-tuning time the provider plants \emph{paired ghost
+canaries}, exchangeable twins: a fair coin admits one into training and later into the
+forget set; the other is never trained on. Under exact unlearning the twins are
+interchangeable, so their score difference is symmetric \emph{by construction}: an
+exact, distribution-free, finite-sample null. Betting e-processes yield a confidence
+sequence on the residual advantage, a two-sided $(\eps,\alpha)$-forgetting certificate
+by sequential equivalence testing, and a revocation alarm. All canaries share one
+trained model, so their signs are dependent; we certify the \emph{realised advantage
+on the committed cohort} against a without-replacement boundary, exact under arbitrary
+dependence, where a fixed boundary breaches its level eightfold. Certificates compose
+by consensus, alarms by product, and the adaptive-mixture alternative of our own
+earlier design is anytime-invalid, falsely certifying $99.6\%$ of the time under an
+adversarially constructed composite null. Against four valid sequential comparators
+and on TOFU and MUSE-News on three architectures, VOUCH certifies exact unlearning
+down to $\eps = 0.05$ on the cohort target, revokes un-unlearned models within tens of
+pairs, and exposes gradient ascent that destroys the model, at $2Qm$ forward passes.
+The certificate concerns a declared score class on a committed cohort under an
+honest-but-verifiable provider, and we measure what each qualification costs.}
 \DIFaddend 
 
 \keywords{machine unlearning, anytime-valid inference, e-values, membership inference,
@@ -214,14 +203,14 @@ certification, large language models}
 
 When a user invokes the right to erasure, a model provider must do more than run an
 unlearning routine: it must be able to \emph{show}, to a regulator or an internal audit
-function, that the routine worked. This obligation is \DIFdelbegin \DIFdel{now concrete. }\DIFdelend \DIFaddbegin \DIFadd{concrete, though it is worth
+function, that the routine worked. This obligation is \DIFdelbegin \DIFdel{now concrete}\DIFdelend \DIFaddbegin \DIFadd{concrete, though it is worth
 locating it precisely. Article~17 of the GDPR creates the right to erasure itself, but
 the duty to }\emph{\DIFadd{demonstrate}} \DIFadd{rather than merely assert compliance lives in
 Articles~5(2) and 24(1), which require controllers to be able to show that processing
 conforms to the Regulation, and in Article~58(1)(b), which empowers supervisory
 authorities to conduct data-protection audits \mbox{%DIFAUXCMD
 \citep{gdpr2016}}\hskip0pt%DIFAUXCMD
-. }\DIFaddend The EU AI Act \DIFdelbegin \DIFdel{'s
+}\DIFaddend . The EU AI Act \DIFdelbegin \DIFdel{'s
 audit provisions, Article~17 of the GDPR, }\DIFdelend \DIFaddbegin \DIFadd{adds
 obligations of a different shape: automatic event logging over a system's lifetime
 (Article~12), technical documentation and its ten-year retention (Articles~11 }\DIFaddend and \DIFdelbegin \DIFdel{a growing set of national data-protection
@@ -240,7 +229,7 @@ that is the gap this paper addresses.
 and its stabilised successors, negative preference optimisation
 \citep{zhang2024npo,fan2025simnpo}, representation misdirection \citep{li2024wmdp},
 and task-vector negation now remove targeted knowledge from large models at modest
-cost. The \emph{verification} side has not kept pace, and \DIFdelbegin \DIFdel{it is verification, }\DIFdelend \DIFaddbegin \DIFadd{a substantial recent
+cost. The \emph{verification} side has not kept pace, and \DIFdelbegin \DIFdel{it is verification}\DIFdelend \DIFaddbegin \DIFadd{a substantial recent
 literature documents why: forget-quality metrics track surface behaviour rather than
 retained knowledge and collapse under attack \mbox{%DIFAUXCMD
 \citep{wang2025towards}}\hskip0pt%DIFAUXCMD
@@ -255,7 +244,7 @@ gradient-ascent objectives redistribute probability mass onto paraphrases so tha
 standard metrics report success while the information remains
 \mbox{%DIFAUXCMD
 \citep{li2026beliefs,feng2025existing}}\hskip0pt%DIFAUXCMD
-. Evaluation, }\DIFaddend not optimisation, \DIFdelbegin \DIFdel{that a regulator cares about}\DIFdelend \DIFaddbegin \DIFadd{is the bottleneck}\DIFaddend .
+. Evaluation}\DIFaddend , not optimisation, \DIFdelbegin \DIFdel{that a regulator cares about}\DIFdelend \DIFaddbegin \DIFadd{is the bottleneck}\DIFaddend .
 
 \DIFdelbegin \DIFdel{Three }\DIFdelend \DIFaddbegin \paragraph{\DIFadd{Three obstacles.}} \DIFadd{Three specific }\DIFaddend obstacles stand between current practice
 and a defensible certificate\DIFdelbegin \DIFdel{, and it is
@@ -353,10 +342,10 @@ divergence and are unaffected, but the stated rule was wrong by a factor of four
 two-sided equivalence testing against a declared attack class, with an exact
 distribution-free null supplied by paired ghost canaries
 (Section~\ref{sec:framework}). We give the supporting theory: \DIFdelbegin \DIFdel{exact validity at any
-stopping time, }\DIFdelend \DIFaddbegin \DIFadd{an exact conditional null
+stopping time}\DIFdelend \DIFaddbegin \DIFadd{an exact conditional null
 requiring no independence across pairs, a certificate that is exact under arbitrary
 dependence via without-replacement betting, a priced bridge to the super-population
-advantage, }\DIFaddend sound composition across scores and across deletion waves in both
+advantage}\DIFaddend , sound composition across scores and across deletion waves in both
 directions, power that matches the Kullback--Leibler information limit, \DIFaddbegin \DIFadd{and }\DIFaddend a
 \DIFdelbegin \DIFdel{magnitude-aware revocation arm that is exact under the symmetry null, and a
 }\DIFdelend \DIFaddbegin \DIFadd{one-directional consistency }\DIFaddend bridge from certified $(\eps_u,\delta_u)$-unlearning
@@ -403,7 +392,7 @@ and the hazardous-knowledge multiple-choice of WMDP \citep{li2024wmdp}---and we 
 all of them, methods and benchmarks alike, as \emph{subjects} that VOUCH certifies
 rather than as competitors.
 
-\DIFdelbegin \DIFdel{What this literature }\DIFdelend \DIFaddbegin \subsection{\DIFadd{Measuring memorisation and forgetting}}
+\DIFdelbegin \DIFdel{What this }\DIFdelend \DIFaddbegin \subsection{\DIFadd{Measuring memorisation and forgetting}}
 
 \DIFadd{The canary methodology VOUCH depends on descends directly from the secret-sharer line
 of work. \mbox{%DIFAUXCMD
@@ -442,13 +431,13 @@ repetition strata are designed to traverse.
 
 \subsection{\DIFadd{Evaluating unlearning: a literature of negative results}}
 
-\DIFadd{What the unlearning literature }\DIFaddend has increasingly documented \DIFdelbegin \DIFdel{, however, }\DIFdelend is that the metrics used
+\DIFadd{What the unlearning }\DIFaddend literature has increasingly documented \DIFdelbegin \DIFdel{, however, }\DIFdelend is that the metrics used
 to declare success are unreliable\DIFdelbegin \DIFdel{. A growing body of adversarial work }\DIFdelend \DIFaddbegin \DIFadd{, and this body of work is the direct motivation for
 VOUCH. A first strand }\DIFaddend shows that apparent forgetting is often mere suppression\DIFdelbegin \DIFdel{:
 }\DIFdelend \DIFaddbegin \DIFadd{.
 }\DIFaddend \citet{lucki2024adversarial} recover ostensibly unlearned capabilities through
 lightweight attacks; \citet{zhang2025quantization} show that \DIFdelbegin \DIFdel{simply }\DIFdelend quantising an unlearned
-model to four bits resurrects \DIFdelbegin \DIFdel{the }\DIFdelend forgotten knowledge; \citet{deeb2024remove} recover most
+model to \DIFdelbegin \DIFdel{four bits resurrects the }\DIFdelend \DIFaddbegin \DIFadd{$4$ bits resurrects }\DIFaddend forgotten knowledge; \citet{deeb2024remove} recover most
 \DIFdelbegin \DIFdel{of the }\DIFdelend pre-unlearning accuracy by fine-tuning on adjacent facts; and \citet{fan2025relearning}
 formalise relearning attacks and connect robustness to sharpness-aware minimisation.
 \DIFdelbegin \DIFdel{The evaluations themselveshave come under equally
@@ -460,8 +449,9 @@ contains the forget targets is enough to jog the model's memory and restore both
 hazardous knowledge and verbatim memorised passages. Their framing---obfuscation
 versus removal---is precisely the distinction our relearn probe operationalises, and
 their result is why we treat a post-relearning verdict as part of the certificate
-rather than as an optional extra: on TOFU with GPT-2 and Pythia the same probe moves
-NPO from issued to undetermined, and on one MUSE/Phi-1.5 seed it revokes outright.
+rather than as an optional extra: on our benchmark tier at $\eps = 0.2$ the same probe
+revokes NPO's certificate on one MUSE/GPT-2 seed and one MUSE/Phi-1.5 seed, and leaves
+it intact on every TOFU cell (Section~\ref{sec:exp-bench}).
 }
 
 \DIFadd{A second strand indicts the evaluation protocols themselves}\DIFaddend .
@@ -500,7 +490,8 @@ fine-tuning\DIFdelbegin \DIFdel{; and
 \mbox{%DIFAUXCMD
 \citet{barbulescu2024each} }\hskip0pt%DIFAUXCMD
 document how per-sequence memorisation
-strength governs how hard a datum isto remove. }\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
+strength governs how hard a datum isto remove.
+}\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
 identify the mechanism they call the
 }\emph{\DIFadd{squeezing effect}}\DIFadd{: gradient-ascent-style objectives push probability mass off
@@ -581,11 +572,11 @@ $\alpha$ \emph{at every stopping time simultaneously}; this is precisely what a
 streaming, continuously-monitored deletion audit requires, and precisely what a
 fixed-sample test cannot offer. The betting perspective
 \citep{waudbysmith2024,orabona2016coin} additionally supplies confidence sequences
-whose bets adapt online to near-optimal growth, \DIFdelbegin \DIFdel{which we use both for the certificate and for its quantitative confidence-sequence face. }\DIFdelend \DIFaddbegin \DIFadd{and---the ingredient our corrected
+whose bets adapt online to near-optimal growth, \DIFdelbegin \DIFdel{which we use both for the certificate and for its quantitative confidence-sequence face}\DIFdelend \DIFaddbegin \DIFadd{and---the ingredient our corrected
 certificate turns on---the without-replacement construction for finite-population
 means, in which the null boundary is recentred at each step on the mean the unsampled
 remainder would need to carry. That device is what lets Theorem~\ref{thm:cert} dispense
-with independence across pairs entirely. }\DIFaddend The one adjacent application of these tools
+with independence across pairs entirely}\DIFaddend . The one adjacent application of these tools
 is to privacy auditing: \citet{steinke2023privacy} audit differential
 privacy in a single training run, and \citet{gonzalez2025sequential} and
 \citet{csillag2026dpevalues} bring sequential e-value machinery to DP auditing. The
@@ -691,16 +682,16 @@ commitment is a Merkle tree whose $i$-th leaf is
 \DIFdelbegin \DIFdel{which }\DIFdelend \DIFaddbegin \DIFadd{with $\rho_i$ a per-leaf blinding nonce derived from the manifest seed, and the
 published value is the tree root. This }\DIFaddend binds the pairs and the coins and prevents the
 audit from being gamed after the fact\DIFdelbegin \DIFdel{: at verification time the manifest is revealed and
-checked against \eqref{eq:commit} before a single query is made. }\DIFdelend \DIFaddbegin \DIFadd{, exactly as a flat hash of the whole manifest
+checked against \eqref{eq:commit} before a single query is made}\DIFdelend \DIFaddbegin \DIFadd{, exactly as a flat hash of the whole manifest
 would; the tree structure buys one further thing that a flat hash does not, and the
 theory needs it. At step $t$ the provider hands over leaf $\pi(t)$ together with its
 authentication path, which the verifier checks against the published root; the path is
-$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs nine hashes at
+$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs $9$ hashes at
 $m = 384$. The blinding nonce matters because the template library is public: without
 it, an unopened leaf's hash could be attacked by enumeration.
-}\DIFaddend 
+}
 
-\DIFaddbegin \DIFadd{The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
+\DIFadd{The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
 opens leaf $\pi(t)$ at step $t$, checking its Merkle path against the published root.
 The filtration is
 }\begin{equation}\DIFadd{\label{eq:filtration}
@@ -713,10 +704,9 @@ unrevealed at time $t-1$, and hence what makes ``the coin is still fair given th
 past'' a true statement about $\F_{t-1}$ rather than an informal one. Every
 supermartingale argument in Section~\ref{sec:theory} is with respect to
 \eqref{eq:filtration}. Nothing else about the protocol changes, and the verifier's
-computational cost is unaffected.
-}
+computational cost is unaffected}\DIFaddend .
 
-\DIFaddend \subsection{Scores and the certified quantity}\label{sec:scores}
+\subsection{Scores and the certified quantity}\label{sec:scores}
 
 We fix a declared class $\F$ of scalar score \DIFdelbegin \DIFdel{functions---the }\DIFdelend \DIFaddbegin \DIFadd{functions, each aggregated over $Q$ fixed
 query prompts, and each oriented so that a }\emph{\DIFadd{higher}} \DIFadd{score means }\emph{\DIFadd{more
@@ -731,13 +721,12 @@ optionally }\DIFdelend \DIFaddbegin \DIFadd{difference
       $s_{\mathrm{loss}}(M_u,\cdot) - s_{\mathrm{loss}}(M_0,\cdot)$, available when the
       verifier may query the pristine base model;
 }\item \DIFadd{optionally $s_{\mathrm{probe}}$, }\DIFaddend a linear probe on the hidden \DIFdelbegin \DIFdel{state---each aggregated over $Q$ fixed query
-prompts.
-}\DIFdelend \DIFaddbegin \DIFadd{state, calibrated
+prompts}\DIFdelend \DIFaddbegin \DIFadd{state, calibrated
       on a disjoint cohort.
 }\end{itemize}
 \DIFadd{The sign convention matters and we fix it once, since an earlier draft described
 $s_{\mathrm{loss}}$ as a negative log-likelihood while the released implementation
-uses the log-likelihood, which flips the sign of every reported gap. }\DIFaddend For pair $i$ and
+uses the log-likelihood, which flips the sign of every reported gap}\DIFaddend . For pair $i$ and
 score $s$ we form the within-pair difference and its sign,
 \begin{equation}\label{eq:sign}
 D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad
@@ -776,22 +765,20 @@ $\sup_{s\in\F}|\Delta^{(s)}| < \eps$, issued by a procedure with the guarantee t
 whenever in truth $\sup_{s\in\F}|\Delta^{(s)}| \ge \eps$, the probability that a
 certificate is }\emph{\DIFdel{ever}} %DIFAUXCMD
 \DIFdel{issued---at any stopping time, under any monitoring rule---is
-at most $\alpha$}\DIFdelend \DIFaddbegin \DIFadd{, or---without the explicit inflation of Proposition~\ref{prop:transfer}---about
-the super-population advantage}\DIFaddend .
-\DIFdelbegin %DIFDELCMD < \end{definition}
-%DIFDELCMD < %%%
-\DIFdelend 
+at most $\alpha$.
+}%DIFDELCMD < \end{definition}
+%DIFDELCMD < 
 
-\DIFdelbegin \DIFdel{The two-sidedness in Definition~\ref{def:cert} is deliberate: $\Delta^{(s)} \le -\eps$,
+%DIFDELCMD < %%%
+\DIFdel{The two-sidedness in Definition~\ref{def:cert} is deliberate: $\Delta^{(s)} \le -\eps$,
 the over-forgetting regime in which the in-twin scores conspicuously }\emph{\DIFdel{below}} %DIFAUXCMD
 \DIFdel{its
 never-seen partner, is membership leakage exactly as much as $\Delta^{(s)} \ge \eps$
 is, and Section~\ref{sec:exp} shows that gradient-ascent unlearning lands there in
-practice.
-}%DIFDELCMD < 
+practice}\DIFdelend \DIFaddbegin \DIFadd{, or---without the explicit inflation of Proposition~\ref{prop:transfer}---about
+the super-population advantage}\DIFaddend .
 
-%DIFDELCMD < %%%
-\DIFdelend \subsection{The betting engine}\label{sec:engine}
+\subsection{The betting engine}\label{sec:engine}
 
 All three of VOUCH's outputs are built from one primitive, the \emph{betting
 e-process}, and it is worth writing its dynamics out explicitly because the validity
@@ -826,15 +813,15 @@ that a supermartingale ever exceeds $1/\alpha$ is at most $\alpha$}\DIFdelend . 
 whatever time we happen to be \DIFdelbegin \DIFdel{looking---the anytime validity on which the whole framework rests}\DIFdelend \DIFaddbegin \DIFadd{looking. Setting $p_0(t) \equiv p_0$ instead recovers
 the fixed-boundary process of the earlier draft, which targets the super-population
 advantage and requires the conditional-mean null; we retain it as a reported variant
-and compare the two throughout Section~\ref{sec:exp}}\DIFaddend .
-
-\DIFaddbegin \DIFadd{For the }\emph{\DIFadd{revocation}} \DIFadd{arm the hypothesised mean is the constant $\tfrac12$, which
-Theorem~\ref{thm:null} makes exact conditionally, so no boundary recentring is needed.
+and compare the two throughout Section~\ref{sec:exp}.
 }
 
-\DIFaddend How the stakes are chosen determines power, not validity, which frees us to be
-aggressive. VOUCH plays a uniform mixture of eight experts and lets their wealth
-arbitrate: six constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
+\DIFadd{For the }\emph{\DIFadd{revocation}} \DIFadd{arm the hypothesised mean is the constant $\tfrac12$, which
+Theorem~\ref{thm:null} makes exact conditionally, so no boundary recentring is needed}\DIFaddend .
+
+How the stakes are chosen determines power, not validity, which frees us to be
+aggressive. VOUCH plays a uniform mixture of \DIFdelbegin \DIFdel{eight }\DIFdelend \DIFaddbegin \DIFadd{$8$ }\DIFaddend experts and lets their wealth
+arbitrate: \DIFdelbegin \DIFdel{six }\DIFdelend \DIFaddbegin \DIFadd{$6$ }\DIFaddend constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
 $c \in \{0.02, 0.05, 0.1, 0.2, 0.4, 0.7\}$, an online-Newton-step (ONS) learner, and a
 truncated Krichevsky--Trofimov (KT) plug-in. The ONS expert follows the coin-betting
 recursion
@@ -853,7 +840,7 @@ expert bypasses stake selection altogether: it estimates the mean by
 e\DIFdelbegin \DIFdel{_i }\DIFdelend \DIFaddbegin \DIFadd{_t }\DIFaddend \;=\; Z\DIFdelbegin \DIFdel{_i}\DIFdelend \DIFaddbegin \DIFadd{_t}\DIFaddend \,\DIFdelbegin \DIFdel{\frac{q_i}{p_0} }\DIFdelend \DIFaddbegin \DIFadd{\frac{q_t}{p_0(t)} }\DIFaddend \;+\; (1 - Z\DIFdelbegin \DIFdel{_i}\DIFdelend \DIFaddbegin \DIFadd{_t}\DIFaddend )\,\DIFdelbegin \DIFdel{\frac{1 - q_i}{1 - p_0}}\DIFdelend \DIFaddbegin \DIFadd{\frac{1 - q_t}{1 - p_0(t)}}\DIFaddend ,
 \end{equation}
 which has conditional mean at most one under the null \DIFdelbegin \DIFdel{(it is linear in the mean, equals
-one at $p_0$, and decreases into the null) and }\DIFdelend \DIFaddbegin \DIFadd{and }\DIFaddend achieves the optimal growth
+one at $p_0$, and decreases into the null) }\DIFdelend and achieves the optimal growth
 rate up to a $\tfrac1{2t}\log t$ redundancy. Because a convex combination of
 e-processes with a fixed prior is again an e-process, the mixture inherits exact
 validity while paying only a $\log 8$ additive cost in log-wealth relative to its best
@@ -862,7 +849,7 @@ expert---power adapts online with nothing to tune.
 The same wealth idea, run over a grid rather than at a single boundary, yields the
 quantitative face of the certificate. For every candidate mean \DIFdelbegin \DIFdel{$m$ }\DIFdelend \DIFaddbegin \DIFadd{$m'$ }\DIFaddend on a grid of
 $1001$ points in $[0,1]$ we maintain two wealth processes betting that the truth is
-above and below \DIFdelbegin \DIFdel{$m$, }\DIFdelend \DIFaddbegin \DIFadd{$m'$, each recentred by the same without-replacement rule, }\DIFaddend with
+above and below \DIFdelbegin \DIFdel{$m$}\DIFdelend \DIFaddbegin \DIFadd{$m'$, each recentred by the same without-replacement rule}\DIFaddend , with
 empirical-Bernstein (aGRAPA) stakes
 \begin{equation}\label{eq:agrapa}
 \lambda\DIFdelbegin \DIFdel{_i}\DIFdelend \DIFaddbegin \DIFadd{_t}\DIFaddend (m\DIFaddbegin \DIFadd{'}\DIFaddend ) \;=\; \Pi\DIFdelbegin \DIFdel{_{[0,\,\lambda_{\max}(m)]}
@@ -912,7 +899,7 @@ in-twins ride along with the organic forget set. Phase~2 is the audit: \DIFdelbe
 the manifest, then }\DIFdelend stream the
 pairs in \DIFaddbegin \DIFadd{the committed }\DIFaddend random order, \DIFaddbegin \DIFadd{opening and checking one leaf at a time, }\DIFaddend updating
 the certificate processes, the confidence sequences, and the revocation mixture after
-each pair, and act\DIFaddbegin \DIFadd{ing}\DIFaddend  on whichever boundary is crossed first. R-VOUCH then re-runs the
+each pair, and \DIFdelbegin \DIFdel{act }\DIFdelend \DIFaddbegin \DIFadd{acting }\DIFaddend on whichever boundary is crossed first. R-VOUCH then re-runs the
 same loop on probed variants of $M_u$---after relearning on public data, after 4-bit
 quantisation, and under adversarial prompt wrappers---and the robust certificate
 requires every probe to pass. \DIFaddbegin \DIFadd{Our empirical probe coverage is partial and we state it
@@ -1237,9 +1224,9 @@ distribution, so $D_i^{(s)} \overset{d}{=} -D_i^{(s)}$ conditionally on $\F_{i-1
 \DIFadd{with the two signs equally likely, so $D_j^{(s)} \overset{d}{=} -D_j^{(s)}$ given
 $\G_{t-1}$. Therefore $\Pr[D_j^{(s)}>0\mid\G_{t-1}] = \Pr[D_j^{(s)}<0\mid\G_{t-1}]$}\DIFaddend ,
 and the committed tie-break coin \DIFdelbegin \DIFdel{distributes }\DIFdelend \DIFaddbegin \DIFadd{splits }\DIFaddend any atom at zero equally\DIFdelbegin \DIFdel{between the two signs, so
-$Z_i^{(s)} \mid \F_{i-1} \sim \Bern(\tfrac12)$ exactly. }\DIFdelend \DIFaddbegin \DIFadd{, giving
+$Z_i^{(s)} \mid \F_{i-1} \sim \Bern(\tfrac12)$ exactly}\DIFdelend \DIFaddbegin \DIFadd{, giving
 $Z_j^{(s)}\mid\G_{t-1}\sim\Bern(\tfrac12)$. Averaging over $\G_{t-1}\supseteq\F_{t-1}$
-gives the claim. }\DIFaddend No property of the model, the score, \DIFdelbegin \DIFdel{or }\DIFdelend the query set\DIFaddbegin \DIFadd{, or the
+gives the claim}\DIFaddend . No property of the model, the score, \DIFdelbegin \DIFdel{or }\DIFdelend the query set\DIFaddbegin \DIFadd{, or the
 dependence between pairs }\DIFaddend was used beyond measurability.
 \end{proof}
 
@@ -1321,7 +1308,7 @@ predictable without-replacement boundary
 p_0(t) \;=\; \frac{m\,p_0 \;-\; \sum_{u<t} Z^{(s)}_{\pi(u)}}{m-t+1},
 }\end{equation}
 \DIFadd{declaring the null refuted outright if ever $p_0(t) > 1$. }\DIFaddend Issue the certificate only
-when \emph{every} per-score, per-direction \DIFdelbegin \DIFdel{e-}\DIFdelend process exceeds $1/\alpha$. Then for any
+when \emph{every} per-score, per-direction \DIFdelbegin \DIFdel{e-process }\DIFdelend \DIFaddbegin \DIFadd{process }\DIFaddend exceeds $1/\alpha$. Then for any
 class $\F$ and any stopping rule,
 \DIFdelbegin \DIFdel{$\Pr[\text{a false }(\eps,\alpha)\text{-certificate is ever issued}] \le \alpha$
 whenever $\sup_s |\Delta^{(s)}| \ge \eps$}\DIFdelend \DIFaddbegin \[
@@ -1503,7 +1490,7 @@ cohort for a }\emph{\DIFadd{mechanism-level}} \DIFadd{claim. For the finite-coho
 a matching analysis; its certification time is capped by $m$, since the claim resolves
 deterministically once the cohort is exhausted, and we report its behaviour
 empirically instead (Table~\ref{tab:power}, cohort column).
-}\end{theorem}
+}
 
 \DIFaddend \begin{proof}
 Fix one process, say the upper process for a score with true sign probability
@@ -1554,9 +1541,9 @@ valid procedure can do better by more than a constant factor. \DIFaddbegin \DIFa
 version of this theorem reported the expansion as $\eps^2/8$ and the sample size as
 $8\log(1/\alpha)/\eps^2$; \eqref{eq:klexp} corrects it. The numerical columns of
 Table~\ref{tab:power} were computed from the exact divergence and are unaffected.
-}\DIFaddend 
+}
 
-\DIFaddbegin \begin{remark}[Per-score versus simultaneous confidence sequences]\label{rem:cs}
+\begin{remark}[Per-score versus simultaneous confidence sequences]\label{rem:cs}
 \DIFadd{Each score's confidence sequence \eqref{eq:cs} covers that score's own advantage
 $\Delta^{(s)}$ with uniform-in-time probability $1-\alpha$; the guarantee is
 }\emph{\DIFadd{per score}}\DIFadd{. Two derived statements should be distinguished. The reported
@@ -1568,8 +1555,9 @@ Simultaneous two-sided coverage of }\emph{\DIFadd{all}} \DIFadd{$|\F|$ advantage
 costs a union bound and holds at level $|\F|\alpha$; we report intervals at that
 corrected level wherever we display the whole class.
 }\end{remark}
+\DIFaddend 
 
-\DIFaddend \begin{theorem}[Streaming composition, in both directions]\label{thm:streaming}
+\begin{theorem}[Streaming composition, in both directions]\label{thm:streaming}
 Let deletion waves $k = 1,\dots,K$ use cohorts with independent coins.
 \emph{(a) Certificates compose by consensus.} Claiming that the whole history is clean
 only when every wave has individually earned its certificate keeps the probability of a
@@ -1725,18 +1713,19 @@ architectures.
 \DIFaddbegin 
 
 \DIFaddend Unless noted we use \DIFdelbegin \DIFdel{$\eps = 0.2$, }\DIFdelend $\alpha = 0.05$, two-sided certification, the sign-based
-revocation arm, \DIFaddbegin \DIFadd{the finite-cohort certificate target, }\DIFaddend LoRA fine-tuning of rank \DIFdelbegin \DIFdel{sixteen,
-}\DIFdelend \DIFaddbegin \DIFadd{$16$,
-$Q = 2$ query wrappers, }\DIFaddend and between $384$ and $640$ canary pairs\DIFaddbegin \DIFadd{; the full
+revocation arm, \DIFaddbegin \DIFadd{the finite-cohort certificate target, }\DIFaddend LoRA fine-tuning of rank \DIFdelbegin \DIFdel{sixteen}\DIFdelend \DIFaddbegin \DIFadd{$16$,
+$Q = 2$ query wrappers}\DIFaddend , and between $384$ and $640$ canary pairs\DIFaddbegin \DIFadd{; the full
 hyperparameter table is Appendix~\ref{app:repro}, and the headline tolerance is
 $\eps = 0.2$ with the complete sweep over $\eps \in \{0.05, 0.1, 0.2\}$ reported in
 Table~\ref{tab:epssweep}}\DIFaddend . The entire study ran on free, ephemeral compute---Colab and
 Kaggle GPU sessions, Colab CPU sessions, \DIFaddbegin \DIFadd{an Apple-silicon laptop, }\DIFaddend and a four-core
 container---coordinated by a released fault-tolerant scheduler; because every training
-stage checkpoints and every verification is saved, a reclaimed session costs at most a
-hundred optimiser steps.
+stage checkpoints and every verification is saved, a reclaimed session costs at most
+\DIFdelbegin \DIFdel{a hundred }\DIFdelend \DIFaddbegin \DIFadd{$100$ }\DIFaddend optimiser steps.
 
-\subsection{\DIFdelbegin \DIFdel{Validity under adversarial optional stopping}\DIFdelend \DIFaddbegin \DIFadd{Which null is actually controlled}\DIFaddend }\DIFaddbegin \label{sec:exp-dependence}
+\subsection{\DIFdelbegin \DIFdel{Validity under adversarial optional stopping}\DIFdelend \DIFaddbegin \DIFadd{Which null is actually controlled}\DIFaddend }\DIFdelbegin %DIFDELCMD < \label{sec:exp-validity}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \label{sec:exp-dependence}
 
 \DIFadd{We begin with the question that reorganised this version of the paper. Signs from all
 canaries pass through one jointly trained and unlearned model, so they are neither
@@ -1744,9 +1733,9 @@ independent nor identically distributed across templates and repetition strata. 
 that matter? Table~\ref{tab:dependence} answers it directly. We generate sign streams
 whose }\emph{\DIFadd{marginal}} \DIFadd{sign probability is exactly $p_0 = 0.55$ under four regimes and
 ask how often each certificate process issues.
-}
+}\DIFaddend 
 
-\DIFadd{The answer is that it matters, and in the direction least convenient for the earlier
+The \DIFdelbegin \DIFdel{first thing to establish is that VOUCH does what it promises: it }\DIFdelend \DIFaddbegin \DIFadd{answer is that it matters, and in the direction least convenient for the earlier
 analysis. When signs are independent, the fixed-boundary process of the
 earlier draft holds its level at $0.034$, as its stated theorem claims. Heterogeneity
 across strata alone does not break it either ($0.026$), because shuffling the reveal
@@ -1809,15 +1798,15 @@ fixed-boundary one.}}
 \input{tables/cohortnull}
 \end{table}
 
-\subsection{\DIFadd{Validity under adversarial optional stopping}}\DIFaddend \label{sec:exp-validity}
+\subsection{\DIFadd{Validity under adversarial optional stopping}}\label{sec:exp-validity}
 
-\DIFdelbegin \DIFdel{The first thing to establish is that VOUCH does what it promises: it }\DIFdelend \DIFaddbegin \DIFadd{With the target settled we can ask whether VOUCH }\DIFaddend holds its error level \DIFdelbegin \DIFdel{even }\DIFdelend when an
+\DIFadd{With the target settled we can ask whether VOUCH }\DIFaddend holds its error level \DIFdelbegin \DIFdel{even }\DIFdelend when an
 adversary peeks after every observation and stops at the first crossing. We simulate
 exactly this attack. Table~\ref{tab:validity} reports the realised type-I error over
 \DIFdelbegin \DIFdel{two thousand seeds, and the picture is unambiguous---VOUCH
 }\DIFdelend \DIFaddbegin \DIFadd{$2{,}000$ seeds: VOUCH }\DIFaddend stays below the nominal level for both the certificate and the
 revocation arm at both $\alpha=0.05$ and $\alpha=0.01$, whereas a fixed-sample binomial
-test used in the same peeking fashion inflates its error to $0.35$, seven times the
+test used in the same peeking fashion inflates its error to $0.35$, \DIFdelbegin \DIFdel{seven }\DIFdelend \DIFaddbegin \DIFadd{$7$ }\DIFaddend times the
 nominal rate. The calibration curve in Figure~\ref{fig:validity} confirms that the
 conservatism holds across the whole range of $\alpha$. When we run the complete
 protocol---three correlated scores, the confidence sequence, and both arms
@@ -1826,17 +1815,17 @@ covers the truth with uniform-in-time probability $0.971$ against the nominal $0
 and when there is genuine memorisation to find ($\Delta \approx 0.36$), the revocation
 arm fires in every run at a median of \DIFdelbegin \DIFdel{forty-four }\DIFdelend \DIFaddbegin \DIFadd{$44$ }\DIFaddend pairs, with no false certificate ever
 issued.
-\DIFdelbegin \DIFdel{Validity, in short, is not merely asymptotic but exact and finite-sample, exactly as
-Theorem~\ref{thm:null} predicts. }\DIFdelend 
+\DIFdelbegin \DIFdel{Validity,
+in short, is not merely asymptotic but exact and finite-sample, exactly as
+Theorem~\ref{thm:null} predicts}\DIFdelend \DIFaddbegin 
 
-\DIFaddbegin \DIFadd{One caveat on reading these numbers, which a reviewer rightly pressed. A realised error
+\DIFadd{One caveat on reading these numbers, which a reviewer rightly pressed. A realised error
 of $0.031$ against a nominal $0.05$ is what a supermartingale bound is }\emph{\DIFadd{supposed}}
 \DIFadd{to produce; it is evidence of validity, not of tightness, and the same conservatism
 costs power, which is the price Table~\ref{tab:baselines} quantifies. We do not claim
-the bound is tight and the gap is not a defect.
-}
+the bound is tight and the gap is not a defect}\DIFaddend .
 
-\DIFaddend \begin{table}[t]
+\begin{table}[t]
 \centering\small
 \caption{Type-I error over \DIFdelbeginFL \DIFdelFL{2}%DIFDELCMD < {%%%
 \DIFdelFL{,}%DIFDELCMD < }%%%
@@ -1869,12 +1858,11 @@ natural. The difference is \DIFdelbegin \DIFdel{stark and is }\DIFdelend reporte
 certifies the leaking model in $99.6\%$ of runs---it is not merely loose but
 anytime-invalid, as Remark~\ref{rem:mixture} explains---while the per-score minimum
 holds at $0.7\%$, comfortably below $\alpha$. \DIFdelbegin \DIFdel{This is the empirical reason VOUCH
-requires every score's process to concur rather than betting on their average. }\DIFdelend \DIFaddbegin \DIFadd{We want to be precise about what this
+requires every score's process to concur rather than betting on their average}\DIFdelend \DIFaddbegin \DIFadd{We want to be precise about what this
 number is and is not: the mixture arm is }\emph{\DIFadd{our own}} \DIFadd{earlier design, evaluated
 against an adversarially constructed composite null. It is not a published method and
 the figure is not a refutation of anyone else's work. It is a trap we fell into and
-climbed out of, reported so that others need not.
-}\DIFaddend 
+climbed out of, reported so that others need not}\DIFaddend .
 
 \begin{table}[t]
 \centering\small
@@ -1912,7 +1900,8 @@ cohorts have a realised advantage genuinely below the tolerance. Against the
 }\emph{\DIFadd{cohort}} \DIFadd{null every procedure holds its level, and the two group-sequential
 boundaries and the fixed-$n$ test are markedly conservative there ($0.004$}\DIFaddend , \DIFdelbegin \DIFdel{and the answer is :
 close to
-nothing beyond the information-theoretic minimum. }\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
+nothing beyond the information-theoretic minimum.
+}\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
 $0.000$) precisely because they were built for the other target. Neither column alone
 is a fair scoreboard, which is why we print both. On power and cost the ordering is
 informative. Against exact unlearning at $\eps = 0.1$ and a budget of $1{,}536$ pairs,
@@ -1948,8 +1937,7 @@ that the median certification time tracks }\DIFdelend \DIFaddbegin \DIFadd{repor
 $\log(1/\alpha)/\KL$ within fifteen percent across the whole $\eps$ grid, and
 Figure~\ref{fig:power} plots the same relationship together with the
 revocation
-detection time.
-}\DIFdelend \DIFaddbegin \DIFadd{limit.
+detection time. }\DIFdelend \DIFaddbegin \DIFadd{limit.
 Two corrections to the earlier version are folded in. First, the theoretical column now
 follows the corrected expansion \eqref{eq:klexp}; the numbers themselves are unchanged
 because they were always computed from the exact divergence, but the accompanying
@@ -1982,17 +1970,14 @@ an advantage of $\Delta=0.4$ in a median of \DIFdelbegin \DIFdel{forty-eight }\D
 confidence sequence tightens at the expected $O(\sqrt{\log\log t / t})$ rate
 (Figure~\ref{fig:tightness}): under exact unlearning its upper bound on $\Delta$ falls
 from $0.26$ at \DIFdelbegin \DIFdel{a hundred and twenty-eight
-}\DIFdelend \DIFaddbegin \DIFadd{$128$ }\DIFaddend pairs to $0.10$ at \DIFdelbegin \DIFdel{a thousand.
-It is worth being candid about the one place where a
+}\DIFdelend \DIFaddbegin \DIFadd{$128$ }\DIFaddend pairs to $0.10$ at \DIFdelbegin \DIFdel{a thousand. It is worth being candid about the one place where a
 classical test wins: at a single }\emph{\DIFdel{pre-committed}} %DIFAUXCMD
 \DIFdel{sample size a permutation or
 binomial test is somewhat more powerful, and on one benchmark seed such a test rejects
 where VOUCH remains undetermined. This is the unavoidable price of validity at
 }\emph{\DIFdel{every}} %DIFAUXCMD
 \DIFdel{sample size at once, and Theorem~\ref{thm:power} guarantees the gap to the
-best possible valid procedure is only a constant factor.
-}\DIFdelend \DIFaddbegin \DIFadd{$1{,}000$.
-}\DIFaddend 
+best possible valid procedure is only a constant factor}\DIFdelend \DIFaddbegin \DIFadd{$1{,}000$}\DIFaddend .
 
 \begin{table}[t]
 \centering\small
@@ -2000,9 +1985,9 @@ best possible valid procedure is only a constant factor.
 horizon $20{,}000$ pairs, $500$ seeds per cell. For }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{KL }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{super-population target the
 median over issued runs is selection-biased where censoring is heavy, so the
 Kaplan--Meier median and the censoring rate are given. The $\mathrm{KL}$ column is the
-information }\DIFaddendFL limit \DIFaddbeginFL \DIFaddFL{for the }\emph{\DIFaddFL{super-population}} \DIFaddFL{target only: the cohort claim
+information limit for the }\emph{\DIFaddFL{super-population}} \DIFaddFL{target only: the cohort claim
 resolves once the cohort is exhausted, so its time is capped by $m$ and may legitimately
-fall below that limit}\DIFaddendFL . \DIFdelbeginFL \DIFdelFL{Starred entries are medians over }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{At $\alpha = 0.01$ (not shown) censoring at $\eps = 0.02$ reaches
+fall below that }\DIFaddendFL limit. \DIFdelbeginFL \DIFdelFL{Starred entries are medians over }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{At $\alpha = 0.01$ (not shown) censoring at $\eps = 0.02$ reaches
 $72\%$ and }\DIFaddendFL the \DIFdelbeginFL \DIFdelFL{runs issued within a 20}%DIFDELCMD < {%%%
 \DIFdelendFL \DIFaddbeginFL \DIFaddFL{survival curve never reaches one half}\DIFaddendFL , \DIFdelbeginFL %DIFDELCMD < }%%%
 \DIFdelFL{000-pair horizon}\DIFdelendFL \DIFaddbeginFL \DIFaddFL{so no median exists}\DIFaddendFL .}
@@ -2030,7 +2015,7 @@ shrinks with the number of pairs observed, under $\Delta=0$ and $\Delta=0.2$.}
 \subsection{Streaming deletion waves}\label{sec:exp-streaming}
 
 Because deletion requests arrive continually, we test the composition rules of
-Theorem~\ref{thm:streaming} on histories of ten waves, and Table~\ref{tab:streaming}
+Theorem~\ref{thm:streaming} on histories of \DIFdelbegin \DIFdel{ten }\DIFdelend \DIFaddbegin \DIFadd{$10$ }\DIFaddend waves, and Table~\ref{tab:streaming}
 bears out both halves of the theorem. When every wave is exactly unlearned, the
 $\alpha$-spending per-wave alarm never once fires falsely and the global product alarm
 raises a false alarm in \DIFdelbegin \DIFdel{only two runs per thousand}\DIFdelend \DIFaddbegin \DIFadd{$2$ of $1{,}000$ histories}\DIFaddend . When a single wave is genuinely bad
@@ -2038,15 +2023,15 @@ raises a false alarm in \DIFdelbegin \DIFdel{only two runs per thousand}\DIFdele
 consensus certificate is \emph{never} falsely issued for the \DIFdelbegin \DIFdel{history}\DIFdelend \DIFaddbegin \DIFadd{history---whereas
 multiplying certificate e-values falsely certifies that history in }\emph{\DIFadd{every}} \DIFadd{run
 (Table~\ref{tab:certprod})}\DIFaddend , which is \DIFdelbegin \DIFdel{exactly
-the failure that multiplying certificate e-values would produce. }\DIFdelend \DIFaddbegin \DIFadd{the failure Theorem~\ref{thm:streaming}(a)
+the failure that multiplying certificate e-values would produce}\DIFdelend \DIFaddbegin \DIFadd{the failure Theorem~\ref{thm:streaming}(a)
 predicts. One cost of consensus deserves stating, since it is a headline rule and the number is
 not flattering: requiring }\emph{\DIFadd{every}} \DIFadd{wave to issue means a history of ten
 }\emph{\DIFadd{perfectly clean}} \DIFadd{waves earns a history-wide certificate only $48\%$ of the time
 at $512$ pairs per wave, because each wave independently risks landing in the
 undetermined band. Consensus buys soundness across waves and pays for it in exactly
 this way, and a provider auditing a long deletion history should size per-wave cohorts
-with $K$ in mind rather than sizing one wave and multiplying. }\DIFaddend The most telling case
-is the one the product alarm was designed for: ten waves each leaking only weakly
+with $K$ in mind rather than sizing one wave and multiplying}\DIFaddend . The most telling case
+is the one the product alarm was designed for: \DIFdelbegin \DIFdel{ten }\DIFdelend \DIFaddbegin \DIFadd{$10$ }\DIFaddend waves each leaking only weakly
 ($\Delta = 0.06$), so weakly that a per-wave test detects them just $14\%$ of the time,
 are nonetheless caught by the accumulated product alarm in $62\%$ of histories, at a
 median firing wave of three. Distributed leakage that hides beneath every individual
@@ -2083,7 +2068,8 @@ produce: the un-unlearned model is revoked in every seed within about \DIFdelbeg
 }\DIFdelend \DIFaddbegin \DIFadd{$11$ }\DIFaddend pairs, its
 canary loss gap averaging $2.2$ nats; \DIFdelbegin \DIFdel{retraining-from-scratch }\DIFdelend \DIFaddbegin \DIFadd{retraining from a fresh adapter }\DIFaddend and all three
 genuine unlearning methods earn certificates in every seed; and the deliberately
-weakened NPO together with the post-relearning probe \DIFdelbegin \DIFdel{land in the honest undetermined band, their leakage signal elevated but not yet conclusive.
+weakened NPO together with the post-relearning probe \DIFdelbegin \DIFdel{land in the
+honest undetermined band, their leakage signal elevated but not yet conclusive.
 }\DIFdelend \DIFaddbegin \DIFadd{sit at the boundary of the
 undetermined band.
 }
@@ -2094,15 +2080,17 @@ caused its loss to optimise \emph{toward} memorisation rather than away from it;
 revocation arm flagged every such run within roughly \DIFdelbegin \DIFdel{eleven }\DIFdelend \DIFaddbegin \DIFadd{$11$ }\DIFaddend pairs, before we had noticed
 the bug ourselves. A certificate that can catch a defect in the unlearning \emph{code},
 not merely in its outcome, is doing more than a descriptive metric \DIFdelbegin \DIFdel{ever could}\DIFdelend \DIFaddbegin \DIFadd{can}\DIFaddend . A
-CPU-affordable tier built around a small transformer, where retraining\DIFdelbegin \DIFdel{-from-scratch}\DIFdelend  is cheap enough
+CPU-affordable tier built around a small transformer, where \DIFdelbegin \DIFdel{retraining-from-scratch }\DIFdelend \DIFaddbegin \DIFadd{retraining }\DIFaddend is cheap enough
 to serve as ground truth, reproduces every one of these qualitative outcomes.
 
 \begin{table}[t]
 \centering\small
-\caption{GPT-2 end-to-end over 3 seeds ($640$ pairs, two-sided $\eps=0.2$\DIFaddbeginFL \DIFaddFL{, cohort
+\caption{GPT-2 end-to-end over \DIFdelbeginFL \DIFdelFL{3 }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{$2$ }\DIFaddendFL seeds ($640$ pairs, two-sided $\eps=0.2$\DIFaddbeginFL \DIFaddFL{, cohort
 target}\DIFaddendFL ): per-seed verdicts (\vI\ issued, \vR\ revoked, \vU\ undetermined), the mean
 confidence-sequence upper bound on $\Delta$, and the mean canary \DIFdelbeginFL \DIFdelFL{loss }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{score }\DIFaddendFL gap $\bar D$
-\DIFaddbeginFL \DIFaddFL{with its across-seed standard deviation}\DIFaddendFL .}
+\DIFaddbeginFL \DIFaddFL{with its across-seed standard deviation. Seeds $1$ and $2$ are shown; the seed-$0$
+run of this tier predates per-pair logging and cannot be replayed under the cohort
+target, so it is omitted rather than mixed in from the earlier analysis}\DIFaddendFL .}
 \label{tab:gpt2v2}
 \input{tables/gpt2v2}
 \end{table}
@@ -2123,15 +2111,17 @@ the earlier draft's bare ``sixteen of eighteen'' overstated what they establish}
 \DIFdelbegin \DIFdel{First, }\DIFdelend \emph{\DIFdelbegin \DIFdel{detection }\DIFdelend \DIFaddbegin \DIFadd{Detection }\DIFaddend works\DIFaddbegin \DIFadd{, at the stated tolerance.}\DIFaddend } \DIFdelbegin \DIFdel{: the }\DIFdelend \DIFaddbegin \DIFadd{The }\DIFaddend un-unlearned model is revoked in
 \DIFdelbegin \DIFdel{sixteen of eighteen }\DIFdelend \DIFaddbegin \DIFadd{$16$ of $18$ }\DIFaddend benchmark runs under the default sign \DIFdelbegin \DIFdel{arm---all }\DIFdelend \DIFaddbegin \DIFadd{arm---$95\%$ CI $[0.65, 0.99]$---all
 }\DIFaddend six Phi-1.5 runs \DIFdelbegin \DIFdel{emphatically so, }\DIFdelend at log-wealth between \DIFdelbegin \DIFdel{$166$ and $182$---with the remaining two honest
-undetermineds rather than false certificates, and the magnitude-aware arm of Proposition~\ref{prop:magnitude} lifts detection to eighteen of eighteen at the cost
+undetermineds rather than false certificates, and the magnitude-aware arm of
+Proposition~\ref{prop:magnitude} lifts detection to eighteen of eighteen at the cost
 of the occasional transient crossing.
-The same arm also catches a genuinely
-}\emph{\DIFdel{failed}} %DIFAUXCMD
-\DIFdel{unlearning run in the wild: on one MUSE/Phi-1.5 seed the sign arm
-revokes GradDiff outright, exposing residual memorisation in a method that a
-forget-metric evaluation would have passed. Second, }\emph{\DIFdel{exact unlearning
+The same arm also catches a genuinely }\emph{\DIFdel{failed}} %DIFAUXCMD
+\DIFdel{unlearning run in the wild: on one MUSE/Phi-1.5 seed the
+sign arm
+revokes GradDiff outright, exposing residual memorisation in a method that a forget-metric evaluation would have passed. Second, }\emph{\DIFdel{exact unlearning
 certifies}}%DIFAUXCMD
-\DIFdel{: retraining-from-scratch }\DIFdelend \DIFaddbegin \DIFadd{$149$ and $186$. The two
+\DIFdel{: retraining-from-scratch is issued on seventeen of eighteen runs, and the single miss is a 384-pair cohort that lands at a log-wealth of $2.98$ against the $3.00$ threshold and issues cleanly once we raise the
+cohort to $512$ pairs---the
+cohort-size guidance of }\DIFdelend \DIFaddbegin \DIFadd{$149$ and $186$. The two
 remaining runs are the two weakest-leaking GPT-2 cells, and here we must report
 something the earlier version did not surface: under the corrected, more powerful
 cohort target those two runs are not merely undetermined, they are }\emph{\DIFadd{certified}}\DIFadd{.
@@ -2144,12 +2134,8 @@ We return to how $\eps$ should be chosen at the end of this subsection.
 }
 
 \emph{\DIFadd{Exact unlearning certifies.}} \DIFadd{Retraining from a fresh adapter is issued on all
-$18$ runs at $\eps = 0.2$ and on all $18$ at $\eps = 0.1$; at $\eps = 0.05$ it }\DIFaddend is
-issued on \DIFdelbegin \DIFdel{seventeen of eighteen runs, and the
-single miss is a
-384-pair cohort that lands at a log-wealth of $2.98$ against the
-$3.00$ threshold and issues cleanly once we raise the cohort to $512$ pairs---the
-cohort-size guidance of }\DIFdelend \DIFaddbegin \DIFadd{$12$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
+$18$ runs at $\eps = 0.2$ and on all $18$ at $\eps = 0.1$; at $\eps = 0.05$ it is
+issued on $12$ of $18$ (Table~\ref{tab:epssweep}). This is the end-to-end result at a
 tight tolerance that was missing from the previous version, and it comes with a
 caveat that must travel with it: it is a }\emph{\DIFadd{cohort}} \DIFadd{certificate. On the
 super-population target, no run certifies at $\eps = 0.05$ at these cohort sizes, and
@@ -2175,7 +2161,7 @@ than soften the picture. Gradient ascent reaches a forget NLL of $94.3$ and a re
 NLL of $93.7$ with ROUGE-L recall of exactly $0.00$ on both splits: it has not
 forgotten the forget set, it has stopped producing language. GradDiff is subtler and
 more interesting---its retain NLL is $6.8$ but its capability NLL is $19.4$, so the
-damage is nearly three times larger off the retain distribution than on it, which a
+damage is nearly $3$ times larger off the retain distribution than on it, which a
 retain-only utility reading would have missed entirely. SimNPO \mbox{%DIFAUXCMD
 \citep{fan2025simnpo}}\hskip0pt%DIFAUXCMD
 ,
@@ -2208,8 +2194,8 @@ measured rather than argued}}%DIFAUXCMD
 \DIFdel{: on TOFU with GPT-2 and Pythia the relearn probe drives
 NPO from issued to undetermined and preferentially resurfaces the most-repeated
 canaries; on TOFU with the
-larger Phi-1.5 and on MUSE with }\DIFdelend \DIFaddbegin \DIFadd{prices them correctly, and at $\eps = 0.05$ five of
-the six retrain runs that fail to issue are held back by the }\emph{\DIFadd{lower}} \DIFadd{arm, not the
+larger Phi-1.5 and on MUSE with }\DIFdelend \DIFaddbegin \DIFadd{prices them correctly, and at $\eps = 0.05$ $5$ of
+the $6$ retrain runs that fail to issue are held back by the }\emph{\DIFadd{lower}} \DIFadd{arm, not the
 upper one---that is, by over-forgetting rather than by residual memorisation. The behavioural
 signature is the one \mbox{%DIFAUXCMD
 \citet{yuan2025closer} }\hskip0pt%DIFAUXCMD
@@ -2248,10 +2234,10 @@ and $+0.73$. This }\DIFaddend is the curve that calibrates
 the extrapolation from canaries to organic data\DIFaddbegin \DIFadd{, and its shape is also the honest
 limit of that extrapolation: the $r = 1$ stratum, the one closest to how an organic
 record appears, is where the signal is weakest}\DIFaddend . Figure~\ref{fig:example} makes \DIFdelbegin \DIFdel{all of this }\DIFdelend \DIFaddbegin \DIFadd{the
-whole mechanism }\DIFaddend concrete on a single real canary pair\DIFdelbegin \DIFdel{from the TOFU/Phi-1.5 pipeline. }\DIFdelend \DIFaddbegin \DIFadd{.
-}\DIFaddend 
+whole mechanism }\DIFaddend concrete on a single real canary pair\DIFdelbegin \DIFdel{from the TOFU/Phi-1.5 pipeline}\DIFdelend \DIFaddbegin \DIFadd{.
+}
 
-\DIFaddbegin \emph{\DIFadd{A certificate and its confidence sequence can disagree, and often do.}} \DIFadd{A reader
+\emph{\DIFadd{A certificate and its confidence sequence can disagree, and often do.}} \DIFadd{A reader
 comparing Tables~\ref{tab:bench} and \ref{tab:descriptive} will notice issued
 certificates sitting beside confidence-sequence upper bounds that exceed the very
 tolerance they certify: across the benchmark tier this happens in $46$ of $107$ issued
@@ -2294,10 +2280,9 @@ stay a negligible share of the corpus, which for a provider with millions of rec
 makes even $\eps = 0.02$ affordable and for a benchmark-scale corpus does not. Our own
 headline $\eps = 0.2$ is a demonstration tolerance chosen so that $384$--$640$ pairs
 suffice on academic-scale corpora; it is not a recommendation, and we say so wherever
-the number appears.
-}
+the number appears}\DIFaddend .
 
-\DIFaddend \begin{figure}[t]
+\begin{figure}[t]
 \centering
 \fbox{\begin{minipage}{.94\textwidth}\small
 \textbf{A worked canary pair} (TOFU/Phi-1.5, seed 0, pair 3, repetition stratum
@@ -2414,7 +2399,7 @@ Clopper--Pearson $95\%$ intervals ($n = 18$).}}
 \begin{table}[t]
 \centering\small
 \caption{\DIFaddFL{Benchmark forget/retain readings and a general-knowledge probe, TOFU/GPT-2,
-three seeds, $\eps = 0.2$ on the cohort target. NLL is the mean over the benchmark's
+$3$ seeds, $\eps = 0.2$ on the cohort target. NLL is the mean over the benchmark's
 own splits; ROUGE-L recall is greedy-decode against the reference continuation, the
 TOFU/MUSE reporting convention. $^{\ddagger}$For TOFU the P1 relearn corpus is the
 capability probe set, so that cell is contaminated by construction and is not
@@ -2430,7 +2415,7 @@ target but nothing below $\eps = 0.2$ on the super-population one, and
 Theorem~\ref{thm:power} says why: $\eps = 0.1$ needs about $600$ pairs and
 $\eps = 0.05$ about $2{,}400$, against the $384$--$640$ we plant. So we planted a large
 cohort and asked what happens. Table~\ref{tab:tight} reports TOFU/GPT-2 with $3{,}072$
-pairs, two seeds, and---this matters for the reading---}\emph{\DIFadd{every canary inserted
+pairs, $2$ seeds, and---this matters for the reading---}\emph{\DIFadd{every canary inserted
 exactly once}}\DIFadd{, $r = 1$, which keeps the corpus share at $22.5\%$ and puts the audit in
 the most organic-like stratum.
 }
@@ -2508,7 +2493,7 @@ is ``is the residual advantage below $\eps$,'' and those are different questions
 Second, PrivLeak reads $-2.4\%$ on the single MUSE/Phi-1.5 GradDiff seed that VOUCH
 }\emph{\DIFadd{revokes}}\DIFadd{---a }\emph{\DIFadd{negative}} \DIFadd{leakage figure on a model carrying residual
 memorisation strong enough to trip an anytime alarm, and $-1.2\%$ averaged over that
-cell's three seeds, which is the number the table shows. This is the concrete instance
+cell's $3$ seeds, which is the number the table shows. This is the concrete instance
 of the claim the earlier draft made rhetorically, and we flag that it rests on one
 seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
 inspected after every pair---the way an auditor with a stream of deletions would
@@ -2681,10 +2666,11 @@ configuration a zero-knowledge filter substantially fails to recover.}}
 
 To show that nothing about the framework is tied to a particular model generation, we
 run the pipeline across parameter scales and release years, from GPT-2 to the
-2025--2026 cohort (Qwen-3 at 0.6B and 4B, Phi-4-mini, and the five-billion-parameter
-Gemma-4-E2B), using a shared-base multi-adapter design that keeps a single frozen base
+2025--2026 cohort (Qwen-3 at 0.6B and 4B, Phi-4-mini, and the \DIFdelbegin \DIFdel{five-billion-parameter
+}\DIFdelend \DIFaddbegin \DIFadd{5.1B-parameter
+}\DIFaddend Gemma-4-E2B), using a shared-base multi-adapter design that keeps a single frozen base
 in memory and represents every training stage as a LoRA adapter---a construction that
-fits five-billion-parameter models on a sixteen-gigabyte GPU and, incidentally, lets
+fits \DIFdelbegin \DIFdel{five-billion-parameter }\DIFdelend \DIFaddbegin \DIFadd{5B-parameter }\DIFaddend models on a \DIFdelbegin \DIFdel{sixteen-gigabyte }\DIFdelend \DIFaddbegin \DIFadd{16\,GB }\DIFaddend GPU and, incidentally, lets
 NPO's frozen reference be the fine-tuned adapter on the same base rather than a second
 model.
 \DIFaddbegin 
@@ -2708,8 +2694,8 @@ as }\DIFaddend Theorem~\ref{thm:power} predicts\DIFaddbegin \DIFadd{, and that o
 \centering\small
 \caption{Model axis, verdicts per seed for the core subjects \DIFaddbeginFL \DIFaddFL{at $\eps = 0.2$ on the
 cohort target}\DIFaddendFL , spanning 0.9M to 5.1B parameters and release years 2019 to 2026. \DIFaddbeginFL \DIFaddFL{The
-seeds column states how many runs each cell aggregates; the four largest models have
-one seed each.}\DIFaddendFL }
+seeds column states how many runs each cell aggregates; the $4$ largest models have
+$1$ seed each.}\DIFaddendFL }
 \label{tab:zoo}
 \input{tables/zoo}
 \end{table}
@@ -2745,17 +2731,17 @@ because the absolute cohort would have to be far larger.
 takes seventy-six seconds on a single mid-range GPU---about ten thousand }\DIFdelend \DIFaddbegin \DIFadd{the earlier version reported a single figure of $76$ seconds
 without saying which configuration produced it, and compared it to alternatives without
 stating the hardware. Both are corrected here. Verification cost is
-$2 \cdot Q \cdot m$ }\DIFaddend short forward passes and no training at \DIFdelbegin \DIFdel{all---against one full fine-tune for a }\DIFdelend \DIFaddbegin \DIFadd{all: $1{,}536$ passes per
+$2 \cdot Q \cdot m$ }\DIFaddend short forward passes and no training at \DIFdelbegin \DIFdel{all---against one full fine-tune for }\DIFdelend \DIFaddbegin \DIFadd{all: $1{,}536$ passes per
 subject at the benchmark tier's $Q = 2$ and $m = 384$, and $5{,}120$ at the GPT-2
 synthetic tier's $Q = 4$ and $m = 640$. Measured
 end to end on the hardware each tier actually ran on, the median scoring time per
 certificate is $13$ seconds for the small transformer, $63$ seconds for GPT-2 at $640$
 pairs, $112$--$148$ seconds for the 124M--1.4B benchmark tier, and $397$--$499$ seconds
 for the 3.8B--5.1B models. The comparison to descriptive alternatives should be read as
-a ratio of }\emph{\DIFadd{workloads}}\DIFadd{, not of wall-clock times on unmatched hardware: a
-}\DIFaddend retrain-based reference \DIFdelbegin \DIFdel{and at least sixteen for }\DIFdelend \DIFaddbegin \DIFadd{costs one full fine-tune of the same model on the same
+a ratio of }\emph{\DIFadd{workloads}}\DIFadd{, not of wall-clock times on unmatched hardware: }\DIFaddend a
+retrain-based reference \DIFdelbegin \DIFdel{and at least sixteen for }\DIFdelend \DIFaddbegin \DIFadd{costs one full fine-tune of the same model on the same
 hardware, and }\DIFaddend a shadow-model evaluator \DIFdelbegin \DIFdel{, which makes VOUCHroughly
-sixty times cheaper than the strongest descriptive alternative while providing the error control that alternative lacks. }\DIFdelend \DIFaddbegin \DIFadd{at least sixteen, against VOUCH's zero. On our
+sixty times cheaper than the strongest descriptive alternative while providing the error control that alternative lacks}\DIFdelend \DIFaddbegin \DIFadd{at least $16$, against VOUCH's zero. On our
 TOFU/GPT-2 configuration one fine-tune is $600$ optimiser steps at batch $8$, roughly
 $4{,}800$ sequence-forward-and-backward passes, so a $16$-model shadow panel is
 about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a ratio of
@@ -2765,8 +2751,7 @@ pass, so the wall-clock gap is larger than $50\times$; we give the pass ratio be
 it is the part we can state without assuming a hardware model. An earlier version
 described this as ``two orders of magnitude,'' which the arithmetic does not support.
 We give a ratio rather than a speed-up factor because the two workloads are not
-interchangeable.
-}\DIFaddend 
+interchangeable}\DIFaddend .
 
 \begin{figure}[t]
 \centering
@@ -2797,7 +2782,7 @@ extractable through a }\emph{\DIFadd{declared score class}} \DIFadd{$\F$, on a }
 cohort}}\DIFadd{, against the }\emph{\DIFadd{deployed model}}\DIFadd{, under an }\emph{\DIFadd{honest-but-verifiable}}
 \DIFadd{provider. Each of those four qualifications has a measured cost. Parameter-space
 }\DIFaddend erasure is behaviourally uncertifiable, so we do not claim it\DIFdelbegin \DIFdel{; the transfer from canaries to organic data is
-calibrated by }\DIFdelend \DIFaddbegin \DIFadd{. The class restriction is a real limit on the claim, though our attempt to measure it
+calibrated by the dose--response strata, not proven; and }\DIFdelend \DIFaddbegin \DIFadd{. The class restriction is a real limit on the claim, though our attempt to measure it
 came back inconclusive: neither of the two out-of-class attacks we ran exceeded the
 tolerance more often than a clean subsample of the same size would by chance, so we
 can report that the definitional gap exists without being able to say how large it is.
@@ -2810,16 +2795,16 @@ motivate is the single most
 valuable addition to $\F$ and we have not made it. The cohort statement transfers to
 the mechanism-level advantage only at the explicit inflation of
 Proposition~\ref{prop:transfer}, which is why our $\eps = 0.05$ results are cohort
-certificates; }\DIFaddend the \DIFdelbegin \DIFdel{dose--response strata, not proven; and the }\DIFdelend \DIFaddbegin \DIFadd{super-population arm reaches $\eps = 0.1$ once the cohort clears
+certificates; }\DIFaddend the \DIFaddbegin \DIFadd{super-population arm reaches $\eps = 0.1$ once the cohort clears
 $3{,}000$ pairs and no further, exactly as Theorem~\ref{thm:power} predicts. That
 experiment also exposed the sharpest limit we know of: at a single insertion per
 canary---the most organic-like dose---a 124M-parameter model memorises so little that
 the un-unlearned model certifies too, so the audit has no power in precisely the
 regime the canary-to-organic extrapolation needs it. The }\DIFaddend guarantee is
 per-cohort rather than per-user, since per-request certificates would require per-user
-canaries. The provider is assumed honest-but-verifiable, and \DIFdelbegin \DIFdel{a }\DIFdelend \DIFaddbegin \DIFadd{we now know that
+canaries. The provider is assumed honest-but-verifiable, and \DIFaddbegin \DIFadd{we now know that
 assumption is easier to violate than we had supposed: a perplexity filter costing one
-forward pass per record locates the entire planted cohort, so a }\DIFaddend provider willing to
+forward pass per record locates the entire planted cohort, so }\DIFaddend a provider willing to
 special-case \DIFdelbegin \DIFdel{the committed canaries }\DIFdelend \DIFaddbegin \DIFadd{it can find it, and closing that gap }\DIFaddend needs cryptographic attestation that
 VOUCH does not itself supply. Canaries must be planted before fine-tuning, so legacy
 models cannot be retro-certified. \DIFdelbegin \DIFdel{Finally, both }\DIFdelend \DIFaddbegin \DIFadd{Both }\DIFaddend two-sided certification and consensus-based
@@ -2981,7 +2966,7 @@ wall-clock times only alongside the tier that produced them
 (Section~\ref{sec:exp-ablation}). The comparison against retrain-based and
 shadow-model evaluators is likewise stated as a ratio of workloads on the same model
 and hardware---$1{,}536$ inference passes against roughly $4{,}800$ training passes per
-fine-tune and sixteen fine-tunes for a shadow panel---rather than as a wall-clock
+fine-tune and $16$ fine-tunes for a shadow panel---rather than as a wall-clock
 speed-up factor.
 }
 

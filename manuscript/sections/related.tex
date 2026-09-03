@@ -59,7 +59,7 @@ to declare success are unreliable, and this body of work is the direct motivatio
 VOUCH. A first strand shows that apparent forgetting is often mere suppression.
 \citet{lucki2024adversarial} recover ostensibly unlearned capabilities through
 lightweight attacks; \citet{zhang2025quantization} show that quantising an unlearned
-model to four bits resurrects forgotten knowledge; \citet{deeb2024remove} recover most
+model to $4$ bits resurrects forgotten knowledge; \citet{deeb2024remove} recover most
 pre-unlearning accuracy by fine-tuning on adjacent facts; and \citet{fan2025relearning}
 formalise relearning attacks and connect robustness to sharpness-aware minimisation.
 Closest to our P1 probe is \citet{hu2025jogging}, who show that fine-tuning an
@@ -68,8 +68,9 @@ contains the forget targets is enough to jog the model's memory and restore both
 hazardous knowledge and verbatim memorised passages. Their framing---obfuscation
 versus removal---is precisely the distinction our relearn probe operationalises, and
 their result is why we treat a post-relearning verdict as part of the certificate
-rather than as an optional extra: on TOFU with GPT-2 and Pythia the same probe moves
-NPO from issued to undetermined, and on one MUSE/Phi-1.5 seed it revokes outright.
+rather than as an optional extra: on our benchmark tier at $\eps = 0.2$ the same probe
+revokes NPO's certificate on one MUSE/GPT-2 seed and one MUSE/Phi-1.5 seed, and leaves
+it intact on every TOFU cell (Section~\ref{sec:exp-bench}).
 
 A second strand indicts the evaluation protocols themselves.
 \citet{feng2025existing} demonstrate that current LLM-unlearning evaluations can be

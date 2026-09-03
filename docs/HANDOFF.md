@@ -196,7 +196,7 @@ Ranked by how much a round-2 referee would care.
 4. **Audit-side reveal randomness.** Theorem 2 needs the reveal order π independent of
    the realised signs. Our runs seed π from the run seed, which also seeds cohort
    generation and training. Nothing exploits the coupling, but the condition is not met.
-   Documented in Remark 3 and Appendix A. A deployed audit should use a public beacon.
+   Documented in Remark 1 and Appendix A. A deployed audit should use a public beacon.
 5. **Power at r = 1.** The tight cohort showed GPT-2 memorises *nothing* at a single
    insertion: realised advantages −0.040 to +0.025, un-unlearned mean gap +0.005 nats,
    so "no unlearning" certifies at ε=0.05 alongside retraining. At the most
@@ -207,10 +207,16 @@ Ranked by how much a round-2 referee would care.
    on the small tiers only (the shared-frozen-base design would have to materialise
    merged weights to quantise a multi-billion-parameter model).
 7. **Capability probe is thin** — TOFU `world_facts` / MUSE holdout, not MMLU.
-8. **Response-letter cross-references.** Section/theorem/table numbers in
-   `response.tex` were written against an intermediate draft and are offset from the
-   final `main.pdf`. A numbering note at the top of the letter tells the referee this;
-   a full pass to renumber them is still worth doing before resubmission.
+8. **Response-letter cross-references.** Done (2026-09-03). Every section, remark and
+   table reference in `response.tex` was renumbered against the labels in the compiled
+   `main.aux` (experiments are §5, theory §4, framework §3, related work §2; the reveal-
+   order remark is Remark 1, the CS remark Remark 3, the one-direction remark Remark 4),
+   and a numbering note now opens the letter. The same pass fixed a stray
+   `\end{theorem}` in `theory.tex` that made pdflatex log an error the build script did
+   not count, a stale relearn-probe sentence in `related.tex` that contradicted the
+   benchmark table, two stale PrivLeak figures in the letter, the GPT-2 table caption
+   (2 seeds, not 3), the letter's claim that the introduction was compressed, and the
+   remaining spelled-out quantities. `build.sh` now fails on LaTeX errors.
 
 ### Also worth a final human pass
 
@@ -220,7 +226,8 @@ Ranked by how much a round-2 referee would care.
   (`li2026beliefs`) has **no confirmed OpenReview forum id** — it is cited by arXiv DOI.
 - `results/lm_e2e_tofu_gpt2_tight_partial.json` (3 MB) duplicates the complete file and
   could be deleted.
-- Abstract is 308 words. Springer prefers ~250; not a hard limit, but trimmable.
+- Abstract trimmed from 308 to under 250 words on 2026-09-03; every claim and both
+  sentences the response letter quotes verbatim were kept.
 
 ---
 

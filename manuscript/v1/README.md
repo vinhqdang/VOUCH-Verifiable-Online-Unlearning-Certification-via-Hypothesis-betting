@@ -43,5 +43,5 @@ Notable renumberings a reader of both versions will hit:
 | Theorem 4 (streaming) | Theorem 5 |
 | Proposition 6 (bridge) | Proposition 7, with the one-directionality remark after it |
 | Table 3 (power vs KL) | Table 6, with censoring rates and Kaplan–Meier medians |
-| Table 5 (GPT-2 end-to-end) | Table 7 |
-| Table 7 (model axis) | Table 15, with a seeds column |
+| Table 5 (GPT-2 end-to-end) | Table 9, now over the 2 seeds that carry per-pair data |
+| Table 7 (model axis) | Table 18, with a seeds column |

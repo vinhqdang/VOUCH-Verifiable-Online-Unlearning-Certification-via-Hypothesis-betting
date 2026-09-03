@@ -17,8 +17,8 @@ $\eps = 0.2$ with the complete sweep over $\eps \in \{0.05, 0.1, 0.2\}$ reported
 Table~\ref{tab:epssweep}. The entire study ran on free, ephemeral compute---Colab and
 Kaggle GPU sessions, Colab CPU sessions, an Apple-silicon laptop, and a four-core
 container---coordinated by a released fault-tolerant scheduler; because every training
-stage checkpoints and every verification is saved, a reclaimed session costs at most a
-hundred optimiser steps.
+stage checkpoints and every verification is saved, a reclaimed session costs at most
+$100$ optimiser steps.
 
 \subsection{Which null is actually controlled}\label{sec:exp-dependence}
 
@@ -95,7 +95,7 @@ adversary peeks after every observation and stops at the first crossing. We simu
 exactly this attack. Table~\ref{tab:validity} reports the realised type-I error over
 $2{,}000$ seeds: VOUCH stays below the nominal level for both the certificate and the
 revocation arm at both $\alpha=0.05$ and $\alpha=0.01$, whereas a fixed-sample binomial
-test used in the same peeking fashion inflates its error to $0.35$, seven times the
+test used in the same peeking fashion inflates its error to $0.35$, $7$ times the
 nominal rate. The calibration curve in Figure~\ref{fig:validity} confirms that the
 conservatism holds across the whole range of $\alpha$. When we run the complete
 protocol---three correlated scores, the confidence sequence, and both arms
@@ -268,7 +268,7 @@ shrinks with the number of pairs observed, under $\Delta=0$ and $\Delta=0.2$.}
 \subsection{Streaming deletion waves}\label{sec:exp-streaming}
 
 Because deletion requests arrive continually, we test the composition rules of
-Theorem~\ref{thm:streaming} on histories of ten waves, and Table~\ref{tab:streaming}
+Theorem~\ref{thm:streaming} on histories of $10$ waves, and Table~\ref{tab:streaming}
 bears out both halves of the theorem. When every wave is exactly unlearned, the
 $\alpha$-spending per-wave alarm never once fires falsely and the global product alarm
 raises a false alarm in $2$ of $1{,}000$ histories. When a single wave is genuinely bad
@@ -283,7 +283,7 @@ at $512$ pairs per wave, because each wave independently risks landing in the
 undetermined band. Consensus buys soundness across waves and pays for it in exactly
 this way, and a provider auditing a long deletion history should size per-wave cohorts
 with $K$ in mind rather than sizing one wave and multiplying. The most telling case
-is the one the product alarm was designed for: ten waves each leaking only weakly
+is the one the product alarm was designed for: $10$ waves each leaking only weakly
 ($\Delta = 0.06$), so weakly that a per-wave test detects them just $14\%$ of the time,
 are nonetheless caught by the accumulated product alarm in $62\%$ of histories, at a
 median firing wave of three. Distributed leakage that hides beneath every individual
@@ -333,10 +333,12 @@ to serve as ground truth, reproduces every one of these qualitative outcomes.
 
 \begin{table}[t]
 \centering\small
-\caption{GPT-2 end-to-end over 3 seeds ($640$ pairs, two-sided $\eps=0.2$, cohort
+\caption{GPT-2 end-to-end over $2$ seeds ($640$ pairs, two-sided $\eps=0.2$, cohort
 target): per-seed verdicts (\vI\ issued, \vR\ revoked, \vU\ undetermined), the mean
 confidence-sequence upper bound on $\Delta$, and the mean canary score gap $\bar D$
-with its across-seed standard deviation.}
+with its across-seed standard deviation. Seeds $1$ and $2$ are shown; the seed-$0$
+run of this tier predates per-pair logging and cannot be replayed under the cohort
+target, so it is omitted rather than mixed in from the earlier analysis.}
 \label{tab:gpt2v2}
 \input{tables/gpt2v2}
 \end{table}
@@ -389,7 +391,7 @@ than soften the picture. Gradient ascent reaches a forget NLL of $94.3$ and a re
 NLL of $93.7$ with ROUGE-L recall of exactly $0.00$ on both splits: it has not
 forgotten the forget set, it has stopped producing language. GradDiff is subtler and
 more interesting---its retain NLL is $6.8$ but its capability NLL is $19.4$, so the
-damage is nearly three times larger off the retain distribution than on it, which a
+damage is nearly $3$ times larger off the retain distribution than on it, which a
 retain-only utility reading would have missed entirely. SimNPO \citep{fan2025simnpo},
 added at revision, achieves the widest forget/retain separation of any subject that
 remains fluent ($6.20$ against $2.62$, versus NPO's $5.50$ against $2.60$) at a
@@ -411,8 +413,8 @@ draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
 two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
 two-sided arm buys is that the \emph{same} runs would be certified by a one-sided test
 at \emph{any} tolerance, however tight, because a one-sided test cannot see below
-chance at all; the two-sided arm prices them correctly, and at $\eps = 0.05$ five of
-the six retrain runs that fail to issue are held back by the \emph{lower} arm, not the
+chance at all; the two-sided arm prices them correctly, and at $\eps = 0.05$ $5$ of
+the $6$ retrain runs that fail to issue are held back by the \emph{lower} arm, not the
 upper one---that is, by over-forgetting rather than by residual memorisation. The behavioural
 signature is the one \citet{yuan2025closer} and \citet{li2026beliefs} describe from
 the optimisation side, showing up in an audit.
@@ -584,7 +586,7 @@ Clopper--Pearson $95\%$ intervals ($n = 18$).}
 \begin{table}[t]
 \centering\small
 \caption{Benchmark forget/retain readings and a general-knowledge probe, TOFU/GPT-2,
-three seeds, $\eps = 0.2$ on the cohort target. NLL is the mean over the benchmark's
+$3$ seeds, $\eps = 0.2$ on the cohort target. NLL is the mean over the benchmark's
 own splits; ROUGE-L recall is greedy-decode against the reference continuation, the
 TOFU/MUSE reporting convention. $^{\ddagger}$For TOFU the P1 relearn corpus is the
 capability probe set, so that cell is contaminated by construction and is not
@@ -600,7 +602,7 @@ target but nothing below $\eps = 0.2$ on the super-population one, and
 Theorem~\ref{thm:power} says why: $\eps = 0.1$ needs about $600$ pairs and
 $\eps = 0.05$ about $2{,}400$, against the $384$--$640$ we plant. So we planted a large
 cohort and asked what happens. Table~\ref{tab:tight} reports TOFU/GPT-2 with $3{,}072$
-pairs, two seeds, and---this matters for the reading---\emph{every canary inserted
+pairs, $2$ seeds, and---this matters for the reading---\emph{every canary inserted
 exactly once}, $r = 1$, which keeps the corpus share at $22.5\%$ and puts the audit in
 the most organic-like stratum.
 
@@ -673,7 +675,7 @@ is ``is the residual advantage below $\eps$,'' and those are different questions
 Second, PrivLeak reads $-2.4\%$ on the single MUSE/Phi-1.5 GradDiff seed that VOUCH
 \emph{revokes}---a \emph{negative} leakage figure on a model carrying residual
 memorisation strong enough to trip an anytime alarm, and $-1.2\%$ averaged over that
-cell's three seeds, which is the number the table shows. This is the concrete instance
+cell's $3$ seeds, which is the number the table shows. This is the concrete instance
 of the claim the earlier draft made rhetorically, and we flag that it rests on one
 seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
 inspected after every pair---the way an auditor with a stream of deletions would
@@ -831,10 +833,10 @@ configuration a zero-knowledge filter substantially fails to recover.}
 
 To show that nothing about the framework is tied to a particular model generation, we
 run the pipeline across parameter scales and release years, from GPT-2 to the
-2025--2026 cohort (Qwen-3 at 0.6B and 4B, Phi-4-mini, and the five-billion-parameter
+2025--2026 cohort (Qwen-3 at 0.6B and 4B, Phi-4-mini, and the 5.1B-parameter
 Gemma-4-E2B), using a shared-base multi-adapter design that keeps a single frozen base
 in memory and represents every training stage as a LoRA adapter---a construction that
-fits five-billion-parameter models on a sixteen-gigabyte GPU and, incidentally, lets
+fits 5B-parameter models on a 16\,GB GPU and, incidentally, lets
 NPO's frozen reference be the fine-tuned adapter on the same base rather than a second
 model.
 
@@ -855,8 +857,8 @@ as Theorem~\ref{thm:power} predicts, and that one seed per cell is too thin to s
 \centering\small
 \caption{Model axis, verdicts per seed for the core subjects at $\eps = 0.2$ on the
 cohort target, spanning 0.9M to 5.1B parameters and release years 2019 to 2026. The
-seeds column states how many runs each cell aggregates; the four largest models have
-one seed each.}
+seeds column states how many runs each cell aggregates; the $4$ largest models have
+$1$ seed each.}
 \label{tab:zoo}
 \input{tables/zoo}
 \end{table}
@@ -897,7 +899,7 @@ pairs, $112$--$148$ seconds for the 124M--1.4B benchmark tier, and $397$--$499$ 
 for the 3.8B--5.1B models. The comparison to descriptive alternatives should be read as
 a ratio of \emph{workloads}, not of wall-clock times on unmatched hardware: a
 retrain-based reference costs one full fine-tune of the same model on the same
-hardware, and a shadow-model evaluator at least sixteen, against VOUCH's zero. On our
+hardware, and a shadow-model evaluator at least $16$, against VOUCH's zero. On our
 TOFU/GPT-2 configuration one fine-tune is $600$ optimiser steps at batch $8$, roughly
 $4{,}800$ sequence-forward-and-backward passes, so a $16$-model shadow panel is
 about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a ratio of

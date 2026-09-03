@@ -60,7 +60,7 @@ audit from being gamed after the fact, exactly as a flat hash of the whole manif
 would; the tree structure buys one further thing that a flat hash does not, and the
 theory needs it. At step $t$ the provider hands over leaf $\pi(t)$ together with its
 authentication path, which the verifier checks against the published root; the path is
-$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs nine hashes at
+$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs $9$ hashes at
 $m = 384$. The blinding nonce matters because the template library is public: without
 it, an unopened leaf's hash could be attacked by enumeration.
 
@@ -158,8 +158,8 @@ For the \emph{revocation} arm the hypothesised mean is the constant $\tfrac12$, 
 Theorem~\ref{thm:null} makes exact conditionally, so no boundary recentring is needed.
 
 How the stakes are chosen determines power, not validity, which frees us to be
-aggressive. VOUCH plays a uniform mixture of eight experts and lets their wealth
-arbitrate: six constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
+aggressive. VOUCH plays a uniform mixture of $8$ experts and lets their wealth
+arbitrate: $6$ constant-fraction bettors $\lambda = c \cdot \lambda_{\max}$ with
 $c \in \{0.02, 0.05, 0.1, 0.2, 0.4, 0.7\}$, an online-Newton-step (ONS) learner, and a
 truncated Krichevsky--Trofimov (KT) plug-in. The ONS expert follows the coin-betting
 recursion
