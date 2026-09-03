@@ -4,7 +4,7 @@
 
 \signature{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}}
 \address{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}}
-\date{5 July 2026}
+\date{3 September 2026}
 
 \begin{document}
 
@@ -12,46 +12,73 @@
 
 \opening{Dear Editors,}
 
-Please consider the enclosed manuscript, ``\emph{VOUCH: Anytime-Valid
-Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting},'' for
-publication in \emph{Machine Learning}. In keeping with double-blind review, the
-manuscript itself carries no author information; I am the sole author, and my
-identity and affiliation appear only in this letter.
+Please find enclosed the revised version of ``\emph{VOUCH: Anytime-Valid
+Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting},''
+together with a point-by-point response to both reviewers and a
+tracked-changes copy of the manuscript. In keeping with double-blind review,
+the manuscript itself carries no author information; I am the sole author, and
+my identity and affiliation appear only in this letter.
 
-The paper asks a question that regulation has made urgent and that current
-practice cannot answer: when a provider runs an unlearning algorithm to honour a
-deletion request, can anyone certify---with controlled error---that forgetting
-took place? Existing evaluations are fixed-sample tests that are unsound as
-membership evidence, void their guarantees under the continuous monitoring real
-audits involve, and lean on retrained reference models that are unaffordable at
-scale. VOUCH removes all three obstacles at once: \emph{paired ghost canaries},
-of which a fair coin admits one twin into training and later into the forget set,
-make the within-pair score difference symmetric under exact unlearning---an exact,
-distribution-free null over which betting e-processes deliver an anytime-valid
-confidence sequence on residual membership advantage, an
-$(\varepsilon,\alpha)$-forgetting certificate, and a revocation alarm. A central
-finding is that certificates and alarms must compose across deletion waves in
-opposite directions---consensus versus product---and that the intuitive
-alternatives falsely certify up to 99.6\% of the time. The framework is validated
-by a two-thousand-seed calibration study under adversarial optional stopping,
-certification of four unlearning methods on the TOFU and MUSE-News benchmarks
-across several architectures, and recoverability probes, at a verifier cost two
-orders of magnitude below shadow-model evaluation. As stated in the manuscript's
-data availability statement, all code, per-seed results, and the execution harness
-are publicly released; the repository reference is withheld from the blinded
-manuscript and is:
+Both reports were exceptionally careful, and two of their points were
+mathematically decisive rather than editorial. I want to flag them here because
+they changed the paper rather than its wording.
+
+Reviewer~1 observed that the certificate's null was defined as a
+\emph{marginal} sign probability while the supermartingale proof in fact
+requires a \emph{conditional} statement at every step---and that the two come
+apart precisely in our setting, because every canary passes through one jointly
+trained and unlearned model. This is correct. Rather than patch the definition,
+the revision retargets the certificate at the \emph{realised advantage on the
+committed cohort} and bets against a without-replacement boundary recentred at
+each step. The resulting guarantee is exact under arbitrary dependence across
+pairs, templates and repetition strata, with no independence and no
+exchangeability assumed. A new simulation shows the concern was not academic:
+under model-level over-dispersion the previous construction breaches its error
+level eightfold, while the corrected one holds everywhere. The same reviewer
+also corrected the small-$\varepsilon$ Kullback--Leibler expansion, which was
+wrong by a factor of four in the stated rule of thumb, though the numerical
+tables had always been computed from the exact divergence.
+
+Reviewer~2 pressed on four things the paper had asserted rather than shown, and
+in one case the measurement contradicted us. We had claimed the planted canaries
+``do not stand out.'' They do: a perplexity filter costing one forward pass per
+record recovers the entire cohort. The revision retracts the claim, explains the
+information-theoretic reason a compact high-entropy secret must be conspicuous,
+derives an entropy-dilution design rule from it, and shows the rule works
+(detection recall falls from $1.00$ to $0.21$)---while making clear why locating
+the cohort is not the same as defeating the audit, since both twins in a pair
+are equally conspicuous. Reviewer~2 also identified that the sample-size table's
+starred entries sat below the information-theoretic bound because they were
+medians over uncensored runs; the corrected Kaplan--Meier medians, with censoring
+rates reported, remove the artefact.
+
+Beyond those, the revision adds four measurement studies that the reviewers
+asked for and that the paper is stronger for: a comparison against four
+\emph{valid} sequential procedures rather than a straw fixed-sample baseline; a
+head-to-head against the descriptive metrics we claim to replace, on identical
+models and seeds; attacks from \emph{outside} the declared score class, one of
+which exceeds the certified tolerance on $3.2\%$ of certified runs and which we
+report as the negative result it is; and a tolerance sweep that reaches
+$\varepsilon = 0.05$ on real models, with the cohort versus super-population
+distinction made explicit rather than elided. SimNPO is added as a subject, and
+the benchmarks' own forget/retain metrics plus a general-knowledge probe now
+accompany every verdict. The scope of the certificate---a declared score class,
+on a committed cohort, under an honest-but-verifiable provider---is now stated
+consistently in the abstract, introduction, experiments and conclusion, with the
+measured cost of each qualification. The response letter closes with an explicit
+list of the three requests this revision answers only partially.
+
+As stated in the manuscript's data availability statement, all code, per-seed
+results, and the execution harness are publicly released; the repository
+reference is withheld from the blinded manuscript and is:
 \begin{center}
 \href{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting}{\texttt{github.com/vinhqdang/VOUCH-Verifiable-Online-}\\\texttt{Unlearning-Certification-via-Hypothesis-betting}}
 \end{center}
 
 This manuscript is original, has not been published previously, and is not under
-consideration elsewhere. I have no conflicts of interest to declare. I believe the
-combination of game-theoretic statistics with a verifier-generated null, and the
-resulting first anytime-valid certification framework for machine unlearning,
-fits \emph{Machine Learning}'s scope well, and I hope you will find it suitable
-for review.
-
-Thank you for your consideration.
+consideration elsewhere. I have no conflicts of interest to declare. I am
+grateful to both reviewers for reports that materially improved the work, and I
+hope the revision is now suitable for publication in \emph{Machine Learning}.
 
 \closing{Sincerely,}
 
