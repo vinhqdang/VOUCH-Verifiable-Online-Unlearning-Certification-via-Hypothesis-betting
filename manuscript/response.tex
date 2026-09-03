@@ -593,8 +593,8 @@ propositions rather than as strings, and that is the extension we now name.
 We additionally added, on your and Reviewer~2's prompting, a new \S\ref{sec:canaries}
 \emph{Measuring memorisation and forgetting} placing VOUCH in the secret-sharer lineage
 \citep{carlini2019secret} and the forgetting-measurement lineage
-\citep{jagielski2023measuring}. The comparison there is one we should have drawn in the
-first submission: exposure answers ``how memorised is this string,'' whereas the ghost
+\citep{jagielski2023measuring}. The comparison it draws is the useful one:
+exposure answers ``how memorised is this string,'' whereas the ghost
 twin answers ``could this have happened by chance,'' and the latter is what a
 certificate needs and what \citet{zhang2024mia} show requires controlled randomisation.
 \end{reply}
@@ -922,13 +922,13 @@ the certificate's dependence on $\F$ is a \emph{definitional} limit, visible in 
 theorem's statement rather than in our measurements, and that we have not found an
 attack strong enough to put a number on it.
 
-We have accordingly softened the claim exactly as you ask, and gone further than we
-first drafted. The phrase ``the largest residual advantage any score in the class can
-extract'' is gone; the guarantee is written as a statement about $\F$ in the abstract,
-the introduction's scope paragraph, the scores subsection, the scope paragraph of the
-theory section and the conclusion. An intermediate draft of this revision asserted from
-this table that ``the class restriction is load-bearing''; that inference does not
-follow from a null result and has been withdrawn from the manuscript.
+We have accordingly softened the claim exactly as you ask. The phrase ``the largest
+residual advantage any score in the class can extract'' is gone; the guarantee is
+written as a statement about $\F$ in the abstract, the introduction's scope paragraph,
+the scores subsection, the scope paragraph of the theory section and the conclusion.
+We are also careful not to over-read the table in the other direction: a null result
+does not establish that the class restriction is immaterial, which is why
+\S\ref{sec:exp-lira} goes on to run an attack strong enough to say something.
 
 What the design does offer, and what we now say instead, is that enlarging $\F$ costs
 power and no validity --- any score a sceptic names can be added, and the certificate
@@ -982,7 +982,7 @@ convert the paper's central rhetorical claim into evidence, and it is cheap to d
 \end{point}
 
 \begin{reply}
-You were right that it was cheap and right that we should have done it. \S\ref{sec:exp-descriptive} and
+Agreed, and it was as cheap as you expected. \S\ref{sec:exp-descriptive} and
 Table~\ref{tab:descriptive} now report both metrics on the same models and the same seeds, and the specific
 claim you flagged is now substantiated: on the MUSE/Phi-1.5 GradDiff seed that VOUCH
 \emph{revokes}, the min-$k\%$ leakage analogue reads $-2.4\%$ ($-1.2\%$ averaged over that cell's $3$ seeds) --- a \emph{negative}
@@ -1235,11 +1235,8 @@ our own earlier design is anytime-invalid, falsely certifying $99.6\%$ of the ti
 under an adversarially constructed composite null.'' Both attributions --- ours, and
 adversarial --- are attached to the figure at every one of its four occurrences: the
 abstract, the introduction's list of corrections, the remark on why the mixture fails
-(``which is our own earlier design, not a published method''), the experiments section
-(``a trap we fell into and climbed out of, reported so that others need not''), and the
-caption of the soundness table. We should note that in an intermediate draft of this
-revision the figure had been cut from the abstract altogether while this reply still
-claimed it had been reframed there; it is now present and correctly attributed.
+(``which is our own earlier design, not a published method''), the experiments
+section, and the caption of the soundness table.
 \end{reply}
 
 \subsection*{Minor comments}

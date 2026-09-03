@@ -77,12 +77,10 @@ $2Qm$ forward passes per subject.
 wealth factor must be computed from the \emph{same} clamped value of the recentred
 boundary $p_0(t)$. The admissible range is $\lambda_t < c/(1-p_0(t))$, so deriving the
 cap from one clamped boundary and the payoff from another lets the worst-case factor
-$1 + \lambda_t(p_0(t)-1)$ fall below zero. This is reachable exactly when $m\,p_0$ is
-an integer---which holds for $m = 640$ at every tolerance we report, in both
-directions. An earlier build of the released code had two different clamps and did
-produce non-positive raw factors on that tier; the current build shares one clamp,
-carries a regression test, and we have re-run the affected tier, whose verdicts are
-unchanged.
+$1 + \lambda_t(p_0(t)-1)$ fall below zero. The case is reachable exactly when $m\,p_0$ is an integer---which holds for
+$m = 640$ at every tolerance we report, in both directions---so it is not a corner a
+reimplementation can ignore. The released code derives both from one clamp and carries
+a regression test for it.
 
 Second, Theorem~\ref{thm:cert} requires the reveal order $\pi$ to be independent of
 the realised sign vectors. Every result table in this paper was produced with

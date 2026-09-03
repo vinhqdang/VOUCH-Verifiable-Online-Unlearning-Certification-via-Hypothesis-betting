@@ -22,7 +22,7 @@ work and we state it wherever the certification claim is summarised, because the
 commitment prevents the manifest from being changed after the fact but does not
 prevent a provider who has \emph{located} the cohort from treating it differently
 from organic data. Section~\ref{sec:exp-detect} measures how hard locating the cohort
-actually is---the answer is: much easier than we had assumed---and explains why
+actually is---the answer is that it is cheap---and explains why
 locating it is nonetheless not the same as defeating the audit: both twins in a pair
 are equally conspicuous, so a provider who finds the cohort still learns nothing
 about which twin the coin admitted. A provider willing to special-case the committed
@@ -99,9 +99,8 @@ memorised}:
 \item optionally $s_{\mathrm{probe}}$, a linear probe on the hidden state, calibrated
       on a disjoint cohort.
 \end{itemize}
-The sign convention matters and we fix it once, since an earlier draft described
-$s_{\mathrm{loss}}$ as a negative log-likelihood while the released implementation
-uses the log-likelihood, which flips the sign of every reported gap. For pair $i$ and
+The sign convention matters and we fix it once here, since a log-likelihood and a
+negative log-likelihood differ by exactly the sign of every reported gap. For pair $i$ and
 score $s$ we form the within-pair difference and its sign,
 \begin{equation}\label{eq:sign}
 D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad

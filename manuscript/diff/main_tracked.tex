@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 13:52:09 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 13:52:09 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 20:40:15 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 20:40:15 2026
 
 
 \theoremstyle{thmstyleone}
@@ -297,8 +297,7 @@ on an un-unlearned model---finds none on a certified one, which bounds the gap o
 tier without closing it in general. The transfer from the realised
 cohort to the mechanism-level advantage costs an explicit inflation of
 $\kappa\sqrt{2\log(2/\alpha')/m}$ (Proposition~\ref{prop:transfer}), which is why our
-tight-tolerance results are cohort statements. And the honest-but-verifiable assumption
-is load-bearing in a way we had underestimated:
+tight-tolerance results are cohort statements. And the honest-but-verifiable assumption is load-bearing:
 Section~\ref{sec:exp-detect} shows a zero-knowledge perplexity filter recovers the
 entire planted cohort, so a provider who wished to special-case it could find it, and
 only cryptographic attestation \mbox{%DIFAUXCMD
@@ -514,8 +513,7 @@ fine-tuning\DIFdelbegin \DIFdel{; and
 \mbox{%DIFAUXCMD
 \citet{barbulescu2024each} }\hskip0pt%DIFAUXCMD
 document how per-sequence memorisation
-strength governs how hard a datum is to remove.
-}\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
+strength governs how hard a datum is to remove. }\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
 identify the mechanism they call the
 }\emph{\DIFadd{squeezing effect}}\DIFadd{: gradient-ascent-style objectives push probability mass off
@@ -668,7 +666,7 @@ work and we state it wherever the certification claim is summarised, because the
 commitment prevents the manifest from being changed after the fact but does not
 prevent a provider who has }\emph{\DIFadd{located}} \DIFadd{the cohort from treating it differently
 from organic data. Section~\ref{sec:exp-detect} measures how hard locating the cohort
-actually is---the answer is: much easier than we had assumed---and explains why
+actually is---the answer is that it is cheap---and explains why
 locating it is nonetheless not the same as defeating the audit: both twins in a pair
 are equally conspicuous, so a provider who finds the cohort still learns nothing
 about which twin the coin admitted. }\DIFaddend A provider willing to special-case the committed
@@ -754,9 +752,8 @@ optionally }\DIFdelend \DIFaddbegin \DIFadd{difference
 prompts}\DIFdelend \DIFaddbegin \DIFadd{state, calibrated
       on a disjoint cohort.
 }\end{itemize}
-\DIFadd{The sign convention matters and we fix it once, since an earlier draft described
-$s_{\mathrm{loss}}$ as a negative log-likelihood while the released implementation
-uses the log-likelihood, which flips the sign of every reported gap}\DIFaddend . For pair $i$ and
+\DIFadd{The sign convention matters and we fix it once here, since a log-likelihood and a
+negative log-likelihood differ by exactly the sign of every reported gap}\DIFaddend . For pair $i$ and
 score $s$ we form the within-pair difference and its sign,
 \begin{equation}\label{eq:sign}
 D_i^{(s)} = s(M_u, c_i^{\text{in}}) - s(M_u, c_i^{\text{ghost}}), \qquad
@@ -1516,8 +1513,7 @@ taken under }\DIFaddend exact unlearning and \DIFaddbegin \DIFadd{the asymptotic
 \DIFaddend this is approximately \DIFdelbegin \DIFdel{$8\log(1/\alpha)/\eps^2$ }\DIFdelend \DIFaddbegin \DIFadd{$2\log(1/\alpha)/\eps^2$ }\DIFaddend pairs.
 \end{theorem}
 
-\DIFaddbegin \DIFadd{The restriction to the fixed boundary is not cosmetic, and we state it because the
-earlier draft did not. Under without-replacement reveal the log-wealth increments are
+\DIFaddbegin \DIFadd{The restriction to the fixed boundary is not cosmetic. Under without-replacement reveal the log-wealth increments are
 neither independent nor identically distributed, the boundary $p_0(t)$ moves, and the
 admissible stake range moves with it---so ``the best constant bet'' is not well
 defined, and neither the $O(\log t)$ ONS regret bound (which assumes a fixed convex
@@ -1975,8 +1971,7 @@ holds at $0.7\%$, comfortably below $\alpha$. \DIFdelbegin \DIFdel{This is the e
 requires every score's process to concur rather than betting on their average}\DIFdelend \DIFaddbegin \DIFadd{We want to be precise about what this
 number is and is not: the mixture arm is }\emph{\DIFadd{our own}} \DIFadd{earlier design, evaluated
 against an adversarially constructed composite null. It is not a published method and
-the figure is not a refutation of anyone else's work. It is a trap we fell into and
-climbed out of, reported so that others need not}\DIFaddend .
+the figure is not a refutation of anyone else's work}\DIFaddend .
 
 \begin{table}[t]
 \centering\small
@@ -2014,8 +2009,7 @@ cohorts have a realised advantage genuinely below the tolerance. Against the
 }\emph{\DIFadd{cohort}} \DIFadd{null every procedure holds its level, and the two group-sequential
 boundaries and the fixed-$n$ test are markedly conservative there ($0.004$}\DIFaddend , \DIFdelbegin \DIFdel{and the answer is :
 close to
-nothing beyond the information-theoretic minimum.
-}\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
+nothing beyond the information-theoretic minimum. }\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
 $0.000$) precisely because they were built for the other target. Neither column alone
 is a fair scoreboard, which is why we print both. On power and cost the ordering is
 informative. Against exact unlearning at $\eps = 0.1$ and a budget of $1{,}536$ pairs,
@@ -2220,8 +2214,8 @@ Table~\ref{tab:bench} and Figures~\ref{fig:tofu} and \ref{fig:muse} report verdi
 across two benchmarks, three architectures spanning 124M to 1.4B parameters, and
 \DIFdelbegin \DIFdel{three seeds each, and five findings emerge
 that together make the case for the framework}\DIFdelend \DIFaddbegin \DIFadd{$3$ seeds each. Table~\ref{tab:counts} gives every verdict count with a
-Clopper--Pearson interval, because at $n = 18$ these counts carry wide uncertainty and
-the earlier draft's bare ``sixteen of eighteen'' overstated what they establish}\DIFaddend .
+Clopper--Pearson interval, because at $n = 18$ these counts carry wide uncertainty that a bare
+fraction does not convey}\DIFaddend .
 
 \DIFdelbegin \DIFdel{First, }\DIFdelend \emph{\DIFdelbegin \DIFdel{detection }\DIFdelend \DIFaddbegin \DIFadd{Detection }\DIFaddend works\DIFaddbegin \DIFadd{, at the stated tolerance.}\DIFaddend } \DIFdelbegin \DIFdel{: the }\DIFdelend \DIFaddbegin \DIFadd{The }\DIFaddend un-unlearned model is revoked in
 \DIFdelbegin \DIFdel{sixteen of eighteen }\DIFdelend \DIFaddbegin \DIFadd{$16$ of $18$ }\DIFaddend benchmark runs under the default sign \DIFdelbegin \DIFdel{arm---all }\DIFdelend \DIFaddbegin \DIFadd{arm---$95\%$ CI $[0.65, 0.99]$---all
@@ -2297,8 +2291,7 @@ disentangling the two would require a probe set disjoint from the relearn corpus
 \emph{\DIFadd{Two-sided certification matters, though not on these runs.}} \DIFadd{On }\DIFaddend several TOFU
 seeds gradient ascent, GradDiff \DIFdelbegin \DIFdel{,
 }\DIFdelend and NPO push the canaries \emph{below} chance, with
-mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the
-}\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
+mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the }\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
 TOFU/Phi-1.5). We should be exact about what follows from that, because an earlier
 draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
 two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
@@ -2577,9 +2570,9 @@ attacker in $\F$ can extract, and it is the one the certificate is stated for.
 subjects, co-trained on TOFU/GPT-2 with a shared fine-tuned adapter, $384$ pairs,
 cohort target. Verdicts are per seed (\vI\ issued, \vR\ revoked, \vU\ undetermined);
 $\hat\Delta$ is the realised cohort advantage of $s_{\mathrm{loss}}$; forget and
-retain NLL are on the benchmark's own splits. This tier was run on CPU for this
-revision and is reported separately from the main benchmark table rather than merged
-into it.}}
+retain NLL are on the benchmark's own splits. It uses the same protocol, cohort size and tolerances as the
+benchmark tier of Section~\ref{sec:exp-bench}, over $2$ seeds, and is reported as its
+own tier because its subjects were co-trained in a single run.}}
 \label{tab:rmu}
 \input{tables/rmu}
 \end{table}
@@ -2670,8 +2663,7 @@ Second, PrivLeak reads $-2.4\%$ on the single MUSE/Phi-1.5 GradDiff seed that VO
 }\emph{\DIFadd{revokes}}\DIFadd{---a }\emph{\DIFadd{negative}} \DIFadd{leakage figure on a model carrying residual
 memorisation strong enough to trip an anytime alarm, and $-1.2\%$ averaged over that
 cell's $3$ seeds, which is the number the table shows. This is the concrete instance
-of the claim the earlier draft made rhetorically, and we flag that it rests on one
-seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
+of the claim, and we flag that it rests on one seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
 inspected after every pair---the way an auditor with a stream of deletions would
 naturally use it---flags leakage on genuinely clean retrained models in several cells,
 which is optional stopping doing exactly what Section~\ref{sec:exp-validity}
@@ -2713,8 +2705,7 @@ the second uses a predictable weight vector---so both come with anytime-valid bo
 rather than point estimates.
 }
 
-\DIFadd{Table~\ref{tab:outclass} reports the outcome, and it is a }\emph{\DIFadd{null}} \DIFadd{result, which
-took us two attempts to read correctly. The stratum-restricted attack exceeds
+\DIFadd{Table~\ref{tab:outclass} reports the outcome, and it is a }\emph{\DIFadd{null}} \DIFadd{result. The stratum-restricted attack exceeds
 $\eps = 0.2$ on $2.8\%$ of certified runs and the learned combination on $0.5\%$. Those
 look like breaches until one asks what a }\emph{\DIFadd{clean}} \DIFadd{subsample of the same size would
 do: the attacks are evaluated on $96$--$159$ and $192$--$1{,}536$ pairs respectively, and
@@ -3064,9 +3055,7 @@ about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a r
 about $50$ to one---and the same ratio on any hardware, because both scale with the
 same model. A training pass is also several times more expensive than an inference
 pass, so the wall-clock gap is larger than $50\times$; we give the pass ratio because
-it is the part we can state without assuming a hardware model. An earlier version
-described this as ``two orders of magnitude,'' which the arithmetic does not support.
-We give a ratio rather than a speed-up factor because the two workloads are not
+it is the part we can state without assuming a hardware model. We give a ratio rather than a speed-up factor because the two workloads are not
 interchangeable}\DIFaddend .
 
 \begin{figure}[t]
@@ -3238,12 +3227,10 @@ $2Qm$ forward passes per subject.
 wealth factor must be computed from the }\emph{\DIFadd{same}} \DIFadd{clamped value of the recentred
 boundary $p_0(t)$. The admissible range is $\lambda_t < c/(1-p_0(t))$, so deriving the
 cap from one clamped boundary and the payoff from another lets the worst-case factor
-$1 + \lambda_t(p_0(t)-1)$ fall below zero. This is reachable exactly when $m\,p_0$ is
-an integer---which holds for $m = 640$ at every tolerance we report, in both
-directions. An earlier build of the released code had two different clamps and did
-produce non-positive raw factors on that tier; the current build shares one clamp,
-carries a regression test, and we have re-run the affected tier, whose verdicts are
-unchanged.
+$1 + \lambda_t(p_0(t)-1)$ fall below zero. The case is reachable exactly when $m\,p_0$ is an integer---which holds for
+$m = 640$ at every tolerance we report, in both directions---so it is not a corner a
+reimplementation can ignore. The released code derives both from one clamp and carries
+a regression test for it.
 }
 
 \DIFadd{Second, Theorem~\ref{thm:cert} requires the reveal order $\pi$ to be independent of

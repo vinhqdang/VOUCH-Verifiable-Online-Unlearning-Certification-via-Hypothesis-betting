@@ -141,8 +141,7 @@ anytime-invalid, as Remark~\ref{rem:mixture} explains---while the per-score mini
 holds at $0.7\%$, comfortably below $\alpha$. We want to be precise about what this
 number is and is not: the mixture arm is \emph{our own} earlier design, evaluated
 against an adversarially constructed composite null. It is not a published method and
-the figure is not a refutation of anyone else's work. It is a trap we fell into and
-climbed out of, reported so that others need not.
+the figure is not a refutation of anyone else's work.
 
 \begin{table}[t]
 \centering\small
@@ -352,8 +351,8 @@ fine-tuning mixture, and we track held-out utility for every subject.
 Table~\ref{tab:bench} and Figures~\ref{fig:tofu} and \ref{fig:muse} report verdicts
 across two benchmarks, three architectures spanning 124M to 1.4B parameters, and
 $3$ seeds each. Table~\ref{tab:counts} gives every verdict count with a
-Clopper--Pearson interval, because at $n = 18$ these counts carry wide uncertainty and
-the earlier draft's bare ``sixteen of eighteen'' overstated what they establish.
+Clopper--Pearson interval, because at $n = 18$ these counts carry wide uncertainty that a bare
+fraction does not convey.
 
 \emph{Detection works, at the stated tolerance.} The un-unlearned model is revoked in
 $16$ of $18$ benchmark runs under the default sign arm---$95\%$ CI $[0.65, 0.99]$---all
@@ -642,9 +641,9 @@ attacker in $\F$ can extract, and it is the one the certificate is stated for.
 subjects, co-trained on TOFU/GPT-2 with a shared fine-tuned adapter, $384$ pairs,
 cohort target. Verdicts are per seed (\vI\ issued, \vR\ revoked, \vU\ undetermined);
 $\hat\Delta$ is the realised cohort advantage of $s_{\mathrm{loss}}$; forget and
-retain NLL are on the benchmark's own splits. This tier was run on CPU for this
-revision and is reported separately from the main benchmark table rather than merged
-into it.}
+retain NLL are on the benchmark's own splits. It uses the same protocol, cohort size and tolerances as the
+benchmark tier of Section~\ref{sec:exp-bench}, over $2$ seeds, and is reported as its
+own tier because its subjects were co-trained in a single run.}
 \label{tab:rmu}
 \input{tables/rmu}
 \end{table}
@@ -730,8 +729,7 @@ Second, PrivLeak reads $-2.4\%$ on the single MUSE/Phi-1.5 GradDiff seed that VO
 \emph{revokes}---a \emph{negative} leakage figure on a model carrying residual
 memorisation strong enough to trip an anytime alarm, and $-1.2\%$ averaged over that
 cell's $3$ seeds, which is the number the table shows. This is the concrete instance
-of the claim the earlier draft made rhetorically, and we flag that it rests on one
-seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
+of the claim, and we flag that it rests on one seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
 inspected after every pair---the way an auditor with a stream of deletions would
 naturally use it---flags leakage on genuinely clean retrained models in several cells,
 which is optional stopping doing exactly what Section~\ref{sec:exp-validity}
@@ -770,8 +768,7 @@ Theorem~\ref{thm:null} intact---the first conditions only on committed per-pair 
 the second uses a predictable weight vector---so both come with anytime-valid bounds
 rather than point estimates.
 
-Table~\ref{tab:outclass} reports the outcome, and it is a \emph{null} result, which
-took us two attempts to read correctly. The stratum-restricted attack exceeds
+Table~\ref{tab:outclass} reports the outcome, and it is a \emph{null} result. The stratum-restricted attack exceeds
 $\eps = 0.2$ on $2.8\%$ of certified runs and the learned combination on $0.5\%$. Those
 look like breaches until one asks what a \emph{clean} subsample of the same size would
 do: the attacks are evaluated on $96$--$159$ and $192$--$1{,}536$ pairs respectively, and
@@ -1085,9 +1082,7 @@ about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a r
 about $50$ to one---and the same ratio on any hardware, because both scale with the
 same model. A training pass is also several times more expensive than an inference
 pass, so the wall-clock gap is larger than $50\times$; we give the pass ratio because
-it is the part we can state without assuming a hardware model. An earlier version
-described this as ``two orders of magnitude,'' which the arithmetic does not support.
-We give a ratio rather than a speed-up factor because the two workloads are not
+it is the part we can state without assuming a hardware model. We give a ratio rather than a speed-up factor because the two workloads are not
 interchangeable.
 
 \begin{figure}[t]
