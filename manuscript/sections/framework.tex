@@ -54,10 +54,15 @@ commitment is a Merkle tree whose $i$-th leaf is
 \ell_i \;=\; H\bigl(c_i^0,\, c_i^1,\, b_i,\, r_i,\, \rho_i\bigr),
 \qquad H = \text{SHA-256},
 \end{equation}
-with $\rho_i$ a per-leaf blinding nonce, and the published value is the tree root.
-This binds the pairs and the coins and prevents the audit from being gamed after the
-fact, exactly as a flat hash of the whole manifest would; the tree structure buys one
-further thing that a flat hash does not, and the theory needs it.
+with $\rho_i$ a per-leaf blinding nonce derived from the manifest seed, and the
+published value is the tree root. This binds the pairs and the coins and prevents the
+audit from being gamed after the fact, exactly as a flat hash of the whole manifest
+would; the tree structure buys one further thing that a flat hash does not, and the
+theory needs it. At step $t$ the provider hands over leaf $\pi(t)$ together with its
+authentication path, which the verifier checks against the published root; the path is
+$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs nine hashes at
+$m = 384$. The blinding nonce matters because the template library is public: without
+it, an unopened leaf's hash could be attacked by enumeration.
 
 The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
 opens leaf $\pi(t)$ at step $t$, checking its Merkle path against the published root.

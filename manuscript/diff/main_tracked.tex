@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 12:04:11 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 12:04:11 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 12:07:44 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 12:07:44 2026
 
 
 \theoremstyle{thmstyleone}
@@ -687,10 +687,16 @@ commitment is a Merkle tree whose $i$-th leaf is
 \DIFdelbegin \DIFdel{\mathrm{commit} }\DIFdelend \DIFaddbegin \DIFadd{\ell_i }\DIFaddend \;=\; H\bigl(\DIFdelbegin \DIFdel{\{(}\DIFdelend c_i^0,\, c_i^1,\, b_i,\, r_i\DIFdelbegin \DIFdel{)\}_{i=1}^{m}}\DIFdelend \DIFaddbegin \DIFadd{,\, \rho_i}\DIFaddend \bigr),
 \qquad H = \text{SHA-256},
 \end{equation}
-\DIFdelbegin \DIFdel{which }\DIFdelend \DIFaddbegin \DIFadd{with $\rho_i$ a per-leaf blinding nonce, and the published value is the tree root.
-This }\DIFaddend binds the pairs and the coins and prevents the audit from being gamed after the
-fact\DIFdelbegin \DIFdel{: at verification time the manifest is revealed and checked against \eqref{eq:commit} before a single query is made. }\DIFdelend \DIFaddbegin \DIFadd{, exactly as a flat hash of the whole manifest would; the tree structure buys one
-further thing that a flat hash does not, and the theory needs it.
+\DIFdelbegin \DIFdel{which }\DIFdelend \DIFaddbegin \DIFadd{with $\rho_i$ a per-leaf blinding nonce derived from the manifest seed, and the
+published value is the tree root. This }\DIFaddend binds the pairs and the coins and prevents the
+audit from being gamed after the fact\DIFdelbegin \DIFdel{: at verification time the manifest is revealed and
+checked against \eqref{eq:commit} before a single query is made. }\DIFdelend \DIFaddbegin \DIFadd{, exactly as a flat hash of the whole manifest
+would; the tree structure buys one further thing that a flat hash does not, and the
+theory needs it. At step $t$ the provider hands over leaf $\pi(t)$ together with its
+authentication path, which the verifier checks against the published root; the path is
+$\lceil\log_2 m\rceil$ hashes long, so per-pair opening costs nine hashes at
+$m = 384$. The blinding nonce matters because the template library is public: without
+it, an unopened leaf's hash could be attacked by enumeration.
 }\DIFaddend 
 
 \DIFaddbegin \DIFadd{The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
@@ -992,11 +998,12 @@ combined.
             \eqref{eq:agrapa}--\eqref{eq:cs}
   \EndFor
   \State update the revocation mixture $R$ by Eq.~\eqref{eq:revmix}
-  \If{$R \ge 1/\alpha$} \textbf{revoke}; \Return
-        $\textsc{Fail}(\text{evidence} = R)$
+  \If{$R \ge 1/\alpha$ \textbf{and} not yet revoked}
+     \State mark \textbf{revoked} at $t$; \textbf{continue} the loop
+            \Comment{keep compounding $R$ for the streaming product alarm}
   \EndIf
-  \If{$\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$} \textbf{break}
-        \Comment{certificate earned early}
+  \If{not revoked \textbf{and} $\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$}
+     \State \textbf{break} \Comment{certificate earned early}
   \EndIf
 \EndFor
 \State run R-VOUCH probes P1 (relearn), P2 (quantise), P3 (jailbreak); repeat the

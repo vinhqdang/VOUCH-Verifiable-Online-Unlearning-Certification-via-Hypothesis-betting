@@ -91,6 +91,11 @@ def main():
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--lr", type=float, default=2e-4)
     ap.add_argument("--queries", type=int, default=2)
+    ap.add_argument("--strata", type=int, nargs="+", default=[1, 2, 4, 8],
+                    help="repetition strata for the canary cohort; a single "
+                         "value such as --strata 1 plants every canary once, "
+                         "which is the most organic-like regime and keeps the "
+                         "corpus share manageable for large cohorts")
     ap.add_argument("--block", type=int, default=160)
     ap.add_argument("--methods", nargs="+",
                     default=["none", "retrain", "ga", "grad_diff", "npo",
@@ -145,7 +150,8 @@ def main():
         keep, forget, public, util_eval = load_benchmark(args.dataset, seed)
         # canary domains matched to corpus format (Section 6.7 / D6)
         domains = ("qa",) if args.dataset == "tofu" else ("pii", "fact")
-        manifest = PGCGenerator(seed=seed, domains=domains).generate(
+        manifest = PGCGenerator(seed=seed, domains=domains,
+                                repetition_strata=tuple(args.strata)).generate(
             m=args.pairs, wave=0)
         commitment = manifest.commitment()
         corpus, stats = build_finetune_corpus(keep, forget, [manifest], seed=seed)

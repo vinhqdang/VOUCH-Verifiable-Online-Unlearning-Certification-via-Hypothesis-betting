@@ -259,11 +259,12 @@ are released.
             \eqref{eq:agrapa}--\eqref{eq:cs}
   \EndFor
   \State update the revocation mixture $R$ by Eq.~\eqref{eq:revmix}
-  \If{$R \ge 1/\alpha$} \textbf{revoke}; \Return
-        $\textsc{Fail}(\text{evidence} = R)$
+  \If{$R \ge 1/\alpha$ \textbf{and} not yet revoked}
+     \State mark \textbf{revoked} at $t$; \textbf{continue} the loop
+            \Comment{keep compounding $R$ for the streaming product alarm}
   \EndIf
-  \If{$\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$} \textbf{break}
-        \Comment{certificate earned early}
+  \If{not revoked \textbf{and} $\min_{s,\pm} E^{s,\pm} \ge 1/\alpha$}
+     \State \textbf{break} \Comment{certificate earned early}
   \EndIf
 \EndFor
 \State run R-VOUCH probes P1 (relearn), P2 (quantise), P3 (jailbreak); repeat the

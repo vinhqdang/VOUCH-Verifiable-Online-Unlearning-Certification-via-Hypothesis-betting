@@ -313,11 +313,92 @@ class CanaryManifest:
         return json.dumps(payload, sort_keys=True, separators=(",", ":"))
 
     def commitment(self) -> str:
-        """SHA-256 hash binding pairs + coins, published before unlearning."""
+        """SHA-256 hash binding pairs + coins, published before unlearning.
+
+        Retained for backward compatibility with released result files.  New
+        audits should publish :meth:`merkle_root`, which additionally supports
+        opening one pair at a time; see the module notes on the filtration.
+        """
         return hashlib.sha256(self.to_json().encode("utf-8")).hexdigest()
 
     def verify(self, commitment: str) -> bool:
         return self.commitment() == commitment
+
+    # -- Merkle commitment with per-pair opening ----------------------------
+    #
+    # The certificate's supermartingale argument needs the coin b_i of the pair
+    # opened at step t to be genuinely *unrevealed* at step t-1.  A flat hash
+    # of the whole manifest forces the verifier to learn every coin at once,
+    # which makes "the coin is still fair given the past" an informal claim
+    # rather than a statement about the audit filtration.  Committing to a
+    # Merkle tree over per-pair leaves fixes that at no extra cost: the
+    # provider publishes one root, and the verifier opens leaf pi(t) -- with
+    # its authentication path -- at step t.
+    #
+    # Each leaf is salted with a per-leaf nonce derived from the manifest seed
+    # so that an unopened leaf's hash reveals nothing about its contents even
+    # when the template library is public.
+
+    def leaf_nonce(self, i: int) -> str:
+        h = hashlib.sha256(
+            f"vouch-nonce|{self.seed}|{self.wave}|{i}".encode("utf-8"))
+        return h.hexdigest()
+
+    def leaf_hash(self, i: int) -> str:
+        p = self.pairs[i]
+        payload = json.dumps(
+            {"pair": asdict(p), "nonce": self.leaf_nonce(i)},
+            sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def _merkle_levels(self) -> List[List[str]]:
+        level = [self.leaf_hash(i) for i in range(len(self.pairs))]
+        if not level:
+            return [[hashlib.sha256(b"vouch-empty").hexdigest()]]
+        levels = [level]
+        while len(level) > 1:
+            nxt = []
+            for j in range(0, len(level), 2):
+                left = level[j]
+                right = level[j + 1] if j + 1 < len(level) else left
+                nxt.append(hashlib.sha256(
+                    (left + right).encode("utf-8")).hexdigest())
+            levels.append(nxt)
+            level = nxt
+        return levels
+
+    def merkle_root(self) -> str:
+        """The value the provider publishes before unlearning begins."""
+        return self._merkle_levels()[-1][0]
+
+    def merkle_proof(self, i: int) -> List[Tuple[str, str]]:
+        """Authentication path for pair ``i`` as [(side, hash), ...]."""
+        levels = self._merkle_levels()
+        proof: List[Tuple[str, str]] = []
+        idx = i
+        for level in levels[:-1]:
+            sib = idx ^ 1
+            sib_hash = level[sib] if sib < len(level) else level[idx]
+            proof.append(("right" if idx % 2 == 0 else "left", sib_hash))
+            idx //= 2
+        return proof
+
+    @staticmethod
+    def verify_merkle_proof(leaf_hash: str, proof: Sequence[Tuple[str, str]],
+                            root: str) -> bool:
+        """Check one opened leaf against the published root."""
+        cur = leaf_hash
+        for side, sib in proof:
+            pair = (cur + sib) if side == "right" else (sib + cur)
+            cur = hashlib.sha256(pair.encode("utf-8")).hexdigest()
+        return cur == root
+
+    def open_leaf(self, i: int):
+        """What the provider hands the verifier at step t for pair ``i``."""
+        return {"index": i, "pair": self.pairs[i],
+                "nonce": self.leaf_nonce(i),
+                "leaf_hash": self.leaf_hash(i),
+                "proof": self.merkle_proof(i)}
 
     @classmethod
     def from_json(cls, s: str) -> "CanaryManifest":

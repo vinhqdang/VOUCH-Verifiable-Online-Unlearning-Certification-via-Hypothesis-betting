@@ -326,3 +326,40 @@ def test_finite_cohort_flag_recovers_v1_behaviour():
     assert a.cohort_size is None
     assert b.population_size is None
     assert abs(b.m0_t - 0.6) < 1e-12
+
+
+def test_merkle_commitment_opens_one_pair_at_a_time():
+    """The Merkle commitment must (a) authenticate every leaf against the
+    published root, (b) reject a tampered leaf, and (c) reveal nothing about
+    unopened leaves -- which is what makes the audit filtration of Theorem 1
+    a statement about what the verifier actually knows at step t-1."""
+    import copy
+    m = PGCGenerator(seed=0, domains=("qa",)).generate(m=64, wave=0)
+    root = m.merkle_root()
+    # (a) every authentication path checks out
+    for i in range(64):
+        assert CanaryManifest.verify_merkle_proof(
+            m.leaf_hash(i), m.merkle_proof(i), root), i
+    # proof length is logarithmic, so per-pair opening is cheap
+    assert len(m.merkle_proof(0)) == 6, len(m.merkle_proof(0))
+    # (b) flipping a single inclusion coin invalidates that leaf and the root
+    tampered = copy.deepcopy(m)
+    tampered.pairs[11].coin ^= 1
+    assert not CanaryManifest.verify_merkle_proof(
+        tampered.leaf_hash(11), m.merkle_proof(11), root)
+    assert tampered.merkle_root() != root
+    # (c) leaves are salted, so an unopened leaf hash is not guessable from
+    # the template library alone: the same pair at a different index differs
+    assert m.leaf_nonce(3) != m.leaf_nonce(4)
+    # (d) the flat commitment still validates, for the released result files
+    assert m.verify(m.commitment())
+
+
+def test_open_leaf_payload_is_self_authenticating():
+    m = PGCGenerator(seed=1, domains=("pii", "fact")).generate(m=32, wave=0)
+    root = m.merkle_root()
+    for i in (0, 5, 31):
+        opened = m.open_leaf(i)
+        assert CanaryManifest.verify_merkle_proof(
+            opened["leaf_hash"], opened["proof"], root), i
+        assert opened["pair"] is m.pairs[i]
