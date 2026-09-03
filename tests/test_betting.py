@@ -363,3 +363,40 @@ def test_open_leaf_payload_is_self_authenticating():
         assert CanaryManifest.verify_merkle_proof(
             opened["leaf_hash"], opened["proof"], root), i
         assert opened["pair"] is m.pairs[i]
+
+
+def test_wealth_factors_stay_positive_when_boundary_reaches_one():
+    """Regression: the recentred boundary can reach exactly 1 whenever
+    N*m0 is an integer (e.g. N=640 at p0 in {0.525, 0.55, 0.6}).  The stake
+    cap and the payoff must be computed from the *same* clamped boundary, or
+    the worst-case factor 1 + lam*(v - 1) goes negative and the implemented
+    process stops being the analysed one."""
+    for m, p0 in ((640, 0.6), (640, 0.55), (640, 0.525), (384, 0.6)):
+        for direction in ("below", "above"):
+            ep = OneSidedEProcess(m0=p0 if direction == "below" else 1 - p0,
+                                  direction=direction, strategy="mixture",
+                                  alpha=0.05, population_size=m)
+            for _ in range(m):
+                if ep._boundary_state() != "live":
+                    ep.update(0.0 if direction == "below" else 1.0)
+                    continue
+                v = ep._clamped_boundary()
+                lam_max = ep._lam_max_at(v)
+                # worst case over z in {0,1} for either direction
+                worst = min(1.0 + lam_max * (v - 1.0), 1.0 + lam_max * v) \
+                    if direction == "below" else \
+                    min(1.0 + lam_max * (0.0 - v), 1.0 + lam_max * (1.0 - v))
+                assert worst > 0.0, (m, p0, direction, ep.t, v, lam_max, worst)
+                ep.update(0.0 if direction == "below" else 1.0)
+
+
+def test_boundary_clamp_is_shared_between_stake_cap_and_payoff():
+    """The stake cap must be derived from the boundary the payoff uses."""
+    ep = OneSidedEProcess(m0=0.6, direction="below", strategy="mixture",
+                          alpha=0.05, population_size=640)
+    for _ in range(256):
+        ep.update(0.0)
+    v = ep._clamped_boundary()
+    assert abs(ep.lam_max - ep._lam_max_at(v)) < 1e-9 * max(1.0, ep.lam_max)
+    # and the implied worst-case factor is the max_bet_frac slack, not negative
+    assert abs((1.0 + ep.lam_max * (v - 1.0)) - (1.0 - ep.max_bet_frac)) < 1e-6

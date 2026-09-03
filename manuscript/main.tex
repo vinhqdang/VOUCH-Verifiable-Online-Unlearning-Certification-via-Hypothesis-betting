@@ -75,14 +75,14 @@ advantage, an $(\eps,\alpha)$-forgetting certificate from sequential two-sided
 equivalence testing, and a revocation alarm. Because every canary passes through one
 jointly trained model its signs are dependent, so we certify the \emph{realised
 advantage on the committed cohort} and bet against a without-replacement boundary,
-which is exact under arbitrary dependence; the marginal alternative is breached
-eightfold under model-level over-dispersion. Certificates and alarms provably compose
+which is exact under arbitrary dependence; the earlier fixed-boundary construction
+breaches its error level eightfold under model-level over-dispersion. Certificates and alarms provably compose
 in opposite directions---by consensus and by product. Across a 2{,}000-seed
-calibration study, four valid sequential comparators, and TOFU and MUSE-News over six
-architectures from 0.9M to 5.1B parameters, VOUCH certifies exact unlearning down to
-$\eps = 0.05$, revokes un-unlearned models within a handful of pairs, and exposes
-gradient ascent that forgets by destroying the model, at $2Qm$ forward passes and no
-training. The certificate concerns a declared score class on a committed cohort under
+calibration study, four valid sequential comparators, TOFU and MUSE-News on three
+architectures, and a model axis from 0.9M to 5.1B parameters, VOUCH certifies exact
+unlearning down to $\eps = 0.05$ \emph{on the cohort target}, revokes un-unlearned
+models within a handful of pairs, and exposes gradient ascent that forgets by
+destroying the model, at $2Qm$ forward passes and no training. The certificate concerns a declared score class on a committed cohort under
 an honest-but-verifiable provider, and we measure what each qualification costs.}
 
 \keywords{machine unlearning, anytime-valid inference, e-values, membership inference,
@@ -163,9 +163,11 @@ tolerance $\eps$, under an \emph{honest-but-verifiable} provider who genuinely e
 the unlearning routine on the forget set as declared. Four qualifications follow, and
 each is quantified rather than merely disclosed. The guarantee is per-cohort, not
 per-deletion-request, since per-request certificates would need per-user canaries. It
-concerns $\F$, and Section~\ref{sec:exp-outclass} exhibits attacks from outside $\F$
-that exceed the tolerance on $2.8\%$ of certified runs. The transfer from the realised
-cohort to the algorithm-level advantage costs an explicit inflation of
+concerns $\F$, and that is a definitional limit rather than a measured one: the two
+attacks from outside $\F$ that we could run (Section~\ref{sec:exp-outclass}) do
+\emph{not} beat the noise floor of subsampling, so they neither show $\F$ is too
+narrow nor license the claim that it is wide enough. The transfer from the realised
+cohort to the mechanism-level advantage costs an explicit inflation of
 $\kappa\sqrt{2\log(2/\alpha')/m}$ (Proposition~\ref{prop:transfer}), which is why our
 tight-tolerance results are cohort statements. And the honest-but-verifiable assumption
 is load-bearing in a way we had underestimated:
@@ -210,9 +212,9 @@ one-directional consistency bridge from certified $(\eps_u,\delta_u)$-unlearning
 (Section~\ref{sec:theory}). We report a comprehensive empirical study
 (Section~\ref{sec:exp}): calibration under adversarial optional stopping over 2{,}000
 seeds; head-to-head comparison against four \emph{valid} sequential procedures;
-end-to-end certification of gradient ascent, GradDiff, NPO, SimNPO, and retraining on
-TOFU and MUSE-News across three architectures with a tolerance sweep down to
-$\eps = 0.05$, utility guardrails, and dose--response calibration; a head-to-head
+end-to-end certification of gradient ascent, GradDiff, NPO and retraining on TOFU and
+MUSE-News across three architectures, with SimNPO added on TOFU/GPT-2, a tolerance
+sweep down to $\eps = 0.05$, utility guardrails, and dose--response calibration; a head-to-head
 against the descriptive metrics VOUCH is argued to replace; attacks from outside the
 declared score class; a measurement of how detectable the planted cohort is, with an
 entropy-dilution design rule that follows from it; recoverability probes that relearn,
@@ -383,15 +385,20 @@ precisely as part of the contribution. VOUCH certifies the residual advantage
 extractable through a \emph{declared score class} $\F$, on a \emph{committed canary
 cohort}, against the \emph{deployed model}, under an \emph{honest-but-verifiable}
 provider. Each of those four qualifications has a measured cost. Parameter-space
-erasure is behaviourally uncertifiable, so we do not claim it. The class restriction is
-load-bearing: a stratum-restricted attack from outside $\F$ exceeds the certified
-tolerance on $2.8\%$ of certified runs, and the constructive response---enlarging
-$\F$, which costs power and no validity---is available but untested at scale. A
+erasure is behaviourally uncertifiable, so we do not claim it. The class restriction is a real limit on the claim, though our attempt to measure it
+came back inconclusive: neither of the two out-of-class attacks we ran exceeded the
+tolerance more often than a clean subsample of the same size would by chance, so we
+can report that the definitional gap exists without being able to say how large it is.
+The constructive response---enlarging $\F$, which costs power and no validity---is
+available but untested at scale, and the decisive experiment, a shadow-model
+LiRA-style attack, remains undone. A
 paraphrase-aware score of the kind \citet{li2026beliefs} motivate is the single most
 valuable addition to $\F$ and we have not made it. The cohort statement transfers to
-the algorithm-level advantage only at the explicit inflation of
+the mechanism-level advantage only at the explicit inflation of
 Proposition~\ref{prop:transfer}, which is why our $\eps = 0.05$ results are cohort
-certificates and our super-population results stop at $\eps = 0.1$. The guarantee is
+certificates; on the fixed-boundary super-population arm nothing certifies at
+$\eps \le 0.1$ at the cohort sizes we plant, exactly as Theorem~\ref{thm:power}
+predicts. The guarantee is
 per-cohort rather than per-user, since per-request certificates would require per-user
 canaries. The provider is assumed honest-but-verifiable, and we now know that
 assumption is easier to violate than we had supposed: a perplexity filter costing one

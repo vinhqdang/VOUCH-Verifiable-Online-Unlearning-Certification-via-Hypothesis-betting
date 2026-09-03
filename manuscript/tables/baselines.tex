@@ -1,15 +1,15 @@
 \begin{tabular}{lccccc}
 \toprule
-& \multicolumn{2}{c}{$\varepsilon=0.2$, $n=512$} & \multicolumn{3}{c}{$\varepsilon=0.1$, $n=1536$}\\
+& \multicolumn{2}{c}{type I at the least favourable null} & \multicolumn{3}{c}{under exact unlearning}\\
 \cmidrule(lr){2-3}\cmidrule(lr){4-6}
-procedure & type I & queries & type I & power & queries\\
+procedure & marginal & cohort & power & queries & median $t$\\
 \midrule
-VOUCH, cohort target & 0.009 & 143 & 0.018 & 1.000 & 523\\
-VOUCH, super-population target & 0.026 & 197 & 0.030 & 0.882 & 747\\
-Beta$(\frac12,\frac12)$-mixture e-process & 0.033 & 224 & 0.040 & 0.769 & 900\\
-normal-mixture e-process & 0.027 & 227 & 0.034 & 0.782 & 901\\
-group sequential, Pocock & 0.045 & 175 & 0.050 & 0.971 & 645\\
-group sequential, O'Brien--Fleming & 0.048 & 251 & 0.051 & 0.985 & 844\\
-fixed-$n$ binomial at pre-committed $n$ & 0.047 & 512 & 0.053 & 0.989 & 1536\\
+VOUCH, cohort target & \textbf{0.495} & 0.018 & 1.000 & 523 & 497\\
+VOUCH, super-population target & 0.030 & 0.016 & 0.882 & 747 & 612\\
+Beta$(\frac12,\frac12)$-mixture e-process & 0.040 & 0.028 & 0.769 & 900 & 715\\
+normal-mixture e-process & 0.034 & 0.037 & 0.782 & 901 & 704\\
+group sequential, Pocock & 0.050 & 0.004 & 0.971 & 645 & 614\\
+group sequential, O'Brien--Fleming & \textbf{0.051} & 0.000 & 0.985 & 844 & 768\\
+fixed-$n$ binomial at pre-committed $n$ & \textbf{0.053} & 0.000 & 0.989 & 1536 & 1536\\
 \bottomrule
 \end{tabular}

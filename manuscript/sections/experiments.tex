@@ -165,7 +165,16 @@ than by a normal approximation; a truncated Beta$(\tfrac12,\tfrac12)$-mixture
 at a pre-committed sample size. All see the same sign stream and the same query
 budget. Table~\ref{tab:baselines} reports the result.
 
-Every procedure holds its level, as it should. On power and cost the ordering is
+Read the two type-I columns together, because they measure different things and the
+distinction is the same one Section~\ref{sec:exp-dependence} draws. Against the
+\emph{marginal} null every super-population procedure holds its level to within Monte
+Carlo error at $2{,}000$ seeds ($0.030$ to $0.053$, standard error $\approx 0.005$),
+and VOUCH's cohort arm does not---it issues in half of runs, because half of those
+cohorts have a realised advantage genuinely below the tolerance. Against the
+\emph{cohort} null every procedure holds its level, and the two group-sequential
+boundaries and the fixed-$n$ test are markedly conservative there ($0.004$, $0.000$,
+$0.000$) precisely because they were built for the other target. Neither column alone
+is a fair scoreboard, which is why we print both. On power and cost the ordering is
 informative. Against exact unlearning at $\eps = 0.1$ and a budget of $1{,}536$ pairs,
 VOUCH on the cohort target certifies every run using a mean of $523$ queries; Pocock
 reaches $0.971$ using $645$; O'Brien--Fleming $0.985$ using $844$; the two mixture
@@ -173,8 +182,9 @@ e-processes trail at $0.77$--$0.78$; and the fixed-$n$ test attains $0.989$ but 
 the entire budget of $1{,}536$ queries on every run, because a fixed-$n$ test cannot
 stop early by construction. The honest summary is that anytime validity is close to
 free here: against the strongest valid sequential comparator VOUCH gives up nothing in
-power and saves about a fifth of the queries, and against the fixed-$n$ test it gives
-up one point of power for a threefold reduction in verifier cost. The comparison also
+power and saves about a fifth of the queries, and it matches the fixed-$n$ test's power
+to within a rounding of one point ($0.9995$ against $0.9885$) at a threefold reduction
+in verifier cost. The comparison also
 isolates how much of VOUCH's advantage comes from retargeting: on the
 super-population target, at the same budget, power falls from $1.000$ to $0.882$ and
 mean queries rise from $523$ to $747$. That gap is the price of the stronger claim, and
@@ -261,14 +271,27 @@ bears out both halves of the theorem. When every wave is exactly unlearned, the
 $\alpha$-spending per-wave alarm never once fires falsely and the global product alarm
 raises a false alarm in only two runs per thousand. When a single wave is genuinely bad
 ($\Delta = 0.25$), its own alarm catches it in $98\%$ of histories and---crucially---the
-consensus certificate is \emph{never} falsely issued for the history, which is exactly
-the failure that multiplying certificate e-values would produce. The most telling case
+consensus certificate is \emph{never} falsely issued for the history---whereas
+multiplying certificate e-values falsely certifies that history in \emph{every} run
+(Table~\ref{tab:certprod}), which is the failure Theorem~\ref{thm:streaming}(a)
+predicts. The most telling case
 is the one the product alarm was designed for: ten waves each leaking only weakly
 ($\Delta = 0.06$), so weakly that a per-wave test detects them just $14\%$ of the time,
 are nonetheless caught by the accumulated product alarm in $62\%$ of histories, at a
 median firing wave of three. Distributed leakage that hides beneath every individual
 wave's threshold is thus surfaced by composition---a capability no fixed-sample audit
 possesses.
+
+\begin{table}[t]
+\centering\small
+\caption{The negative half of Theorem~\ref{thm:streaming}(a), measured: histories of
+$K{=}10$ waves ($512$ pairs each, $500$ histories) containing one genuinely bad wave
+($\Delta = 0.25 > \eps = 0.2$), restricted to the histories whose bad wave's
+\emph{realised} cohort advantage does violate the tolerance. Multiplying certificate
+e-values---the instinctive move---falsely certifies the whole history every time.}
+\label{tab:certprod}
+\input{tables/certprod}
+\end{table}
 
 \begin{table}[t]
 \centering\small
@@ -324,7 +347,7 @@ the earlier draft's bare ``sixteen of eighteen'' overstated what they establish.
 
 \emph{Detection works, at the stated tolerance.} The un-unlearned model is revoked in
 $16$ of $18$ benchmark runs under the default sign arm---$95\%$ CI $[0.65, 0.99]$---all
-six Phi-1.5 runs at log-wealth between $166$ and $182$. The two
+six Phi-1.5 runs at log-wealth between $149$ and $186$. The two
 remaining runs are the two weakest-leaking GPT-2 cells, and here we must report
 something the earlier version did not surface: under the corrected, more powerful
 cohort target those two runs are not merely undetermined, they are \emph{certified}.
@@ -372,20 +395,32 @@ better than the retrained reference, which is an artefact and not a finding. We 
 it as unavailable rather than quietly printing a flattering number, and note that
 disentangling the two would require a probe set disjoint from the relearn corpus.
 
-\emph{Two-sided certification matters.} On several TOFU seeds gradient ascent,
-GradDiff, and NPO push the canaries \emph{below} chance, with mean score gaps as
-negative as $-0.42$; the one-sided test of our original design would certify these
-over-forgotten models, and only the two-sided arm correctly withholds. This is the
-behavioural signature \citet{yuan2025closer} and \citet{li2026beliefs} describe from
+\emph{Two-sided certification matters, though not on these runs.} On several TOFU
+seeds gradient ascent, GradDiff and NPO push the canaries \emph{below} chance, with
+mean score gaps as negative as $-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
+TOFU/Phi-1.5). We should be exact about what follows from that, because an earlier
+draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
+two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
+two-sided arm buys is that the \emph{same} runs would be certified by a one-sided test
+at \emph{any} tolerance, however tight, because a one-sided test cannot see below
+chance at all; the two-sided arm prices them correctly, and at $\eps = 0.05$ five of
+the six retrain runs that fail to issue are held back by the \emph{lower} arm, not the
+upper one---that is, by over-forgetting rather than by residual memorisation. The behavioural
+signature is the one \citet{yuan2025closer} and \citet{li2026beliefs} describe from
 the optimisation side, showing up in an audit.
 
-\emph{Recoverability is measured rather than argued.} On TOFU with GPT-2 and Pythia
-the relearn probe drives NPO from issued to undetermined and preferentially resurfaces
-the most-repeated canaries; on TOFU with Phi-1.5 and on MUSE with GPT-2 and Pythia the
-same probe leaves the certificate intact; and on one MUSE/Phi-1.5 seed the probe
-\emph{revokes}. Recoverability is benchmark- and model-dependent, exactly as
-\citet{hu2025jogging} report, and VOUCH quantifies the dependence rather than assuming
-it away.
+\emph{Recoverability is measured rather than argued.} At $\eps = 0.2$ on the cohort
+target the relearn probe leaves NPO's certificate intact on all three TOFU
+architectures and on MUSE/Pythia; it \emph{revokes} on one MUSE/GPT-2 seed and on one
+MUSE/Phi-1.5 seed. So on this benchmark tier the probe changes the verdict in exactly
+$2$ of $18$ runs, both on MUSE-News---the more open-domain corpus, and the one where
+the public relearn set sits closest in distribution to the forget set. Recoverability
+is benchmark- and model-dependent, exactly as \citet{hu2025jogging} report, and VOUCH
+quantifies the dependence rather than assuming it away. But we should be plain that at
+$\eps = 0.2$ the probe is close to inert on our runs: $16$ of $18$ certificates
+survive it, and the two that do not are revocations rather than downgrades. A relearn
+probe becomes informative as the tolerance tightens, which is another reason not to
+read $\eps = 0.2$ as a recommendation.
 
 Underlying all of this is a clean dose--response signal. Mean score gaps rise
 monotonically with training-time repetition---$+0.42$, $+0.60$, $+1.14$ and $+1.85$
@@ -395,6 +430,26 @@ the extrapolation from canaries to organic data, and its shape is also the hones
 limit of that extrapolation: the $r = 1$ stratum, the one closest to how an organic
 record appears, is where the signal is weakest. Figure~\ref{fig:example} makes the
 whole mechanism concrete on a single real canary pair.
+
+\emph{A certificate and its confidence sequence can disagree, and often do.} A reader
+comparing Tables~\ref{tab:bench} and \ref{tab:descriptive} will notice issued
+certificates sitting beside confidence-sequence upper bounds that exceed the very
+tolerance they certify: across the benchmark tier this happens in $46$ of $107$ issued
+runs, with $U_t$ reaching $0.232$ against $\eps = 0.2$. This is not an inconsistency in
+the sense of one object being wrong, and it is worth explaining because it looks like
+one. The two arms are different procedures with different budgets: the certificate is
+a sequential equivalence test that rejects at $1/\alpha$, while the confidence
+sequence intersects two-sided wealth processes at $2/\alpha$ per grid point, and the
+latter is a strictly more demanding object---it must cover the truth at every time and
+for every candidate value simultaneously. Each is separately valid, and a procedure
+that rejects the null $|\Delta| \ge \eps$ need not also produce an interval contained
+in $(-\eps, \eps)$. A verifier who wants the stronger, self-evidently coherent
+statement can define issuance as ``$U_t < \eps$'' instead; that is a valid rule, it
+implies the certificate, and it costs roughly a factor of two in pairs. We report the
+certificate as the headline verdict because it is the object the theory is stated for,
+and we print $U_t$ alongside because a bounded quantity is more useful to an auditor
+than a bare verdict---but the two should be read as two answers to two questions, not
+as one answer checked twice.
 
 \emph{Ties.} Exact ties $D = 0$ occur in $0$ of $99{,}840$ scored pairs for
 $s_{\mathrm{loss}}$ across every architecture. The one exception is $s_{\mathrm{mink}}$
@@ -546,10 +601,12 @@ advantage is within noise of zero, because a KS test on several hundred paired s
 detects distributional differences far smaller than the tolerance anyone would want to
 certify. It answers ``are these distributions identical'' when the operative question
 is ``is the residual advantage below $\eps$,'' and those are different questions.
-Second, PrivLeak reads $-1.2\%$ on the MUSE/Phi-1.5 GradDiff seed that VOUCH
-\emph{revokes}---a negative leakage figure on a model carrying real residual
-memorisation. This is the concrete instance of the claim the earlier draft made
-rhetorically. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
+Second, PrivLeak reads $-2.4\%$ on the single MUSE/Phi-1.5 GradDiff seed that VOUCH
+\emph{revokes}---a \emph{negative} leakage figure on a model carrying residual
+memorisation strong enough to trip an anytime alarm, and $-1.2\%$ averaged over that
+cell's three seeds, which is the number the table shows. This is the concrete instance
+of the claim the earlier draft made rhetorically, and we flag that it rests on one
+seed. Third, and most directly on the paper's thesis, the min-$k\%$ statistic
 inspected after every pair---the way an auditor with a stream of deletions would
 naturally use it---flags leakage on genuinely clean retrained models in several cells,
 which is optional stopping doing exactly what Section~\ref{sec:exp-validity}
@@ -588,40 +645,43 @@ Theorem~\ref{thm:null} intact---the first conditions only on committed per-pair 
 the second uses a predictable weight vector---so both come with anytime-valid bounds
 rather than point estimates.
 
-Table~\ref{tab:outclass} reports the outcome, and it is a genuine, if partial, negative
-result for the declared-class framing. The stratum-restricted attack exceeds the
-tolerance on $5$ of $178$ certified runs ($2.8\%$), reaching a realised advantage of
-$0.27$ against a certified bound of $0.2$; the learned combination exceeds it once,
-on $1$ of $178$ ($0.6\%$), at $-0.22$---in the over-forgetting direction, which the
-two-sided certificate treats as leakage just as it should. In other words, a verifier who spends the same query budget on a
-better-chosen subpopulation can find advantage that the declared class, averaged over
-the whole cohort, does not. This does not contradict Theorem~\ref{thm:cert}, which
-concerns $\F$ and the whole cohort; it does show that the class restriction is
-load-bearing, and it is the reason we now write the guarantee as a statement about
-$\F$ everywhere rather than as a bound on ``the largest residual advantage any score
-can extract.''
+Table~\ref{tab:outclass} reports the outcome, and it is a \emph{null} result, which
+took us two attempts to read correctly. The stratum-restricted attack exceeds
+$\eps = 0.2$ on $2.8\%$ of certified runs and the learned combination on $0.6\%$. Those
+look like breaches until one asks what a \emph{clean} subsample of the same size would
+do: the attacks are evaluated on $96$--$159$ and $192$--$320$ pairs respectively, and an
+exact binomial calculation puts the chance exceedance rate at $3.5\%$ and $0.3\%$. The
+stratum-restricted attack therefore exceeds the tolerance \emph{less} often than noise
+predicts, and the learned combination's single exceedance in $178$ runs is within a
+coin-flip of its own null. The anytime confidence bounds tell the same story: their
+means, $0.078$ and $0.064$, sit far below $\eps$.
 
-It is worth diagnosing \emph{why} the stratum-restricted attack wins, because the
-mechanism is mundane and bounds how far the result should be generalised. The
-certificate is a statement about the cohort \emph{average}, and the $r = 8$ stratum
-carries eight times the training exposure of the $r = 1$ stratum; the dose--response
-curve of Section~\ref{sec:exp-bench} already reports realised advantages of $+0.70$ at
-$r = 8$ against $+0.28$ at $r = 1$. Restricting the audit to the most-dosed quarter of
-the cohort therefore finds more advantage than the average more or less by
-construction. The attack is not a mysteriously stronger score; it is a reminder that an
-average over a heterogeneous cohort can sit below a tolerance that some subpopulation
-exceeds. Two consequences follow. First, the effect is partly an artefact of our own
-calibration design: the repetition strata exist so that we can measure dose--response,
-and an organic forget record resembles the $r = 1$ end, where the advantage is
-weakest---so a deployment that planted a homogeneous cohort would not expose this
-particular gap. Second, and less comfortably, the same logic applies to \emph{any}
-heterogeneity the auditor can name, whether or not we planted it. The constructive
-response is available and cheap: certify per stratum, or equivalently add the
-stratum-restricted score to $\F$, and the certificate simply becomes slower and
-stronger, since Theorem~\ref{thm:cert} needs no multiplicity correction. We have not
-made stratified certification the default, because doing so multiplies the cohort
-requirement by the number of strata, and we would rather report the gap than hide it
-behind a more expensive default.
+So this experiment does not show what we had hoped it would show in either direction.
+It does not demonstrate that $\F$ is too narrow, because the two attacks we could
+build produce no signal beyond subsampling noise. And it does not license the
+converse---that $\F$ is wide enough---because both attacks are weak: one is a
+subpopulation restriction that pays for its focus in sample size, the other a linear
+recombination of scores already in $\F$. The honest position is that the certificate's
+dependence on $\F$ is a \emph{definitional} limit, visible in
+Theorem~\ref{thm:cert}'s statement rather than in our measurements, and that we have
+not yet found an attack strong enough to put a number on it.
+
+We have accordingly softened the surrounding claims rather than leaning on this table.
+The phrase ``the largest residual advantage any score in the class can extract'' is
+gone; the guarantee is written as a statement about $\F$ everywhere. What the design
+does offer is that enlarging $\F$ costs power and no validity---any score a sceptic
+names can be added, and Theorem~\ref{thm:cert} needs no multiplicity correction---so
+the framework absorbs a stronger attack without any change to the theory. Two
+observations on where such an attack would come from. The subpopulation reading is
+worth keeping in mind independently of this table: the certificate bounds a cohort
+\emph{average}, and our own dose--response curve reports realised advantages of
+$+0.70$ at $r = 8$ against $+0.28$ at $r = 1$, so an average below the tolerance is
+compatible with a stratum above it. Certifying per stratum removes that gap at the
+cost of multiplying the cohort requirement by the number of strata, and we report the
+trade-off rather than silently adopting either default. And the most promising
+direction is a paraphrase-aware score, since \citet{li2026beliefs} show that
+gradient-ascent objectives move probability mass onto semantically equivalent
+rephrasings---mass that our literal-span scores cannot see by construction.
 
 We did not run a full LiRA-style attack with shadow models, which is the strongest
 comparison a sceptic would want; it needs dozens of retrained references per cell and
@@ -631,8 +691,12 @@ next experiment rather than claiming it is unnecessary.
 \begin{table}[t]
 \centering\small
 \caption{Attacks from outside the declared class $\F$, run against the $178$
-model/subject/seed combinations certified at $\eps = 0.2$. Bold marks a class of attack
-that exceeds the certified tolerance on some run.}
+model/subject/seed combinations certified at $\eps = 0.2$. ``observed'' is the fraction
+of runs on which the attack's realised advantage exceeds $\eps$; ``null'' is what an
+exact binomial calculation predicts for a \emph{clean} subsample of the same size,
+averaged over the run-specific sizes. Neither attack beats its own null, so the table
+is a null result: it bounds neither how narrow $\F$ is nor how wide. Bold marks an
+observed rate above the null.}
 \label{tab:outclass}
 \input{tables/outclass}
 \end{table}
@@ -735,8 +799,9 @@ Krichevsky--Trofimov plug-in all certify within $20{,}000$ pairs, whereas a fixe
 aggressive bet goes bankrupt and issues only $10\%$ of the time---adaptivity is not a
 refinement but a requirement. On the \emph{magnitude-aware arm}, sparse leakage in
 which only $5\%$ of pairs are strongly memorised is detected in a median of $941$ pairs
-against $2{,}196$ for sign-only betting, the $2.3\times$ speed-up promised by
-Proposition~\ref{prop:magnitude}. A \emph{guardrail on the protocol itself} confirms
+against $2{,}196$ for sign-only betting, a $2.3\times$ speed-up.
+Proposition~\ref{prop:magnitude} says only that the magnitude arm is exact and more
+powerful under sparse leakage; the factor is measured, not predicted. A \emph{guardrail on the protocol itself} confirms
 that planting canaries does not damage the model being audited: even at an extreme
 $38\%$ canary share, held-out loss shifts by only $0.005$ nats per character, and the
 deployment target is below $0.05\%$.
@@ -744,8 +809,9 @@ deployment target is below $0.05\%$.
 On \emph{cost}, the earlier version reported a single figure of seventy-six seconds
 without saying which configuration produced it, and compared it to alternatives without
 stating the hardware. Both are corrected here. Verification cost is
-$2 \cdot Q \cdot m$ short forward passes and no training at all: with $Q = 2$ wrappers
-and $m = 384$--$640$ pairs that is $1{,}536$--$2{,}560$ passes per subject. Measured
+$2 \cdot Q \cdot m$ short forward passes and no training at all: $1{,}536$ passes per
+subject at the benchmark tier's $Q = 2$ and $m = 384$, and $5{,}120$ at the GPT-2
+synthetic tier's $Q = 4$ and $m = 640$. Measured
 end to end on the hardware each tier actually ran on, the median scoring time per
 certificate is $13$ seconds for the small transformer, $63$ seconds for GPT-2 at $640$
 pairs, $112$--$148$ seconds for the 124M--1.4B benchmark tier, and $397$--$499$ seconds
@@ -755,10 +821,14 @@ retrain-based reference costs one full fine-tune of the same model on the same
 hardware, and a shadow-model evaluator at least sixteen, against VOUCH's zero. On our
 TOFU/GPT-2 configuration one fine-tune is $600$ optimiser steps at batch $8$, roughly
 $4{,}800$ sequence-forward-and-backward passes, so a sixteen-model shadow panel is
-about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes---two
-orders of magnitude in the arithmetic that matters, and the same ratio on any hardware
-because both scale with the same model. We give the ratio rather than a speed-up
-factor because the two workloads are not interchangeable.
+about $77{,}000$ training passes against VOUCH's $1{,}536$ inference passes, a ratio of
+about $50$ to one---and the same ratio on any hardware, because both scale with the
+same model. A training pass is also several times more expensive than an inference
+pass, so the wall-clock gap is larger than $50\times$; we give the pass ratio because
+it is the part we can state without assuming a hardware model. An earlier version
+described this as ``two orders of magnitude,'' which the arithmetic does not support.
+We give a ratio rather than a speed-up factor because the two workloads are not
+interchangeable.
 
 \begin{figure}[t]
 \centering

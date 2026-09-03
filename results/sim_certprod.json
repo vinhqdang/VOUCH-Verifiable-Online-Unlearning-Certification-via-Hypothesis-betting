@@ -1,0 +1,21 @@
+{
+  "description": "Streaming composition, negative half of Theorem 6(a).  Histories of K=10 waves in which exactly one wave (index 6) is genuinely bad (Delta = 0.25 > eps = 0.2).  'all-pass' is the sound consensus rule; 'product' multiplies per-wave certificate e-values, the instinctive move the theorem warns against.  A history-wide claim is FALSE here by construction, so any issuance is an error.",
+  "frac_histories_whose_bad_wave_realised_ge_eps": 0.868,
+  "all_pass_rate_marginal": 0.122,
+  "product_rate_marginal": 1.0,
+  "all_pass_false_history_certification_rate": 0.0,
+  "product_false_history_certification_rate": 1.0,
+  "all_pass_ci": [
+    -8.597518272958379e-19,
+    0.008773629685596515
+  ],
+  "product_ci": [
+    0.9912263703144035,
+    1.0000000000000002
+  ],
+  "n_histories": 500,
+  "n_histories_false_claim": 434,
+  "K": 10,
+  "m_per_wave": 512,
+  "bad_wave_delta": 0.25
+}

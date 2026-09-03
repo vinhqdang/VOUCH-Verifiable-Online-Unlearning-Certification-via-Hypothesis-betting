@@ -82,18 +82,23 @@ For $s\in\F$ the \emph{realised cohort advantage} is
 \;=\; 2\,\Pr\nolimits_{I}\bigl[z_I^{(s)}=1\bigr] - 1 ,
 \end{equation}
 the advantage of the rule ``guess that the twin scoring higher under $s$ is the
-in-twin'' when the pair index $I$ is drawn uniformly from the committed cohort. Its
-super-population counterpart is $\bar\Delta^{(s)} = \Efrak\bigl[\Delta^{(s)}\bigr]$,
-the same advantage averaged over the draw of the cohort, the coins, and the training
-randomness.
+in-twin'' when the pair index $I$ is drawn uniformly from the committed cohort. Two
+coarser quantities sit above it: the \emph{mechanism-level} advantage
+$\Delta^{(s)}_C = \Efrak_b[\Delta^{(s)} \mid C, \xi]$, averaging over the inclusion
+coins with the pair contents $C$ and the training randomness $\xi$ held fixed; and the
+\emph{super-population} advantage $\bar\Delta^{(s)} = \Efrak[\Delta^{(s)}]$, averaging
+over $C$ and $\xi$ as well.
 \end{definition}
 
 $\Delta^{(s)}$ is the quantity an auditor of \emph{this} model wants bounded, and it
-is the one the protocol controls exactly. $\bar\Delta^{(s)}$ is an
-algorithm-level quantity, obtained from $\Delta^{(s)}$ by the transfer bound of
-Proposition~\ref{prop:transfer} at a stated cost. Definition~\ref{def:cert} is
-stated for $\Delta$; the corresponding claim for $\bar\Delta$ follows by inflating
-$\eps$ by that cost.
+is the one the protocol controls exactly; Definition~\ref{def:cert} is stated for it.
+Proposition~\ref{prop:transfer} climbs one level, from $\Delta^{(s)}$ to
+$\Delta^{(s)}_C$, at a stated cost in tolerance. We do not climb the second level to
+$\bar\Delta^{(s)}$: that would need concentration over the draw of corpora, which we
+neither prove nor assume. Where the experiments report a ``super-population'' verdict
+they mean the fixed-boundary process of the earlier design, whose null is the
+predictable conditional mean; we keep both columns throughout so that the reader can
+see which claims survive at which tolerance.
 
 \begin{definition}[$(\eps,\alpha)$-forgetting certificate]\label{def:cert}
 Fix a tolerance $\eps \in (0,1)$, an error budget $\alpha \in (0,1)$, and the boundary
@@ -112,8 +117,12 @@ is, and Section~\ref{sec:exp} shows that gradient-ascent unlearning lands there 
 practice.
 
 \begin{theorem}[Certificate coverage under arbitrary dependence]\label{thm:cert}
-Reveal the cohort in a committed uniformly random order $\pi$, and for each score $s$
-and direction run the wealth process of Eq.~\eqref{eq:wealthwor} against the
+Reveal the cohort in a uniformly random order $\pi$ drawn by the verifier
+\emph{independently of the realised sign vectors} $\{z^{(s)}\}_{s\in\F}$ and committed
+before any query, and for each score $s$ and direction run the wealth process of
+Eq.~\eqref{eq:wealthwor} with stakes confined to
+$\lambda_t^{s,+} \in [0,\, c/(1-p_0(t)))$ and
+$\lambda_t^{s,-} \in [0,\, c/\bar p_0(t))$ for some fixed $c < 1$, against the
 predictable without-replacement boundary
 \begin{equation}\label{eq:worboundary}
 p_0(t) \;=\; \frac{m\,p_0 \;-\; \sum_{u<t} Z^{(s)}_{\pi(u)}}{m-t+1},
@@ -128,7 +137,9 @@ class $\F$ and any stopping rule,
 The guarantee is exact and finite-sample, and it holds \emph{conditionally on the
 cohort's sign vectors}: no independence across pairs, no exchangeability across
 pairs, and no homogeneity across templates or repetition strata is assumed. No
-multiplicity correction over $\F$ is required.
+multiplicity correction over $\F$ is required. The one thing that \emph{is} assumed
+is the independence of $\pi$ from the signs, and Remark~\ref{rem:order} explains why
+it is not free.
 \end{theorem}
 
 \begin{proof}
@@ -151,8 +162,14 @@ using $\mu \ge p_0$. Each wealth factor therefore has conditional mean
 \Efrak\bigl[\,1 + \lambda_t\,(p_0(t) - Z^{(s^\ast)}_{\pi(t)}) \,\big|\, \F_{t-1}\bigr]
 = 1 + \lambda_t\bigl(p_0(t) - \Efrak[Z^{(s^\ast)}_{\pi(t)} \mid \F_{t-1}]\bigr) \;\le\; 1,
 \]
-since $\lambda_t \ge 0$ is predictable. So the process is a nonnegative
-supermartingale started at one, and Ville's inequality gives
+since $\lambda_t \ge 0$ is predictable. Nonnegativity is the other half and needs the
+stake restriction: with $Z \in \{0,1\}$ the factor $1 + \lambda_t(p_0(t) - Z)$ is
+minimised at $Z = 1$, where it equals $1 - \lambda_t(1 - p_0(t)) \ge 1 - c > 0$ by
+$\lambda_t < c/(1-p_0(t))$; the mirror arm is identical with $\bar p_0(t)$ in place of
+$1 - p_0(t)$. (This bound is why the implementation must derive the stake cap from the
+\emph{same} clamped boundary the payoff is evaluated at; see
+Appendix~\ref{app:repro}.) So the process is a nonnegative supermartingale started at
+one, and Ville's inequality gives
 $\Pr[\exists t: E_t^{s^\ast,+} \ge 1/\alpha] \le \alpha$. The refutation branch is
 never taken under the null, because $p_0(t) \le \Efrak[Z_{\pi(t)}\mid\F_{t-1}] \le 1$.
 Issuing the certificate requires \emph{every} process to exceed $1/\alpha$---in
@@ -164,10 +181,10 @@ score.
 \end{proof}
 
 Two consequences are worth naming because they shape how the certificate should be
-read. First, the guarantee is genuinely assumption-free: whatever dependence the
-shared model induces among the signs, it is absorbed by conditioning on the realised
-sign vector, and the only randomness the proof spends is the verifier's own
-permutation. Second, and less comfortably, a cohort audited to exhaustion resolves
+read. First, the guarantee spends no assumption on the \emph{data}: whatever
+dependence the shared model induces among the signs, it is absorbed by conditioning on
+the realised sign vector, and the only randomness the proof spends is the verifier's
+own permutation. Second, and less comfortably, a cohort audited to exhaustion resolves
 \emph{deterministically}: at $t=m$ the realised mean is known, and no inference
 remains. The betting machinery therefore buys three things---early stopping at a
 fraction of the query budget, validity under continuous monitoring and across
@@ -176,15 +193,33 @@ Theorem~\ref{thm:null}---rather than buying the cohort statement itself. We thin
 this is the honest way to describe what a canary audit can do, and
 Section~\ref{sec:exp-baselines} quantifies each of the three.
 
-\begin{proposition}[Transfer to the super-population advantage]\label{prop:transfer}
-Assume \emph{bounded coin influence}: flipping a single inclusion coin $b_i$ changes
-at most $\kappa$ of the $m$ signs $z_j^{(s)}$. Then for any $\alpha' \in (0,1)$, with
-probability at least $1-\alpha'$,
+\begin{remark}[The reveal order must be the verifier's own randomness]\label{rem:order}
+Theorem~\ref{thm:cert} conditions on the sign vector and spends the permutation, so it
+needs $\pi \perp \{z^{(s)}\}$. That is not a formality here for two reasons. A provider
+who can locate the cohort---and Section~\ref{sec:exp-detect} shows that is
+cheap---could, if it also knew $\pi$, arrange which pairs are revealed early. And in
+our own experiments $\pi$ is seeded from the run seed, which also seeds cohort
+generation and training, so the two are not independent by construction even though
+nothing in the pipeline exploits the coupling. A deployed audit should draw $\pi$ from
+verifier-side entropy, or from a public randomness beacon, and commit to it before
+opening any leaf; we state this as a protocol requirement rather than an
+implementation detail, and Appendix~\ref{app:repro} records that our runs do not meet
+it.
+\end{remark}
+
+\begin{proposition}[Transfer to the coin-averaged advantage]\label{prop:transfer}
+Fix the pair contents $C$ and the training randomness $\xi$, and write
+$\Delta^{(s)}_C = \Efrak_b\bigl[\Delta^{(s)} \,\big|\, C, \xi\bigr]$ for the
+advantage averaged over the inclusion coins alone---the advantage the unlearning
+\emph{mechanism} yields on this corpus. Assume \emph{bounded coin influence}:
+flipping a single coin $b_i$ changes at most $\kappa$ of the $m$ signs
+$z_j^{(s)}$. Then for any $\alpha' \in (0,1)$, with probability at least
+$1-\alpha'$,
 \begin{equation}\label{eq:transfer}
-\bigl|\Delta^{(s)} - \bar\Delta^{(s)}\bigr| \;\le\;
+\bigl|\Delta^{(s)} - \Delta^{(s)}_C\bigr| \;\le\;
 \kappa\,\sqrt{\frac{2\log(2/\alpha')}{m}} .
 \end{equation}
-Consequently a cohort certificate at tolerance $\eps$ implies a super-population
+Consequently a cohort certificate at tolerance $\eps$ implies a mechanism-level
 certificate at tolerance $\eps + \kappa\sqrt{2\log(2/\alpha')/m}$, at total error
 level $\alpha + \alpha'$.
 \end{proposition}
@@ -194,17 +229,27 @@ Write $f(b) = \tfrac2m\sum_j z_j^{(s)} - 1$ as a function of the coin vector, th
 other randomness held fixed. Changing one coordinate changes $\sum_j z_j^{(s)}$ by at
 most $\kappa$ by hypothesis, so $f$ has bounded differences $c_i = 2\kappa/m$.
 McDiarmid's inequality gives
-$\Pr[|f - \Efrak f| \ge u] \le 2\exp(-2u^2/\sum_i c_i^2) = 2\exp(-u^2 m/(2\kappa^2))$;
-setting the right-hand side to $\alpha'$ yields \eqref{eq:transfer}.
+$\Pr[|f - \Efrak_b f| \ge u] \le 2\exp(-2u^2/\sum_i c_i^2) = 2\exp(-u^2 m/(2\kappa^2))$,
+with the expectation over the coins and $(C,\xi)$ held fixed---which is exactly
+$\Delta^{(s)}_C$; setting the right-hand side to $\alpha'$ yields
+\eqref{eq:transfer}.
 \end{proof}
 
-Under exact unlearning $\kappa = 1$ holds trivially, since a coin that leaves no trace
-in the model can only affect its own pair's sign. Away from it, $\kappa$ is a genuine
-assumption and we flag it as such. The size of the price is worth internalising: at
-$m=512$, $\alpha'=0.05$ and $\kappa=1$ the inflation is $0.12$, which is why a
-super-population claim at $\eps = 0.05$ needs a cohort an order of magnitude larger
-than a cohort claim at the same tolerance---a gap Section~\ref{sec:exp-bench} reports
-rather than elides.
+Three qualifications travel with Proposition~\ref{prop:transfer} and we would rather
+state them than let a reader over-read the bound. First, it bounds the distance to
+$\Delta^{(s)}_C$, the \emph{coin-averaged} advantage on this corpus, not to
+$\bar\Delta^{(s)} = \Efrak[\Delta^{(s)}]$ of Definition~\ref{def:delta}, which
+additionally averages over the draw of $C$ and $\xi$; closing that second gap requires
+a further concentration step over corpora that we do not have and do not claim.
+Second, the bound is informative only when $\kappa = o(\sqrt m)$: at
+$\kappa = \Theta(m)$ it is vacuous. Under exact unlearning $\kappa = 1$ holds
+trivially, since a coin that leaves no trace in the model can only affect its own
+pair's sign; away from it, an influential coin can move the model and hence many
+signs, which is precisely the regime where the transfer is wanted. Third, the size of
+the price is worth internalising: at $m=512$, $\alpha'=0.05$ and $\kappa=1$ the
+inflation is $0.12$, which is why a mechanism-level claim at $\eps = 0.05$ needs a
+cohort an order of magnitude larger than a cohort claim at the same tolerance---a gap
+Section~\ref{sec:exp-bench} reports rather than elides.
 
 \begin{remark}[Why the intuitive mixture fails]\label{rem:mixture}
 It is tempting to run a \emph{single} certificate process on the adaptively reweighted
@@ -227,9 +272,11 @@ average.
 
 \subsection{Power, confidence sequences, and composition}
 
-\begin{theorem}[Power]\label{thm:power}
-If $|\Delta^{(s)}| < \eps$ for all $s$ and the bets have sublinear regret (the mixture
-of Section~\ref{sec:engine} qualifies), then
+\begin{theorem}[Power, fixed-boundary process]\label{thm:power}
+Consider the \emph{super-population} arm, i.e.\ the process of
+Eq.~\eqref{eq:wealthwor} run against the fixed boundary $p_0(t) \equiv p_0$ with signs
+i.i.d.\ across pairs. If $|\Delta^{(s)}| < \eps$ for all $s$ and the bets have
+sublinear regret (the mixture of Section~\ref{sec:engine} qualifies), then
 $\tfrac1t \log E_t \to \KL(\Bern(p)\,\|\,\Bern(p_0))$ almost surely for each process,
 and the expected certification time is
 $\Efrak[\tau^*] = (1+o(1))\,\log(1/\alpha)/\min_{s,\pm}\KL$, the expectation being
@@ -239,9 +286,20 @@ taken under exact unlearning and the asymptotics in small $\eps$. Since
 \;=\; -\tfrac12\log\bigl(1-\eps^2\bigr)
 \;=\; \tfrac{\eps^2}{2} + O(\eps^4),
 \end{equation}
-this is approximately $2\log(1/\alpha)/\eps^2$ pairs. For the finite-cohort target the
-time is additionally capped by the cohort size $m$, since the claim resolves
-deterministically once the cohort is exhausted.
+this is approximately $2\log(1/\alpha)/\eps^2$ pairs.
+\end{theorem}
+
+The restriction to the fixed boundary is not cosmetic, and we state it because the
+earlier draft did not. Under without-replacement reveal the log-wealth increments are
+neither independent nor identically distributed, the boundary $p_0(t)$ moves, and the
+admissible stake range moves with it---so ``the best constant bet'' is not well
+defined, and neither the $O(\log t)$ ONS regret bound (which assumes a fixed convex
+domain) nor the Krichevsky--Trofimov redundancy bound (which assumes a fixed $p_0$)
+transfers as stated. Theorem~\ref{thm:power} should therefore be read as sizing the
+cohort for a \emph{mechanism-level} claim. For the finite-cohort target we do not have
+a matching analysis; its certification time is capped by $m$, since the claim resolves
+deterministically once the cohort is exhausted, and we report its behaviour
+empirically instead (Table~\ref{tab:power}, cohort column).
 \end{theorem}
 
 \begin{proof}
@@ -324,10 +382,12 @@ waves. For the negative half of the statement, note that a product
 $\prod_k E^{(k)}$ of \emph{certificate} e-values is, by construction, an e-value for
 the intersection null $\bigcap_k \{\text{wave } k \text{ bad}\}$; rejecting an
 intersection establishes only the disjunction ``some wave is clean.'' In the
-one-bad-wave scenario the clean waves' e-values grow without bound
-(Theorem~\ref{thm:power}) and drag the product over $1/\alpha$ regardless of the bad
-wave; we measured this as a $0.96$ false history-wide certification rate against
-$0.000$ for all-pass (Table~\ref{tab:streaming}).
+one-bad-wave scenario the clean waves' e-values grow without bound and drag the
+product over $1/\alpha$ regardless of the bad wave. We measure the damage rather than
+assert it: over $500$ ten-wave histories containing one genuinely bad wave, the
+product rule issues a false history-wide certificate in \emph{every} history whose bad
+wave truly violates the tolerance, against $0.000$ for the all-pass rule
+(Table~\ref{tab:certprod}).
 
 \emph{(b)} Under the intersection null, Theorem~\ref{thm:null} applies wave by wave,
 so each $R^{(k)}$ is a nonnegative supermartingale with initial value one with respect

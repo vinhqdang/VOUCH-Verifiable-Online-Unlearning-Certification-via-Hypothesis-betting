@@ -64,6 +64,13 @@ __all__ = [
 
 _LOG_INF = 1e6   # stand-in for "the null is refuted with certainty"
 
+# One shared clamp for the recentred boundary.  It MUST be the same everywhere:
+# the admissible stake range is lam < 1/(1 - v), so computing lam_max from one
+# clamped v and the payoff from another lets the worst-case factor
+# 1 + lam*(v - 1) fall below zero.  That happens exactly when the recentred
+# boundary reaches 1, which is reachable whenever N*m0 is an integer.
+_B_EPS = 1e-9
+
 
 def ons_bet(lam: float, z: float, m0: float, a_prev: float,
             eta: float = 0.5, lo: float = 0.0, hi: Optional[float] = None):
@@ -172,12 +179,25 @@ class OneSidedEProcess:
         return "live"
 
     # -- geometry -----------------------------------------------------------
-    @property
-    def lam_max(self) -> float:
-        v = min(max(self.m0_t, 1e-12), 1.0 - 1e-12)
+    def _clamped_boundary(self) -> float:
+        """The boundary actually bet against, clamped once into (0, 1)."""
+        return min(max(self.m0_t, _B_EPS), 1.0 - _B_EPS)
+
+    def _lam_max_at(self, v: float) -> float:
+        """Largest admissible stake at boundary ``v``.
+
+        For direction "below" the wealth factor is 1 + lam*(v - Z) with
+        Z in [0,1], whose worst case is Z = 1; requiring it to stay positive
+        gives lam < 1/(1 - v).  Mirrored for "above".  ``v`` must be the same
+        value the payoff is later evaluated at.
+        """
         if self.direction == "below":
             return self.max_bet_frac / (1.0 - v)
         return self.max_bet_frac / v
+
+    @property
+    def lam_max(self) -> float:
+        return self._lam_max_at(self._clamped_boundary())
 
     def _payoff(self, z: float, lam: float, v: float) -> float:
         """Wealth multiplier for one observation with bet lam at boundary v."""
@@ -204,18 +224,19 @@ class OneSidedEProcess:
 
     # -- bets ---------------------------------------------------------------
     def _next_lam(self, v: float) -> float:
+        lam_max = self._lam_max_at(v)
         if self.strategy == "fixed":
-            return self.fixed_lam * self.lam_max
+            return self.fixed_lam * lam_max
         if self.strategy == "ons":
-            return min(self._lam, self.lam_max)
+            return min(self._lam, lam_max)
         if self.strategy == "agrapa":
             if self.t < 2:
-                return 0.5 * self.lam_max * 0.1
+                return 0.5 * lam_max * 0.1
             mu = self._sum / self.t
             var = max(self._sumsq / self.t - mu * mu, 1e-6)
             signed_gap = (v - mu) if self.direction == "below" else (mu - v)
             lam = signed_gap / (var + signed_gap * signed_gap)
-            return min(max(lam, 0.0), self.lam_max)
+            return min(max(lam, 0.0), lam_max)
         if self.strategy in ("mixture", "kt"):
             return -1.0  # sentinel: handled inside update()
         raise ValueError(f"unknown strategy {self.strategy!r}")
@@ -245,13 +266,13 @@ class OneSidedEProcess:
             self.log_e_history.append(self.log_e)
             return self.log_e
 
-        v = min(max(self.m0_t, 1e-9), 1.0 - 1e-9)
+        v = self._clamped_boundary()
         if self.strategy == "kt":
             step = math.log(max(self._kt_payoff(z, v), 1e-300))
         elif self.strategy == "mixture":
             # each expert's factor; overall factor = weighted average of
             # expert wealth growth (a mixture of e-processes is an e-process)
-            lam_max = self.lam_max
+            lam_max = self._lam_max_at(v)
             lams = [f * lam_max for f in self._mix_fracs] + [min(self._lam, lam_max)]
             factors = [max(self._payoff(z, l, v), 1e-300) for l in lams]
             factors.append(max(self._kt_payoff(z, v), 1e-300))
@@ -269,7 +290,7 @@ class OneSidedEProcess:
             lam = self._next_lam(v)
             step = math.log(max(self._payoff(z, lam, v), 1e-300))
             if self.strategy == "ons":
-                lam_max = self.lam_max
+                lam_max = self._lam_max_at(v)
                 if self.direction == "below":
                     self._lam, self._a = ons_bet(min(self._lam, lam_max), z, v,
                                                  self._a, eta=self.eta,

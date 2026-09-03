@@ -1,9 +1,10 @@
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccccc}
 \toprule
-attack & runs & pairs & mean $|\hat\Delta|$ & max $|\hat\Delta|$ & still certifies\\
+& & & \multicolumn{2}{c}{$|\hat\Delta| > \varepsilon$} & \multicolumn{2}{c}{anytime CS}\\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+attack & runs & pairs & observed & null & mean $U_t$ & exceed\\
 \midrule
-declared class $\F$ (reference) & 178 & --- & 0.041 & 0.130 & ---\\
-stratum-restricted ($r=8$ only) & 178 & 96 & 0.070 & 0.270 & \textbf{0.972}\\
-cross-fitted learned combination & 178 & 192 & 0.061 & 0.219 & \textbf{0.994}\\
+stratum-restricted ($r=8$ only) & 178 & $96--159$ & 0.028 & 0.035 & 0.078 & 0.028\\
+cross-fitted learned combination & 178 & $192--320$ & \textbf{0.006} & 0.003 & 0.064 & 0.006\\
 \bottomrule
 \end{tabular}

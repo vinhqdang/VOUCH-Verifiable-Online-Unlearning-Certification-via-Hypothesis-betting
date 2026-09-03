@@ -548,6 +548,97 @@ def exp_power_censoring(n_seeds: int, pool: Pool) -> None:
     save("sim_power_censoring", out)
 
 
+
+
+# ===========================================================================
+# 5. The negative half of the streaming theorem, measured
+# ===========================================================================
+
+def _certprod_one(args):
+    """One 10-wave history with exactly one genuinely bad wave.
+
+    Theorem 6(a) says that *multiplying* per-wave certificate e-values tests
+    the intersection null "every wave is bad", so rejecting it establishes only
+    that *some* wave is clean -- and the clean waves' e-values grow without
+    bound and drag the product across 1/alpha even though wave 6 is bad.  The
+    manuscript previously asserted a rate for this without measuring it; this
+    function measures it, against the sound all-pass rule on the same
+    histories.
+    """
+    seed, k_waves, m, eps, alpha, bad_wave, bad_delta = args
+    rng = np.random.default_rng(seed)
+    p0 = 0.5 + eps / 2
+    thr = math.log(1 / alpha)
+    log_prod = 0.0
+    all_pass = True
+    bad_realised = float("nan")
+    for k in range(k_waves):
+        p = 0.5 + bad_delta / 2 if k == bad_wave else 0.5
+        z = rng.binomial(1, p, size=m).astype(float)
+        if k == bad_wave:
+            bad_realised = 2.0 * float(z.mean()) - 1.0
+        # per-wave certificate arm (two-sided), finite-cohort target
+        up = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                              alpha=alpha, population_size=m)
+        dn = OneSidedEProcess(m0=1 - p0, direction="above", strategy="mixture",
+                              alpha=alpha, population_size=m)
+        issued = False
+        for zz in z:
+            up.update(zz)
+            dn.update(zz)
+            if min(up.log_e, dn.log_e) >= thr:
+                issued = True
+                break
+        all_pass &= issued
+        log_prod += min(min(up.log_e, dn.log_e), _CAP)
+    return all_pass, log_prod >= thr, bad_realised
+
+
+_CAP = 50.0   # keep the deterministic-refutation sentinel out of the product
+
+
+def exp_certprod(n_seeds: int, pool: Pool) -> None:
+    out = {"description": (
+        "Streaming composition, negative half of Theorem 6(a).  Histories of "
+        "K=10 waves in which exactly one wave (index 6) is genuinely bad "
+        "(Delta = 0.25 > eps = 0.2).  'all-pass' is the sound consensus rule; "
+        "'product' multiplies per-wave certificate e-values, the instinctive "
+        "move the theorem warns against.  A history-wide claim is FALSE here "
+        "by construction, so any issuance is an error.")}
+    alpha, eps, m, K = 0.05, 0.20, 512, 10
+    n = min(n_seeds, 500)
+    res = pool.map(_certprod_one,
+                   [(s, K, m, eps, alpha, 6, 0.25) for s in range(n)])
+    ap_all = np.array([r[0] for r in res])
+    pr_all = np.array([r[1] for r in res])
+    realised = np.array([r[2] for r in res])
+    # The history-wide claim is false only when the bad wave's *realised*
+    # cohort advantage genuinely violates the tolerance -- the same
+    # cohort-versus-marginal distinction as Table 1.
+    bad = realised >= eps
+    out["frac_histories_whose_bad_wave_realised_ge_eps"] = float(bad.mean())
+    out["all_pass_rate_marginal"] = float(ap_all.mean())
+    out["product_rate_marginal"] = float(pr_all.mean())
+    ap = float(ap_all[bad].mean()) if bad.any() else float("nan")
+    pr = float(pr_all[bad].mean()) if bad.any() else float("nan")
+    out["all_pass_false_history_certification_rate"] = ap
+    out["product_false_history_certification_rate"] = pr
+    out["all_pass_ci"] = list(wilson(int(ap_all[bad].sum()), int(bad.sum())))
+    out["product_ci"] = list(wilson(int(pr_all[bad].sum()), int(bad.sum())))
+    out["n_histories"] = n
+    out["n_histories_false_claim"] = int(bad.sum())
+    out["K"] = K
+    out["m_per_wave"] = m
+    out["bad_wave_delta"] = 0.25
+    print(f"  one bad wave, {n} histories ({int(bad.sum())} with the bad wave's "
+          f"realised advantage >= eps):")
+    print(f"    all-pass  : false history-wide certification {ap:.3f} "
+          f"(marginal {ap_all.mean():.3f})")
+    print(f"    product   : false history-wide certification {pr:.3f} "
+          f"(marginal {pr_all.mean():.3f})")
+    save("sim_certprod", out)
+
+
 # ===========================================================================
 
 EXPERIMENTS = {
@@ -555,6 +646,7 @@ EXPERIMENTS = {
     "cohortnull": exp_cohortnull,
     "baselines": exp_baselines,
     "power": exp_power_censoring,
+    "certprod": exp_certprod,
 }
 
 

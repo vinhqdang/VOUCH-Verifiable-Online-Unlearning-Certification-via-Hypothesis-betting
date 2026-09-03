@@ -112,30 +112,33 @@ def tab_baselines():
     d = load("sim_baselines")
     if not d:
         return
-    names = [("vouch_cohort", "VOUCH, cohort target", True),
-             ("vouch_sup", "VOUCH, super-population target", False),
-             ("beta_mixture", "Beta$(\\frac12,\\frac12)$-mixture e-process", False),
-             ("normal_mixture", "normal-mixture e-process", False),
-             ("gs_pocock", "group sequential, Pocock", False),
-             ("gs_obf", "group sequential, O'Brien--Fleming", False),
-             ("fixed_n", "fixed-$n$ binomial at pre-committed $n$", False)]
+    names = [("vouch_cohort", "VOUCH, cohort target"),
+             ("vouch_sup", "VOUCH, super-population target"),
+             ("beta_mixture", "Beta$(\\frac12,\\frac12)$-mixture e-process"),
+             ("normal_mixture", "normal-mixture e-process"),
+             ("gs_pocock", "group sequential, Pocock"),
+             ("gs_obf", "group sequential, O'Brien--Fleming"),
+             ("fixed_n", "fixed-$n$ binomial at pre-committed $n$")]
+    # Both error statistics for every row: the marginal rate (which is what a
+    # super-population procedure controls) and the rate restricted to runs
+    # whose realised cohort advantage violates the tolerance (which is what
+    # the cohort target controls).  Printing one for VOUCH and the other for
+    # the comparators would not be a comparison.
     body = ("\\begin{tabular}{lccccc}\n\\toprule\n"
-            "& \\multicolumn{2}{c}{$\\varepsilon=0.2$, $n=512$} "
-            "& \\multicolumn{3}{c}{$\\varepsilon=0.1$, $n=1536$}\\\\\n"
+            "& \\multicolumn{2}{c}{type I at the least favourable null} "
+            "& \\multicolumn{3}{c}{under exact unlearning}\\\\\n"
             "\\cmidrule(lr){2-3}\\cmidrule(lr){4-6}\n"
-            "procedure & type I & queries & type I & power & queries\\\\\n"
-            "\\midrule\n")
-    for key, label, is_cohort in names:
-        cells = []
-        for eps, n in ((0.2, 512), (0.1, 1536)):
-            nul = d[f"eps={eps}/null_p0"][key]
-            alt = d[f"eps={eps}/exact_unlearning"][key]
-            err = (nul["rate_given_cohort_null"] if is_cohort else nul["rate"])
-            cells.append(f"{err:.3f}")
-            if eps == 0.1:
-                cells.append(f"{alt['rate']:.3f}")
-            cells.append(f"{alt['mean_queries']:.0f}")
-        body += f"{label} & " + " & ".join(cells) + "\\\\\n"
+            "procedure & marginal & cohort & power & queries "
+            "& median $t$\\\\\n\\midrule\n")
+    eps, n = 0.10, 1536
+    for key, label in names:
+        nul = d[f"eps={eps}/null_p0"][key]
+        alt = d[f"eps={eps}/exact_unlearning"][key]
+        marg = nul["rate"]
+        coh = nul["rate_given_cohort_null"]
+        fm = (f"\\textbf{{{marg:.3f}}}" if marg > 0.05 + 1e-9 else f"{marg:.3f}")
+        body += (f"{label} & {fm} & {coh:.3f} & {alt['rate']:.3f} & "
+                 f"{alt['mean_queries']:.0f} & {alt['median_t']:.0f}\\\\\n")
     body += "\\bottomrule\n\\end{tabular}\n"
     write("baselines", body)
 
@@ -322,30 +325,40 @@ def tab_outclass():
             for r in rows:
                 if r["cohort/eps=0.2"]["status"] != "ISSUED":
                     continue
-                infd = abs(r["sign_rate"]["loss"] * 2 - 1)
-                agg["declared class $\\F$"].append((infd, infd, True, 0))
                 for k, v in r.get("out_of_class", {}).items():
-                    agg[k].append((abs(v["delta_hat"]), abs(v["delta_cs"][1]),
-                                   v["certifies_at_eps=0.2"], v["n"]))
-    names = {"declared class $\\F$": "declared class $\\F$ (reference)",
-             "stratum_r8": "stratum-restricted ($r=8$ only)",
+                    agg[k].append(v)
+    names = {"stratum_r8": "stratum-restricted ($r=8$ only)",
              "learned_combo": "cross-fitted learned combination"}
-    body = ("\\begin{tabular}{lccccc}\n\\toprule\n"
-            "attack & runs & pairs & mean $|\\hat\\Delta|$ & max $|\\hat\\Delta|$ "
-            "& still certifies\\\\\n\\midrule\n")
-    for key in ("declared class $\\F$", "stratum_r8", "learned_combo"):
+    body = ("\\begin{tabular}{lcccccc}\n\\toprule\n"
+            "& & & \\multicolumn{2}{c}{$|\\hat\\Delta| > \\varepsilon$} "
+            "& \\multicolumn{2}{c}{anytime CS}\\\\\n"
+            "\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}\n"
+            "attack & runs & pairs & observed & null & mean $U_t$ "
+            "& exceed\\\\\n\\midrule\n")
+    for key in ("stratum_r8", "learned_combo"):
         vs = agg.get(key)
         if not vs:
             continue
-        dh = np.array([x[0] for x in vs])
-        ok = np.array([x[2] for x in vs])
-        npair = vs[0][3]
-        ns = "---" if npair == 0 else f"{npair}"
-        frac = f"{ok.mean():.3f}" if key != "declared class $\\F$" else "---"
-        if key != "declared class $\\F$" and ok.mean() < 1.0:
-            frac = f"\\textbf{{{ok.mean():.3f}}}"
-        body += (f"{names[key]} & {len(vs)} & {ns} & {dh.mean():.3f} & "
-                 f"{dh.max():.3f} & {frac}\\\\\n")
+        ns = np.array([v["n"] for v in vs])
+        dh = np.array([abs(v["delta_hat"]) for v in vs])
+        # Exact binomial reference, evaluated at each run's own subsample size
+        # and averaged: what a *clean* subsample of that size would produce by
+        # chance alone.  Without it a raw exceedance count on a 96-pair
+        # subsample is uninterpretable.
+        def _null(nn):
+            kk = np.arange(int(nn) + 1)
+            pm = stats.binom.pmf(kk, int(nn), 0.5)
+            return float(pm[np.abs(2 * kk / int(nn) - 1) > 0.20].sum())
+        null_rate = float(np.mean([_null(x) for x in ns]))
+        npair = f"{ns.min()}--{ns.max()}" if ns.min() != ns.max() else f"{ns.min()}"
+        # the anytime CS is the object the certificate actually bounds
+        up = np.array([max(abs(v["delta_cs"][0]), abs(v["delta_cs"][1]))
+                       for v in vs])
+        obs = float((dh > 0.20).mean())
+        obs_s = (f"\\textbf{{{obs:.3f}}}" if obs > null_rate else f"{obs:.3f}")
+        body += (f"{names[key]} & {len(vs)} & ${npair}$ & {obs_s} & "
+                 f"{null_rate:.3f} & {up.mean():.3f} & "
+                 f"{(up > 0.20).mean():.3f}\\\\\n")
     body += "\\bottomrule\n\\end{tabular}\n"
     write("outclass", body)
 
@@ -408,7 +421,8 @@ def tab_zoo():
             rows = rec["methods"].get(m)
             cells[m] = ("/".join(VERD[r["cohort/eps=0.2"]["status"]]
                                  for r in rows) if rows else "--")
-        body += (f"{name} & {size} & {year} & {rec['n_seeds']} & "
+        n_rows = max((len(v) for v in rec["methods"].values()), default=0)
+        body += (f"{name} & {size} & {year} & {n_rows} & "
                  f"{cells['none']} & {cells['retrain']} & {cells['npo']}\\\\\n")
     body += "\\bottomrule\n\\end{tabular}\n"
     write("zoo", body)
@@ -473,6 +487,23 @@ def tab_metrics():
     write("metrics", body)
 
 
+def tab_certprod():
+    d = load("sim_certprod")
+    if not d:
+        return
+    body = ("\\begin{tabular}{lcc}\n\\toprule\n"
+            "history-wide rule & false certification & 95\\% CI\\\\\n"
+            "\\midrule\n"
+            f"all-pass consensus (ours) & "
+            f"{d['all_pass_false_history_certification_rate']:.3f} & "
+            f"$[{max(d['all_pass_ci'][0], 0.0):.3f},\\,{d['all_pass_ci'][1]:.3f}]$\\\\\n"
+            f"product of certificate e-values & "
+            f"\\textbf{{{d['product_false_history_certification_rate']:.3f}}} & "
+            f"$[{d['product_ci'][0]:.3f},\\,{d['product_ci'][1]:.3f}]$\\\\\n"
+            "\\bottomrule\n\\end{tabular}\n")
+    write("certprod", body)
+
+
 if __name__ == "__main__":
     tab_dependence()
     tab_cohortnull()
@@ -487,4 +518,5 @@ if __name__ == "__main__":
     tab_zoo()
     tab_gpt2v2()
     tab_metrics()
+    tab_certprod()
     print("revision tables done")

@@ -73,6 +73,25 @@ synthetic tier, with $k = 20\%$ for min-$k$. Scores are computed from temperatur
 forward passes and aggregated over wrappers by the mean. Verification cost is exactly
 $2Qm$ forward passes per subject.
 
+\paragraph{Two implementation notes that affect validity.} First, the stake cap and the
+wealth factor must be computed from the \emph{same} clamped value of the recentred
+boundary $p_0(t)$. The admissible range is $\lambda_t < c/(1-p_0(t))$, so deriving the
+cap from one clamped boundary and the payoff from another lets the worst-case factor
+$1 + \lambda_t(p_0(t)-1)$ fall below zero. This is reachable exactly when $m\,p_0$ is
+an integer---which holds for $m = 640$ at every tolerance we report, in both
+directions. An earlier build of the released code had two different clamps and did
+produce non-positive raw factors on that tier; the current build shares one clamp,
+carries a regression test, and we have re-run the affected tier, whose verdicts are
+unchanged.
+
+Second, Theorem~\ref{thm:cert} requires the reveal order $\pi$ to be independent of
+the realised sign vectors. In the released experiments $\pi$ is seeded from the run
+seed, which also seeds cohort generation and training, so that independence does not
+strictly hold, even though nothing in the pipeline exploits the coupling. A deployed
+audit should draw $\pi$ from verifier-side entropy or a public randomness beacon and
+commit to it before opening any leaf (Remark~\ref{rem:order}); we record the gap rather
+than paper over it.
+
 \paragraph{Verification.} $\alpha = 0.05$; two-sided certification; sign-based
 revocation for all headline tables, with the magnitude-aware arm reported separately;
 finite-cohort certificate target by default and the super-population target reported
