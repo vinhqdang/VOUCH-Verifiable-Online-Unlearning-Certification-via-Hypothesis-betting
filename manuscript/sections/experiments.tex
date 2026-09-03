@@ -599,10 +599,29 @@ the whole cohort, does not. This does not contradict Theorem~\ref{thm:cert}, whi
 concerns $\F$ and the whole cohort; it does show that the class restriction is
 load-bearing, and it is the reason we now write the guarantee as a statement about
 $\F$ everywhere rather than as a bound on ``the largest residual advantage any score
-can extract.'' The constructive reading is that the framework absorbs such attacks
-without any change to the theory: add the stratum-restricted score to $\F$ and the
-certificate simply becomes slower and stronger, since Theorem~\ref{thm:cert} needs no
-multiplicity correction.
+can extract.''
+
+It is worth diagnosing \emph{why} the stratum-restricted attack wins, because the
+mechanism is mundane and bounds how far the result should be generalised. The
+certificate is a statement about the cohort \emph{average}, and the $r = 8$ stratum
+carries eight times the training exposure of the $r = 1$ stratum; the dose--response
+curve of Section~\ref{sec:exp-bench} already reports realised advantages of $+0.70$ at
+$r = 8$ against $+0.28$ at $r = 1$. Restricting the audit to the most-dosed quarter of
+the cohort therefore finds more advantage than the average more or less by
+construction. The attack is not a mysteriously stronger score; it is a reminder that an
+average over a heterogeneous cohort can sit below a tolerance that some subpopulation
+exceeds. Two consequences follow. First, the effect is partly an artefact of our own
+calibration design: the repetition strata exist so that we can measure dose--response,
+and an organic forget record resembles the $r = 1$ end, where the advantage is
+weakest---so a deployment that planted a homogeneous cohort would not expose this
+particular gap. Second, and less comfortably, the same logic applies to \emph{any}
+heterogeneity the auditor can name, whether or not we planted it. The constructive
+response is available and cheap: certify per stratum, or equivalently add the
+stratum-restricted score to $\F$, and the certificate simply becomes slower and
+stronger, since Theorem~\ref{thm:cert} needs no multiplicity correction. We have not
+made stratified certification the default, because doing so multiplies the cohort
+requirement by the number of strata, and we would rather report the gap than hide it
+behind a more expensive default.
 
 We did not run a full LiRA-style attack with shadow models, which is the strongest
 comparison a sceptic would want; it needs dozens of retrained references per cell and

@@ -820,6 +820,23 @@ The learned combination exceeds it once, on $1$ of $178$ ($0.6\%$), at $-0.22$ -
 just as it should. Neither contradicts Theorem~2, which concerns $\F$ and the whole
 cohort, but together they show the class restriction is load-bearing.
 
+We also diagnose \emph{why} the stratum-restricted attack wins, because we think the
+mechanism bounds how far the result generalises and a reader deserves it. The
+certificate is a statement about the cohort \emph{average}; the $r = 8$ stratum carries
+eight times the training exposure of $r = 1$, and our own dose--response curve already
+reports realised advantages of $+0.70$ at $r = 8$ against $+0.28$ at $r = 1$. So
+restricting to the most-dosed quarter finds more than the average more or less by
+construction: it is not a mysteriously stronger score, but a reminder that an average
+over a heterogeneous cohort can sit below a tolerance some subpopulation exceeds. That
+cuts both ways and we report both. In our favour, the strata exist only because we
+planted them for calibration, and an organic record resembles the $r=1$ end, so a
+homogeneous deployment cohort would not expose this particular gap. Against us, the
+same logic applies to any heterogeneity an auditor can name, whether or not we planted
+it. The fix is cheap and available---certify per stratum, or add the stratified score to
+$\F$---and we did not make it the default only because it multiplies the cohort
+requirement by the number of strata; we would rather report the gap than hide it behind
+a more expensive default.
+
 Accordingly we have softened the claim exactly as you ask. The phrase ``the largest
 residual advantage any score in the class can extract'' is gone; the guarantee is
 written as a statement about $\F$ everywhere, including in the abstract, the
