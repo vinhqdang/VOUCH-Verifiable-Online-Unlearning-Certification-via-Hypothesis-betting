@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 20:40:15 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 20:40:15 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 22:41:03 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 22:41:03 2026
 
 
 \theoremstyle{thmstyleone}
@@ -2291,7 +2291,8 @@ disentangling the two would require a probe set disjoint from the relearn corpus
 \emph{\DIFadd{Two-sided certification matters, though not on these runs.}} \DIFadd{On }\DIFaddend several TOFU
 seeds gradient ascent, GradDiff \DIFdelbegin \DIFdel{,
 }\DIFdelend and NPO push the canaries \emph{below} chance, with
-mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the }\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
+mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the
+}\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
 TOFU/Phi-1.5). We should be exact about what follows from that, because an earlier
 draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
 two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
@@ -2728,10 +2729,9 @@ number on it needs an attack that demonstrably works where leakage is present, w
 is what Section~\ref{sec:exp-lira} supplies.
 }
 
-\DIFadd{We have accordingly softened the surrounding claims rather than leaning on this table.
-The phrase ``the largest residual advantage any score in the class can extract'' is
-gone; the guarantee is written as a statement about $\F$ everywhere. What the design
-does offer is that enlarging $\F$ costs power and no validity---any score a sceptic
+\DIFadd{We therefore state the guarantee as what it is---a statement about $\F$---rather than
+as a bound on the largest residual advantage any score whatever could extract. What the
+design does offer is that enlarging $\F$ costs power and no validity---any score a sceptic
 names can be added, and Theorem~\ref{thm:cert} needs no multiplicity correction---so
 the framework absorbs a stronger attack without any change to the theory. Two
 observations on where such an attack would come from. The subpopulation reading is
