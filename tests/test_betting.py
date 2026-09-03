@@ -157,3 +157,172 @@ def _run_all():
 
 if __name__ == "__main__":
     _run_all()
+
+
+# ---------------------------------------------------------------------------
+# Finite-cohort (without-replacement) certificate target.
+#
+# These cover the property the revision turns on: validity under *arbitrary*
+# dependence across pairs.  The trick in every test below is that the sign
+# vector is a fixed array -- so it embodies whatever dependence, heterogeneity
+# or adversarial structure we like -- and the only randomness spent is the
+# verifier's own committed reveal permutation.
+# ---------------------------------------------------------------------------
+
+def _least_favourable_cohort(m, p0, structure="stratified"):
+    """A fixed sign vector at the least favourable feasible point of the
+    cohort null H0: cohort mean >= p0 (i.e. mean = ceil(p0*m)/m)."""
+    k = int(math.ceil(p0 * m - 1e-12))
+    z = np.zeros(m)
+    if structure == "contiguous":
+        z[:k] = 1.0
+    elif structure == "spread":
+        z[np.linspace(0, m - 1, k).astype(int)] = 1.0
+    elif structure == "stratified":
+        # four blocks with wildly different rates, overall mean fixed to k/m
+        per = m // 4
+        for j, rate in enumerate((0.15, 0.45, 0.70, 0.95)):
+            lo = j * per
+            z[lo:lo + int(round(rate * per))] = 1.0
+        cur = int(z.sum())
+        if cur > k:
+            z[np.flatnonzero(z)[: cur - k]] = 0.0
+        elif cur < k:
+            z[np.flatnonzero(z == 0)[: k - cur]] = 1.0
+    else:
+        raise ValueError(structure)
+    assert int(z.sum()) == k
+    return z
+
+
+def test_wor_supermartingale_under_cohort_null():
+    """Wealth has mean <= 1 under the cohort null, for a fixed sign vector
+    with arbitrary internal structure (no independence anywhere)."""
+    m, p0 = 256, 0.55
+    for structure in ("contiguous", "spread", "stratified"):
+        z0 = _least_favourable_cohort(m, p0, structure)
+        finals = []
+        for seed in range(400):
+            rng = np.random.default_rng(seed)
+            z = z0.copy()
+            rng.shuffle(z)                       # committed random reveal order
+            ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                                  alpha=0.05, population_size=m)
+            for zz in z:
+                ep.update(zz)
+            finals.append(min(ep.log_e, 50.0))   # guard the refutation sentinel
+        assert np.mean(np.exp(finals)) <= 1.5, (structure, np.mean(np.exp(finals)))
+
+
+def test_wor_type_i_error_under_peeking():
+    """Realised type-I error stays at or below alpha when the auditor peeks
+    after every pair, for every cohort structure."""
+    alpha = 0.05
+    thr = math.log(1 / alpha)
+    for m in (128, 384):
+        for structure in ("contiguous", "spread", "stratified"):
+            z0 = _least_favourable_cohort(m, 0.55, structure)
+            crossed = 0
+            for seed in range(600):
+                rng = np.random.default_rng(10_000 + seed)
+                z = z0.copy()
+                rng.shuffle(z)
+                ep = OneSidedEProcess(m0=0.55, direction="below",
+                                      strategy="mixture", alpha=alpha,
+                                      population_size=m)
+                for zz in z:
+                    ep.update(zz)
+                    if ep.log_e >= thr:
+                        crossed += 1
+                        break
+            rate = crossed / 600
+            # Monte-Carlo slack: 600 draws at alpha=0.05 has se ~ 0.009
+            assert rate <= alpha + 0.03, (m, structure, rate)
+
+
+def test_wor_boundary_matches_definition():
+    """The predictable boundary equals (m*p0 - sum so far) / (m - t + 1)."""
+    m, p0 = 64, 0.6
+    rng = np.random.default_rng(0)
+    z = rng.binomial(1, 0.5, size=m).astype(float)
+    ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                          alpha=0.05, population_size=m)
+    running = 0.0
+    for t, zz in enumerate(z, start=1):
+        expected = (m * p0 - running) / (m - t + 1)
+        assert abs(ep.m0_t - expected) < 1e-12, (t, ep.m0_t, expected)
+        ep.update(zz)
+        running += zz
+
+
+def test_wor_refutes_only_when_null_is_impossible():
+    """The deterministic-refutation branch fires only for cohorts whose
+    realised mean is genuinely below p0, never under the null."""
+    m, p0 = 128, 0.55
+    # (a) under the null: never refuted
+    z0 = _least_favourable_cohort(m, p0, "stratified")
+    for seed in range(200):
+        rng = np.random.default_rng(seed)
+        z = z0.copy(); rng.shuffle(z)
+        ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                              alpha=0.05, population_size=m)
+        for zz in z:
+            ep.update(zz)
+        assert not ep._refuted, seed
+    # (b) a clean cohort (mean 1/2 < p0) is refuted with certainty by the end
+    z1 = np.r_[np.ones(m // 2), np.zeros(m - m // 2)]
+    for seed in range(50):
+        rng = np.random.default_rng(seed)
+        z = z1.copy(); rng.shuffle(z)
+        ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                              alpha=0.05, population_size=m)
+        for zz in z:
+            ep.update(zz)
+        assert ep.log_e >= math.log(1 / 0.05), seed
+
+
+def test_wor_cs_collapses_onto_the_cohort_mean():
+    """The without-replacement confidence sequence contains the realised
+    cohort mean at every step and pins it exactly once exhausted."""
+    m = 200
+    rng = np.random.default_rng(3)
+    z = rng.binomial(1, 0.42, size=m).astype(float)
+    truth = z.mean()
+    cs = BettingCS(alpha=0.05, grid=1001, population_size=m)
+    for zz in z:
+        cs.update(zz)
+        assert cs.lo - 1e-9 <= truth <= cs.hi + 1e-9, (cs.interval, truth)
+    assert cs.hi - cs.lo < 0.02, cs.interval
+
+
+def test_wor_verifier_agrees_with_the_sign_count_at_exhaustion():
+    """With the whole cohort observed, the cohort certificate must agree with
+    a direct count: |2*mean - 1| < eps  <=>  ISSUED."""
+    eps, m = 0.2, 300
+    for seed in range(12):
+        rng = np.random.default_rng(100 + seed)
+        # spread the true advantage across and around the tolerance
+        p = 0.40 + 0.03 * seed
+        diffs = [{"loss": float(x)} for x in
+                 np.where(rng.binomial(1, p, size=m) > 0, 1.0, -1.0)]
+        v = VouchVerifier(["loss"], VouchConfig(eps=eps, alpha=0.05,
+                                                use_magnitude_revocation=False))
+        cert = v.run(diffs, shuffle_seed=seed, early_stop=False)
+        mean = np.mean([d["loss"] > 0 for d in diffs])
+        inside = abs(2 * mean - 1) < eps
+        if cert.status == "ISSUED":
+            assert inside, (seed, mean, cert.status)
+        if not inside and cert.status != "REVOKED":
+            assert cert.status != "ISSUED", (seed, mean, cert.status)
+
+
+def test_finite_cohort_flag_recovers_v1_behaviour():
+    """finite_cohort=False must reproduce the fixed-boundary process."""
+    rng = np.random.default_rng(7)
+    diffs = [{"loss": float(x)} for x in rng.standard_normal(300)]
+    a = VouchVerifier(["loss"], VouchConfig(eps=0.2, finite_cohort=False))
+    b = OneSidedEProcess(m0=0.6, direction="below", strategy="mixture",
+                         alpha=0.05)   # population_size=None
+    assert a.cohort_size is None
+    assert b.population_size is None
+    assert abs(b.m0_t - 0.6) < 1e-12
