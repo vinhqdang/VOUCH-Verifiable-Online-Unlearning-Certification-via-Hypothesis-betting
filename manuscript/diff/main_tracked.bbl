@@ -1,0 +1,919 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{47}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\url{https://doi.org/#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\bibcommenthead
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem[\protect\citeauthoryear{{European Parliament and Council of the
+  European Union}}{2016}]{gdpr2016}
+\begin{botherref}
+\oauthor{\bsnm{{European Parliament and Council of the European Union}}}:
+Regulation ({EU}) 2016/679 on the protection of natural persons with regard to
+  the processing of personal data and on the free movement of such data
+  (General Data Protection Regulation).
+Official Journal of the European Union, OJ L 119, 4.5.2016, pp. 1--88,
+  CELEX:32016R0679
+(2016).
+\url{https://eur-lex.europa.eu/eli/reg/2016/679/oj}
+\end{botherref}
+\endbibitem
+
+%%% 2
+\bibitem[\protect\citeauthoryear{{European Parliament and Council of the
+  European Union}}{2024}]{aiact2024}
+\begin{botherref}
+\oauthor{\bsnm{{European Parliament and Council of the European Union}}}:
+Regulation ({EU}) 2024/1689 laying down harmonised rules on artificial
+  intelligence (Artificial Intelligence Act).
+Official Journal of the European Union, OJ L, 2024/1689, 12.7.2024,
+  CELEX:32024R1689
+(2024).
+\url{https://eur-lex.europa.eu/eli/reg/2024/1689/oj}
+\end{botherref}
+\endbibitem
+
+%%% 3
+\bibitem[\protect\citeauthoryear{Zhang et~al.}{2024}]{zhang2024npo}
+\begin{bchapter}
+\bauthor{\bsnm{Zhang}, \binits{R.}},
+\bauthor{\bsnm{Lin}, \binits{L.}},
+\bauthor{\bsnm{Bai}, \binits{Y.}},
+\bauthor{\bsnm{Mei}, \binits{S.}}:
+\bctitle{Negative preference optimization: From catastrophic collapse to
+  effective unlearning}.
+In: \bbtitle{First Conference on Language Modeling (COLM)}
+(\byear{2024}).
+\burl{https://openreview.net/forum?id=MXLBXjQkmb}
+\end{bchapter}
+\endbibitem
+
+%%% 4
+\bibitem[\protect\citeauthoryear{Fan et~al.}{2025}]{fan2025simnpo}
+\begin{bchapter}
+\bauthor{\bsnm{Fan}, \binits{C.}},
+\bauthor{\bsnm{Liu}, \binits{J.}},
+\bauthor{\bsnm{Lin}, \binits{L.}},
+\bauthor{\bsnm{Jia}, \binits{J.}},
+\bauthor{\bsnm{Zhang}, \binits{R.}},
+\bauthor{\bsnm{Mei}, \binits{S.}},
+\bauthor{\bsnm{Liu}, \binits{S.}}:
+\bctitle{Simplicity prevails: Rethinking negative preference optimization for
+  {LLM} unlearning}.
+In: \bbtitle{Advances in Neural Information Processing Systems (NeurIPS)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=JbvSQm5h1l}
+\end{bchapter}
+\endbibitem
+
+%%% 5
+\bibitem[\protect\citeauthoryear{Li et~al.}{2024}]{li2024wmdp}
+\begin{bchapter}
+\bauthor{\bsnm{Li}, \binits{N.}},
+\bauthor{\bsnm{Pan}, \binits{A.}},
+\bauthor{\bsnm{Gopal}, \binits{A.}},
+\bauthor{\bsnm{Yue}, \binits{S.}},
+\bauthor{\bsnm{Berrios}, \binits{D.}},
+\bauthor{\bsnm{Gatti}, \binits{A.}},
+\bauthor{\bsnm{Li}, \binits{J.D.}},
+\bauthor{\bsnm{Dombrowski}, \binits{A.-K.}},
+\bauthor{\bsnm{Goel}, \binits{S.}},
+\bauthor{\bsnm{Phan}, \binits{L.}},
+\bauthor{\bsnm{Mukobi}, \binits{G.}},
+\bauthor{\bsnm{Helm-Burger}, \binits{N.}},
+\bauthor{\bsnm{Lababidi}, \binits{R.}},
+\bauthor{\bsnm{Justen}, \binits{L.}},
+\bauthor{\bsnm{Liu}, \binits{A.B.}},
+\bauthor{\bsnm{Chen}, \binits{M.}},
+\bauthor{\bsnm{Barrass}, \binits{I.}},
+\bauthor{\bsnm{Zhang}, \binits{O.}},
+\bauthor{\bsnm{Zhu}, \binits{X.}},
+\bauthor{\bsnm{Tamirisa}, \binits{R.}},
+\bauthor{\bsnm{Bharathi}, \binits{B.}},
+\bauthor{\bsnm{Khoja}, \binits{A.}},
+\bauthor{\bsnm{Zhao}, \binits{Z.}},
+\bauthor{\bsnm{Herbert-Voss}, \binits{A.}},
+\bauthor{\bsnm{Breuer}, \binits{C.B.}},
+\bauthor{\bsnm{Marks}, \binits{S.}},
+\bauthor{\bsnm{Patel}, \binits{O.}},
+\bauthor{\bsnm{Zou}, \binits{A.}},
+\bauthor{\bsnm{Mazeika}, \binits{M.}},
+\bauthor{\bsnm{Wang}, \binits{Z.}},
+\bauthor{\bsnm{Oswal}, \binits{P.}},
+\bauthor{\bsnm{Lin}, \binits{W.}},
+\bauthor{\bsnm{Hunt}, \binits{A.A.}},
+\bauthor{\bsnm{Tienken-Harder}, \binits{J.}},
+\bauthor{\bsnm{Shih}, \binits{K.Y.}},
+\bauthor{\bsnm{Talley}, \binits{K.}},
+\bauthor{\bsnm{Guan}, \binits{J.}},
+\bauthor{\bsnm{Kaplan}, \binits{R.}},
+\bauthor{\bsnm{Steneker}, \binits{I.}},
+\bauthor{\bsnm{Campbell}, \binits{D.}},
+\bauthor{\bsnm{Jokubaitis}, \binits{B.}},
+\bauthor{\bsnm{Levinson}, \binits{A.}},
+\bauthor{\bsnm{Wang}, \binits{J.}},
+\bauthor{\bsnm{Qian}, \binits{W.}},
+\bauthor{\bsnm{Karmakar}, \binits{K.K.}},
+\bauthor{\bsnm{Basart}, \binits{S.}},
+\bauthor{\bsnm{Fitz}, \binits{S.}},
+\bauthor{\bsnm{Levine}, \binits{M.}},
+\bauthor{\bsnm{Kumaraguru}, \binits{P.}},
+\bauthor{\bsnm{Tupakula}, \binits{U.}},
+\bauthor{\bsnm{Varadharajan}, \binits{V.}},
+\bauthor{\bsnm{Wang}, \binits{R.}},
+\bauthor{\bsnm{Shoshitaishvili}, \binits{Y.}},
+\bauthor{\bsnm{Ba}, \binits{J.}},
+\bauthor{\bsnm{Esvelt}, \binits{K.M.}},
+\bauthor{\bsnm{Wang}, \binits{A.}},
+\bauthor{\bsnm{Hendrycks}, \binits{D.}}:
+\bctitle{The {WMDP} benchmark: Measuring and reducing malicious use with
+  unlearning}.
+In: \bbtitle{Proceedings of the 41st International Conference on Machine
+  Learning (ICML)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{235},
+pp. \bfpage{28525}--\blpage{28550}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2024}).
+\burl{https://proceedings.mlr.press/v235/li24bc.html}
+\end{bchapter}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Wang et~al.}{2025}]{wang2025towards}
+\begin{bchapter}
+\bauthor{\bsnm{Wang}, \binits{Q.}},
+\bauthor{\bsnm{Han}, \binits{B.}},
+\bauthor{\bsnm{Yang}, \binits{P.}},
+\bauthor{\bsnm{Zhu}, \binits{J.}},
+\bauthor{\bsnm{Liu}, \binits{T.}},
+\bauthor{\bsnm{Sugiyama}, \binits{M.}}:
+\bctitle{Towards effective evaluations and comparisons for {LLM} unlearning
+  methods}.
+In: \bbtitle{The Thirteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=wUtCieKuQU}
+\end{bchapter}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Yuan et~al.}{2025}]{yuan2025closer}
+\begin{bchapter}
+\bauthor{\bsnm{Yuan}, \binits{X.}},
+\bauthor{\bsnm{Pang}, \binits{T.}},
+\bauthor{\bsnm{Du}, \binits{C.}},
+\bauthor{\bsnm{Chen}, \binits{K.}},
+\bauthor{\bsnm{Zhang}, \binits{W.}},
+\bauthor{\bsnm{Lin}, \binits{M.}}:
+\bctitle{A closer look at machine unlearning for large language models}.
+In: \bbtitle{The Thirteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=Q1MHvGmhyT}
+\end{bchapter}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{Hu et~al.}{2025}]{hu2025jogging}
+\begin{bchapter}
+\bauthor{\bsnm{Hu}, \binits{S.}},
+\bauthor{\bsnm{Fu}, \binits{Y.}},
+\bauthor{\bsnm{Wu}, \binits{Z.S.}},
+\bauthor{\bsnm{Smith}, \binits{V.}}:
+\bctitle{Unlearning or obfuscating? jogging the memory of unlearned {LLM}s via
+  benign relearning}.
+In: \bbtitle{The Thirteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=fMNRYBvcQN}
+\end{bchapter}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{Li et~al.}{2026}]{li2026beliefs}
+\begin{bchapter}
+\bauthor{\bsnm{Li}, \binits{K.}},
+\bauthor{\bsnm{Wang}, \binits{Q.}},
+\bauthor{\bsnm{Wang}, \binits{Y.}},
+\bauthor{\bsnm{Li}, \binits{F.}},
+\bauthor{\bsnm{Liu}, \binits{J.}},
+\bauthor{\bsnm{Han}, \binits{B.}},
+\bauthor{\bsnm{Zhou}, \binits{J.}}:
+\bctitle{{LLM} unlearning with {LLM} beliefs}.
+In: \bbtitle{The Fourteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2026}).
+\doiurl{10.48550/arXiv.2510.19422} .
+\burl{https://arxiv.org/abs/2510.19422}
+\end{bchapter}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{Feng et~al.}{2025}]{feng2025existing}
+\begin{botherref}
+\oauthor{\bsnm{Feng}, \binits{Z.}},
+\oauthor{\bsnm{Xu}, \binits{Y.E.}},
+\oauthor{\bsnm{Robey}, \binits{A.}},
+\oauthor{\bsnm{Kirk}, \binits{R.}},
+\oauthor{\bsnm{Davies}, \binits{X.}},
+\oauthor{\bsnm{Gal}, \binits{Y.}},
+\oauthor{\bsnm{Schwarzschild}, \binits{A.}},
+\oauthor{\bsnm{Kolter}, \binits{J.Z.}}:
+Existing large language model unlearning evaluations are inconclusive.
+arXiv preprint arXiv:2506.00688
+(2025)
+\end{botherref}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Zhang et~al.}{2025}]{zhang2024mia}
+\begin{bchapter}
+\bauthor{\bsnm{Zhang}, \binits{J.}},
+\bauthor{\bsnm{Das}, \binits{D.}},
+\bauthor{\bsnm{Kamath}, \binits{G.}},
+\bauthor{\bsnm{Tram{\`e}r}, \binits{F.}}:
+\bctitle{Position: Membership inference attacks cannot prove that a model was
+  trained on your data}.
+In: \bbtitle{2025 IEEE Conference on Secure and Trustworthy Machine Learning
+  (SaTML)},
+pp. \bfpage{333}--\blpage{345}.
+\bpublisher{IEEE},
+\blocation{New York, NY, USA}
+(\byear{2025}).
+\doiurl{10.1109/SaTML64287.2025.00025}
+\end{bchapter}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Maini et~al.}{2024}]{maini2024tofu}
+\begin{bchapter}
+\bauthor{\bsnm{Maini}, \binits{P.}},
+\bauthor{\bsnm{Feng}, \binits{Z.}},
+\bauthor{\bsnm{Schwarzschild}, \binits{A.}},
+\bauthor{\bsnm{Lipton}, \binits{Z.C.}},
+\bauthor{\bsnm{Kolter}, \binits{J.Z.}}:
+\bctitle{{TOFU}: A task of fictitious unlearning for {LLMs}}.
+In: \bbtitle{First Conference on Language Modeling (COLM)}
+(\byear{2024}).
+\burl{https://openreview.net/forum?id=B41hNBoWLo}
+\end{bchapter}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{Shi et~al.}{2025}]{shi2024muse}
+\begin{bchapter}
+\bauthor{\bsnm{Shi}, \binits{W.}},
+\bauthor{\bsnm{Lee}, \binits{J.}},
+\bauthor{\bsnm{Huang}, \binits{Y.}},
+\bauthor{\bsnm{Malladi}, \binits{S.}},
+\bauthor{\bsnm{Zhao}, \binits{J.}},
+\bauthor{\bsnm{Holtzman}, \binits{A.}},
+\bauthor{\bsnm{Liu}, \binits{D.}},
+\bauthor{\bsnm{Zettlemoyer}, \binits{L.}},
+\bauthor{\bsnm{Smith}, \binits{N.A.}},
+\bauthor{\bsnm{Zhang}, \binits{C.}}:
+\bctitle{{MUSE}: Machine unlearning six-way evaluation for language models}.
+In: \bbtitle{The Thirteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=TArmA033BU}
+\end{bchapter}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{Hayes et~al.}{2025}]{hayes2024inexact}
+\begin{bchapter}
+\bauthor{\bsnm{Hayes}, \binits{J.}},
+\bauthor{\bsnm{Shumailov}, \binits{I.}},
+\bauthor{\bsnm{Triantafillou}, \binits{E.}},
+\bauthor{\bsnm{Khalifa}, \binits{A.}},
+\bauthor{\bsnm{Papernot}, \binits{N.}}:
+\bctitle{Inexact unlearning needs more careful evaluations to avoid a false
+  sense of privacy}.
+In: \bbtitle{2025 IEEE Conference on Secure and Trustworthy Machine Learning
+  (SaTML)},
+pp. \bfpage{497}--\blpage{519}.
+\bpublisher{IEEE},
+\blocation{New York, NY, USA}
+(\byear{2025}).
+\doiurl{10.1109/SaTML64287.2025.00034}
+\end{bchapter}
+\endbibitem
+
+%%% 15
+\bibitem[\protect\citeauthoryear{Yu et~al.}{2025}]{yu2025impossibility}
+\begin{botherref}
+\oauthor{\bsnm{Yu}, \binits{J.}},
+\oauthor{\bsnm{He}, \binits{Y.}},
+\oauthor{\bsnm{Goyal}, \binits{A.}},
+\oauthor{\bsnm{Arora}, \binits{S.}}:
+On the impossibility of retrain equivalence in machine unlearning.
+arXiv preprint arXiv:2510.16629
+(2025)
+\end{botherref}
+\endbibitem
+
+%%% 16
+\bibitem[\protect\citeauthoryear{Eisenhofer
+  et~al.}{2025}]{eisenhofer2025verifiable}
+\begin{bchapter}
+\bauthor{\bsnm{Eisenhofer}, \binits{T.}},
+\bauthor{\bsnm{Riepel}, \binits{D.}},
+\bauthor{\bsnm{Chandrasekaran}, \binits{V.}},
+\bauthor{\bsnm{Ghosh}, \binits{E.}},
+\bauthor{\bsnm{Ohrimenko}, \binits{O.}},
+\bauthor{\bsnm{Papernot}, \binits{N.}}:
+\bctitle{Verifiable and provably secure machine unlearning}.
+In: \bbtitle{2025 IEEE Conference on Secure and Trustworthy Machine Learning
+  (SaTML)},
+pp. \bfpage{479}--\blpage{496}.
+\bpublisher{IEEE},
+\blocation{New York, NY, USA}
+(\byear{2025}).
+\doiurl{10.1109/SaTML64287.2025.00033}
+\end{bchapter}
+\endbibitem
+
+%%% 17
+\bibitem[\protect\citeauthoryear{Bourtoule et~al.}{2021}]{bourtoule2021machine}
+\begin{bchapter}
+\bauthor{\bsnm{Bourtoule}, \binits{L.}},
+\bauthor{\bsnm{Chandrasekaran}, \binits{V.}},
+\bauthor{\bsnm{Choquette-Choo}, \binits{C.A.}},
+\bauthor{\bsnm{Jia}, \binits{H.}},
+\bauthor{\bsnm{Travers}, \binits{A.}},
+\bauthor{\bsnm{Zhang}, \binits{B.}},
+\bauthor{\bsnm{Lie}, \binits{D.}},
+\bauthor{\bsnm{Papernot}, \binits{N.}}:
+\bctitle{Machine unlearning}.
+In: \bbtitle{2021 IEEE Symposium on Security and Privacy (SP)},
+pp. \bfpage{141}--\blpage{159}.
+\bpublisher{IEEE},
+\blocation{New York, NY, USA}
+(\byear{2021}).
+\doiurl{10.1109/SP40001.2021.00019}
+\end{bchapter}
+\endbibitem
+
+%%% 18
+\bibitem[\protect\citeauthoryear{Carlini et~al.}{2019}]{carlini2019secret}
+\begin{bchapter}
+\bauthor{\bsnm{Carlini}, \binits{N.}},
+\bauthor{\bsnm{Liu}, \binits{C.}},
+\bauthor{\bsnm{Erlingsson}, \binits{{\'U}.}},
+\bauthor{\bsnm{Kos}, \binits{J.}},
+\bauthor{\bsnm{Song}, \binits{D.}}:
+\bctitle{The secret sharer: Evaluating and testing unintended memorization in
+  neural networks}.
+In: \bbtitle{28th USENIX Security Symposium (USENIX Security 19)},
+pp. \bfpage{267}--\blpage{284}.
+\bpublisher{USENIX Association},
+\blocation{Berkeley, CA, USA}
+(\byear{2019}).
+\burl{https://www.usenix.org/conference/usenixsecurity19/presentation/carlini}
+\end{bchapter}
+\endbibitem
+
+%%% 19
+\bibitem[\protect\citeauthoryear{Jagielski
+  et~al.}{2023}]{jagielski2023measuring}
+\begin{bchapter}
+\bauthor{\bsnm{Jagielski}, \binits{M.}},
+\bauthor{\bsnm{Thakkar}, \binits{O.}},
+\bauthor{\bsnm{Tram{\`e}r}, \binits{F.}},
+\bauthor{\bsnm{Ippolito}, \binits{D.}},
+\bauthor{\bsnm{Lee}, \binits{K.}},
+\bauthor{\bsnm{Carlini}, \binits{N.}},
+\bauthor{\bsnm{Wallace}, \binits{E.}},
+\bauthor{\bsnm{Song}, \binits{S.}},
+\bauthor{\bsnm{Thakurta}, \binits{A.}},
+\bauthor{\bsnm{Papernot}, \binits{N.}},
+\bauthor{\bsnm{Zhang}, \binits{C.}}:
+\bctitle{Measuring forgetting of memorized training examples}.
+In: \bbtitle{The Eleventh International Conference on Learning Representations
+  (ICLR)}
+(\byear{2023}).
+\burl{https://openreview.net/forum?id=7bJizxLKrR}
+\end{bchapter}
+\endbibitem
+
+%%% 20
+\bibitem[\protect\citeauthoryear{B{\u{a}}rbulescu and
+  Triantafillou}{2024}]{barbulescu2024each}
+\begin{bchapter}
+\bauthor{\bsnm{B{\u{a}}rbulescu}, \binits{G.-O.}},
+\bauthor{\bsnm{Triantafillou}, \binits{P.}}:
+\bctitle{To each (textual sequence) its own: Improving memorized-data
+  unlearning in large language models}.
+In: \bbtitle{Proceedings of the 41st International Conference on Machine
+  Learning (ICML)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{235},
+pp. \bfpage{3003}--\blpage{3023}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2024}).
+\burl{https://proceedings.mlr.press/v235/barbulescu24a.html}
+\end{bchapter}
+\endbibitem
+
+%%% 21
+\bibitem[\protect\citeauthoryear{{\L}ucki et~al.}{2025}]{lucki2024adversarial}
+\begin{botherref}
+\oauthor{\bsnm{{\L}ucki}, \binits{J.}},
+\oauthor{\bsnm{Wei}, \binits{B.}},
+\oauthor{\bsnm{Huang}, \binits{Y.}},
+\oauthor{\bsnm{Henderson}, \binits{P.}},
+\oauthor{\bsnm{Tram{\`e}r}, \binits{F.}},
+\oauthor{\bsnm{Rando}, \binits{J.}}:
+An adversarial perspective on machine unlearning for {AI} safety.
+Transactions on Machine Learning Research
+(2025)
+\end{botherref}
+\endbibitem
+
+%%% 22
+\bibitem[\protect\citeauthoryear{Zhang et~al.}{2025}]{zhang2025quantization}
+\begin{bchapter}
+\bauthor{\bsnm{Zhang}, \binits{Z.}},
+\bauthor{\bsnm{Wang}, \binits{F.}},
+\bauthor{\bsnm{Li}, \binits{X.}},
+\bauthor{\bsnm{Wu}, \binits{Z.}},
+\bauthor{\bsnm{Tang}, \binits{X.}},
+\bauthor{\bsnm{Liu}, \binits{H.}},
+\bauthor{\bsnm{He}, \binits{Q.}},
+\bauthor{\bsnm{Yin}, \binits{W.}},
+\bauthor{\bsnm{Wang}, \binits{S.}}:
+\bctitle{Catastrophic failure of {LLM} unlearning via quantization}.
+In: \bbtitle{The Thirteenth International Conference on Learning
+  Representations (ICLR)}
+(\byear{2025}).
+\burl{https://openreview.net/forum?id=lHSeDYamnz}
+\end{bchapter}
+\endbibitem
+
+%%% 23
+\bibitem[\protect\citeauthoryear{Deeb and Roger}{2024}]{deeb2024remove}
+\begin{botherref}
+\oauthor{\bsnm{Deeb}, \binits{A.}},
+\oauthor{\bsnm{Roger}, \binits{F.}}:
+Do unlearning methods remove information from language model weights?
+arXiv preprint arXiv:2410.08827
+(2024)
+\end{botherref}
+\endbibitem
+
+%%% 24
+\bibitem[\protect\citeauthoryear{Fan et~al.}{2025}]{fan2025relearning}
+\begin{bchapter}
+\bauthor{\bsnm{Fan}, \binits{C.}},
+\bauthor{\bsnm{Jia}, \binits{J.}},
+\bauthor{\bsnm{Zhang}, \binits{Y.}},
+\bauthor{\bsnm{Ramakrishna}, \binits{A.}},
+\bauthor{\bsnm{Hong}, \binits{M.}},
+\bauthor{\bsnm{Liu}, \binits{S.}}:
+\bctitle{Towards llm unlearning resilient to relearning attacks: A
+  sharpness-aware minimization perspective and beyond}.
+In: \bbtitle{International Conference on Machine Learning (ICML)}
+(\byear{2025}).
+\burl{https://arxiv.org/abs/2502.05374}
+\end{bchapter}
+\endbibitem
+
+%%% 25
+\bibitem[\protect\citeauthoryear{Wei et~al.}{2025}]{wei2025forget}
+\begin{bchapter}
+\bauthor{\bsnm{Wei}, \binits{R.}},
+\bauthor{\bsnm{Niu}, \binits{P.}},
+\bauthor{\bsnm{Hsu}, \binits{H.H.-H.}},
+\bauthor{\bsnm{Wu}, \binits{R.}},
+\bauthor{\bsnm{Yin}, \binits{H.}},
+\bauthor{\bsnm{Ghassemi}, \binits{M.}},
+\bauthor{\bsnm{Li}, \binits{Y.}},
+\bauthor{\bsnm{Potluru}, \binits{V.K.}},
+\bauthor{\bsnm{Chien}, \binits{E.}},
+\bauthor{\bsnm{Chaudhuri}, \binits{K.}},
+\bauthor{\bsnm{Milenkovic}, \binits{O.}},
+\bauthor{\bsnm{Li}, \binits{P.}}:
+\bctitle{Do llms really forget? evaluating unlearning with knowledge
+  correlation and confidence awareness}.
+In: \bbtitle{Advances in Neural Information Processing Systems (NeurIPS)}
+(\byear{2025}).
+\burl{https://arxiv.org/abs/2506.05735}
+\end{bchapter}
+\endbibitem
+
+%%% 26
+\bibitem[\protect\citeauthoryear{Xu et~al.}{2026}]{xu2026reversibility}
+\begin{bchapter}
+\bauthor{\bsnm{Xu}, \binits{X.}},
+\bauthor{\bsnm{Yue}, \binits{X.}},
+\bauthor{\bsnm{Liu}, \binits{Y.}},
+\bauthor{\bsnm{Ye}, \binits{Q.}},
+\bauthor{\bsnm{Zheng}, \binits{H.}},
+\bauthor{\bsnm{Hu}, \binits{P.}},
+\bauthor{\bsnm{Du}, \binits{M.}},
+\bauthor{\bsnm{Hu}, \binits{H.}}:
+\bctitle{Unlearning isn't deletion: Investigating reversibility of machine
+  unlearning in llms}.
+In: \bbtitle{International Conference on Machine Learning (ICML)}
+(\byear{2026}).
+\burl{https://arxiv.org/abs/2505.16831}
+\end{bchapter}
+\endbibitem
+
+%%% 27
+\bibitem[\protect\citeauthoryear{Guo et~al.}{2020}]{guo2020certified}
+\begin{bchapter}
+\bauthor{\bsnm{Guo}, \binits{C.}},
+\bauthor{\bsnm{Goldstein}, \binits{T.}},
+\bauthor{\bsnm{Hannun}, \binits{A.}},
+\bauthor{\bsnm{Maaten}, \binits{L.}}:
+\bctitle{Certified data removal from machine learning models}.
+In: \bbtitle{Proceedings of the 37th International Conference on Machine
+  Learning (ICML)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{119},
+pp. \bfpage{3832}--\blpage{3842}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2020}).
+\burl{https://proceedings.mlr.press/v119/guo20c.html}
+\end{bchapter}
+\endbibitem
+
+%%% 28
+\bibitem[\protect\citeauthoryear{Sekhari et~al.}{2021}]{sekhari2021remember}
+\begin{bchapter}
+\bauthor{\bsnm{Sekhari}, \binits{A.}},
+\bauthor{\bsnm{Acharya}, \binits{J.}},
+\bauthor{\bsnm{Kamath}, \binits{G.}},
+\bauthor{\bsnm{Suresh}, \binits{A.T.}}:
+\bctitle{Remember what you want to forget: Algorithms for machine unlearning}.
+In: \bbtitle{Advances in Neural Information Processing Systems 34 (NeurIPS
+  2021)},
+pp. \bfpage{18075}--\blpage{18086}
+(\byear{2021}).
+\burl{https://proceedings.neurips.cc/paper/2021/hash/9627c45df543c816a3ddf2d8ea686a99-Abstract.html}
+\end{bchapter}
+\endbibitem
+
+%%% 29
+\bibitem[\protect\citeauthoryear{Neel et~al.}{2021}]{neel2021descent}
+\begin{bchapter}
+\bauthor{\bsnm{Neel}, \binits{S.}},
+\bauthor{\bsnm{Roth}, \binits{A.}},
+\bauthor{\bsnm{Sharifi-Malvajerdi}, \binits{S.}}:
+\bctitle{Descent-to-delete: Gradient-based methods for machine unlearning}.
+In: \bbtitle{Proceedings of the 32nd International Conference on Algorithmic
+  Learning Theory (ALT)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{132},
+pp. \bfpage{931}--\blpage{962}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2021}).
+\burl{https://proceedings.mlr.press/v132/neel21a.html}
+\end{bchapter}
+\endbibitem
+
+%%% 30
+\bibitem[\protect\citeauthoryear{Ginart et~al.}{2019}]{ginart2019making}
+\begin{bchapter}
+\bauthor{\bsnm{Ginart}, \binits{A.}},
+\bauthor{\bsnm{Guan}, \binits{M.Y.}},
+\bauthor{\bsnm{Valiant}, \binits{G.}},
+\bauthor{\bsnm{Zou}, \binits{J.}}:
+\bctitle{Making ai forget you: Data deletion in machine learning}.
+In: \bbtitle{Advances in Neural Information Processing Systems 32 (NeurIPS
+  2019)},
+pp. \bfpage{3513}--\blpage{3526}
+(\byear{2019}).
+\burl{https://proceedings.neurips.cc/paper/2019/hash/cb79f8fa58b91d3af6c9c991f63962d3-Abstract.html}
+\end{bchapter}
+\endbibitem
+
+%%% 31
+\bibitem[\protect\citeauthoryear{Thudi et~al.}{2022}]{thudi2022necessity}
+\begin{bchapter}
+\bauthor{\bsnm{Thudi}, \binits{A.}},
+\bauthor{\bsnm{Jia}, \binits{H.}},
+\bauthor{\bsnm{Shumailov}, \binits{I.}},
+\bauthor{\bsnm{Papernot}, \binits{N.}}:
+\bctitle{On the necessity of auditable algorithmic definitions for machine
+  unlearning}.
+In: \bbtitle{31st USENIX Security Symposium (USENIX Security 22)},
+pp. \bfpage{4007}--\blpage{4022}.
+\bpublisher{USENIX Association},
+\blocation{Berkeley, CA, USA}
+(\byear{2022}).
+\burl{https://www.usenix.org/conference/usenixsecurity22/presentation/thudi}
+\end{bchapter}
+\endbibitem
+
+%%% 32
+\bibitem[\protect\citeauthoryear{Zhang et~al.}{2024}]{zhang2024verification}
+\begin{bchapter}
+\bauthor{\bsnm{Zhang}, \binits{B.}},
+\bauthor{\bsnm{Chen}, \binits{Z.}},
+\bauthor{\bsnm{Shen}, \binits{C.}},
+\bauthor{\bsnm{Li}, \binits{J.}}:
+\bctitle{Verification of machine unlearning is fragile}.
+In: \bbtitle{Proceedings of the 41st International Conference on Machine
+  Learning (ICML)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{235},
+pp. \bfpage{58717}--\blpage{58738}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2024}).
+\burl{https://proceedings.mlr.press/v235/zhang24h.html}
+\end{bchapter}
+\endbibitem
+
+%%% 33
+\bibitem[\protect\citeauthoryear{Pandey et~al.}{2025}]{pandey2025gaussian}
+\begin{botherref}
+\oauthor{\bsnm{Pandey}, \binits{A.}},
+\oauthor{\bsnm{Auddy}, \binits{A.}},
+\oauthor{\bsnm{Zou}, \binits{H.}},
+\oauthor{\bsnm{Maleki}, \binits{A.}},
+\oauthor{\bsnm{Kulkarni}, \binits{S.}}:
+Gaussian certified unlearning in high dimensions: A hypothesis testing
+  approach.
+arXiv preprint arXiv:2510.13094
+(2025)
+\end{botherref}
+\endbibitem
+
+%%% 34
+\bibitem[\protect\citeauthoryear{Pawelczyk et~al.}{2025}]{pawelczyk2025machine}
+\begin{bchapter}
+\bauthor{\bsnm{Pawelczyk}, \binits{M.}},
+\bauthor{\bsnm{Di}, \binits{J.Z.}},
+\bauthor{\bsnm{Lu}, \binits{Y.}},
+\bauthor{\bsnm{Kamath}, \binits{G.}},
+\bauthor{\bsnm{Sekhari}, \binits{A.}},
+\bauthor{\bsnm{Neel}, \binits{S.}}:
+\bctitle{Machine unlearning fails to remove data poisoning attacks}.
+In: \bbtitle{International Conference on Learning Representations (ICLR)}
+(\byear{2025}).
+\burl{https://arxiv.org/abs/2406.17216}
+\end{bchapter}
+\endbibitem
+
+%%% 35
+\bibitem[\protect\citeauthoryear{Xue et~al.}{2026}]{xue2026survey}
+\begin{barticle}
+\bauthor{\bsnm{Xue}, \binits{L.}},
+\bauthor{\bsnm{Hu}, \binits{S.}},
+\bauthor{\bsnm{Lu}, \binits{W.}},
+\bauthor{\bsnm{Shen}, \binits{Y.}},
+\bauthor{\bsnm{Li}, \binits{D.}},
+\bauthor{\bsnm{Guo}, \binits{P.}},
+\bauthor{\bsnm{Zhou}, \binits{Z.}},
+\bauthor{\bsnm{Li}, \binits{M.}},
+\bauthor{\bsnm{Zhang}, \binits{Y.}},
+\bauthor{\bsnm{Zhang}, \binits{L.Y.}}:
+\batitle{Towards reliable forgetting: A survey on machine unlearning
+  verification}.
+\bjtitle{ACM Computing Surveys}
+(\byear{2026})
+\doiurl{10.1145/3807451}
+\end{barticle}
+\endbibitem
+
+%%% 36
+\bibitem[\protect\citeauthoryear{Liu et~al.}{2025}]{liu2025rethinking}
+\begin{barticle}
+\bauthor{\bsnm{Liu}, \binits{S.}},
+\bauthor{\bsnm{Yao}, \binits{Y.}},
+\bauthor{\bsnm{Jia}, \binits{J.}},
+\bauthor{\bsnm{Casper}, \binits{S.}},
+\bauthor{\bsnm{Baracaldo}, \binits{N.}},
+\bauthor{\bsnm{Hase}, \binits{P.}},
+\bauthor{\bsnm{Yao}, \binits{Y.}},
+\bauthor{\bsnm{Liu}, \binits{C.Y.}},
+\bauthor{\bsnm{Xu}, \binits{X.}},
+\bauthor{\bsnm{Li}, \binits{H.}},
+\bauthor{\bsnm{Varshney}, \binits{K.R.}},
+\bauthor{\bsnm{Bansal}, \binits{M.}},
+\bauthor{\bsnm{Koyejo}, \binits{S.}},
+\bauthor{\bsnm{Liu}, \binits{Y.}}:
+\batitle{Rethinking machine unlearning for large language models}.
+\bjtitle{Nature Machine Intelligence}
+\bvolume{7},
+\bfpage{181}--\blpage{194}
+(\byear{2025})
+\doiurl{10.1038/s42256-025-00985-0}
+\end{barticle}
+\endbibitem
+
+%%% 37
+\bibitem[\protect\citeauthoryear{Ramdas et~al.}{2023}]{ramdas2023game}
+\begin{barticle}
+\bauthor{\bsnm{Ramdas}, \binits{A.}},
+\bauthor{\bsnm{Gr{\"u}nwald}, \binits{P.}},
+\bauthor{\bsnm{Vovk}, \binits{V.}},
+\bauthor{\bsnm{Shafer}, \binits{G.}}:
+\batitle{Game-theoretic statistics and safe anytime-valid inference}.
+\bjtitle{Statistical Science}
+\bvolume{38}(\bissue{4}),
+\bfpage{576}--\blpage{601}
+(\byear{2023})
+\doiurl{10.1214/23-STS894}
+\end{barticle}
+\endbibitem
+
+%%% 38
+\bibitem[\protect\citeauthoryear{Gr{\"u}nwald et~al.}{2024}]{grunwald2024safe}
+\begin{barticle}
+\bauthor{\bsnm{Gr{\"u}nwald}, \binits{P.}},
+\bauthor{\bsnm{Heide}, \binits{R.}},
+\bauthor{\bsnm{Koolen}, \binits{W.M.}}:
+\batitle{Safe testing}.
+\bjtitle{Journal of the Royal Statistical Society Series B: Statistical
+  Methodology}
+\bvolume{86}(\bissue{5}),
+\bfpage{1091}--\blpage{1128}
+(\byear{2024})
+\doiurl{10.1093/jrsssb/qkae011}
+\end{barticle}
+\endbibitem
+
+%%% 39
+\bibitem[\protect\citeauthoryear{Shafer}{2021}]{shafer2021testing}
+\begin{barticle}
+\bauthor{\bsnm{Shafer}, \binits{G.}}:
+\batitle{Testing by betting: A strategy for statistical and scientific
+  communication}.
+\bjtitle{Journal of the Royal Statistical Society Series A: Statistics in
+  Society}
+\bvolume{184}(\bissue{2}),
+\bfpage{407}--\blpage{431}
+(\byear{2021})
+\doiurl{10.1111/rssa.12647}
+\end{barticle}
+\endbibitem
+
+%%% 40
+\bibitem[\protect\citeauthoryear{Waudby-Smith and
+  Ramdas}{2024}]{waudbysmith2024}
+\begin{barticle}
+\bauthor{\bsnm{Waudby-Smith}, \binits{I.}},
+\bauthor{\bsnm{Ramdas}, \binits{A.}}:
+\batitle{Estimating means of bounded random variables by betting}.
+\bjtitle{Journal of the Royal Statistical Society Series B: Statistical
+  Methodology}
+\bvolume{86}(\bissue{1}),
+\bfpage{1}--\blpage{27}
+(\byear{2024})
+\doiurl{10.1093/jrsssb/qkad009}
+\end{barticle}
+\endbibitem
+
+%%% 41
+\bibitem[\protect\citeauthoryear{Howard et~al.}{2021}]{howard2021time}
+\begin{barticle}
+\bauthor{\bsnm{Howard}, \binits{S.R.}},
+\bauthor{\bsnm{Ramdas}, \binits{A.}},
+\bauthor{\bsnm{McAuliffe}, \binits{J.}},
+\bauthor{\bsnm{Sekhon}, \binits{J.}}:
+\batitle{Time-uniform, nonparametric, nonasymptotic confidence sequences}.
+\bjtitle{The Annals of Statistics}
+\bvolume{49}(\bissue{2}),
+\bfpage{1055}--\blpage{1080}
+(\byear{2021})
+\doiurl{10.1214/20-AOS1991}
+\end{barticle}
+\endbibitem
+
+%%% 42
+\bibitem[\protect\citeauthoryear{Ville}{1939}]{ville1939}
+\begin{bbook}
+\bauthor{\bsnm{Ville}, \binits{J.}}:
+\bbtitle{{\'E}tude Critique de la Notion de Collectif}.
+\bpublisher{Gauthier-Villars},
+\blocation{Paris}
+(\byear{1939}).
+\burl{http://www.numdam.org/item/THESE_1939__218__1_0/}
+\end{bbook}
+\endbibitem
+
+%%% 43
+\bibitem[\protect\citeauthoryear{Orabona and P{\'a}l}{2016}]{orabona2016coin}
+\begin{bchapter}
+\bauthor{\bsnm{Orabona}, \binits{F.}},
+\bauthor{\bsnm{P{\'a}l}, \binits{D.}}:
+\bctitle{Coin betting and parameter-free online learning}.
+In: \bbtitle{Advances in Neural Information Processing Systems 29 (NIPS 2016)}
+(\byear{2016}).
+\burl{https://proceedings.neurips.cc/paper/2016/hash/320722549d1751cf3f247855f937b982-Abstract.html}
+\end{bchapter}
+\endbibitem
+
+%%% 44
+\bibitem[\protect\citeauthoryear{Steinke et~al.}{2023}]{steinke2023privacy}
+\begin{bchapter}
+\bauthor{\bsnm{Steinke}, \binits{T.}},
+\bauthor{\bsnm{Nasr}, \binits{M.}},
+\bauthor{\bsnm{Jagielski}, \binits{M.}}:
+\bctitle{Privacy auditing with one (1) training run}.
+In: \bbtitle{Advances in Neural Information Processing Systems 36 (NeurIPS
+  2023)}
+(\byear{2023}).
+\burl{https://proceedings.neurips.cc/paper_files/paper/2023/hash/9a6f6e0d6781d1cb8689192408946d73-Abstract-Conference.html}
+\end{bchapter}
+\endbibitem
+
+%%% 45
+\bibitem[\protect\citeauthoryear{Gonz{\'a}lez
+  et~al.}{2025}]{gonzalez2025sequential}
+\begin{bchapter}
+\bauthor{\bsnm{Gonz{\'a}lez}, \binits{T.}},
+\bauthor{\bsnm{Dulce-Rubio}, \binits{M.}},
+\bauthor{\bsnm{Ramdas}, \binits{A.}},
+\bauthor{\bsnm{Ribero}, \binits{M.}}:
+\bctitle{Sequentially auditing differential privacy}.
+In: \bbtitle{Advances in Neural Information Processing Systems 38 (NeurIPS
+  2025)}
+(\byear{2025}).
+\burl{https://arxiv.org/abs/2509.07055}
+\end{bchapter}
+\endbibitem
+
+%%% 46
+\bibitem[\protect\citeauthoryear{Csillag and
+  Mesquita}{2026}]{csillag2026dpevalues}
+\begin{bchapter}
+\bauthor{\bsnm{Csillag}, \binits{D.}},
+\bauthor{\bsnm{Mesquita}, \binits{D.}}:
+\bctitle{Differentially private e-values}.
+In: \bbtitle{Proceedings of the 29th International Conference on Artificial
+  Intelligence and Statistics (AISTATS)}
+(\byear{2026}).
+\burl{https://arxiv.org/abs/2510.18654}
+\end{bchapter}
+\endbibitem
+
+%%% 47
+\bibitem[\protect\citeauthoryear{Kairouz et~al.}{2015}]{kairouz2015composition}
+\begin{bchapter}
+\bauthor{\bsnm{Kairouz}, \binits{P.}},
+\bauthor{\bsnm{Oh}, \binits{S.}},
+\bauthor{\bsnm{Viswanath}, \binits{P.}}:
+\bctitle{The composition theorem for differential privacy}.
+In: \bbtitle{Proceedings of the 32nd International Conference on Machine
+  Learning (ICML)}.
+\bsertitle{Proceedings of Machine Learning Research},
+vol. \bseriesno{37},
+pp. \bfpage{1376}--\blpage{1385}.
+\bpublisher{PMLR},
+\blocation{Cambridge, MA, USA}
+(\byear{2015}).
+\burl{https://proceedings.mlr.press/v37/kairouz15.html}
+\end{bchapter}
+\endbibitem
+
+\end{thebibliography}
