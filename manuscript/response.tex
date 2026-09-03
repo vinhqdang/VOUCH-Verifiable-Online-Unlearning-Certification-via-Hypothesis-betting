@@ -389,11 +389,14 @@ SimNPO \citep{fan2025simnpo} is implemented and evaluated. We added it as a
 reference-free objective,
 $L = (2/\beta)\,\mathrm{softplus}(-\beta(\mathrm{nll}_\theta - \gamma))$ on the
 length-normalised forget NLL with $\beta=0.1$, $\gamma=0$ --- NPO's objective with the
-frozen reference replaced by a constant margin --- and ran it end to end under identical
-seeds, canary manifests and budgets as the existing subjects, so it is directly
-comparable. It certifies like NPO while holding held-out loss closest to the retrained
-reference of any approximate method we test, and is now reported in the benchmark table
-and named in \S6.9 as the best-behaved subject on the utility axis.
+frozen reference replaced by a constant margin --- and ran it end to end on TOFU/GPT-2
+under identical seeds, canary manifests and budgets as the existing subjects, so it is
+directly comparable. It certifies on all three seeds and achieves the widest
+forget/retain separation of any subject that remains fluent (forget NLL $6.20$ against
+retain $2.62$, versus NPO's $5.50$ against $2.60$), at a capability NLL of $4.17$
+against retraining's $3.23$. It is reported in the new metrics table
+(Table~12) and named in \S6.9 as the best-behaved of the approximate methods on the
+utility axis.
 
 On a second method we must be candid about the boundary of what this revision achieved.
 We prioritised SimNPO because you named it and because it is the closest competitor to
@@ -412,16 +415,31 @@ at least one general capability benchmark.
 \end{point}
 
 \begin{reply}
-Agreed. The end-to-end runner now records, behind an \texttt{--extra-metrics} flag and
-enabled for the revision-round runs: mean NLL on the benchmark's own \emph{forget} and
-\emph{retain} splits; greedy-decode ROUGE-L recall against the reference continuation
-on both splits, which is the TOFU/MUSE reporting convention; and a
-\texttt{capability\_nll} on a fixed probe set disjoint from both splits --- TOFU
-\texttt{world\_facts} for TOFU and the MUSE holdout news stream for MUSE. The
-implementation and definitions are in Appendix~A. We are explicit in the appendix that
-\texttt{world\_facts} is a modest general-knowledge probe rather than a full capability
-suite such as MMLU, and that a broader suite is the natural next step; we would rather
-report a small, clearly described probe than imply coverage we do not have.
+Agreed, and the added metrics changed what we can say. The end-to-end runner now
+records, behind an \texttt{--extra-metrics} flag and enabled for the revision-round
+runs: mean NLL on the benchmark's own \emph{forget} and \emph{retain} splits;
+greedy-decode ROUGE-L recall against the reference continuation on both splits, the
+TOFU/MUSE reporting convention; and a general-knowledge \texttt{capability\_nll} on a
+fixed probe set --- TOFU \texttt{world\_facts}, or the MUSE holdout news stream.
+Results are in the new Table~12, on TOFU/GPT-2 over three seeds.
+
+They sharpen the paper's central utility finding rather than softening it. Gradient
+ascent reaches forget NLL $94.3$, retain NLL $93.7$ and ROUGE-L recall of exactly
+$0.00$ on \emph{both} splits: it has not forgotten the forget set, it has stopped
+producing language. More usefully, the metrics reveal something held-out NLL alone had
+hidden: GradDiff's retain NLL is $6.8$ but its capability NLL is $19.4$, so its damage
+is nearly threefold larger \emph{off} the retain distribution than on it. A
+retain-only utility reading --- which is what we previously had --- would have missed
+that entirely, which is a direct vindication of your point.
+
+Two honest limitations. First, \texttt{world\_facts} is a modest general-knowledge
+probe, not a suite such as MMLU; we say so in Appendix~A and name a broader suite as
+the next step, preferring a small clearly described probe to implied coverage. Second,
+we discovered a confound while running this and report it rather than printing the
+flattering number: for TOFU the P1 relearn corpus \emph{is} the capability probe set,
+so a post-P1 capability reading measures training on the probe. It reads $1.46$,
+better than the retrained reference, which is an artefact. That cell is marked
+unavailable in Table~12 with the reason given.
 \end{reply}
 
 \begin{point}{R1.5d --- systematic R-VOUCH}

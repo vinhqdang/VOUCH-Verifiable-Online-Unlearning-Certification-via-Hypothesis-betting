@@ -437,6 +437,42 @@ def tab_gpt2v2():
     write("gpt2v2", body)
 
 
+# ---------------------------------------------------------------------------
+# Benchmark forget/retain/capability metrics (TOFU/GPT-2 revision run)
+# ---------------------------------------------------------------------------
+def tab_metrics():
+    d = load("reanalysis_rev")
+    if not d:
+        return
+    rec = d["runs"].get("tofu_gpt2_rev")
+    if not rec:
+        return
+    order = ["none", "retrain", "ga", "grad_diff", "npo", "simnpo",
+             "npo_P1_relearn", "npo_P3_jailbreak"]
+    body = ("\\begin{tabular}{lcccccc}\n\\toprule\n"
+            "& & \\multicolumn{3}{c}{mean NLL} "
+            "& \\multicolumn{2}{c}{ROUGE-L recall}\\\\\n"
+            "\\cmidrule(lr){3-5}\\cmidrule(lr){6-7}\n"
+            "subject & verdicts & forget & retain & capability "
+            "& forget & retain\\\\\n\\midrule\n")
+    for m in order:
+        rows = rec["methods"].get(m)
+        if not rows:
+            continue
+        v = "/".join(VERD[r["cohort/eps=0.2"]["status"]] for r in rows)
+        g = lambda k: float(np.nanmean([r.get(k) if r.get(k) is not None
+                                        else np.nan for r in rows]))
+        cap = g("capability_nll")
+        # The TOFU P1 relearn corpus *is* the capability probe set
+        # (world_facts), so that cell is contaminated by construction.
+        caps = "n/a$^{\\ddagger}$" if m == "npo_P1_relearn" else f"{cap:.2f}"
+        body += (f"{LBL.get(m,m)} & {v} & {g('forget_nll'):.2f} & "
+                 f"{g('retain_nll'):.2f} & {caps} & "
+                 f"{g('forget_rouge'):.2f} & {g('retain_rouge'):.2f}\\\\\n")
+    body += "\\bottomrule\n\\end{tabular}\n"
+    write("metrics", body)
+
+
 if __name__ == "__main__":
     tab_dependence()
     tab_cohortnull()
@@ -450,4 +486,5 @@ if __name__ == "__main__":
     tab_detect()
     tab_zoo()
     tab_gpt2v2()
+    tab_metrics()
     print("revision tables done")

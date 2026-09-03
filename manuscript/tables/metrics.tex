@@ -1,0 +1,16 @@
+\begin{tabular}{lcccccc}
+\toprule
+& & \multicolumn{3}{c}{mean NLL} & \multicolumn{2}{c}{ROUGE-L recall}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+subject & verdicts & forget & retain & capability & forget & retain\\
+\midrule
+no unlearning & \vR/\vR/\vI & 2.19 & 2.14 & 3.22 & 0.32 & 0.33\\
+retrain (fresh adapter) & \vI/\vI/\vI & 2.53 & 1.98 & 3.23 & 0.31 & 0.34\\
+GA & \vI/\vI/\vI & 94.31 & 93.71 & 86.65 & 0.00 & 0.00\\
+GradDiff & \vI/\vI/\vI & 7.98 & 6.79 & 19.44 & 0.24 & 0.29\\
+NPO & \vI/\vI/\vI & 5.50 & 2.60 & 3.84 & 0.20 & 0.26\\
+SimNPO & \vI/\vI/\vI & 6.20 & 2.62 & 4.17 & 0.17 & 0.28\\
+NPO + P1 relearn & \vI/\vI/\vI & 3.72 & 2.70 & n/a$^{\ddagger}$ & 0.11 & 0.14\\
+NPO + P3 jailbreak & \vI/\vI/\vI & 5.50 & 2.60 & 3.84 & 0.20 & 0.26\\
+\bottomrule
+\end{tabular}

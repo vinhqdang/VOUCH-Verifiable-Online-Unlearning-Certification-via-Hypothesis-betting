@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 11:41:31 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 11:41:31 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Thu Sep  3 11:56:02 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Thu Sep  3 11:56:02 2026
 
 
 \theoremstyle{thmstyleone}
@@ -2054,13 +2054,34 @@ recommend reading them together.
 \DIFaddend \emph{\DIFdelbegin \DIFdel{forgetting-by-lobotomy}\DIFdelend \DIFaddbegin \DIFadd{The certificate/utility pairing exposes destructive unlearning.}\DIFaddend } \DIFdelbegin \DIFdel{: gradient }\DIFdelend \DIFaddbegin \DIFadd{Gradient }\DIFaddend ascent
 earns forgetting certificates while its held-out loss balloons to between $58$ and
 $286$ nats against retraining's $1.5$ to $3.4$\DIFdelbegin \DIFdel{, a catastrophe }\DIFdelend \DIFaddbegin \DIFadd{---a collapse }\DIFaddend that no forget-only metric
-would reveal \DIFdelbegin \DIFdel{but that our utility column makes impossible to miss. Fourth, }\emph{\DIFdel{two-sided certification matters}}%DIFAUXCMD
-\DIFdel{: on }\DIFdelend \DIFaddbegin \DIFadd{and that the paired utility column exposes directly. SimNPO
-\mbox{%DIFAUXCMD
+would reveal \DIFdelbegin \DIFdel{but that our utility column makes impossible to miss.
+Fourth, }\emph{\DIFdel{two-sided certification matters}}%DIFAUXCMD
+\DIFdel{: on }\DIFdelend \DIFaddbegin \DIFadd{and that the paired utility column exposes directly.
+}
+
+\DIFadd{A reviewer observed, correctly, that held-out NLL identifies severe collapse but does
+not establish general utility, so we added the benchmark's own forget and retain
+readings and a general-knowledge probe (Table~\ref{tab:metrics}). They sharpen rather
+than soften the picture. Gradient ascent reaches a forget NLL of $94.3$ and a retain
+NLL of $93.7$ with ROUGE-L recall of exactly $0.00$ on both splits: it has not
+forgotten the forget set, it has stopped producing language. GradDiff is subtler and
+more interesting---its retain NLL is $6.8$ but its capability NLL is $19.4$, so the
+damage is nearly three times larger off the retain distribution than on it, which a
+retain-only utility reading would have missed entirely. SimNPO \mbox{%DIFAUXCMD
 \citep{fan2025simnpo}}\hskip0pt%DIFAUXCMD
-, added at revision, certifies like NPO while holding held-out
-loss close to the retrained reference, and is the best-behaved of the approximate
-methods on this axis.
+,
+added at revision, achieves the widest forget/retain separation of any subject that
+remains fluent ($6.20$ against $2.62$, versus NPO's $5.50$ against $2.60$) at a
+capability NLL of $4.17$ against retraining's $3.23$, and is the best-behaved of the
+approximate methods on this axis.
+}
+
+\DIFadd{One cell of that table is deliberately blank. For TOFU the P1 relearn corpus
+}\emph{\DIFadd{is}} \DIFadd{the capability probe set (}\texttt{\DIFadd{world\_facts}}\DIFadd{), so a capability reading
+after P1 measures training on the probe rather than retained ability; it reads $1.46$,
+better than the retrained reference, which is an artefact and not a finding. We report
+it as unavailable rather than quietly printing a flattering number, and note that
+disentangling the two would require a probe set disjoint from the relearn corpus.
 }
 
 \emph{\DIFadd{Two-sided certification matters.}} \DIFadd{On }\DIFaddend several TOFU seeds gradient ascent,
@@ -2236,6 +2257,18 @@ Theorem~\ref{thm:power} predicts at these cohort sizes.}}
 Clopper--Pearson $95\%$ intervals ($n = 18$).}}
 \label{tab:counts}
 \input{tables/counts}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{\DIFaddFL{Benchmark forget/retain readings and a general-knowledge probe, TOFU/GPT-2,
+three seeds, $\eps = 0.2$ on the cohort target. NLL is the mean over the benchmark's
+own splits; ROUGE-L recall is greedy-decode against the reference continuation, the
+TOFU/MUSE reporting convention. $^{\ddagger}$For TOFU the P1 relearn corpus is the
+capability probe set, so that cell is contaminated by construction and is not
+reported.}}
+\label{tab:metrics}
+\input{tables/metrics}
 \end{table}
 
 \subsection{\DIFadd{Head to head against the descriptive metrics}}\label{sec:exp-descriptive}

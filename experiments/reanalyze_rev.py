@@ -58,6 +58,7 @@ RES = os.path.join(REPO, "results")
 # tag -> (benchmark, display name, params, year, canary domains, n_seeds_expected)
 RUN_SPECS = [
     ("tofu_gpt2",        "TOFU", "GPT-2",       "124M", "2019", ("qa",)),
+    ("tofu_gpt2_rev",    "TOFU", "GPT-2 (rev)", "124M", "2019", ("qa",)),
     ("tofu_pythia160m",  "TOFU", "Pythia-160M", "160M", "2023", ("qa",)),
     ("tofu_phi-1_5",     "TOFU", "Phi-1.5",     "1.4B", "2023", ("qa",)),
     ("muse_gpt2_512",    "MUSE", "GPT-2",       "124M", "2019", ("pii", "fact")),
@@ -228,6 +229,12 @@ def main():
                 entry = rec["methods"].setdefault(method, [])
                 row = {"seed": seed, "m_pairs": m,
                        "utility_nll": cert.get("utility_nll"),
+                       "forget_nll": cert.get("forget_nll"),
+                       "retain_nll": cert.get("retain_nll"),
+                       "capability_nll": cert.get("capability_nll"),
+                       "forget_rouge": cert.get("forget_rouge"),
+                       "retain_rouge": cert.get("retain_rouge"),
+                       "n_queries": cert.get("n_queries"),
                        "mean_loss_diff": cert.get("mean_loss_diff"),
                        "scoring_seconds": cert.get("scoring_seconds"),
                        "score_class": scores}
