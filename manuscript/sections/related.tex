@@ -18,7 +18,8 @@ introduced precisely to avoid the catastrophic collapse that ascent invites; the
 simplified reappraisal SimNPO \citep{fan2025simnpo}, which discards NPO's frozen
 reference model in favour of a length-normalised margin objective and which we
 include as a subject in Section~\ref{sec:exp-bench}; representation misdirection
-\citep{li2024wmdp}; and task-vector negation. These methods are evaluated on
+\citep{li2024wmdp}, which acts on hidden activations rather than on the token loss and
+which we add as a subject in Section~\ref{sec:exp-rmu}; and task-vector negation. These methods are evaluated on
 purpose-built benchmarks---TOFU's fictitious-author question answering
 \citep{maini2024tofu}, MUSE's six-way news-and-books evaluation \citep{shi2024muse},
 and the hazardous-knowledge multiple-choice of WMDP \citep{li2024wmdp}---and we treat
@@ -40,6 +41,19 @@ a null. Exposure answers ``how memorised is this string''; the ghost twin answer
 ``could this have happened by chance,'' which is the question a certificate must
 answer and the one \citet{zhang2024mia} show cannot be answered without controlled
 randomisation.
+
+The strongest membership attacks in this lineage calibrate per example rather than
+thresholding a raw score. \citet{carlini2022lira} show that comparing a target model's
+confidence on an example against the confidences that shadow models trained with and
+without it produce---a likelihood-ratio test they call LiRA---dominates score-threshold
+attacks, particularly in the low false-positive regime that matters for a privacy
+claim. LiRA is the natural adversary against which to stress-test a declared score
+class, since it uses information no member of ours has: $N$ additionally trained
+models. It is for the same reason not a candidate for inclusion in $\F$, because a
+verifier held to $2Qm$ forward passes and no training cannot run it. We use it in
+Section~\ref{sec:exp-lira} as an attack from outside the class, with a positive
+control that establishes it is working before its null on a certified model is read as
+meaning anything.
 
 The complementary literature measures forgetting rather than memorisation.
 \citet{jagielski2023measuring} quantify how the success of privacy attacks on a
@@ -110,12 +124,15 @@ migrated to a paraphrase is, by construction, mass our default class does not se
 framework's response is structural rather than rhetorical---the class $\F$ is declared,
 the certificate is explicitly a statement about $\F$, and any score a sceptic can name
 can be added to $\F$ at the cost of a slower certificate and no loss of validity, since
-Theorem~\ref{thm:cert} needs no multiplicity correction. Section~\ref{sec:exp-outclass}
-takes the first step by running attacks from \emph{outside} the declared class against
-already-certified models and reporting where they exceed the tolerance. A
-paraphrase-aware score in the spirit of \citet{li2026beliefs} is the natural next
-member of $\F$, and we regard adding it as the most valuable single extension of this
-work.
+Theorem~\ref{thm:cert} needs no multiplicity correction. Sections~\ref{sec:exp-outclass} and
+\ref{sec:exp-lira} run attacks from \emph{outside} the declared class against
+already-certified models and report where they exceed the tolerance. We also
+implement the score their result calls for: Section~\ref{sec:exp-para} adds a
+paraphrase-aware member to $\F$, which costs one to two per cent in pairs and changes
+no verdict---though we are explicit there that our random-string secrets have no
+semantic neighbourhood for mass to migrate into, so this tests the score's cost rather
+than the squeezing effect itself, which would need canaries whose secret is
+paraphrasable.
 
 The recurring message across all of this is that \emph{evaluation}, not optimisation,
 is the bottleneck---which is exactly the problem VOUCH addresses, and which motivates

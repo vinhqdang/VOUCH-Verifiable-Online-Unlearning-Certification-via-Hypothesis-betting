@@ -1,6 +1,6 @@
 %% BioMed_Central_Bib_Style_v1.01
 
-\begin{thebibliography}{47}
+\begin{thebibliography}{48}
 % BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
 \ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
 \ifx \binits  \undefined \def \binits#1{#1}\fi
@@ -416,6 +416,24 @@ pp. \bfpage{267}--\blpage{284}.
 \endbibitem
 
 %%% 19
+\bibitem[\protect\citeauthoryear{Carlini et~al.}{2022}]{carlini2022lira}
+\begin{bchapter}
+\bauthor{\bsnm{Carlini}, \binits{N.}},
+\bauthor{\bsnm{Chien}, \binits{S.}},
+\bauthor{\bsnm{Nasr}, \binits{M.}},
+\bauthor{\bsnm{Song}, \binits{S.}},
+\bauthor{\bsnm{Terzis}, \binits{A.}},
+\bauthor{\bsnm{Tram{\`e}r}, \binits{F.}}:
+\bctitle{Membership inference attacks from first principles}.
+In: \bbtitle{2022 IEEE Symposium on Security and Privacy (SP)},
+pp. \bfpage{1897}--\blpage{1914}.
+\bpublisher{IEEE}, \blocation{???}
+(\byear{2022}).
+\doiurl{10.1109/SP46214.2022.9833649}
+\end{bchapter}
+\endbibitem
+
+%%% 20
 \bibitem[\protect\citeauthoryear{Jagielski
   et~al.}{2023}]{jagielski2023measuring}
 \begin{bchapter}
@@ -438,7 +456,7 @@ In: \bbtitle{The Eleventh International Conference on Learning Representations
 \end{bchapter}
 \endbibitem
 
-%%% 20
+%%% 21
 \bibitem[\protect\citeauthoryear{B{\u{a}}rbulescu and
   Triantafillou}{2024}]{barbulescu2024each}
 \begin{bchapter}
@@ -458,7 +476,7 @@ pp. \bfpage{3003}--\blpage{3023}.
 \end{bchapter}
 \endbibitem
 
-%%% 21
+%%% 22
 \bibitem[\protect\citeauthoryear{{\L}ucki et~al.}{2025}]{lucki2024adversarial}
 \begin{botherref}
 \oauthor{\bsnm{{\L}ucki}, \binits{J.}},
@@ -473,7 +491,7 @@ Transactions on Machine Learning Research
 \end{botherref}
 \endbibitem
 
-%%% 22
+%%% 23
 \bibitem[\protect\citeauthoryear{Zhang et~al.}{2025}]{zhang2025quantization}
 \begin{bchapter}
 \bauthor{\bsnm{Zhang}, \binits{Z.}},
@@ -493,7 +511,7 @@ In: \bbtitle{The Thirteenth International Conference on Learning
 \end{bchapter}
 \endbibitem
 
-%%% 23
+%%% 24
 \bibitem[\protect\citeauthoryear{Deeb and Roger}{2024}]{deeb2024remove}
 \begin{botherref}
 \oauthor{\bsnm{Deeb}, \binits{A.}},
@@ -504,7 +522,7 @@ arXiv preprint arXiv:2410.08827
 \end{botherref}
 \endbibitem
 
-%%% 24
+%%% 25
 \bibitem[\protect\citeauthoryear{Fan et~al.}{2025}]{fan2025relearning}
 \begin{bchapter}
 \bauthor{\bsnm{Fan}, \binits{C.}},
@@ -521,7 +539,7 @@ In: \bbtitle{International Conference on Machine Learning (ICML)}
 \end{bchapter}
 \endbibitem
 
-%%% 25
+%%% 26
 \bibitem[\protect\citeauthoryear{Wei et~al.}{2025}]{wei2025forget}
 \begin{bchapter}
 \bauthor{\bsnm{Wei}, \binits{R.}},
@@ -544,7 +562,7 @@ In: \bbtitle{Advances in Neural Information Processing Systems (NeurIPS)}
 \end{bchapter}
 \endbibitem
 
-%%% 26
+%%% 27
 \bibitem[\protect\citeauthoryear{Xu et~al.}{2026}]{xu2026reversibility}
 \begin{bchapter}
 \bauthor{\bsnm{Xu}, \binits{X.}},
@@ -563,7 +581,7 @@ In: \bbtitle{International Conference on Machine Learning (ICML)}
 \end{bchapter}
 \endbibitem
 
-%%% 27
+%%% 28
 \bibitem[\protect\citeauthoryear{Guo et~al.}{2020}]{guo2020certified}
 \begin{bchapter}
 \bauthor{\bsnm{Guo}, \binits{C.}},
@@ -583,7 +601,7 @@ pp. \bfpage{3832}--\blpage{3842}.
 \end{bchapter}
 \endbibitem
 
-%%% 28
+%%% 29
 \bibitem[\protect\citeauthoryear{Sekhari et~al.}{2021}]{sekhari2021remember}
 \begin{bchapter}
 \bauthor{\bsnm{Sekhari}, \binits{A.}},
@@ -599,7 +617,7 @@ pp. \bfpage{18075}--\blpage{18086}
 \end{bchapter}
 \endbibitem
 
-%%% 29
+%%% 30
 \bibitem[\protect\citeauthoryear{Neel et~al.}{2021}]{neel2021descent}
 \begin{bchapter}
 \bauthor{\bsnm{Neel}, \binits{S.}},
@@ -618,7 +636,7 @@ pp. \bfpage{931}--\blpage{962}.
 \end{bchapter}
 \endbibitem
 
-%%% 30
+%%% 31
 \bibitem[\protect\citeauthoryear{Ginart et~al.}{2019}]{ginart2019making}
 \begin{bchapter}
 \bauthor{\bsnm{Ginart}, \binits{A.}},
@@ -634,7 +652,7 @@ pp. \bfpage{3513}--\blpage{3526}
 \end{bchapter}
 \endbibitem
 
-%%% 31
+%%% 32
 \bibitem[\protect\citeauthoryear{Thudi et~al.}{2022}]{thudi2022necessity}
 \begin{bchapter}
 \bauthor{\bsnm{Thudi}, \binits{A.}},
@@ -652,7 +670,7 @@ pp. \bfpage{4007}--\blpage{4022}.
 \end{bchapter}
 \endbibitem
 
-%%% 32
+%%% 33
 \bibitem[\protect\citeauthoryear{Zhang et~al.}{2024}]{zhang2024verification}
 \begin{bchapter}
 \bauthor{\bsnm{Zhang}, \binits{B.}},
@@ -672,7 +690,7 @@ pp. \bfpage{58717}--\blpage{58738}.
 \end{bchapter}
 \endbibitem
 
-%%% 33
+%%% 34
 \bibitem[\protect\citeauthoryear{Pandey et~al.}{2025}]{pandey2025gaussian}
 \begin{botherref}
 \oauthor{\bsnm{Pandey}, \binits{A.}},
@@ -687,7 +705,7 @@ arXiv preprint arXiv:2510.13094
 \end{botherref}
 \endbibitem
 
-%%% 34
+%%% 35
 \bibitem[\protect\citeauthoryear{Pawelczyk et~al.}{2025}]{pawelczyk2025machine}
 \begin{bchapter}
 \bauthor{\bsnm{Pawelczyk}, \binits{M.}},
@@ -703,7 +721,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{bchapter}
 \endbibitem
 
-%%% 35
+%%% 36
 \bibitem[\protect\citeauthoryear{Xue et~al.}{2026}]{xue2026survey}
 \begin{barticle}
 \bauthor{\bsnm{Xue}, \binits{L.}},
@@ -724,7 +742,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 36
+%%% 37
 \bibitem[\protect\citeauthoryear{Liu et~al.}{2025}]{liu2025rethinking}
 \begin{barticle}
 \bauthor{\bsnm{Liu}, \binits{S.}},
@@ -750,7 +768,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 37
+%%% 38
 \bibitem[\protect\citeauthoryear{Ramdas et~al.}{2023}]{ramdas2023game}
 \begin{barticle}
 \bauthor{\bsnm{Ramdas}, \binits{A.}},
@@ -766,7 +784,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 38
+%%% 39
 \bibitem[\protect\citeauthoryear{Gr{\"u}nwald et~al.}{2024}]{grunwald2024safe}
 \begin{barticle}
 \bauthor{\bsnm{Gr{\"u}nwald}, \binits{P.}},
@@ -782,7 +800,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 39
+%%% 40
 \bibitem[\protect\citeauthoryear{Shafer}{2021}]{shafer2021testing}
 \begin{barticle}
 \bauthor{\bsnm{Shafer}, \binits{G.}}:
@@ -797,7 +815,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 40
+%%% 41
 \bibitem[\protect\citeauthoryear{Waudby-Smith and
   Ramdas}{2024}]{waudbysmith2024}
 \begin{barticle}
@@ -813,7 +831,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 41
+%%% 42
 \bibitem[\protect\citeauthoryear{Howard et~al.}{2021}]{howard2021time}
 \begin{barticle}
 \bauthor{\bsnm{Howard}, \binits{S.R.}},
@@ -829,7 +847,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{barticle}
 \endbibitem
 
-%%% 42
+%%% 43
 \bibitem[\protect\citeauthoryear{Ville}{1939}]{ville1939}
 \begin{bbook}
 \bauthor{\bsnm{Ville}, \binits{J.}}:
@@ -841,7 +859,7 @@ In: \bbtitle{International Conference on Learning Representations (ICLR)}
 \end{bbook}
 \endbibitem
 
-%%% 43
+%%% 44
 \bibitem[\protect\citeauthoryear{Orabona and P{\'a}l}{2016}]{orabona2016coin}
 \begin{bchapter}
 \bauthor{\bsnm{Orabona}, \binits{F.}},
@@ -853,7 +871,7 @@ In: \bbtitle{Advances in Neural Information Processing Systems 29 (NIPS 2016)}
 \end{bchapter}
 \endbibitem
 
-%%% 44
+%%% 45
 \bibitem[\protect\citeauthoryear{Steinke et~al.}{2023}]{steinke2023privacy}
 \begin{bchapter}
 \bauthor{\bsnm{Steinke}, \binits{T.}},
@@ -867,7 +885,7 @@ In: \bbtitle{Advances in Neural Information Processing Systems 36 (NeurIPS
 \end{bchapter}
 \endbibitem
 
-%%% 45
+%%% 46
 \bibitem[\protect\citeauthoryear{Gonz{\'a}lez
   et~al.}{2025}]{gonzalez2025sequential}
 \begin{bchapter}
@@ -883,7 +901,7 @@ In: \bbtitle{Advances in Neural Information Processing Systems 38 (NeurIPS
 \end{bchapter}
 \endbibitem
 
-%%% 46
+%%% 47
 \bibitem[\protect\citeauthoryear{Csillag and
   Mesquita}{2026}]{csillag2026dpevalues}
 \begin{bchapter}
@@ -897,7 +915,7 @@ In: \bbtitle{Proceedings of the 29th International Conference on Artificial
 \end{bchapter}
 \endbibitem
 
-%%% 47
+%%% 48
 \bibitem[\protect\citeauthoryear{Kairouz et~al.}{2015}]{kairouz2015composition}
 \begin{bchapter}
 \bauthor{\bsnm{Kairouz}, \binits{P.}},

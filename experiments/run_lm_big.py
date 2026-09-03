@@ -81,7 +81,9 @@ def seq_nll(model, batch, pad_id):
 def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
                   seed=0, sign=+1, retain=None, retain_w=1.0, npo_ref=None,
                   beta=0.1, log_every=100, ckpt=None, ckpt_every=100,
-                  simnpo=False, simnpo_gamma=0.0):
+                  simnpo=False, simnpo_gamma=0.0,
+                  rmu=False, rmu_ref=None, rmu_layer_frac=0.5, rmu_c=20.0,
+                  rmu_retain_w=1.0):
     """Train `adapter` (already active) on texts.
 
     sign=+1: descent (fine-tune);  sign=-1: ascent (GA / GradDiff forget term).
@@ -97,6 +99,22 @@ def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
         which is NPO's objective with ``nll_ref`` replaced by the constant
         ``gamma``.  Because ``seq_nll`` already divides by the unmasked token
         count, ``nll_theta`` is the length-normalised NLL SimNPO prescribes.
+    rmu: Representation Misdirection for Unlearning (Li et al., 2024, the
+        method introduced with WMDP).  Unlike the loss-space objectives
+        above, RMU acts in *representation* space at a single hidden layer
+        l: forget activations are pushed toward a fixed random unit
+        direction scaled by ``rmu_c``, while retain activations are held
+        near the frozen reference model's activations.  With
+        ``h_l(x)`` the layer-l hidden states under the trainable adapter and
+        ``h_l^ref(x)`` those under the frozen reference adapter ``rmu_ref``,
+
+            L = MSE(h_l(x_forget), rmu_c * u)
+                + rmu_retain_w * MSE(h_l(x_retain), h_l^ref(x_retain))
+
+        with ``u`` a fixed random unit vector drawn once from ``seed``.
+        ``rmu_layer_frac`` selects the layer as a fraction of depth.  RMU is
+        the second utility-preserving subject in the study (alongside NPO
+        and SimNPO) and the only one that never touches the token loss.
     ckpt: optional path for intra-stage checkpointing (adapter + optimizer +
     step) so short-lived VMs make progress through long stages.
     """
@@ -115,6 +133,23 @@ def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
         print(f"    [{adapter}] resumed at step {start_step}", flush=True)
     gen = batches(texts, bs, rng)
     rgen = batches(retain, bs, rng) if retain else None
+    rmu_u = None
+    rmu_layer = None
+    if rmu:
+        # fixed random unit control direction, drawn once per stage from the
+        # run seed, and the layer index (a fraction of depth, per Li et al.)
+        n_layers = int(model.config.num_hidden_layers)
+        rmu_layer = max(1, min(n_layers, int(round(rmu_layer_frac * n_layers))))
+        hid = int(model.config.hidden_size)
+        g = torch.Generator(device="cpu").manual_seed(abs(hash(("rmu", adapter, seed))) % (2**31))
+        u = torch.randn(hid, generator=g)
+        rmu_u = (u / u.norm()).to(device)
+        print(f"    [{adapter}] RMU layer {rmu_layer}/{n_layers}, c={rmu_c}, "
+              f"retain_w={rmu_retain_w}", flush=True)
+
+    def hidden_at(batch, layer):
+        return model(input_ids=batch, output_hidden_states=True).hidden_states[layer]
+
     model.train()
     for step in range(steps):
         if step < start_step:
@@ -123,6 +158,35 @@ def train_adapter(model, tok, texts, adapter, steps, bs, lr, block, device,
                 next(rgen)
             continue
         b = encode_batch(tok, next(gen), block, device)
+        if rmu:
+            pad_b = (b != pad).float().unsqueeze(-1)
+            h_f = hidden_at(b, rmu_layer)
+            tgt_f = (rmu_c * rmu_u).to(h_f.dtype).expand_as(h_f)
+            loss = (((h_f - tgt_f) * pad_b) ** 2).sum() / pad_b.sum().clamp(min=1) \
+                / h_f.shape[-1]
+            if rgen is not None:
+                rb = encode_batch(tok, next(rgen), block, device)
+                pad_r = (rb != pad).float().unsqueeze(-1)
+                with torch.no_grad():
+                    model.set_adapter(rmu_ref)
+                    h_r_ref = hidden_at(rb, rmu_layer).detach()
+                model.set_adapter(adapter)
+                h_r = hidden_at(rb, rmu_layer)
+                loss = loss + rmu_retain_w * (
+                    (((h_r - h_r_ref) * pad_r) ** 2).sum()
+                    / pad_r.sum().clamp(min=1) / h_r.shape[-1])
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(params, 1.0)
+            opt.step()
+            if log_every and (step + 1) % log_every == 0:
+                print(f"    [{adapter}] step {step+1}/{steps} loss {loss.item():.4f}",
+                      flush=True)
+            if ckpt and (step + 1) % ckpt_every == 0 and (step + 1) < steps:
+                torch.save({"adapter": get_peft_model_state_dict(
+                                model, adapter_name=adapter),
+                            "opt": opt.state_dict(), "step": step + 1}, ckpt)
+            continue
         if simnpo:
             nll_theta = seq_nll(model, b, pad)
             loss = (2.0 / beta) * F.softplus(

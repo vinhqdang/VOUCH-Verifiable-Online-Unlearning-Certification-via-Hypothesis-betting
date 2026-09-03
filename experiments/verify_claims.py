@@ -62,7 +62,7 @@ def main():
         print("results/reanalysis_rev.json missing; run experiments/reanalyze_rev.py")
         return 1
 
-    print("== benchmark verdict counts (Section 6, Tables 8-10) ==")
+    print("== benchmark verdict counts (Section 5, Tables 10-12) ==")
     k = sum(1 for t in BENCH for r in d["runs"][t]["methods"]["none"]
             if r["cohort/eps=0.2"]["status"] == "REVOKED")
     check("un-unlearned revoked on 16 of 18 runs", k == 16, f"{k}/18")
@@ -72,7 +72,7 @@ def main():
                 if r["cohort/eps=0.2"]["status"] == "ISSUED")
         check(f"{m} issued on {want} of 18", k == want, f"{k}/18")
 
-    print("== tolerance sweep (Table 9) ==")
+    print("== tolerance sweep (Table 11) ==")
     k = sum(1 for t in BENCH for r in d["runs"][t]["methods"]["retrain"]
             if r["cohort/eps=0.05"]["status"] == "ISSUED")
     check("retrain issues 12 of 18 at eps=0.05, cohort target", k == 12, f"{k}/18")
@@ -86,14 +86,14 @@ def main():
     check("5 of the 6 non-issuing retrain runs are blocked by the lower arm",
           (len(nb), lo) == (6, 5), f"{lo} of {len(nb)}")
 
-    print("== recoverability (Section 6.9) ==")
+    print("== recoverability (Section 5.8) ==")
     chg = sum(1 for t in BENCH
               for a, b in zip(d["runs"][t]["methods"].get("npo", []),
                               d["runs"][t]["methods"].get("npo_P1_relearn", []))
               if a["cohort/eps=0.2"]["status"] != b["cohort/eps=0.2"]["status"])
     check("the P1 relearn probe changes 2 of 18 verdicts", chg == 2, f"{chg}/18")
 
-    print("== ties (Section 4.4, 6.9) ==")
+    print("== ties (Section 3.4, 5.8) ==")
     tl = sum(v["ties"] for k2, v in d["ties"].items() if k2.endswith("/loss"))
     tn = sum(v["n"] for k2, v in d["ties"].items() if k2.endswith("/loss"))
     check(f"zero exact ties for s_loss over {tn} scored pairs", tl == 0, f"{tl}/{tn}")
@@ -103,7 +103,7 @@ def main():
         check("2.7% tie rate for min-k on Gemma-4-E2B",
               close(gem["rate"], 0.027, 0.001), f"{gem['rate']:.4f}")
 
-    print("== heterogeneity (Section 6.1) ==")
+    print("== heterogeneity (Section 5.1) ==")
     het = d["heterogeneity"]
     ps = [r["p"] for r in het if r["factor"] == "repetition" and np.isfinite(r["p"])]
     pc = 100 * sum(1 for p in ps if p < 0.05) / len(ps)
@@ -113,7 +113,7 @@ def main():
     kn = sum(1 for p in psn if p < 0.05)
     check("rejected in 24 of the un-unlearned runs", kn == 24, f"{kn}/{len(psn)}")
 
-    print("== out-of-class attacks are a NULL result (Section 6.12, Table 12) ==")
+    print("== out-of-class attacks are a NULL result (Section 5.11, Table 16) ==")
     for atk, want_obs in (("stratum_r8", 0.028), ("learned_combo", 0.005)):
         vs = [v for rec in d["runs"].values()
               for m, rows in rec["methods"].items() if m != "none"
@@ -134,7 +134,7 @@ def main():
         check(f"{atk} does not beat its binomial null",
               obs <= nullr + 0.003, f"observed {obs:.3f} vs null {nullr:.3f}")
 
-    print("== certificate / confidence-sequence incoherence (Section 6.9) ==")
+    print("== certificate / confidence-sequence incoherence (Section 5.8) ==")
     tot = sum(1 for t in BENCH for rows in d["runs"][t]["methods"].values()
               for r in rows if r["cohort/eps=0.2"]["status"] == "ISSUED")
     bad = sum(1 for t in BENCH for rows in d["runs"][t]["methods"].values()
@@ -143,7 +143,7 @@ def main():
     check("46 of 107 issued runs have a CS upper bound at or above eps",
           (bad, tot) == (46, 107), f"{bad}/{tot}")
 
-    print("== dose-response (Section 6.9) ==")
+    print("== dose-response (Section 5.8) ==")
     for r_, want in ((1, 0.46), (2, 0.78), (4, 1.54), (8, 2.35)):
         # The claim sits in the benchmark subsection, so it is scoped to the
         # six TOFU/MUSE cells: not the synthetic tiers, not the duplicate
@@ -166,7 +166,7 @@ def main():
             check(f"realised advantage {want:+.2f} at r={r_}",
                   close(dh, want, 0.02), f"{dh:+.3f}")
 
-    print("== tight-tolerance cohort (Section 6.10, Table 13) ==")
+    print("== tight-tolerance cohort (Section 5.9, Table 14) ==")
     rec = d["runs"].get("tofu_gpt2_tight")
     if rec:
         subs = ("none", "retrain", "npo", "simnpo")
@@ -225,7 +225,7 @@ def main():
               close(st["all_exact/global_certified_rate_allpass"], 0.484, 0.01),
               f"{st['all_exact/global_certified_rate_allpass']:.3f}")
 
-    print("== detectability (Section 6.13, Table 14) ==")
+    print("== detectability (Section 5.12, Table 17) ==")
     det = load("detectability_tofu_gpt2")
     if det:
         v = det["variants"]["deployed"]
@@ -245,6 +245,136 @@ def main():
             check(f"{key}: predicted excess = H ln2 / T",
                   close(pred, v["predicted_excess_nll_per_token"], 1e-6),
                   f"{pred:.3f}")
+
+    print("== RMU, the second utility-preserving subject (Section 5.9) ==")
+    rmu = load("lm_e2e_tofu_gpt2_rmu")
+    if rmu:
+        def _delta(rec, m):
+            pd_ = rec["certs"][m]["pair_diffs"]
+            return 2 * np.mean([x["loss"] > 0 for x in pd_]) - 1
+
+        def _mean(m, key):
+            return float(np.nanmean([r["certs"][m].get(key, np.nan)
+                                     for r in rmu if m in r["certs"]]))
+        d_rmu = float(np.mean([_delta(r, "rmu") for r in rmu if "rmu" in r["certs"]]))
+        d_rt = float(np.mean([_delta(r, "retrain") for r in rmu]))
+        d_none = float(np.mean([_delta(r, "none") for r in rmu]))
+        check("RMU realised advantage +0.036, comparable to retrain's +0.031",
+              close(d_rmu, 0.036, 0.002) and close(d_rt, 0.031, 0.002),
+              f"rmu {d_rmu:+.3f}, retrain {d_rt:+.3f}")
+        check("the un-unlearned model's advantage is +0.125",
+              close(d_none, 0.125, 0.002), f"{d_none:+.3f}")
+        check("RMU issues at eps=0.2 on both seeds",
+              all(r["certs"]["rmu"]["status"] == "ISSUED" for r in rmu),
+              [r["certs"]["rmu"]["status"] for r in rmu])
+        check("RMU barely raises the forget split (2.71) where NPO and SimNPO reach 5.79/5.11",
+              close(_mean("rmu", "forget_nll"), 2.71, 0.02)
+              and close(_mean("npo", "forget_nll"), 5.79, 0.02)
+              and close(_mean("simnpo", "forget_nll"), 5.11, 0.02),
+              f"rmu {_mean('rmu','forget_nll'):.2f}, npo {_mean('npo','forget_nll'):.2f}, "
+              f"simnpo {_mean('simnpo','forget_nll'):.2f}")
+        check("RMU retain NLL 2.53 against retraining's 1.98",
+              close(_mean("rmu", "retain_nll"), 2.53, 0.02)
+              and close(_mean("retrain", "retain_nll"), 1.98, 0.02),
+              f"{_mean('rmu','retain_nll'):.2f} vs {_mean('retrain','retain_nll'):.2f}")
+
+    print("== LiRA, an attack from outside F (Section 5.13) ==")
+    lira = load("lira_analysis")
+    if lira:
+        n = lira["subjects"]["none"]; c = lira["subjects"]["npo"]
+        check("the positive control works: LiRA recovers +0.820 on the un-unlearned model",
+              close(n["delta_lira"], 0.820, 0.002), f"{n['delta_lira']:+.3f}")
+        check("and agrees with the declared class on 92% of pairs there",
+              close(n["agreement"], 0.922, 0.005), f"{n['agreement']:.3f}")
+        check("on the certified model LiRA finds -0.016",
+              close(c["delta_lira"], -0.016, 0.002), f"{c['delta_lira']:+.3f}")
+        check("whose 95% interval [-0.141,+0.110] excludes every tolerance certified at",
+              close(c["delta_lira_ci"][0], -0.141, 0.002)
+              and close(c["delta_lira_ci"][1], 0.110, 0.002)
+              and abs(c["delta_lira_ci"][0]) < 0.2 and abs(c["delta_lira_ci"][1]) < 0.2,
+              f"[{c['delta_lira_ci'][0]:+.3f}, {c['delta_lira_ci'][1]:+.3f}]")
+        check("agreement falls to chance on the certified model",
+              abs(c["agreement"] - 0.5) < 0.05, f"{c['agreement']:.3f}")
+        check("16 shadows, 256 pairs", lira["shadows"] == 16 and lira["pairs"] == 256,
+              f"{lira['shadows']} shadows, {lira['pairs']} pairs")
+
+    print("== the paraphrase-aware score in F (Section 5.14) ==")
+    para = load("paraphrase")
+    if para and para.get("runs"):
+        run = para["runs"][0]
+        changed = [m for m, v in run["subjects"].items()
+                   for e in (0.2, 0.1, 0.05)
+                   if v["verdicts"][f"default/eps={e}"]["status"]
+                   != v["verdicts"][f"with_para/eps={e}"]["status"]]
+        check("adding s_para changes no verdict at any tolerance", not changed, changed or "none")
+        costs = [(v["verdicts"]["with_para/eps=0.2"]["t_stop"]
+                  - v["verdicts"]["default/eps=0.2"]["t_stop"])
+                 for m, v in run["subjects"].items()
+                 if v["verdicts"]["default/eps=0.2"]["status"] == "ISSUED"]
+        check("and costs at most a few pairs (1-2%) where it certifies",
+              max(costs) <= 5, f"extra pairs: {costs}")
+        gaps = [abs(v["sign_rate"]["para"] - v["sign_rate"]["loss"])
+                for v in run["subjects"].values()]
+        check("s_para tracks the literal score to within 0.02 in sign rate",
+              max(gaps) <= 0.02, f"max gap {max(gaps):.3f}")
+
+    print("== Theorem 5: finite-cohort certification time ==")
+    import random as _random
+
+    def _k0(m, p0):
+        return math.ceil(m * p0 - 1e-9)
+
+    sys.path.insert(0, REPO)
+    from vouch.verify.betting import OneSidedEProcess
+
+    def _refute_time(m, p0, signs):
+        ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                              alpha=1e-15, population_size=m)
+        for i, z in enumerate(signs, start=1):
+            ep.update(float(z))
+            if ep._refuted:
+                return i
+        return None
+
+    ok_worst, worst_slack = True, []
+    rng = _random.Random(20260903)
+    for m, p0, j in ((384, 0.6, 192), (384, 0.55, 150), (256, 0.6, 100),
+                     (512, 0.6, 256), (128, 0.7, 40)):
+        k0 = _k0(m, p0)
+        bound = m - (k0 - j) + 2
+        adversarial = [1] * j + [0] * (m - j)          # the proof's worst case
+        t_adv = _refute_time(m, p0, adversarial)
+        ok_worst &= (t_adv == bound)
+        worst_slack.append(bound - t_adv if t_adv else None)
+        for _ in range(20):
+            o = [1] * j + [0] * (m - j)
+            rng.shuffle(o)
+            t = _refute_time(m, p0, o)
+            ok_worst &= (t is not None and t <= bound)
+    check("Thm 5(a): worst-case bound holds and is attained by the ones-first order",
+          ok_worst, f"slack at the adversarial order: {set(worst_slack)}")
+
+    m, p0, j = 384, 0.6, 192
+    k0 = _k0(m, p0)
+    predicted = (m - k0 + 1) * (m + 1) / (m - j + 1) + 1
+    times = []
+    for _ in range(400):
+        o = [1] * j + [0] * (m - j)
+        rng.shuffle(o)
+        t = _refute_time(m, p0, o)
+        if t:
+            times.append(t)
+    observed = sum(times) / len(times)
+    check("Thm 5(b): expected refutation time matches the negative-hypergeometric formula",
+          abs(observed - predicted) < 0.03 * predicted,
+          f"predicted {predicted:.1f}, observed {observed:.1f}")
+    check("Thm 5 prose: m=384, eps=0.2, cohort at chance gives 308 pairs",
+          round(predicted) == 308, f"{predicted:.1f}")
+
+    j_edge = k0 - 1
+    o = [1] * j_edge + [0] * (m - j_edge)
+    check("Thm 5 hypothesis is sharp: no refutation at one pair of margin",
+          _refute_time(m, p0, o) is None, "no refutation, as the theorem requires")
 
     print("== closed-form identities quoted in the theory ==")
     for eps in (0.02, 0.05, 0.10, 0.20):

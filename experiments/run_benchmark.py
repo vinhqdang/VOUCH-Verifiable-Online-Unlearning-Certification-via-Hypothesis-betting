@@ -99,10 +99,17 @@ def main():
     ap.add_argument("--block", type=int, default=160)
     ap.add_argument("--methods", nargs="+",
                     default=["none", "retrain", "ga", "grad_diff", "npo",
-                             "simnpo", "npo_P1_relearn", "npo_P3_jailbreak"])
+                             "simnpo", "rmu", "npo_P1_relearn",
+                             "npo_P3_jailbreak"])
     ap.add_argument("--simnpo-gamma", type=float, default=0.0,
                     help="SimNPO reward margin gamma (Fan et al., 2025)")
     ap.add_argument("--simnpo-steps", type=int, default=250)
+    ap.add_argument("--rmu-steps", type=int, default=250)
+    ap.add_argument("--rmu-c", type=float, default=20.0,
+                    help="RMU control-vector scale (Li et al., 2024)")
+    ap.add_argument("--rmu-layer-frac", type=float, default=0.5,
+                    help="RMU intervention layer as a fraction of depth")
+    ap.add_argument("--rmu-retain-w", type=float, default=1.0)
     ap.add_argument("--extra-metrics", action="store_true",
                     help="also record benchmark forget/retain metrics and a "
                          "general-capability reading for every subject")
@@ -368,6 +375,15 @@ def main():
                           simnpo=True, simnpo_gamma=args.simnpo_gamma, **ukw)
             verify("simnpo", "snpo")
             drop_adapter(model, "snpo")
+
+        if "rmu" in todo:
+            clone_adapter(model, "ft", "rmu")
+            train_adapter(model, tok, forget_texts, "rmu", steps=args.rmu_steps,
+                          retain=keep, rmu=True, rmu_ref="ft",
+                          rmu_c=args.rmu_c, rmu_layer_frac=args.rmu_layer_frac,
+                          rmu_retain_w=args.rmu_retain_w, **ukw)
+            verify("rmu", "rmu")
+            drop_adapter(model, "rmu")
 
         need_npo = {"npo", "npo_P1_relearn", "npo_P3_jailbreak"} & set(todo)
         if need_npo:

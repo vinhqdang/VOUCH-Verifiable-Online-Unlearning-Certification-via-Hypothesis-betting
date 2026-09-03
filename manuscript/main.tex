@@ -158,10 +158,12 @@ tolerance $\eps$, under an \emph{honest-but-verifiable} provider who genuinely e
 the unlearning routine on the forget set as declared. Four qualifications follow, and
 each is quantified rather than merely disclosed. The guarantee is per-cohort, not
 per-deletion-request, since per-request certificates would need per-user canaries. It
-concerns $\F$, and that is a definitional limit rather than a measured one: the two
-attacks from outside $\F$ that we could run (Section~\ref{sec:exp-outclass}) do
-\emph{not} beat the noise floor of subsampling, so they neither show $\F$ is too
-narrow nor license the claim that it is wide enough. The transfer from the realised
+concerns $\F$, and that is a definitional limit: two weak attacks from outside $\F$
+(Section~\ref{sec:exp-outclass}) do \emph{not} beat the noise floor of subsampling and
+so settle nothing either way, while a LiRA-style shadow-model attack
+(Section~\ref{sec:exp-lira})---demonstrably potent, recovering an advantage of $0.82$
+on an un-unlearned model---finds none on a certified one, which bounds the gap on that
+tier without closing it in general. The transfer from the realised
 cohort to the mechanism-level advantage costs an explicit inflation of
 $\kappa\sqrt{2\log(2/\alpha')/m}$ (Proposition~\ref{prop:transfer}), which is why our
 tight-tolerance results are cohort statements. And the honest-but-verifiable assumption
@@ -203,16 +205,20 @@ distribution-free null supplied by paired ghost canaries
 requiring no independence across pairs, a certificate that is exact under arbitrary
 dependence via without-replacement betting, a priced bridge to the super-population
 advantage, sound composition across scores and across deletion waves in both
-directions, power that matches the Kullback--Leibler information limit, and a
-one-directional consistency bridge from certified $(\eps_u,\delta_u)$-unlearning
-(Section~\ref{sec:theory}). We report a comprehensive empirical study
+directions, power that matches the Kullback--Leibler information limit, an exact
+finite-cohort certification-time bound that holds for every betting strategy and every
+reveal order, and a one-directional consistency bridge from certified
+$(\eps_u,\delta_u)$-unlearning (Section~\ref{sec:theory}). We report a comprehensive empirical study
 (Section~\ref{sec:exp}): calibration under adversarial optional stopping over 2{,}000
 seeds; head-to-head comparison against four \emph{valid} sequential procedures;
 end-to-end certification of gradient ascent, GradDiff, NPO and retraining on TOFU and
-MUSE-News across three architectures, with SimNPO added on TOFU/GPT-2, a tolerance
-sweep down to $\eps = 0.05$, utility guardrails, and dose--response calibration; a head-to-head
+MUSE-News across three architectures, with SimNPO and representation misdirection
+added on TOFU/GPT-2, a tolerance sweep down to $\eps = 0.05$, utility guardrails, and
+dose--response calibration; a head-to-head
 against the descriptive metrics VOUCH is argued to replace; attacks from outside the
-declared score class; a measurement of how detectable the planted cohort is, with an
+declared score class, including a LiRA-style shadow-model attack with matched shadows
+and a positive control; a paraphrase-aware score added to the declared class and
+priced; a measurement of how detectable the planted cohort is, with an
 entropy-dilution design rule that follows from it; recoverability probes that relearn,
 quantise, and jailbreak the unlearned model; a model axis spanning 2019 to 2026; and
 cost measurements with their hardware and workload assumptions stated. All code, all
@@ -381,15 +387,17 @@ precisely as part of the contribution. VOUCH certifies the residual advantage
 extractable through a \emph{declared score class} $\F$, on a \emph{committed canary
 cohort}, against the \emph{deployed model}, under an \emph{honest-but-verifiable}
 provider. Each of those four qualifications has a measured cost. Parameter-space
-erasure is behaviourally uncertifiable, so we do not claim it. The class restriction is a real limit on the claim, though our attempt to measure it
-came back inconclusive: neither of the two out-of-class attacks we ran exceeded the
-tolerance more often than a clean subsample of the same size would by chance, so we
-can report that the definitional gap exists without being able to say how large it is.
-The constructive response---enlarging $\F$, which costs power and no validity---is
-available but untested at scale, and the decisive experiment, a shadow-model
-LiRA-style attack, remains undone. A
-paraphrase-aware score of the kind \citet{li2026beliefs} motivate is the single most
-valuable addition to $\F$ and we have not made it. The cohort statement transfers to
+erasure is behaviourally uncertifiable, so we do not claim it. The class restriction
+remains a definitional limit, but this version measures rather than merely names it.
+Two weak out-of-class attacks settle nothing, failing to beat the noise floor of
+subsampling. A LiRA-style shadow-model attack does better: with matched shadows it
+recovers an advantage of $0.82$ on an un-unlearned model, and on a certified one
+returns $-0.016$ with a $95\%$ interval that excludes every tolerance we certify at
+(Section~\ref{sec:exp-lira}). That is one tier, one target and $16$ shadows, so it
+bounds the gap rather than closing it. Enlarging $\F$ costs power and no validity, and
+we now exercise that too: a paraphrase-aware score of the kind
+\citet{li2026beliefs} motivate is implemented and added to $\F$
+(Section~\ref{sec:exp-para}). The cohort statement transfers to
 the mechanism-level advantage only at the explicit inflation of
 Proposition~\ref{prop:transfer}, which is why our $\eps = 0.05$ results are cohort
 certificates; the super-population arm reaches $\eps = 0.1$ once the cohort clears
@@ -403,7 +411,11 @@ canaries. The provider is assumed honest-but-verifiable, and we now know that
 assumption is easier to violate than we had supposed: a perplexity filter costing one
 forward pass per record locates the entire planted cohort, so a provider willing to
 special-case it can find it, and closing that gap needs cryptographic attestation that
-VOUCH does not itself supply. Canaries must be planted before fine-tuning, so legacy
+VOUCH does not itself supply. The audit's own randomness is now as checkable as its
+commitment---the reveal order can be drawn from a public randomness beacon bound to the
+manifest root, which is what Theorem~\ref{thm:cert}'s hypothesis actually
+requires---though the results reported here predate that and were computed with a
+seed-derived order. Canaries must be planted before fine-tuning, so legacy
 models cannot be retro-certified. Both two-sided certification and consensus-based
 streaming composition cost power, which we quantify (Tables~\ref{tab:power} and
 \ref{tab:streaming}) so that cohorts can be sized accordingly. And the extrapolation

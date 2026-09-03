@@ -24,6 +24,7 @@ import numpy as np
 
 __all__ = [
     "s_loss", "s_mink", "make_s_ratio", "ScoreEngine", "QUERY_WRAPPERS",
+    "PARAPHRASE_FRAMES", "s_para",
 ]
 
 
@@ -59,6 +60,31 @@ QUERY_WRAPPERS: List[Callable[[str], str]] = [
     lambda p: "Complete this entry: " + p,
 ]
 
+# Paraphrase frames for the *paraphrase-aware* score (Section 5.13).
+# \citet{li2026beliefs} show that gradient-ascent objectives do not delete
+# probability mass so much as move it: mass pushed off one surface form
+# reappears on a semantically equivalent rephrasing.  A score that reads the
+# literal span under a fixed frame, or averages over frames, cannot see mass
+# that has migrated *between* frames -- the average falls even as the fact
+# stays fully recoverable under the best frame.  ``s_para`` therefore takes
+# the MAXIMUM over frames rather than the mean: it asks whether the secret
+# survives under *any* rephrasing of its carrier, which is the quantity an
+# attacker who may rephrase actually enjoys.
+PARAPHRASE_FRAMES: List[Callable[[str], str]] = [
+    lambda p: p,
+    lambda p: "Question: " + p.rstrip(".") + "?\nAnswer:",
+    lambda p: "It is recorded that " + p[0].lower() + p[1:],
+    lambda p: "In other words, " + p[0].lower() + p[1:],
+    lambda p: "Restated for the record: " + p,
+]
+
+
+def s_para(frame_logprobs: Sequence[np.ndarray]) -> float:
+    """Paraphrase-aware score: best token-normalised log-likelihood of the
+    secret over the paraphrase frames.  Higher means more memorised, in the
+    same orientation as every other member of F."""
+    return float(max(np.mean(lp) for lp in frame_logprobs))
+
 
 class ScoreEngine:
     """Computes the per-pair score differences D_i^(s) for every score in F.
@@ -76,21 +102,36 @@ class ScoreEngine:
                  model_logprob_fn: Callable[[str, str], np.ndarray],
                  base_logprob_fn: Optional[Callable[[str, str], np.ndarray]] = None,
                  n_queries: int = 4,
-                 mink_k: float = 0.2):
+                 mink_k: float = 0.2,
+                 paraphrase: bool = False,
+                 n_frames: int = 5,
+                 embed_fn: Optional[Callable[[str, str], float]] = None):
         self.model_fn = model_logprob_fn
         self.base_fn = base_logprob_fn
         self.wrappers = QUERY_WRAPPERS[:max(1, min(n_queries, len(QUERY_WRAPPERS)))]
         self.mink_k = mink_k
+        # paraphrase-aware member of F (Section 5.13): off by default so the
+        # released tables keep the declared class they were computed under
+        self.paraphrase = paraphrase
+        self.frames = PARAPHRASE_FRAMES[:max(1, min(n_frames,
+                                                    len(PARAPHRASE_FRAMES)))]
+        # optional semantic-neighbourhood score: (prefix, secret) -> similarity
+        self.embed_fn = embed_fn
 
     @property
     def score_names(self) -> List[str]:
         names = ["loss", "mink"]
         if self.base_fn is not None:
             names.append("ratio")
+        if self.paraphrase:
+            names.append("para")
+        if self.embed_fn is not None:
+            names.append("embed")
         return names
 
     def _twin_scores(self, prefix: str, target: str) -> Dict[str, float]:
-        per_wrapper: Dict[str, List[float]] = {n: [] for n in self.score_names}
+        wrapper_names = [n for n in self.score_names if n not in ("para", "embed")]
+        per_wrapper: Dict[str, List[float]] = {n: [] for n in wrapper_names}
         for wrap in self.wrappers:
             wp = wrap(prefix)
             lp = self.model_fn(wp, target)
@@ -99,7 +140,13 @@ class ScoreEngine:
             if self.base_fn is not None:
                 base_lp = self.base_fn(wp, target)
                 per_wrapper["ratio"].append(float(np.mean(lp) - np.mean(base_lp)))
-        return {n: float(np.mean(v)) for n, v in per_wrapper.items()}
+        out = {n: float(np.mean(v)) for n, v in per_wrapper.items()}
+        if self.paraphrase:
+            out["para"] = s_para([self.model_fn(f(prefix), target)
+                                  for f in self.frames])
+        if self.embed_fn is not None:
+            out["embed"] = float(self.embed_fn(prefix, target))
+        return out
 
     def pair_differences(self, in_twin, ghost_twin) -> Dict[str, float]:
         """D^(s) = s(M_u, c_in) - s(M_u, c_ghost) for every s in F."""

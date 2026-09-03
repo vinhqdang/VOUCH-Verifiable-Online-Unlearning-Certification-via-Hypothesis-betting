@@ -362,6 +362,90 @@ membership advantage of the unlearned model against the declared score class F o
 canary population is below ε"* — certification of extractable influence relative to a
 declared attack class, per honest-scope desideratum D6 of `algorithm.md`.
 
+## Closing the round-1 gaps (added 2026-09-03)
+
+Four items the revision had answered only partially are now closed with new theory,
+new code and new experiments.
+
+### Theorem 5 — finite-cohort certification time
+
+Theorem 4's power analysis is proved for the fixed-boundary i.i.d. process, and its
+regret bounds do not transfer to without-replacement reveal. Theorem 5 bounds the
+cohort target by a different route: not how fast wealth grows, but when the null's
+remaining feasible compositions run out. With `k0 = ceil(m*p0)` and `j` the realised
+count of violating signs, and provided `j <= k0 - 2`,
+
+```
+tau*   <= m - (k0 - j) + 2                          for EVERY reveal order
+E[tau*] <= (m - k0 + 1)(m + 1)/(m - j + 1) + 1      under a uniform order
+```
+
+It holds for every predictable betting strategy and involves neither α nor |F|, and it
+explains structurally why the cohort column of the power table can legitimately sit
+below the Kullback–Leibler bound. The hypothesis is sharp: at `j = k0 - 1` the null
+stays feasible to the last pair and the refutation branch never fires. Both formulas
+are checked against the implementation in `verify_claims.py` and four unit tests.
+
+### Verifier-side reveal randomness
+
+Theorem 2 needs the reveal order independent of the realised signs, which a run-seeded
+permutation does not satisfy. `vouch/verify/beacon.py` adds two sources that do: a
+public **drand beacon** (seed = `H(manifest_root || round randomness)`, fetched after
+the commitment, with the round recorded on the certificate so anyone can recompute the
+order) and OS entropy. The legacy seeded order is retained — it is what every committed
+table used, and the certificate now says so.
+
+### LiRA — a shadow-model attack from outside F
+
+`experiments/run_lira.py`, 16 matched shadows on the TinyGPT tier, m=256. Each shadow
+repeats the whole pipeline with an independent coin redraw, so each twin is trained on
+in about half of them; unlearned targets are calibrated against unlearned shadows.
+
+| target model | in-class Δ | LiRA Δ | 95% CI | agreement |
+|---|---|---|---|---|
+| no unlearning (positive control) | +0.867 | **+0.820** | [+0.736, +0.884] | 0.92 |
+| NPO, certified at ε=0.2 | +0.047 | **−0.016** | [−0.141, +0.110] | 0.47 |
+
+The positive control is the point: the attack demonstrably works, so its null on the
+certified model is informative rather than vacuous — unlike the two weaker attacks of
+§5.11, which could not beat their own binomial nulls. One tier, one target, 16 shadows,
+so it bounds the gap without closing it.
+
+### RMU — a second utility-preserving subject
+
+`--methods rmu` adds representation misdirection (Li et al., 2024): forget activations
+pushed toward a fixed random direction at one layer, retain activations held near the
+frozen reference. It never touches the token loss. Co-trained with the other subjects
+on TOFU/GPT-2 so every row shares one adapter and one cohort:
+
+Two seeds, verdicts per seed:
+
+| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
+|---|---|---|---|---|---|
+| no unlearning | R / R | R / R | +0.125 | 2.18 | 2.13 |
+| retrain (fresh adapter) | I / I | I / I | +0.031 | 2.51 | 1.98 |
+| NPO | I / I | I / I | +0.005 | 5.79 | 2.92 |
+| SimNPO | I / I | I / I | −0.023 | 5.11 | 2.37 |
+| **RMU** | **I / I** | **I / U** | **+0.036** | 2.71 | 2.53 |
+
+RMU's residual advantage is indistinguishable from what retraining achieves on the same
+cohorts (+0.036 vs +0.031), at a retain NLL of 2.53 against retraining's 1.98. The
+interesting part is the contrast with NPO and SimNPO: they raise the forget split's
+likelihood to 5.79 and 5.11 while RMU barely moves it (2.71), yet all three land at
+essentially the same realised advantage. A forget-quality metric reading likelihoods
+would rank RMU far below the other two; the certificate treats them as equivalent,
+because it measures whether an attacker can still *distinguish* the twins.
+
+### A paraphrase-aware score in F
+
+`s_para` takes the **maximum** token-normalised log-likelihood of the secret over five
+paraphrase frames rather than the mean over wrappers, since an average falls precisely
+when mass moves out of the frames it averages over. Adding it to F costs 1–2% in pairs
+(225→227 for GA at ε=0.2) and changes no verdict; its own e-process is never the
+bottleneck. The honest caveat: our secrets are random alphanumeric strings, which have
+no paraphrase, so this measures the score's cost rather than the squeezing effect —
+testing that needs canaries whose *secret* is natural language.
+
 ## Continuing this work
 
 **Start with [`docs/HANDOFF.md`](docs/HANDOFF.md)** — environment setup, how to rebuild
@@ -372,7 +456,7 @@ reports are in [`manuscript/reviews/round1.md`](manuscript/reviews/round1.md).
 Quick check that a fresh clone is sound:
 
 ```bash
-python -m pytest tests/ -q                  # 18 passed
+python -m pytest tests/ -q                  # 25 passed
 python experiments/verify_claims.py         # all checks pass
 cd manuscript && ./build.sh                 # 4 PDFs, 0 warnings
 ```

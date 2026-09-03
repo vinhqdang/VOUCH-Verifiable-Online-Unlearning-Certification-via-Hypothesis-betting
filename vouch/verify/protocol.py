@@ -53,6 +53,10 @@ class VouchConfig:
     two_sided: bool = True       # close F under negation (catches over-forgetting)
     tie_seed: int = 20260702     # committed PRNG seed for tie-breaking
     cs_grid: int = 1001
+    reveal_source: str = "seeded"  # "beacon" | "local" | "seeded"; see
+                                 # vouch.verify.beacon.  "seeded" reproduces
+                                 # the released result files but does not
+                                 # meet Theorem 2's independence hypothesis.
     finite_cohort: bool = True   # certificate target = realised cohort mean
                                  # (without-replacement betting; exact under
                                  # arbitrary dependence across pairs).  Set
@@ -82,6 +86,12 @@ class Certificate:
     per_score_log_e_cert: Dict[str, float]
     cohort_size: int = -1        # N for the without-replacement target (-1 = none)
     sign_mean: Dict[str, float] = field(default_factory=dict)
+    reveal: Dict[str, object] = field(default_factory=dict)
+                                 # provenance of the reveal order pi: which
+                                 # randomness source drew it, and (for a
+                                 # public beacon) the round that lets a third
+                                 # party reconstruct it.  Theorem 2 needs pi
+                                 # independent of the realised signs.
     manifest_sha256: str = ""
     score_class: List[str] = field(default_factory=list)
     probes: Dict[str, dict] = field(default_factory=dict)
@@ -140,6 +150,7 @@ class VouchVerifier:
                                 population_size=n_pop)
                    for s in self.score_names}
         self._tie_rng = random.Random(self.cfg.tie_seed)
+        self.reveal: Dict[str, object] = {}
         self.t = 0
         self.revoked_at: Optional[int] = None
         self.log_e_rev_max: float = 0.0   # running max (value at the decision)
@@ -227,16 +238,34 @@ class VouchVerifier:
     # -- full loop -----------------------------------------------------------
     def run(self, pair_diffs: Sequence[Dict[str, float]],
             shuffle_seed: Optional[int] = None,
-            early_stop: bool = True) -> Certificate:
+            early_stop: bool = True,
+            reveal_source: Optional[str] = None) -> Certificate:
         """Run the Phase-2 loop over a cohort of pair score-differences.
 
         ``pair_diffs`` is a list of {score_name: D_i^(s)} dicts.  Pairs are
         revealed in random order (predictable filtration).
+
+        ``reveal_source`` selects where that order's randomness comes from
+        (see ``vouch.verify.beacon``): ``"beacon"`` draws it from a public
+        randomness beacon and records the round, ``"local"`` from OS
+        entropy, ``"seeded"`` from ``shuffle_seed``.  Theorem 2 requires the
+        order to be independent of the realised signs, which the first two
+        satisfy and the third does not; the default follows the config.
         """
         if self.cfg.finite_cohort and self.cohort_size is None:
             self.set_cohort_size(len(pair_diffs))
+        src = reveal_source or self.cfg.reveal_source
+        if src == "seeded":
+            seed = self.cfg.tie_seed if shuffle_seed is None else shuffle_seed
+            self.reveal = {"reveal_source": "seeded", "reveal_seed": int(seed),
+                           "reveal_verifiable": False,
+                           "reveal_independent_of_signs": False}
+        else:
+            from .beacon import draw_reveal_seed
+            seed, self.reveal = draw_reveal_seed(
+                self.manifest_sha256, source=src, seed=shuffle_seed)
         order = list(range(len(pair_diffs)))
-        rng = random.Random(self.cfg.tie_seed if shuffle_seed is None else shuffle_seed)
+        rng = random.Random(seed)
         rng.shuffle(order)
         status = "UNDETERMINED"
         for idx in order:
@@ -278,6 +307,7 @@ class VouchVerifier:
                        for s in self.score_names},
             manifest_sha256=self.manifest_sha256,
             score_class=self.score_names,
+            reveal=dict(self.reveal),
         )
 
 

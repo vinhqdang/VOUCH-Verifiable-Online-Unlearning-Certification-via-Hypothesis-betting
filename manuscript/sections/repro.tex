@@ -85,12 +85,19 @@ carries a regression test, and we have re-run the affected tier, whose verdicts 
 unchanged.
 
 Second, Theorem~\ref{thm:cert} requires the reveal order $\pi$ to be independent of
-the realised sign vectors. In the released experiments $\pi$ is seeded from the run
-seed, which also seeds cohort generation and training, so that independence does not
-strictly hold, even though nothing in the pipeline exploits the coupling. A deployed
-audit should draw $\pi$ from verifier-side entropy or a public randomness beacon and
-commit to it before opening any leaf (Remark~\ref{rem:order}); we record the gap rather
-than paper over it.
+the realised sign vectors. Every result table in this paper was produced with
+\texttt{reveal\_source = "seeded"}, in which $\pi$ is seeded from the run seed---the
+same seed that drives cohort generation and training---so for those runs the
+independence does not strictly hold, even though nothing in the pipeline exploits the
+coupling. We report them as they were computed rather than restating them under a
+different reveal rule. The released code now also implements the two sources that do
+satisfy the hypothesis (\texttt{vouch/verify/beacon.py}): \texttt{"beacon"} seeds $\pi$
+with $H(\text{manifest root} \,\|\, r)$ for the randomness $r$ of a drand round drawn
+after the commitment is published, recording the round number and value on the
+certificate so a third party can recompute the order; and \texttt{"local"} draws from
+operating-system entropy. A deployed audit should use the beacon, and the certificate
+object now carries a \texttt{reveal} block naming the source, whether it is
+third-party verifiable, and whether it meets Theorem~\ref{thm:cert}'s hypothesis.
 
 \paragraph{Verification.} $\alpha = 0.05$; two-sided certification; sign-based
 revocation for all headline tables, with the magnitude-aware arm reported separately;

@@ -1,0 +1,12 @@
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{2}{c}{$\hat\Delta$} & \multicolumn{2}{c}{verdict, $\eps{=}0.2$} & \multicolumn{2}{c}{pairs to certify}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+subject & literal & paraphrase & $\F$ & $\F\cup\{s_{\mathrm{para}}\}$ & $\F$ & $\F\cup\{s_{\mathrm{para}}\}$\\
+\midrule
+no unlearning & +0.135 & +0.141 & \vR & \vR & 384 & 384\\
+GA & -0.016 & -0.021 & \vI & \vI & 225 & 227\\
+NPO & -0.057 & -0.078 & \vI & \vI & 223 & 225\\
+retrain (fresh adapter) & +0.089 & +0.073 & \vI & \vI & 198 & 198\\
+\bottomrule
+\end{tabular}

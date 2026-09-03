@@ -595,6 +595,60 @@ reported.}
 \input{tables/metrics}
 \end{table}
 
+\subsection{A subject that never touches the token loss: RMU}\label{sec:exp-rmu}
+
+Every subject so far optimises a token-level objective, and a reviewer reasonably
+asked whether the framework's conclusions survive a method of a different kind. We
+therefore add \emph{representation misdirection} \citep{li2024wmdp}, the method
+introduced with WMDP, which acts in representation space rather than on the loss: at
+one hidden layer it pushes the forget set's activations toward a fixed random
+direction while holding the retain set's activations near the frozen reference
+model's. Nothing in VOUCH changes to accommodate it---the audit queries $M_u$ as a
+black box---which is the point of testing it.
+
+Table~\ref{tab:rmu} reports RMU beside the two other utility-preserving subjects and
+the two controls, all co-trained in a single run on TOFU/GPT-2 so that every row
+shares one fine-tuned adapter, one canary cohort and one machine. RMU behaves as a
+genuine unlearning method. It certifies at $\eps = 0.2$ on both seeds and at
+$\eps = 0.1$ on one of the two, and its realised cohort advantage of $+0.036$ is
+indistinguishable from what retraining a fresh adapter achieves on the same cohorts
+($+0.031$), against the un-unlearned model's $+0.125$. It does that at a retain NLL of
+$2.53$ against retraining's $1.98$, so it is a genuine member of the
+utility-preserving family rather than destructive unlearning in disguise.
+
+The interesting comparison is with the other two, and it is a distinction the
+certificate is built to draw. NPO and SimNPO buy their forgetting by raising the
+forget split's likelihood a long way---to $5.79$ and $5.11$ against the un-unlearned
+model's $2.18$---while RMU raises it only to $2.71$, barely moving it. Yet all three
+end up at essentially the same place on the quantity the certificate measures
+($+0.005$, $-0.023$ and $+0.036$). A forget-quality metric reading likelihoods would
+therefore rank RMU far below the other two; the certificate treats them as equivalent,
+because what it measures is whether the deployed model still lets an attacker
+\emph{distinguish} a trained twin from its ghost. Which ranking is right depends on
+what the audit is for, and this is the clearest instance in the study of the two
+readings coming apart on real models.
+
+One reporting caution belongs with this table, since two of its quantities can look
+contradictory. RMU's mean score gap $\bar D$ is $+0.119$ nats, well above NPO's
+$+0.002$, while their realised advantages are $+0.036$ and $+0.005$---much closer
+together. There is no inconsistency: $\bar D$ averages a likelihood gap and is moved by
+a handful of large-magnitude pairs, whereas $\Delta$ counts how often the trained twin
+scores higher at all. It is the second quantity, not the first, that bounds what an
+attacker in $\F$ can extract, and it is the one the certificate is stated for.
+
+\begin{table}[t]
+\centering\small
+\caption{Representation misdirection (RMU) beside the other utility-preserving
+subjects, co-trained on TOFU/GPT-2 with a shared fine-tuned adapter, $384$ pairs,
+cohort target. Verdicts are per seed (\vI\ issued, \vR\ revoked, \vU\ undetermined);
+$\hat\Delta$ is the realised cohort advantage of $s_{\mathrm{loss}}$; forget and
+retain NLL are on the benchmark's own splits. This tier was run on CPU for this
+revision and is reported separately from the main benchmark table rather than merged
+into it.}
+\label{tab:rmu}
+\input{tables/rmu}
+\end{table}
+
 \subsection{A tight-tolerance cohort, and the limit it exposes}\label{sec:exp-tight}
 
 The tolerance sweep of Table~\ref{tab:epssweep} reaches $\eps = 0.05$ on the cohort
@@ -734,8 +788,9 @@ converse---that $\F$ is wide enough---because both attacks are weak: one is a
 subpopulation restriction that pays for its focus in sample size, the other a linear
 recombination of scores already in $\F$. The honest position is that the certificate's
 dependence on $\F$ is a \emph{definitional} limit, visible in
-Theorem~\ref{thm:cert}'s statement rather than in our measurements, and that we have
-not yet found an attack strong enough to put a number on it.
+Theorem~\ref{thm:cert}'s statement rather than in these two measurements. Putting a
+number on it needs an attack that demonstrably works where leakage is present, which
+is what Section~\ref{sec:exp-lira} supplies.
 
 We have accordingly softened the surrounding claims rather than leaning on this table.
 The phrase ``the largest residual advantage any score in the class can extract'' is
@@ -754,10 +809,10 @@ direction is a paraphrase-aware score, since \citet{li2026beliefs} show that
 gradient-ascent objectives move probability mass onto semantically equivalent
 rephrasings---mass that our literal-span scores cannot see by construction.
 
-We did not run a full LiRA-style attack with shadow models, which is the strongest
-comparison a sceptic would want; it needs dozens of retrained references per cell and
-was outside the compute available for this revision. We flag it as the most valuable
-next experiment rather than claiming it is unnecessary.
+The strongest comparison a sceptic would want is a full LiRA-style attack with shadow
+models. It needs the whole pipeline repeated for every shadow, which the tiers in this
+section cannot afford; Section~\ref{sec:exp-lira} runs it on the tier that can, and
+reports both what it finds and how far its scope reaches.
 
 \begin{table}[t]
 \centering\small
@@ -771,6 +826,130 @@ is a null result: it bounds neither how narrow $\F$ is nor how wide. Bold marks 
 observed rate above the null.}
 \label{tab:outclass}
 \input{tables/outclass}
+\end{table}
+
+\subsection{A shadow-model attack from outside $\F$}\label{sec:exp-lira}
+
+The two attacks of Section~\ref{sec:exp-outclass} were weak by construction, and
+their null result was correspondingly uninformative: neither beat the noise floor of
+subsampling, so neither bounded the gap between $\sup_{s\in\F}|\Delta^{(s)}|$ and what
+a determined attacker could extract. The attack a sceptic actually wants is
+LiRA \citep{carlini2022lira}, which calibrates the target model's confidence on each
+example against the distribution of confidences that \emph{shadow} models trained with
+and without that example produce. LiRA is outside $\F$ in a strong sense: every score
+in $\F$ is a function of the deployed model's outputs alone, whereas LiRA consumes
+$N$ additional trained models, so no choice of $Q$ and no reweighting of members of
+$\F$ reproduces it. It is also not a candidate for inclusion in $\F$, because a
+verifier operating under VOUCH's cost model---$2Qm$ forward passes and no
+training---cannot run it.
+
+Running it requires repeating the entire pipeline $N+1$ times, which the 124M--5.1B
+tiers cannot afford on the compute available here. We therefore run it on the
+TinyGPT tier, the one this study already uses where retraining is cheap enough to
+serve as ground truth (Section~\ref{sec:exp-e2e}), with $16$ shadows and a cohort of
+$256$ pairs. Each shadow repeats the whole pipeline on the same twin pool with an
+independent redraw of the inclusion coins, so every twin is trained on in about half
+the shadows and withheld in the rest, and the unlearned subject is calibrated against
+shadows that were themselves unlearned rather than against a pre-unlearning proxy.
+For twin $x$ we take $\phi(M,x)$ to be the token-normalised log-likelihood of its
+secret, fit $\mathcal{N}(\mu_{\mathrm{in}}(x),\sigma^2)$ and
+$\mathcal{N}(\mu_{\mathrm{out}}(x),\sigma^2)$ with a variance pooled across twins---the
+global-variance variant, which is what a modest shadow count supports---and score
+$\Lambda(x) = \log \mathcal{N}(\phi; \mu_{\mathrm{in}}, \sigma^2)
+- \log \mathcal{N}(\phi; \mu_{\mathrm{out}}, \sigma^2)$. The attack guesses the twin
+with the larger $\Lambda$, and its realised cohort advantage is directly comparable to
+the tolerance.
+
+Table~\ref{tab:lira} reports the outcome, and the positive control is what makes it
+readable. On the un-unlearned model LiRA achieves $\hat\Delta = +0.820$
+(95\% CI $[+0.736, +0.884]$) and agrees with the declared class's own verdict on
+$92\%$ of pairs: the attack is potent, and it is seeing the same memorisation the
+audit sees. On the NPO model that VOUCH certifies at $\eps = 0.2$, the same attack
+yields $\hat\Delta = -0.016$ with 95\% CI $[-0.141, +0.110]$, and its agreement with
+the in-class score falls to $0.47$---chance, which is what two statistics guessing
+independently look like. The interval excludes every tolerance we certify at, so on
+this model the strongest attack we could mount does not merely fail to beat a noise
+floor: it is bounded away from $\eps$.
+
+We are careful about what that licenses. This is one target model on one tier, with
+$16$ shadows against the hundreds a canonical LiRA would use, and the certified
+subject is a single unlearning method. It does not show that $\F$ is wide enough in
+general, and a larger model, a stronger attack, or a different subject could still
+exceed the tolerance. What it does do is change the character of the evidence. The
+attacks in Section~\ref{sec:exp-outclass} could not distinguish ``$\F$ is adequate''
+from ``our attacks were weak,'' because they produced no signal even where signal
+exists. This one produces a large signal exactly where leakage is present and none
+where the certificate says there is none, which is the first measurement in this study
+that constrains, rather than merely names, the definitional gap the class restriction
+leaves open.
+
+\begin{table}[t]
+\centering\small
+\caption{A LiRA-style shadow-model attack from outside $\F$ (TinyGPT tier, $16$
+matched shadows, cohort $m = 256$, one target seed). ``declared $\F$'' is the
+advantage the audit's own score class achieves on the same cohort; ``agreement'' is
+the fraction of pairs on which LiRA and the declared class make the same guess.
+Intervals are Clopper--Pearson on the sign rate: the betting confidence sequence
+collapses onto the realised value once the cohort is exhausted
+(Theorem~\ref{thm:cert}), so it carries no width here. The first row is the positive
+control that makes the second interpretable.}
+\label{tab:lira}
+\input{tables/lira}
+\end{table}
+
+\subsection{A paraphrase-aware score in $\F$}\label{sec:exp-para}
+
+The limitation we have named most often is that every member of $\F$ reads the
+likelihood of the \emph{literal} secret span, while \citet{li2026beliefs} show that
+gradient-ascent objectives do not delete probability mass so much as move it, onto
+semantically equivalent rephrasings. Mass that has migrated between surface forms is
+invisible to a score that reads one form, and averaging over query wrappers does not
+help: an average falls when mass moves out of the frames it averages over. We
+therefore implement the score that limitation calls for and add it to $\F$.
+
+$s_{\mathrm{para}}$ takes the \emph{maximum} token-normalised log-likelihood of the
+secret over five paraphrase frames of its carrier rather than the mean over wrappers,
+asking whether the secret survives under \emph{any} rephrasing---the quantity an
+attacker free to rephrase actually enjoys. It is a legitimate member of $\F$: it is a
+function of the deployed model's outputs on the committed pair, so
+Theorem~\ref{thm:null} is untouched, and Theorem~\ref{thm:cert} needs no multiplicity
+correction to accommodate it.
+
+Table~\ref{tab:para} reports what happens when it joins the class, on TOFU/GPT-2 with
+the un-unlearned model, gradient ascent---the objective \citet{li2026beliefs}
+implicate directly---NPO, and retraining. Three things are worth stating, and the
+third is the one that matters.
+
+First, the enlargement is nearly free, as the theory predicts: certification takes
+$227$ pairs instead of $225$ for gradient ascent and $225$ instead of $223$ for NPO,
+a cost of one to two per cent, and no verdict changes at any tolerance we tested.
+Second, $s_{\mathrm{para}}$ is not the binding constraint---its own e-process runs
+ahead of the literal one (log-wealth $17.0$ against $15.8$ for gradient ascent), so
+the certificate still waits on min-$k\%$. Third, and this is the honest reading:
+$s_{\mathrm{para}}$ finds essentially the same advantage as the literal score
+everywhere, agreeing to within $0.02$ in realised advantage on every subject.
+
+We do not present that as evidence that the squeezing effect is absent, because this
+canary design cannot exhibit it. Our secrets are ten random alphanumeric characters,
+and a high-entropy random string has no semantically equivalent rephrasing for mass to
+move onto---only its carrier sentence does, which is what the frames vary. The
+experiment therefore establishes something narrower and still useful: the
+paraphrase-aware score is implemented, it costs almost nothing to carry, and it
+perturbs neither the verdicts nor the calibration. Testing the squeezing effect itself
+needs canaries whose \emph{secret} is natural language and therefore paraphrasable,
+which is a different canary design---the twins would have to be exchangeable as
+\emph{propositions} rather than as strings---and we name it as the next step rather
+than claiming this one covers it.
+
+\begin{table}[t]
+\centering\small
+\caption{A paraphrase-aware score added to the declared class, TOFU/GPT-2, $384$
+pairs, cohort target. $\hat\Delta$ is the realised cohort advantage under each score;
+``pairs to certify'' is the stopping time under $\F$ and under
+$\F \cup \{s_{\mathrm{para}}\}$. Enlarging the class costs power and no validity, and
+here the power costs one to two per cent.}
+\label{tab:para}
+\input{tables/para}
 \end{table}
 
 \subsection{Can a provider find the cohort?}\label{sec:exp-detect}

@@ -40,8 +40,8 @@ Notable renumberings a reader of both versions will hit:
 |---|---|
 | Theorem 2 (certificate coverage) | Theorem 2, restated for the finite-cohort target |
 | Theorem 3 (power) | Theorem 4, with the corrected $\varepsilon^2/2$ expansion |
-| Theorem 4 (streaming) | Theorem 5 |
-| Proposition 6 (bridge) | Proposition 7, with the one-directionality remark after it |
+| Theorem 4 (streaming) | Theorem 6 (Theorem 5 is new: finite-cohort power) |
+| Proposition 6 (bridge) | Proposition 8, with the one-directionality remark after it |
 | Table 3 (power vs KL) | Table 6, with censoring rates and Kaplan–Meier medians |
 | Table 5 (GPT-2 end-to-end) | Table 9, now over the 2 seeds that carry per-pair data |
 | Table 7 (model axis) | Table 18, with a seeds column |

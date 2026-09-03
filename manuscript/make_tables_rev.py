@@ -534,6 +534,128 @@ def tab_certprod():
     write("certprod", body)
 
 
+
+# ---------------------------------------------------------------------------
+# RMU: a second utility-preserving subject (Section 5.13)
+# ---------------------------------------------------------------------------
+def tab_rmu():
+    """RMU beside the other utility-preserving subjects, co-trained (Sec 5.13)."""
+    import sys as _sys
+    _sys.path.insert(0, REPO)
+    from vouch.verify import VouchConfig, VouchVerifier
+
+    d = load("lm_e2e_tofu_gpt2_rmu") or load("lm_e2e_tofu_gpt2_rmu_partial")
+    if not d:
+        return
+    order = ["none", "retrain", "npo", "simnpo", "rmu"]
+    lbl = dict(LBL); lbl["rmu"] = "RMU"
+    epss = (0.2, 0.1, 0.05)
+    rows = []
+    for m in order:
+        cells = [(r, r["certs"][m]) for r in d if m in r.get("certs", {})]
+        if not cells:
+            continue
+        verds = {e: [] for e in epss}
+        deltas, fn, rn, cn = [], [], [], []
+        for r, c in cells:
+            diffs = c["pair_diffs"]
+            names = list(diffs[0].keys())
+            deltas.append(2 * np.mean([x["loss"] > 0 for x in diffs]) - 1)
+            for e in epss:
+                v = VouchVerifier(names, VouchConfig(eps=e, alpha=0.05),
+                                  manifest_sha256=r.get("manifest_sha256", ""))
+                verds[e].append(VERD[v.run(diffs, shuffle_seed=r["seed"],
+                                           early_stop=True).status])
+            fn.append(c.get("forget_nll", float("nan")))
+            rn.append(c.get("retain_nll", float("nan")))
+            cn.append(c.get("capability_nll", float("nan")))
+        rows.append((lbl.get(m, m),
+                     ["/".join(verds[e]) for e in epss],
+                     float(np.mean(deltas)), float(np.nanmean(fn)),
+                     float(np.nanmean(rn)), float(np.nanmean(cn))))
+    if not rows:
+        return
+    body = ("\\begin{tabular}{lcccccc}\n\\toprule\n"
+            "& \\multicolumn{3}{c}{verdict} & & "
+            "\\multicolumn{2}{c}{mean NLL}\\\\\n"
+            "\\cmidrule(lr){2-4}\\cmidrule(lr){6-7}\n"
+            "subject & $\\eps{=}0.2$ & $0.1$ & $0.05$ & $\\hat\\Delta$ "
+            "& forget & retain\\\\\n\\midrule\n")
+    for name, vs, dl, f_, r_, c_ in rows:
+        body += (f"{name} & {vs[0]} & {vs[1]} & {vs[2]} & {dl:+.3f} & "
+                 f"{f_:.2f} & {r_:.2f}\\\\\n")
+    body += "\\bottomrule\n\\end{tabular}\n"
+    write("rmu", body)
+
+
+# ---------------------------------------------------------------------------
+# A paraphrase-aware score in F (Section 5.14)
+# ---------------------------------------------------------------------------
+def tab_para():
+    """A paraphrase-aware score added to F (Section 5.14)."""
+    d = load("paraphrase")
+    if not d or not d.get("runs"):
+        return
+    runs = d["runs"]
+    subjects = ["none", "ga", "npo", "retrain"]
+    lbl = dict(LBL); lbl["ga"] = "GA"
+    body = ("\\begin{tabular}{lcccccc}\n\\toprule\n"
+            "& \\multicolumn{2}{c}{$\\hat\\Delta$} & "
+            "\\multicolumn{2}{c}{verdict, $\\eps{=}0.2$} & "
+            "\\multicolumn{2}{c}{pairs to certify}\\\\\n"
+            "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\\cmidrule(lr){6-7}\n"
+            "subject & literal & paraphrase & $\\F$ & "
+            "$\\F\\cup\\{s_{\\mathrm{para}}\\}$ & $\\F$ & "
+            "$\\F\\cup\\{s_{\\mathrm{para}}\\}$\\\\\n\\midrule\n")
+    any_row = False
+    for m in subjects:
+        cells = [r["subjects"][m] for r in runs if m in r.get("subjects", {})]
+        if not cells:
+            continue
+        any_row = True
+        dl = np.mean([2 * c["sign_rate"]["loss"] - 1 for c in cells])
+        dp = np.mean([2 * c["sign_rate"]["para"] - 1 for c in cells])
+        vd = "/".join(VERD[c["verdicts"]["default/eps=0.2"]["status"]] for c in cells)
+        vp = "/".join(VERD[c["verdicts"]["with_para/eps=0.2"]["status"]] for c in cells)
+        td = np.mean([c["verdicts"]["default/eps=0.2"]["t_stop"] for c in cells])
+        tp = np.mean([c["verdicts"]["with_para/eps=0.2"]["t_stop"] for c in cells])
+        body += (f"{lbl.get(m, m)} & {dl:+.3f} & {dp:+.3f} & {vd} & {vp} & "
+                 f"{td:.0f} & {tp:.0f}\\\\\n")
+    if not any_row:
+        return
+    body += "\\bottomrule\n\\end{tabular}\n"
+    write("para", body)
+
+
+# ---------------------------------------------------------------------------
+# LiRA-style shadow-model attack from outside F (Section 5.12)
+# ---------------------------------------------------------------------------
+def tab_lira():
+    d = load("lira_analysis")
+    if not d:
+        return
+    lbl = {"none": "no unlearning (positive control)",
+           "npo": r"NPO, certified at $\eps=0.2$",
+           "retrain": "retrain (negative control)"}
+    body = ("\\begin{tabular}{lccccc}\n\\toprule\n"
+            "& declared $\\F$ & \\multicolumn{3}{c}{LiRA (outside $\\F$)} & \\\\\n"
+            "\\cmidrule(lr){2-2}\\cmidrule(lr){3-5}\n"
+            "target model & $\\hat\\Delta$ & $\\hat\\Delta$ & 95\\% CI & "
+            "agreement & $|\\hat\\Delta| > \\eps$?\\\\\n\\midrule\n")
+    for k in ("none", "npo", "retrain"):
+        if k not in d["subjects"]:
+            continue
+        r = d["subjects"][k]
+        ci = r["delta_lira_ci"]
+        exc = "\\textbf{yes}" if r.get("exceeds_eps=0.2") else "no"
+        body += (f"{lbl.get(k, k)} & {r['delta_in_class']:+.3f} & "
+                 f"{r['delta_lira']:+.3f} & "
+                 f"$[{ci[0]:+.3f},\\,{ci[1]:+.3f}]$ & "
+                 f"{r['agreement']:.2f} & {exc}\\\\\n")
+    body += "\\bottomrule\n\\end{tabular}\n"
+    write("lira", body)
+
+
 if __name__ == "__main__":
     tab_dependence()
     tab_cohortnull()
@@ -550,4 +672,7 @@ if __name__ == "__main__":
     tab_metrics()
     tab_certprod()
     tab_tight()
+    tab_rmu()
+    tab_para()
+    tab_lira()
     print("revision tables done")

@@ -195,16 +195,23 @@ Section~\ref{sec:exp-baselines} quantifies each of the three.
 
 \begin{remark}[The reveal order must be the verifier's own randomness]\label{rem:order}
 Theorem~\ref{thm:cert} conditions on the sign vector and spends the permutation, so it
-needs $\pi \perp \{z^{(s)}\}$. That is not a formality here for two reasons. A provider
+needs $\pi \perp \{z^{(s)}\}$. That is not a formality here. A provider
 who can locate the cohort---and Section~\ref{sec:exp-detect} shows that is
-cheap---could, if it also knew $\pi$, arrange which pairs are revealed early. And in
-our own experiments $\pi$ is seeded from the run seed, which also seeds cohort
-generation and training, so the two are not independent by construction even though
-nothing in the pipeline exploits the coupling. A deployed audit should draw $\pi$ from
-verifier-side entropy, or from a public randomness beacon, and commit to it before
-opening any leaf; we state this as a protocol requirement rather than an
-implementation detail, and Appendix~\ref{app:repro} records that our runs do not meet
-it.
+cheap---could, if it also knew $\pi$, arrange which pairs are revealed early. The
+released implementation therefore draws $\pi$ from one of three sources, and records
+which on the certificate. A \emph{public randomness beacon} is the recommended one:
+the verifier fetches a drand round published \emph{after} the manifest commitment and
+seeds $\pi$ with $H(\text{root} \,\|\, \text{beacon randomness})$, so the order is
+unpredictable to the provider before the round exists, independent of the signs, and
+reconstructible afterwards by anyone holding the certificate---the audit's own
+randomness becomes as checkable as its commitment. Failing network access, the
+verifier draws from operating-system entropy, which satisfies the hypothesis but is
+not third-party verifiable. The third source is the run seed, which is what produced
+the results in this paper and which does \emph{not} satisfy the hypothesis, since that
+seed also seeds cohort generation and training; nothing in the pipeline exploits the
+coupling, but the condition is not met, and Appendix~\ref{app:repro} records exactly
+where. Binding the beacon value to the commitment matters in both directions: drawing
+the beacon first would let a provider grind the manifest against a known order.
 \end{remark}
 
 \begin{proposition}[Transfer to the coin-averaged advantage]\label{prop:transfer}
@@ -342,6 +349,80 @@ valid procedure can do better by more than a constant factor. We note that an ea
 version of this theorem reported the expansion as $\eps^2/8$ and the sample size as
 $8\log(1/\alpha)/\eps^2$; \eqref{eq:klexp} corrects it. The numerical columns of
 Table~\ref{tab:power} were computed from the exact divergence and are unaffected.
+
+\begin{theorem}[Finite-cohort certification time]\label{thm:cohortpower}
+Fix a score $s$ and run the upper certificate process of
+Theorem~\ref{thm:cert}: the without-replacement boundary
+\eqref{eq:worboundary} with the rule that the null is refuted outright once
+$p_0(t) > 1$. Let the committed cohort of size $m$ carry exactly $j$ signs
+$z_i^{(s)} = 1$, and let $k_0 = \lceil m p_0 \rceil$ be the least number of
+such signs compatible with the null $\Delta^{(s)} \ge \eps$. If
+$j \le k_0 - 2$---the realised cohort sits at least two pairs below the
+boundary---then the process refutes, and hence certifies at \emph{any}
+$\alpha$, by the stopping time
+\begin{equation}\label{eq:cohortworst}
+\tau^\ast \;\le\; m - (k_0 - j) + 2
+\qquad\text{for \emph{every} reveal order } \pi,
+\end{equation}
+and, under the uniformly random $\pi$ that Theorem~\ref{thm:cert} requires,
+\begin{equation}\label{eq:cohortmean}
+\Efrak[\tau^\ast] \;\le\; \frac{(m - k_0 + 1)(m+1)}{m - j + 1} \;+\; 1 ,
+\end{equation}
+with equality when the decision is reached by refutation. The lower arm is
+the mirror statement with $z$ replaced by $1-z$ and $p_0$ by $1-p_0$; the
+two-sided certificate over a class $\F$ is issued by the largest of the
+$2|\F|$ individual bounds. Neither bound involves $\alpha$, the betting
+strategy, or $|\F|$.
+\end{theorem}
+
+\begin{proof}
+Refutation fires at the first $t$ with $p_0(t) > 1$, i.e.\ with
+$m p_0 - \sum_{u<t} Z_{\pi(u)} > m - t + 1$. Writing $S_{t-1}$ for the
+revealed count of ones and $W_{t-1} = (t-1) - S_{t-1}$ for the revealed
+count of zeros, and using $S_{t-1} + (m - t + 1) = m - W_{t-1}$, the
+condition is $m - W_{t-1} < m p_0$, that is $W_{t-1} > m(1 - p_0)$. Both
+sides being compared to an integer, this is exactly
+$W_{t-1} \ge m - k_0 + 1 =: r$, whether or not $m p_0$ is an integer.
+Refutation therefore occurs one step after the $r$-th zero is revealed:
+$\tau^\ast = 1 + \pi\text{-position of the } r\text{-th zero}$. The cohort
+contains $m - j$ zeros, and $r \le m - j - 1$ exactly when $j \le k_0 - 2$,
+so under that hypothesis the $r$-th zero is revealed at some position
+$\le m - 1$ and $\tau^\ast \le m$.
+
+For \eqref{eq:cohortworst}, the position of the $r$-th zero is largest when
+every one precedes every zero, putting it at $j + r = j + m - k_0 + 1$;
+adding the one step gives the bound, and the ordering that attains it shows
+it is tight. For \eqref{eq:cohortmean}, let $M = m - j$ be the number of
+zeros. In a uniformly random arrangement the $M$ zeros split the $m - M$
+ones into $M+1$ exchangeable gaps, so the expected number of ones preceding
+the $r$-th zero is $r(m - M)/(M + 1)$ and the expected position of that zero
+is $r + r(m-M)/(M+1) = r(m+1)/(M+1)$. Adding one step gives
+\eqref{eq:cohortmean}.
+
+Finally, the argument never inspects the stake $\lambda_t$: refutation is a
+statement about which cohort compositions remain feasible, so it holds for
+every predictable betting strategy, and the certificate's actual stopping
+time is the minimum of this time and the time its wealth crosses $1/\alpha$
+by ordinary growth.
+\end{proof}
+
+Theorem~\ref{thm:cohortpower} is the finite-population counterpart that
+Theorem~\ref{thm:power} could not supply. Under without-replacement reveal
+the log-wealth increments are neither independent nor identically
+distributed and the regret bounds behind Theorem~\ref{thm:power} do not
+transfer, so we bound the cohort target's stopping time by a different
+route: not by how fast wealth grows, but by when the null's remaining
+feasible compositions run out. The two mechanisms run in parallel and the
+process stops at whichever fires first, which is what makes the cohort
+column of Table~\ref{tab:power} legitimately faster than the
+Kullback--Leibler column rather than mysteriously so. Their regimes are
+also easy to tell apart: exponential growth dominates when the cohort is
+large relative to $\log(1/\alpha)/\KL$, and the feasibility bound binds when
+it is not, which is exactly the tight-tolerance regime of
+Section~\ref{sec:exp-tight}. At $m = 384$, $\eps = 0.2$ and a cohort at
+chance ($j = m/2$), \eqref{eq:cohortmean} gives $308$ pairs against a
+measured median of $165$: the wealth process usually wins, and the
+feasibility bound is the guarantee that holds when it does not.
 
 \begin{remark}[Per-score versus simultaneous confidence sequences]\label{rem:cs}
 Each score's confidence sequence \eqref{eq:cs} covers that score's own advantage

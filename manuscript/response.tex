@@ -7,6 +7,11 @@
 \usepackage{enumitem}
 \usepackage{titlesec}
 \usepackage[round,authoryear]{natbib}
+% Resolve \ref{} against the compiled manuscript, so every cross-reference in
+% this letter tracks main.tex's numbering instead of being maintained by hand.
+% (Section, table and theorem numbers have shifted twice during this revision.)
+\usepackage{xr}
+\externaldocument{main}
 
 \definecolor{rcol}{rgb}{0.16,0.16,0.16}
 \definecolor{acol}{rgb}{0.05,0.25,0.55}
@@ -36,7 +41,7 @@ Paired-Canary Hypothesis-Betting}\\[0.4em]
 \bigskip
 
 \noindent We thank both reviewers for reports that were unusually careful and, in two
-places, mathematically decisive. Reviewer~1's observation that Definition~1's marginal
+places, mathematically decisive. Reviewer~1's observation that Definition~\ref{def:delta}'s marginal
 null does not match the condition our supermartingale proof actually uses is correct,
 and acting on it has changed the paper's central theorem rather than merely its
 wording. Reviewer~1's correction of the Kullback--Leibler expansion is likewise
@@ -55,8 +60,9 @@ table and figure numbers differ between the two versions. Numbers inside the quo
 reviewer points refer to the previous version; numbers in our responses refer to the
 revised manuscript unless we say otherwise. The correspondences a reader of both
 versions will meet most often are: Theorem~2 (certificate coverage) is still
-Theorem~2, restated; Theorem~3 (power) is now Theorem~4; Theorem~4 (streaming) is now
-Theorem~5; Proposition~6 (bridge) is now Proposition~7; Table~3 (power against the
+Theorem~2, restated; Theorem~3 (power) is now Theorem~4; the finite-cohort power
+result added at this revision is Theorem~5, which shifts Theorem~4 (streaming) to
+Theorem~6 and Proposition~6 (bridge) to Proposition~8; Table~3 (power against the
 Kullback--Leibler limit) is now Table~6; Table~5 (GPT-2 end-to-end) is now Table~9;
 Table~7 (model axis) is now Table~18; and the experiments remain Section~5.
 
@@ -66,33 +72,44 @@ Table~7 (model axis) is now Table~18; and the experiments remain Section~5.
 \item \textbf{The certificate's null is restated and its theorem replaced.} We now
 certify the \emph{realised advantage on the committed cohort} and bet against a
 without-replacement boundary recentred at every step. The resulting guarantee
-(Theorem~2) is exact under arbitrary dependence across pairs, templates and repetition
+(Theorem~\ref{thm:cert}) is exact under arbitrary dependence across pairs, templates and repetition
 strata --- no independence, no exchangeability across pairs, no homogeneity. A new
-Proposition~3 prices the transfer to the super-population advantage under a named
+Proposition~\ref{prop:transfer} prices the transfer to the super-population advantage under a named
 assumption. Both targets are reported side by side throughout.
 \item \textbf{New simulation showing the old null was genuinely not controlled}
-(\S5.1, Tables~1--2): under model-level over-dispersion the previous fixed-boundary
+(\S\ref{sec:exp-dependence}, Tables~\ref{tab:dependence}--\ref{tab:cohortnull}): under model-level over-dispersion the previous fixed-boundary
 process issues under the marginal null in $38.9\%$ of runs, an eightfold breach of
 $\alpha$; the corrected process holds at $\le 0.020$ in every regime. Heterogeneity is
 also measured on the real runs.
-\item \textbf{Four valid sequential comparators added} (\S5.4, Table~5): exact
+\item \textbf{Four valid sequential comparators added} (\S\ref{sec:exp-baselines}, Table~\ref{tab:baselines}): exact
 group-sequential $\alpha$-spending (Pocock, O'Brien--Fleming), a Jeffreys-mixture
 e-process, a Robbins normal-mixture e-process, and a fixed-$n$ test at a pre-committed
 size.
-\item \textbf{Tolerance sweep to $\eps = 0.05$ on real models} (Table~11), with the
+\item \textbf{Tolerance sweep to $\eps = 0.05$ on real models} (Table~\ref{tab:epssweep}), with the
 cohort/super-population distinction made explicit; guidance on choosing $\eps$ added.
 \item \textbf{Mathematical corrections}: $\mathrm{KL} = \eps^2/2 + O(\eps^4)$, so the
 cohort rule is $2\log(1/\alpha)/\eps^2$; the score sign convention fixed to the
 token-normalised \emph{log-likelihood}; per-score versus simultaneous confidence-sequence
-coverage stated; Proposition~7's one-directionality stated immediately after it.
+coverage stated; Proposition~\ref{prop:bridge}'s one-directionality stated immediately after it.
 \item \textbf{Statistical reporting}: Clopper--Pearson intervals on every verdict count,
 across-seed dispersion on every mean column, censoring rates and Kaplan--Meier medians
 in the power table, seed counts on the model axis, and the ``stable across the axis''
 characterisation corrected.
 \item \textbf{Three new empirical sections}: head-to-head against forget-quality and
-min-$k\%$ on identical runs (\S5.10); attacks from \emph{outside} the declared class
-(\S5.11); canary detectability, with the negative result and the entropy-dilution
-design rule that follows from it (\S5.12).
+min-$k\%$ on identical runs (\S\ref{sec:exp-descriptive}); attacks from \emph{outside} the declared class
+(\S\ref{sec:exp-outclass}); canary detectability, with the negative result and the entropy-dilution
+design rule that follows from it (\S\ref{sec:exp-detect}).
+\item \textbf{Four further additions made after the first revision draft}, each
+answering a request we had previously answered only partially: a LiRA-style
+shadow-model attack with matched shadows and a positive control (\S\ref{sec:exp-lira}); RMU as a
+second utility-preserving subject, chosen because it never touches the token loss
+(\S\ref{sec:exp-rmu}); a paraphrase-aware score added to $\F$ (\S\ref{sec:exp-para}); and
+Theorem~\ref{thm:cohortpower}, a finite-cohort certification-time bound that supplies the
+finite-population power analysis Theorem~\ref{thm:power} could not.
+\item \textbf{Verifier-side reveal randomness implemented}: the released code now
+draws the reveal order from a public randomness beacon, binding it to the manifest
+commitment and recording the round on the certificate, with operating-system entropy
+as the offline fallback (Remark~\ref{rem:order}, Appendix~A).
 \item \textbf{SimNPO added} as a subject; \textbf{benchmark forget/retain and
 general-capability readings} added; \textbf{reproducibility appendix} added, including
 an unambiguous definition of ``retraining''.
@@ -105,7 +122,7 @@ discussed, not merely cited.
 \clearpage
 \section*{Reviewer 1}
 
-\subsection*{1. The null in Definition~1 does not match the condition used in Theorem~2}
+\subsection*{1. The null in Definition~\ref{def:delta} does not match the condition used in Theorem~\ref{thm:cert}}
 
 \begin{point}{R1.1}
 Definition~1 defines $p^{(s)} = \Pr[Z_i^{(s)}=1]$, a marginal probability, whereas the
@@ -124,11 +141,11 @@ This is correct, it is the most consequential point in either report, and we hav
 the second of the two options offered --- a result valid under the dependence structure
 --- because we agree the first would have been a patch. Four changes follow.
 
-\emph{(a) Which randomness defines the null (\S3.3, \S4.1).} The randomness is the
+\emph{(a) Which randomness defines the null (\S\ref{sec:filtration}, \S\ref{sec:theory}).} The randomness is the
 \emph{inclusion coins}, and we now make the filtration carry that literally. The
 manifest is committed as a Merkle tree with one leaf per pair, and leaf $\pi(t)$ is
 opened at step $t$, so the coin $b_{\pi(t)}$ is genuinely unrevealed at time $t-1$.
-Theorem~1 is restated against this filtration and now reads: under exact unlearning,
+Theorem~\ref{thm:null} is restated against this filtration and now reads: under exact unlearning,
 $Z^{(s)}_{\pi(t)}\mid\mathcal{F}_{t-1}\sim\mathrm{Bern}(\tfrac12)$ \emph{exactly},
 \textbf{whether or not the signs are independent across pairs}. The proof never asks
 for independence; it asks only that the coin governing the pair opened now still be
@@ -136,7 +153,7 @@ fair given everything opened before, which under exact unlearning it is. The rev
 arm therefore needs no repair --- the reviewer's concern does not bite there, and we now
 say so explicitly.
 
-\emph{(b) The certificate is retargeted (Definition~2, Theorem~2).} The composite null
+\emph{(b) The certificate is retargeted (Definition~\ref{def:cert}, Theorem~\ref{thm:cert}).} The composite null
 ``some score still leaks'' is where dependence does bite. Once $M_u$ and the manifest
 exist, the cohort's sign vector is \emph{fixed}; the only randomness left to the audit
 is the reveal order. We therefore certify
@@ -148,13 +165,13 @@ against the committed cohort, which is what an auditor of \emph{this} model want
 bounded. Sequential reveal of a committed uniform permutation is simple random sampling
 without replacement, so we bet against the recentred boundary
 $p_0(t) = (m p_0 - \sum_{u<t} Z_{\pi(u)})/(m-t+1)$, the mean the unrevealed remainder
-would need for the null to hold. Theorem~2 shows this is a nonnegative supermartingale
+would need for the null to hold. Theorem~\ref{thm:cert} shows this is a nonnegative supermartingale
 \emph{conditionally on the sign vector}, so its coverage holds under \textbf{arbitrary}
 dependence across pairs, arbitrary heterogeneity across templates and repetition
 strata, and arbitrary non-identical distribution. No assumption whatsoever is spent on
 how the sign vector arose.
 
-\emph{(c) The super-population claim is available but priced (Proposition~3).} Under a
+\emph{(c) The super-population claim is available but priced (Proposition~\ref{prop:transfer}).} Under a
 named \emph{bounded coin influence} assumption --- flipping one coin changes at most
 $\kappa$ signs, with $\kappa=1$ automatic under exact unlearning --- McDiarmid gives
 $|\Delta^{(s)} - \bar\Delta^{(s)}| \le \kappa\sqrt{2\log(2/\alpha')/m}$. At $m=512$,
@@ -162,7 +179,7 @@ $\alpha'=0.05$, $\kappa=1$ that is $0.12$. So the algorithm-level statement cost
 tolerance inflation we now state, and this is exactly why our tight-tolerance
 end-to-end results are cohort certificates (see R2.W1).
 
-\emph{(d) Simulations with dependent and heterogeneous signs (\S5.1, Tables~1--2).}
+\emph{(d) Simulations with dependent and heterogeneous signs (\S\ref{sec:exp-dependence}, Tables~\ref{tab:dependence}--\ref{tab:cohortnull}).}
 We built the study you asked for and it vindicates the concern. Sign streams with
 \emph{marginal} mean exactly $p_0=0.55$ under four regimes, $2{,}000$ seeds, peeking
 after every pair:
@@ -183,7 +200,7 @@ shared model-level latent   & 0.500 & \textbf{0.481} & 0.000\\
 \noindent Independence and stratum heterogeneity alone leave the old process valid.
 A shared model-level random effect --- one training run leaks, another does not --- breaks
 it eight- to tenfold. The corrected process controls the realised-cohort error at
-$\le 0.020$ everywhere. Table~2 verifies Theorem~2 directly on \emph{fixed}
+$\le 0.020$ everywhere. Table~\ref{tab:cohortnull} verifies Theorem~\ref{thm:cert} directly on \emph{fixed}
 adversarially structured sign vectors at the least favourable feasible point of the
 cohort null: error never exceeds $0.035$ against nominal $0.05$, for every structure,
 both tolerances, both cohort sizes.
@@ -192,7 +209,7 @@ Finally, the dependence is real on our own runs: a chi-square test of sign-rate
 homogeneity across repetition strata rejects in $24$ of the $32$ un-unlearned runs,
 where there is leakage to be heterogeneous about, and in $14\%$ of runs overall.
 
-We note in \S4.2 one honest consequence of the retargeting: a cohort audited to
+We note in \S\ref{sec:certquantity} one honest consequence of the retargeting: a cohort audited to
 exhaustion resolves deterministically, so the betting machinery buys early stopping,
 validity under continuous monitoring, and the alarm arm, rather than buying the cohort
 statement itself. We prefer to state that than to leave the reader to discover it.
@@ -223,7 +240,7 @@ their costs. We also checked every remaining occurrence of ``certif*'' in the
 manuscript for an unqualified claim.
 
 \emph{Evidence that canaries track organic forgetting.} We have added the comparison
-you suggest, in the strongest form our data supports (\S5.10, Table~15): on identical
+you suggest, in the strongest form our data supports (\S\ref{sec:exp-descriptive}, Table~\ref{tab:descriptive}): on identical
 models and seeds we compute a TOFU-style forget-quality analogue (two-sample KS between
 the unlearned and retrained models' canary-score distributions) and a MUSE-style
 min-$k\%$ leakage analogue (paired AUC relative to the retrained reference), and report
@@ -248,7 +265,7 @@ most like an organic record, carries the \emph{weakest} signal, so the extrapola
 weakest exactly where it matters most. We do not claim a transfer theorem, because we
 do not have one.
 
-\emph{The threat model.} The honest-but-verifiable assumption is now stated in \S3.1,
+\emph{The threat model.} The honest-but-verifiable assumption is now stated in \S\ref{sec:setting},
 in the introduction's scope paragraph, in the scope paragraph that closes \S4, and in the conclusion --- i.e.\ wherever
 the certification claim is summarised. It also acquired teeth we had not expected: see
 our response to R2.8, where a measurement shows a zero-knowledge perplexity filter
@@ -278,7 +295,7 @@ described the score as ``the token-normalised negative log-likelihood''. That si
 word inverted the stated convention.
 
 We have fixed the prose rather than the figure, and pinned the convention down so it
-cannot drift again. \S3.4 now lists every member of $\F$ with the orientation stated
+cannot drift again. \S\ref{sec:scores} now lists every member of $\F$ with the orientation stated
 explicitly (``each oriented so that a \emph{higher} score means \emph{more
 memorised}''), defines $s_{\mathrm{loss}}$ as the token-normalised log-likelihood, and
 adds a sentence recording that an earlier draft said otherwise. Equation~(2) is now
@@ -298,7 +315,7 @@ calculations.
 \end{point}
 
 \begin{reply}
-You are exactly right, including in your inference about Table~3 (now Table~6). Theorem~4 now carries
+You are exactly right, including in your inference about Table~3 (now Table~6). Theorem~\ref{thm:power} now carries
 the derivation in full:
 \[
 \mathrm{KL}\bigl(\mathrm{Bern}(\tfrac12)\,\|\,\mathrm{Bern}(p_0)\bigr)
@@ -310,7 +327,7 @@ number. The tables were computed in code from the \emph{exact} divergence
 (\texttt{kl = 0.5*log(0.5/p0) + 0.5*log(0.5/(1-p0))}), so no numerical column changes:
 at $\eps=0.1$, $\alpha=0.05$ the exact bound is $596$ and $2\log(1/\alpha)/\eps^2$ gives
 $599$, against the erroneous rule's $2{,}397$. Only the stated rule of thumb was wrong,
-by a factor of four. Theorem~4 now says so in a sentence, so a reader of the previous
+by a factor of four. Theorem~\ref{thm:power} now says so in a sentence, so a reader of the previous
 version is not left guessing. The cohort-sizing prose is updated ($600$ pairs at
 $\eps=0.1$, $2{,}400$ at $0.05$, $15{,}000$ at $0.02$), as is the cost discussion, which
 previously quoted the wrong scaling.
@@ -322,7 +339,7 @@ whole score class $\F$.
 \end{point}
 
 \begin{reply}
-Added as Remark~3, distinguishing three statements. Each score's sequence covers
+Added as Remark~\ref{rem:cs}, distinguishing three statements. Each score's sequence covers
 \emph{its own} advantage with uniform-in-time probability $1-\alpha$: the guarantee is
 per score. The reported $\max_{s\in\F} U_t^{(s)}$ \emph{is} nonetheless a valid
 level-$\alpha$ anytime upper bound on $\sup_{s\in\F}\Delta^{(s)}$ with no multiplicity
@@ -345,7 +362,7 @@ precommitted sample size would also help show the practical cost of anytime vali
 
 \begin{reply}
 Agreed; the peeking binomial was a demonstration, not a competitor, and we have added
-all four comparators you name (\S5.4, Table~5), on the same sign stream and the same
+all four comparators you name (\S\ref{sec:exp-baselines}, Table~\ref{tab:baselines}), on the same sign stream and the same
 query budget:
 \begin{itemize}[leftmargin=1.4em,itemsep=0pt,topsep=2pt]
 \item exact group-sequential $\alpha$-spending with Pocock and O'Brien--Fleming
@@ -382,7 +399,7 @@ power and saves about a fifth of the queries, and it matches fixed-$n$'s power t
 within a rounding of one point at a threefold reduction in verifier cost. The table also isolates how
 much of the advantage comes from our retargeting rather than from betting: on the
 super-population target, same budget, power falls from $1.000$ to $0.882$ and mean
-queries rise from $523$ to $747$ --- the same price Proposition~3 charges in tolerance.
+queries rise from $523$ to $747$ --- the same price Proposition~\ref{prop:transfer} charges in tolerance.
 We think separating those two effects is more useful than a single headline number.
 \end{reply}
 
@@ -396,9 +413,9 @@ the number of runs is small.
 
 \begin{reply}
 Done, and the wording is now built around the intervals rather than the counts. A new
-Table~12 gives every pooled verdict count with a Clopper--Pearson $95\%$ interval:
+Table~\ref{tab:counts} gives every pooled verdict count with a Clopper--Pearson $95\%$ interval:
 $16/18 \to [0.65, 0.99]$, $18/18 \to [0.81, 1.00]$, $17/18 \to [0.73, 1.00]$. Mean
-columns carry across-seed standard deviations. Every claim in \S5.8 is now stated as
+columns carry across-seed standard deviations. Every claim in \S\ref{sec:exp-bench} is now stated as
 ``$16$ of $18$ runs, $95\%$ CI $[0.65,0.99]$'' rather than as a bare fraction, and the
 model-axis discussion is rewritten (see R2.W6) to stop treating single-seed rows as
 evidence of stability.
@@ -420,17 +437,38 @@ directly comparable. It certifies on all three seeds and achieves the widest
 forget/retain separation of any subject that remains fluent (forget NLL $6.20$ against
 retain $2.62$, versus NPO's $5.50$ against $2.60$), at a capability NLL of $4.17$
 against retraining's $3.23$. It is reported in the new metrics table
-(Table~13) and named in \S5.8 as the best-behaved of the approximate methods on the
+(Table~\ref{tab:metrics}) and named in \S\ref{sec:exp-bench} as the best-behaved of the approximate methods on the
 utility axis.
 
-On a second method we must be candid about the boundary of what this revision achieved.
-We prioritised SimNPO because you named it and because it is the closest competitor to
-a subject we already had. Adding RMU \citep{li2024wmdp} or task-vector negation would
-require a further round of fine-tuning across all six benchmark/model cells, and we
-judged the marginal value lower than the four new \emph{measurement} studies
-(\S5.1, \S5.4, \S5.10, \S5.11, \S5.12) that speak to the framework's validity rather
-than to its coverage of the method space. We name this as a limitation rather than
-implying the method list is complete.
+On a second method: RMU \citep{li2024wmdp} is now implemented and evaluated as well
+(new \S\ref{sec:exp-rmu}, Table~\ref{tab:rmu}). We chose it deliberately over task-vector negation
+because it is the one subject in the toolbox that never touches the token loss --- it
+pushes the forget set's hidden activations toward a fixed random direction at one
+layer while holding the retain set's activations near the frozen reference's --- so it
+tests whether the framework's conclusions survive a method of a different kind.
+Nothing in the audit changes to accommodate it, which is the point.
+
+It is run co-trained with the other utility-preserving subjects and the two controls
+in a single run on TOFU/GPT-2 over two seeds, so every row shares one fine-tuned
+adapter, one cohort and one machine. RMU certifies at $\eps = 0.2$ on both seeds and
+at $\eps = 0.1$ on one, with a realised cohort advantage of $+0.036$ ---
+indistinguishable from what retraining a fresh adapter achieves on the same cohorts
+($+0.031$), against the un-unlearned model's $+0.125$ --- at a retain NLL of $2.53$
+against retraining's $1.98$.
+
+The comparison also produced a finding we did not expect and now report, because it
+bears on your R1.5c point about what utility readings are for. RMU barely raises the
+forget split's likelihood at all ($2.71$ against the un-unlearned model's $2.18$),
+whereas NPO and SimNPO raise it to $5.79$ and $5.11$ --- yet all three land at
+essentially the same realised advantage ($+0.036$, $+0.005$, $-0.023$). A
+forget-quality metric reading likelihoods would rank RMU far below the other two; the
+certificate treats them as equivalent, because what it measures is whether an attacker
+can still \emph{distinguish} a trained twin from its ghost. Which ranking is right
+depends on what the audit is for, and it is the clearest instance in the study of the
+two readings coming apart on real models.
+
+Task-vector negation remains unevaluated, and we still name the method list as
+incomplete.
 \end{reply}
 
 \begin{point}{R1.5c --- held-out NLL is not sufficient for utility}
@@ -446,7 +484,7 @@ runs: mean NLL on the benchmark's own \emph{forget} and \emph{retain} splits;
 greedy-decode ROUGE-L recall against the reference continuation on both splits, the
 TOFU/MUSE reporting convention; and a general-knowledge \texttt{capability\_nll} on a
 fixed probe set --- TOFU \texttt{world\_facts}, or the MUSE holdout news stream.
-Results are in the new Table~13, on TOFU/GPT-2 over $3$ seeds.
+Results are in the new Table~\ref{tab:metrics}, on TOFU/GPT-2 over $3$ seeds.
 
 They sharpen the paper's central utility finding rather than softening it. Gradient
 ascent reaches forget NLL $94.3$, retain NLL $93.7$ and ROUGE-L recall of exactly
@@ -464,7 +502,7 @@ we discovered a confound while running this and report it rather than printing t
 flattering number: for TOFU the P1 relearn corpus \emph{is} the capability probe set,
 so a post-P1 capability reading measures training on the probe. It reads $1.46$,
 better than the retrained reference, which is an artefact. That cell is marked
-unavailable in Table~13 with the reason given.
+unavailable in Table~\ref{tab:metrics} with the reason given.
 \end{reply}
 
 \begin{point}{R1.5d --- systematic R-VOUCH}
@@ -503,7 +541,7 @@ adding citations.
 \end{point}
 
 \begin{reply}
-All four are now discussed substantively, in a restructured \S2.3 titled
+All four are now discussed substantively, in a restructured \S\ref{sec:related} titled
 \emph{Evaluating unlearning: a literature of negative results}, which we organised into
 three strands so that each work's bearing on VOUCH is explicit rather than implied.
 
@@ -538,12 +576,21 @@ to a paraphrase is, by construction, mass our default score class does not see, 
 our scores read the likelihood of the literal secret span. We state this plainly, note
 that the framework's response is structural (the class $\F$ is declared, the
 certificate is explicitly a statement about $\F$, and any named score can be added at
-the cost of power and no loss of validity since Theorem~2 needs no multiplicity
-correction), point to our new out-of-class experiments (\S5.11) as a first step, and
-identify a paraphrase-aware score in their spirit as the single most valuable extension
-of this work. It is also cited in the conclusion's limitations.
+the cost of power and no loss of validity since Theorem~\ref{thm:cert} needs no multiplicity
+correction), point to our out-of-class experiments (\S\ref{sec:exp-outclass}--\S\ref{sec:exp-lira}) as a first step. We have
+also stopped calling a paraphrase-aware score the most valuable extension we have not
+made, and made it: \S\ref{sec:exp-para} adds $s_{\mathrm{para}}$ --- the \emph{maximum}
+token-normalised log-likelihood of the secret over five paraphrase frames, rather than
+the mean over wrappers, since an average falls precisely when mass moves out of the
+frames it averages over --- to $\F$ and reports the cost. It is one to two per cent in
+pairs and no verdict changes. We are equally explicit about what that does not
+establish: our secrets are ten random alphanumeric characters, and a high-entropy
+random string has no semantically equivalent rephrasing for mass to migrate onto, so
+this canary design cannot exhibit the squeezing effect. Testing that needs canaries
+whose \emph{secret} is natural language, so that the twins are exchangeable as
+propositions rather than as strings, and that is the extension we now name.
 
-We additionally added, on your and Reviewer~2's prompting, a new \S2.2
+We additionally added, on your and Reviewer~2's prompting, a new \S\ref{sec:canaries}
 \emph{Measuring memorisation and forgetting} placing VOUCH in the secret-sharer lineage
 \citep{carlini2019secret} and the forgetting-measurement lineage
 \citep{jagielski2023measuring}. The comparison there is one we should have drawn in the
@@ -701,7 +748,7 @@ choose $\eps$ would also help.
 \begin{reply}
 We have done the first of the two, and also the discussion you asked for.
 
-\emph{End-to-end at $\eps \le 0.05$ (Table~11).} The corrected finite-cohort target
+\emph{End-to-end at $\eps \le 0.05$ (Table~\ref{tab:epssweep}).} The corrected finite-cohort target
 (R1.1) is materially more powerful than the fixed-boundary one, and replaying every
 saved run at $\eps \in \{0.05, 0.1, 0.2\}$ now yields real-model certificates at
 $\eps = 0.05$: exact unlearning is issued on all three seeds at $\eps=0.05$ for
@@ -710,7 +757,7 @@ $\eps = 0.1$ it is issued on all $18$.
 
 \emph{And on the super-population target.} The result above is a \emph{cohort}
 certificate, and at $384$--$640$ pairs the super-population arm certifies nothing below
-$\eps = 0.2$ --- Theorem~4 says it should not, since $\eps = 0.1$ needs about $600$
+$\eps = 0.2$ --- Theorem~\ref{thm:power} says it should not, since $\eps = 0.1$ needs about $600$
 pairs. So we ran the experiment your point implies: a new tight-tolerance cohort of
 $3{,}072$ pairs on TOFU/GPT-2, two seeds, with every canary inserted \emph{once}
 ($r = 1$) to hold the corpus share to $22.5\%$. On that cohort the super-population
@@ -718,7 +765,7 @@ target certifies at $\eps = 0.1$ for all four subjects and both seeds --- your r
 met on the target you asked about. At $\eps = 0.05$ it is still undetermined, and we
 now say why: the $2{,}400$-pair figure is for a one-sided crossing, and two-sided
 certification costs about $1.7\times$, so $\eps = 0.05$ wants roughly $4{,}000$ pairs.
-Both targets are reported side by side in Tables~11 and 14 and we recommend reading them
+Both targets are reported side by side in Tables~\ref{tab:epssweep} and \ref{tab:tight} and we recommend reading them
 together.
 
 \emph{That experiment also produced the most useful negative result in the revision},
@@ -731,15 +778,15 @@ $6{,}872$-document corpus leaves no measurable trace in a 124M-parameter model. 
 the sharpest form of your W2 point that we can state: the audit's power at the
 most organic-like dose is not merely lowest, on this model it is nil, so a certificate
 issued there is uninformative rather than wrong. We have added a subsection saying so
-(\S5.9) and named it in the conclusion as the most important open problem the
+(\S\ref{sec:exp-tight}) and named it in the conclusion as the most important open problem the
 framework faces.
 
-\emph{What $\eps = 0.2$ means, said plainly.} \S5.8 now closes with an explicit
+\emph{What $\eps = 0.2$ means, said plainly.} \S\ref{sec:exp-bench} now closes with an explicit
 paragraph on choosing $\eps$, which states that $\eps=0.2$ licenses a $60\%$
 distinguishing rate and $\eps=0.05$ a $52.5\%$ one, and gives three considerations that
 set it: a regulatory one (if the audit must support a demonstrability claim, the
 permitted advantage should not itself be reportable as a privacy loss, arguing for
-$\eps \le 0.05$); a statistical one (Theorem~4 fixes the cohort at
+$\eps \le 0.05$); a statistical one (Theorem~\ref{thm:power} fixes the cohort at
 $\approx 2\log(1/\alpha)/\eps^2$ pairs, so $\eps$ is bought with canaries --- $600$ at
 $0.1$, $2{,}400$ at $0.05$, $15{,}000$ at $0.02$); and an operational one (the cohort must
 stay a negligible corpus share, which makes $\eps=0.02$ affordable for a provider with
@@ -752,7 +799,7 @@ powerful target, the two GPT-2 cells in which the un-unlearned model was previou
 ``undetermined'' are now \emph{certified} at $\eps=0.2$ --- their realised advantages are
 $0.062$ and $0.078$, genuinely below the tolerance. So at $\eps=0.2$ a model that was
 never unlearned at all can pass. That is the sharpest available illustration of your
-point about the permissiveness of the default, and we now use it as such in \S5.8.
+point about the permissiveness of the default, and we now use it as such in \S\ref{sec:exp-bench}.
 \end{reply}
 
 \subsection*{W2. Canaries versus a user's deleted record}
@@ -779,7 +826,7 @@ conclusion. The legal framing is rewritten (R1--M1) so that it no longer implies
 certificate discharges an Article~17 obligation for a particular data subject; it
 presents the accountability duty as the reason evidence is needed at all.
 
-\emph{The transfer statement we can prove.} Proposition~3 bridges the \emph{realised
+\emph{The transfer statement we can prove.} Proposition~\ref{prop:transfer} bridges the \emph{realised
 cohort} advantage to the \emph{super-population} advantage over the coin draw, under an
 explicitly named bounded-coin-influence assumption, at cost
 $\kappa\sqrt{2\log(2/\alpha')/m}$. That is a genuine, named, quantified transfer.
@@ -789,7 +836,7 @@ $\kappa\sqrt{2\log(2/\alpha')/m}$. That is a genuine, named, quantified transfer
 say so, and we have strengthened the empirical calibration and its stated limits: the
 dose--response curve is now reported with dispersion, and we state explicitly that
 $r=1$, the stratum most like an organic record, carries the weakest signal, so the
-extrapolation is weakest exactly where it matters most. \S5.10's head-to-head against
+extrapolation is weakest exactly where it matters most. \S\ref{sec:exp-descriptive}'s head-to-head against
 forget-quality and min-$k\%$ on identical runs (see R1.2) is the most direct evidence we
 can offer that canary verdicts track conventional forgetting measurements, and we
 present it with its limitations rather than as a substitute for the missing theorem.
@@ -805,14 +852,14 @@ one-directionality immediately after the proposition.
 \end{point}
 
 \begin{reply}
-Done, as Remark~4 placed immediately after the proposition, and stated at least as
+Done, as Remark~\ref{rem:onedirection} placed immediately after the proposition, and stated at least as
 strongly as you put it: ``The converse is false and we claim nothing like it: passing
 VOUCH does \emph{not} imply any $(\eps_u,\delta_u)$ guarantee, does not bound the
 influence of any datum outside the canary cohort, and does not constrain scores outside
 $\F$.'' The remark also reframes the proposition's purpose as a consistency check on
 the definition --- an algorithm with a parameter-space guarantee should not be flagged by
 a behavioural audit --- and says it should not be read as a semantic equivalence in
-either direction. The phrase ``semantic anchor'' is deleted; \S2.4 now calls it a
+either direction. The phrase ``semantic anchor'' is deleted; \S\ref{sec:related} now calls it a
 consistency check and cross-references the remark. The proposition is also retitled
 ``One-directional bridge from certified unlearning'' so the qualification travels with
 the name.
@@ -831,7 +878,7 @@ extract.''
 
 \begin{reply}
 We ran the experiment, it produced a partial negative result, and we report it as such
-(\S5.11, Table~16). Two attacks that no member of $\F$ implements were run against all
+(\S\ref{sec:exp-outclass}, Table~\ref{tab:outclass}). Two attacks that no member of $\F$ implements were run against all
 $178$ model/subject/seed combinations certified at $\eps=0.2$:
 \begin{itemize}[leftmargin=1.4em,itemsep=0pt,topsep=2pt]
 \item \emph{stratum-restricted}: the repetition label $r_i$ is part of the committed
@@ -841,7 +888,7 @@ concentrates it on the most-memorised pairs. No score in $\F$ uses $r_i$.
 scores estimated on the first half of the reveal order and applied to the second. A
 trained combination of members of $\F$ is not itself a member of $\F$.
 \end{itemize}
-Both preserve Theorem~1 --- the first conditions only on committed per-pair data, the
+Both preserve Theorem~\ref{thm:null} --- the first conditions only on committed per-pair data, the
 second uses a predictable weight vector --- so both come with anytime-valid bounds rather
 than point estimates.
 
@@ -896,10 +943,33 @@ paraphrase-aware score, since \citet{li2026beliefs} show that gradient-ascent
 objectives move mass onto semantically equivalent rephrasings --- mass our literal-span
 scores cannot see by construction.
 
-Finally, on the LiRA-style attack you suggested: we did not run it. It needs dozens of
-retrained shadow references per cell and was outside the compute available for this
-revision. We say this in \S5.11 and name it as the most valuable next experiment,
-rather than implying the two attacks we did run are a substitute.
+\medskip
+\emph{And, since that draft, the LiRA-style attack you suggested.} You were right that
+it was the experiment worth running, and we have now run it (new \S\ref{sec:exp-lira},
+Table~\ref{tab:lira}). It needs the whole pipeline repeated once per shadow, which the
+124M--5.1B tiers cannot afford here, so it runs on the TinyGPT tier --- the one the
+paper already uses where retraining is cheap enough to be ground truth --- with $16$
+matched shadows and a cohort of $256$ pairs. Each shadow repeats the pipeline with an
+independent redraw of the inclusion coins, so every twin is trained on in about half
+of them, and the unlearned subject is calibrated against shadows that were themselves
+unlearned.
+
+The positive control is what makes the result readable, and we would draw your
+attention to it first: on the un-unlearned model LiRA achieves
+$\hat\Delta = +0.820$ (95\% CI $[+0.736,+0.884]$) and agrees with the declared class's
+own guess on $92\%$ of pairs. The attack works. On the NPO model VOUCH certifies at
+$\eps = 0.2$, the same attack yields $\hat\Delta = -0.016$, 95\% CI
+$[-0.141,+0.110]$, with agreement falling to $0.47$ --- chance. The interval excludes
+every tolerance we certify at.
+
+This is a different kind of evidence from the two attacks above, and we are careful
+about how much it carries. It is one target model, one tier, one unlearning method and
+$16$ shadows against the hundreds a canonical LiRA would use, so it does not show that
+$\F$ is wide enough in general. But unlike the stratum-restricted and learned-combination
+attacks, it cannot be dismissed as too weak to have found anything: it finds a great
+deal where leakage exists and nothing where the certificate says there is none. That is
+the first measurement in the paper that \emph{bounds} the class-restriction gap rather
+than merely naming it.
 \end{reply}
 
 \subsection*{W5. No comparison against an existing verification method}
@@ -912,8 +982,8 @@ convert the paper's central rhetorical claim into evidence, and it is cheap to d
 \end{point}
 
 \begin{reply}
-You were right that it was cheap and right that we should have done it. \S5.10 and
-Table~15 now report both metrics on the same models and the same seeds, and the specific
+You were right that it was cheap and right that we should have done it. \S\ref{sec:exp-descriptive} and
+Table~\ref{tab:descriptive} now report both metrics on the same models and the same seeds, and the specific
 claim you flagged is now substantiated: on the MUSE/Phi-1.5 GradDiff seed that VOUCH
 \emph{revokes}, the min-$k\%$ leakage analogue reads $-2.4\%$ ($-1.2\%$ averaged over that cell's $3$ seeds) --- a \emph{negative}
 leakage figure on a model carrying real residual memorisation. That is the evidence the
@@ -927,7 +997,7 @@ on several hundred paired scores detects distributional differences far smaller 
 tolerance one would certify. And the min-$k\%$ statistic inspected after every pair ---
 the way an auditor facing a stream of deletions would naturally use it --- flags leakage
 on genuinely clean retrained models in several cells, which is optional stopping doing
-what \S5.2 predicts.
+what \S\ref{sec:exp-validity} predicts.
 
 We are also explicit about the comparison's limits: these are analogues computed on
 canary cohorts, not the benchmarks' own metrics on their own splits, and a metric
@@ -951,7 +1021,7 @@ matter most.
 Every part of this is addressed, and we accept the characterisation in the last
 sentence.
 
-\emph{Intervals and dispersion.} New Table~12 gives every pooled verdict count with a
+\emph{Intervals and dispersion.} New Table~\ref{tab:counts} gives every pooled verdict count with a
 Clopper--Pearson $95\%$ interval ($16/18 \to [0.65,0.99]$; $18/18 \to [0.81,1.00]$;
 $17/18 \to [0.73,1.00]$). The GPT-2 end-to-end table gains an across-seed standard
 deviation column on $\bar D$. Counts in the prose are now always given with their
@@ -963,7 +1033,7 @@ text is rewritten. It no longer says the axis is stable. It says: detection is s
 --- every un-unlearned model is revoked at every scale, on every seed run; certification
 is \emph{not} uniformly stable --- at the $384$-pair cohorts used for the largest models
 the super-population target returns undetermined for retraining and NPO on Qwen3-0.6B
-and Qwen3-4B, exactly as Theorem~4 predicts at that cohort size; and one seed per cell
+and Qwen3-4B, exactly as Theorem~\ref{thm:power} predicts at that cohort size; and one seed per cell
 is too thin to distinguish a systematic effect from noise. We also state that those
 cells do issue under the cohort target, so the reader can see which claim is
 cohort-size-limited and which is not.
@@ -1001,7 +1071,7 @@ At $\eps=0.02$, $45\%$ of runs are censored and the corrected median is $18{,}37
 comfortably \emph{above} the limit of $14{,}976$; conditioning on the fast half had
 produced $11{,}189$. At $\alpha=0.01$ censoring reaches $72\%$ and the survival curve
 never reaches one half, so no median exists and we now print ``---'' rather than a
-number. The caption states the censoring convention, and \S5.5 explains the artefact
+number. The caption states the censoring convention, and \S\ref{sec:exp-power} explains the artefact
 explicitly so a reader of the earlier version can see what changed.
 
 One presentational note. The table also has a finite-cohort column whose entries can
@@ -1028,7 +1098,7 @@ We ran the experiment and it contradicts what we had written. We retract the cla
 A perplexity filter under the \emph{pristine base model} --- one forward pass per record,
 no knowledge of the template --- separates the deployed canaries from the TOFU corpus with
 AUC $1.000$ and recovers the \emph{entire} cohort at a $1\%$ false-positive rate
-(\S5.12, Table~17). A trained character-$n$-gram classifier does the same.
+(\S\ref{sec:exp-detect}, Table~\ref{tab:detect}). A trained character-$n$-gram classifier does the same.
 
 There is an information-theoretic reason, and stating it turns the negative result into
 a design rule. A span carrying $H$ bits of entropy that the scoring model has never seen
@@ -1066,7 +1136,7 @@ would refine it slightly, because the distinction turns out to be the crux of th
 model. Both twins in a pair are drawn from the same template distribution and are
 therefore \emph{equally} conspicuous, so a provider who locates the cohort learns which
 records are canaries but nothing whatever about which twin the coin admitted: the null
-of Theorem~1 survives complete disclosure of the manifest's \emph{contents}. What it
+of Theorem~\ref{thm:null} survives complete disclosure of the manifest's \emph{contents}. What it
 does not survive is a provider who, having located the cohort, treats it differently
 from organic data. That is special-casing; it is what the honest-but-verifiable
 assumption excludes; and it is precisely the gap cryptographic attestation exists to
@@ -1096,7 +1166,7 @@ re-attributed, because it did not correspond to a configuration we could identif
 unambiguously in the logs, and quoting it would compound the original error. Cost is
 now given as a closed form plus per-tier measurements. The workload is exactly $2Qm$
 forward passes and no training. As a function of the two variables you name: $m$ scales
-as $2\log(1/\alpha)/\eps^2$ by Theorem~4, so verifier cost scales as
+as $2\log(1/\alpha)/\eps^2$ by Theorem~\ref{thm:power}, so verifier cost scales as
 $4Q\log(1/\alpha)/\eps^2$ forward passes, and the per-pass cost scales with model size.
 Measured medians, per tier and on the hardware that tier ran on, are $13$\,s (TinyGPT,
 0.9M), $63$\,s (GPT-2, $640$ pairs), $112$--$148$\,s (124M--1.4B benchmark tier) and
@@ -1124,7 +1194,7 @@ inference path.
 
 So the committed tie-break coin is a formality for the loss score and is
 load-bearing for min-$k\%$ on that model --- which is the measured justification you
-asked for, and we report both numbers in \S3.4 and \S5.8 rather than only the reassuring
+asked for, and we report both numbers in \S\ref{sec:scores} and \S\ref{sec:exp-bench} rather than only the reassuring
 one. We also report the near-tie rate at $|D| < 10^{-6}$ in the released re-analysis
 JSON.
 \end{reply}
@@ -1141,7 +1211,7 @@ certificate is meant to cover.
 Stated in the experiments preamble, in Appendix~A, and in the definition of ``retrain
 (fresh adapter)'' (R1.7a). On representativeness we give a direct two-part answer
 rather than a disclaimer. The \emph{audit} is indifferent: it queries $M_u$ as a black
-box and never inspects parameters, so nothing in Theorem~1 or Theorem~2 changes if the
+box and never inspects parameters, so nothing in Theorem~\ref{thm:null} or Theorem~\ref{thm:cert} changes if the
 provider unlearns by full-parameter gradient steps. What the adapter setting changes is
 the \emph{difficulty of the problem the subjects face}: a rank-$16$ adapter has far
 fewer degrees of freedom in which to hide memorised content than a full fine-tune, so
@@ -1182,7 +1252,7 @@ relative to them.
 \end{point}
 
 \begin{reply}
-Both added, with a new \S3.2 devoted to situating the design. \citet{carlini2019secret}
+Both added, with a new \S\ref{sec:canaries} devoted to situating the design. \citet{carlini2019secret}
 is credited with the planted-canary device and the exposure metric, and we state the one
 change that matters for inference: exposure answers ``how memorised is this string,''
 whereas randomising which twin enters training makes the measurement carry a
@@ -1241,10 +1311,10 @@ acknowledging this.
 \end{point}
 
 \begin{reply}
-Added, in \S5.2 immediately after the calibration numbers: ``A realised error of
+Added, in \S\ref{sec:exp-validity} immediately after the calibration numbers: ``A realised error of
 $0.031$ against a nominal $0.05$ is what a supermartingale bound is \emph{supposed} to
 produce; it is evidence of validity, not of tightness, and the same conservatism costs
-power, which is the price Table~5 quantifies. We do not claim the bound is tight and the
+power, which is the price Table~\ref{tab:baselines} quantifies. We do not claim the bound is tight and the
 gap is not a defect.'' The cross-reference is to the new sequential-baselines table, so
 the reader can see the cost measured rather than merely conceded.
 \end{reply}
@@ -1254,7 +1324,7 @@ Fig.\ 2's left panel and the corresponding text make the same point twice; one c
 \end{point}
 
 \begin{reply}
-The soundness result is now carried by the table and Remark~2 alone, and the redundant
+The soundness result is now carried by the table and Remark~\ref{rem:mixture} alone, and the redundant
 figure panel is dropped from the manuscript.
 \end{reply}
 
@@ -1264,7 +1334,7 @@ and small $\eps$, as the proof's final step assumes.
 \end{point}
 
 \begin{reply}
-Done: Theorem~4 now reads ``\ldots the expectation being taken under exact unlearning and
+Done: Theorem~\ref{thm:power} now reads ``\ldots the expectation being taken under exact unlearning and
 the asymptotics in small $\eps$'', and the statement additionally notes that for the
 finite-cohort target the time is capped by the cohort size $m$, since the claim resolves
 deterministically once the cohort is exhausted.
@@ -1282,36 +1352,43 @@ Figure~3. The sentence now reads ``$\Delta=0.1$ in $690$'', in numerals.
 \clearpage
 \section*{A note on what this revision does not settle}
 
-\noindent Three of the reviewers' requests we have answered only partially, and we
-identified two further gaps ourselves; we would rather list all five than let them be
-inferred from the text.
+\noindent Since the first revision draft we have closed four of the five gaps this
+section previously listed: the LiRA-style attack is run (\S\ref{sec:exp-lira}), RMU is added as a
+second utility-preserving subject (\S\ref{sec:exp-rmu}), the paraphrase-aware score is implemented
+and added to $\F$ (\S\ref{sec:exp-para}), Theorem~\ref{thm:cohortpower} supplies the finite-population power analysis,
+and the reveal order can now be drawn from a public randomness beacon. What remains is
+narrower than before, and sharper for it.
 
 \begin{enumerate}[leftmargin=1.4em,itemsep=3pt]
-\item \textbf{A LiRA-style attack outside $\F$} (R2.W4). Not run; it needs dozens of
-retrained shadow references per cell. The two attacks we could run came back below
-their own binomial nulls, so the size of the gap between $\sup_{s\in\F}|\Delta^{(s)}|$
-and the advantage a genuinely strong attack could extract is, on our evidence,
-\emph{unmeasured} rather than small. This is the single most consequential thing this
-revision does not settle.
-\item \textbf{A paraphrase-aware score in $\F$} (R1.6, prompted by
-\citealt{li2026beliefs}). Not implemented. It is the single most valuable extension we
-can identify, precisely because the squeezing effect describes leakage our current class
-cannot see, and we say so in both the related work and the conclusion.
-\item \textbf{Method and probe coverage} (R1.5b, R1.5d). SimNPO is added; RMU and
-task-vector negation are not, and the R-VOUCH probes remain anchored on NPO in the
-benchmark tier. A general capability probe is added but it is \texttt{world\_facts} and
-the MUSE holdout, not a full suite such as MMLU.
-\item \textbf{A finite-population power analysis} for the cohort target. Theorem~4 is
-proved for the fixed-boundary process with i.i.d.\ signs; under without-replacement
-reveal the increments are neither independent nor identically distributed and the
-regret bounds do not transfer as stated. We have scoped the theorem accordingly and
-report the cohort target's certification times empirically, but the matching theory is
-missing.
-\item \textbf{An audit-side source of reveal randomness.} Theorem~2 needs the reveal
-order to be independent of the realised signs. Our runs seed it from the run seed,
-which also seeds cohort generation and training. Nothing in the pipeline exploits the
-coupling, but the condition is not met and we say so in Remark~1 and Appendix~A rather
-than assert independence we do not have.
+\item \textbf{The LiRA result's reach.} It is one target model, on the TinyGPT tier,
+against one unlearning method, with $16$ shadows. Its positive control establishes
+that the attack works, so its null on a certified model is informative rather than
+vacuous --- but a shadow study at 124M parameters and above needs the whole pipeline
+repeated per shadow, which we could not afford, and nothing here rules out a larger
+model behaving differently.
+\item \textbf{The squeezing effect is still untested.} We added the score
+\citet{li2026beliefs} motivate, and it costs almost nothing to carry, but our secrets
+are random alphanumeric strings and a random string has no paraphrase. Testing whether
+mass migrates onto rephrasings needs canaries whose secret is natural language --- twins
+exchangeable as propositions, not as strings --- which is a canary design we have not
+built.
+\item \textbf{Method and probe coverage.} SimNPO and RMU are added; task-vector
+negation is not. The R-VOUCH probes remain anchored on NPO in the benchmark tier, P2
+runs on the small tiers only, and the capability probe is \texttt{world\_facts} and
+the MUSE holdout rather than a suite such as MMLU.
+\item \textbf{Theorem~\ref{thm:cohortpower} bounds one of the two mechanisms.} It gives an exact,
+strategy-independent finite-sample guarantee via the null's remaining feasible
+compositions, and that is what was missing. It does not give a growth rate for the
+wealth process under without-replacement reveal, which is usually the mechanism that
+fires first; the cohort target's typical timing is still reported empirically.
+\item \textbf{The released numbers predate the beacon.} Every table in the paper was
+computed with \texttt{reveal\_source = "seeded"}, in which the reveal order is derived
+from the run seed and so does not meet Theorem~\ref{thm:cert}'s independence hypothesis. The two
+sources that do meet it are implemented and tested, and a deployed audit should use
+the beacon; we report the tables as they were computed rather than restating them
+under a reveal rule they were not run under.
+\item \textbf{The RMU tier is thin.} Two seeds, CPU, TOFU/GPT-2 only, reported
+separately from the main benchmark table rather than merged into it.
 \end{enumerate}
 
 \noindent Set against those, the changes we regard as materially strengthening the
@@ -1319,11 +1396,10 @@ paper are the ones the reviewers forced: a certificate whose validity no longer 
 on an independence assumption that our own data violates, a tolerance sweep that reaches
 $\eps=0.05$ on real models with the cohort/super-population distinction made explicit, a
 comparison against valid sequential procedures rather than a straw baseline, a
-head-to-head against the metrics we claim to replace, and a detectability measurement
-that overturns a claim we should never have made without testing. The out-of-class
-experiment we would characterise differently: it is the one addition that came back
-inconclusive, and we report it as such rather than as support for a conclusion it does
-not carry. We are grateful for both reports.
+head-to-head against the metrics we claim to replace, a detectability measurement
+that overturns a claim we should never have made without testing, and --- added since
+the first draft --- an attack from outside $\F$ that is strong enough for its null to
+mean something. We are grateful for both reports.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

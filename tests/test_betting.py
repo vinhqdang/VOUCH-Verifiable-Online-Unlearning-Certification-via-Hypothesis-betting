@@ -3,8 +3,10 @@
 Run:  python3 -m pytest tests/ -q   (or python3 tests/test_betting.py)
 """
 
+import json
 import math
 import os
+import random
 import sys
 
 import numpy as np
@@ -400,3 +402,143 @@ def test_boundary_clamp_is_shared_between_stake_cap_and_payoff():
     assert abs(ep.lam_max - ep._lam_max_at(v)) < 1e-9 * max(1.0, ep.lam_max)
     # and the implied worst-case factor is the max_bet_frac slack, not negative
     assert abs((1.0 + ep.lam_max * (v - 1.0)) - (1.0 - ep.max_bet_frac)) < 1e-6
+
+
+# ---------------------------------------------------------------------------
+# Theorem 5: finite-cohort certification time
+# ---------------------------------------------------------------------------
+
+def _k0(m, p0):
+    return math.ceil(m * p0 - 1e-9)
+
+
+def test_cohort_refutation_worst_case_bound():
+    """Theorem 5(a): for EVERY reveal order the upper certificate process
+    refutes by m - (k0 - j) + 2, provided the cohort sits at least two pairs
+    below the boundary.  Checked against the adversarial (ones-first) order,
+    which the proof identifies as the worst case, and against random ones."""
+    rng = random.Random(20260903)
+    for m, p0 in ((384, 0.6), (384, 0.55), (256, 0.6), (128, 0.7)):
+        k0 = _k0(m, p0)
+        for j in (0, 1, k0 // 3, max(k0 - 2, 0)):
+            if k0 - j < 2:
+                continue
+            bound = m - (k0 - j) + 2
+            orders = [[1] * j + [0] * (m - j)]          # adversarial
+            for _ in range(20):                          # and random ones
+                o = [1] * j + [0] * (m - j)
+                rng.shuffle(o)
+                orders.append(o)
+            for signs in orders:
+                ep = OneSidedEProcess(m0=p0, direction="below",
+                                      strategy="mixture", alpha=1e-15,
+                                      population_size=m)
+                t_ref = None
+                for i, z in enumerate(signs, start=1):
+                    ep.update(float(z))
+                    if ep._refuted:
+                        t_ref = i
+                        break
+                assert t_ref is not None, (m, p0, j)
+                assert t_ref <= bound, (m, p0, j, t_ref, bound)
+
+
+def test_cohort_refutation_worst_case_is_attained():
+    """Theorem 5(a) is tight: the ones-first order attains the bound."""
+    m, p0, j = 384, 0.6, 100
+    k0 = _k0(m, p0)
+    signs = [1] * j + [0] * (m - j)
+    ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                          alpha=1e-15, population_size=m)
+    t_ref = None
+    for i, z in enumerate(signs, start=1):
+        ep.update(float(z))
+        if ep._refuted:
+            t_ref = i
+            break
+    assert t_ref == m - (k0 - j) + 2, (t_ref, m - (k0 - j) + 2)
+
+
+def test_cohort_refutation_expected_time():
+    """Theorem 5(b): E[tau*] = (m-k0+1)(m+1)/(m-j+1) + 1 under a uniform
+    reveal order (the negative-hypergeometric first-passage identity)."""
+    rng = random.Random(7)
+    for m, p0, j in ((384, 0.6, 192), (256, 0.55, 100), (512, 0.6, 256)):
+        k0 = _k0(m, p0)
+        predicted = (m - k0 + 1) * (m + 1) / (m - j + 1) + 1
+        times = []
+        for _ in range(400):
+            signs = [1] * j + [0] * (m - j)
+            rng.shuffle(signs)
+            ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                                  alpha=1e-15, population_size=m)
+            for i, z in enumerate(signs, start=1):
+                ep.update(float(z))
+                if ep._refuted:
+                    times.append(i)
+                    break
+        observed = sum(times) / len(times)
+        assert abs(observed - predicted) < 0.03 * predicted, (observed, predicted)
+
+
+def test_cohort_refutation_needs_two_pairs_of_margin():
+    """Theorem 5's hypothesis is sharp: at j = k0 - 1 the null stays feasible
+    to the last pair, so the refutation branch never fires."""
+    m, p0 = 384, 0.6
+    j = _k0(m, p0) - 1
+    signs = [1] * j + [0] * (m - j)
+    ep = OneSidedEProcess(m0=p0, direction="below", strategy="mixture",
+                          alpha=1e-15, population_size=m)
+    for z in signs:
+        ep.update(float(z))
+    assert not ep._refuted
+
+
+# ---------------------------------------------------------------------------
+# Verifier-side reveal randomness (Remark 1)
+# ---------------------------------------------------------------------------
+
+def test_reveal_seed_sources_and_provenance():
+    from vouch.verify.beacon import draw_reveal_seed
+    root = "a" * 64
+    s_seeded, p_seeded = draw_reveal_seed(root, source="seeded", seed=11)
+    assert s_seeded == 11
+    assert p_seeded["reveal_independent_of_signs"] is False
+    s_local, p_local = draw_reveal_seed(root, source="local")
+    assert p_local["reveal_independent_of_signs"] is True
+    assert p_local["reveal_verifiable"] is False
+    # an unreachable beacon must fall back to local entropy, not raise
+    s_fb, p_fb = draw_reveal_seed(root, source="beacon",
+                                  beacon_url="https://127.0.0.1:9/nope",
+                                  timeout=0.5)
+    assert p_fb["reveal_source"] == "local" and "beacon_error" in p_fb
+    # ... unless the caller insists on a verifiable draw
+    try:
+        draw_reveal_seed(root, source="beacon",
+                         beacon_url="https://127.0.0.1:9/nope",
+                         timeout=0.5, fallback_to_local=False)
+        raise AssertionError("expected the beacon failure to propagate")
+    except Exception as exc:
+        assert not isinstance(exc, AssertionError)
+
+
+def test_reveal_seed_binds_manifest_to_beacon_randomness():
+    """The order must depend on both the commitment and the beacon value, so
+    that neither party alone determines it."""
+    from vouch.verify.beacon import _derive
+    r1, r2 = "00" * 32, "ff" * 32
+    m1, m2 = "a" * 64, "b" * 64
+    assert _derive(m1, r1) != _derive(m1, r2)   # beacon changes the order
+    assert _derive(m1, r1) != _derive(m2, r1)   # so does the manifest
+    assert _derive(m1, r1) == _derive(m1, r1)   # and it is reproducible
+
+
+def test_certificate_records_reveal_provenance():
+    v = VouchVerifier(["loss"], VouchConfig(eps=0.2, reveal_source="seeded"),
+                      manifest_sha256="c" * 64)
+    rng = random.Random(3)
+    cert = v.run([{"loss": rng.gauss(0, 1)} for _ in range(128)], shuffle_seed=5)
+    assert cert.reveal["reveal_source"] == "seeded"
+    assert cert.reveal["reveal_seed"] == 5
+    assert cert.reveal["reveal_independent_of_signs"] is False
+    assert "reveal" in json.loads(cert.to_json())

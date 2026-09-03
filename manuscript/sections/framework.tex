@@ -66,6 +66,10 @@ it, an unopened leaf's hash could be attacked by enumeration.
 
 The verifier draws a uniformly random reveal order $\pi$, committed in advance, and
 opens leaf $\pi(t)$ at step $t$, checking its Merkle path against the published root.
+Where $\pi$'s randomness comes from is a protocol requirement rather than an
+implementation choice, because Theorem~\ref{thm:cert} spends it: it must be the
+verifier's own, drawn after the commitment and unpredictable to the provider
+(Remark~\ref{rem:order}).
 The filtration is
 \begin{equation}\label{eq:filtration}
 \F_t \;=\; \sigma\Bigl(\text{query access to } M_u,\;
