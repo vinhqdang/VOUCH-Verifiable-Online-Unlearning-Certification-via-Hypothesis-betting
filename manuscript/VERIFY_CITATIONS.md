@@ -1,11 +1,13 @@
 # Citation verification status
 
-All 41 references in `refs.bib` were verified against Crossref, doi.org, publisher
-pages, OpenReview, PMLR, dblp, and NeurIPS/USENIX proceedings (July 2026). Author
-lists are complete (no "et al."). DOIs are given where the venue issues one; otherwise
-a stable publisher/arXiv/OpenReview URL. Below are the **five entries worth a final
-human check before submission** — none is believed wrong, but each has a caveat the
-automated check could not fully close.
+All 50 references in `refs.bib` were verified against Crossref, doi.org, publisher
+pages, OpenReview, PMLR, dblp, and NeurIPS/USENIX proceedings (originally July 2026;
+four entries added afterward -- `li2024wmdp`, `carlini2022lira`, `dang2021rtbf`,
+`li2026beliefs` -- checked September 2026, see notes below). Author lists are complete
+(no "et al."). DOIs are given where the venue issues one; otherwise a stable
+publisher/arXiv/OpenReview URL. Below are the **five entries worth a final human check
+before submission** — none is believed wrong, but each has a caveat the automated check
+could not fully close.
 
 | key | status | caveat to confirm |
 |---|---|---|
@@ -27,6 +29,18 @@ automated check could not fully close.
   (IEEE Trans. Inf. Theory 63(6):4037–4049, 2017, DOI `10.1109/TIT.2017.2685505`) — swap
   if the journal prefers archival.
 - `li2024wmdp`: all 57 authors are listed in full, cross-checked between arXiv and PMLR.
+- `carlini2022lira`: IEEE S&P 2022, DOI `10.1109/SP46214.2022.9833649` confirmed;
+  `address` added (`San Francisco, CA, USA`) to avoid the bibliography style's "???"
+  rendering for `@inproceedings` entries with a publisher but no address.
+- `dang2021rtbf`: Springer, *Advances in Digital Science (ICADS 2021)*, AISC vol. 1352,
+  pp. 403-411, DOI `10.1007/978-3-030-71782-7_35` confirmed; `address` added (`Cham`)
+  for the same reason.
+- `li2026beliefs`: acceptance at ICLR 2026 (poster) confirmed by the manuscript's
+  author -- upgraded from the arXiv-only entry to the OpenReview forum
+  (`https://openreview.net/forum?id=qCfYOLAzti`, found via web search; the forum page
+  itself sits behind OpenReview's bot check and could not be fetched directly, but the
+  author list and title were independently cross-checked against the arXiv abstract
+  page and match `refs.bib` exactly).
 
 If any of the five flagged items should be replaced or the metadata corrected, edit
 `refs.bib` and rerun `bibtex main && pdflatex main && pdflatex main`.
