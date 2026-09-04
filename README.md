@@ -418,23 +418,30 @@ pushed toward a fixed random direction at one layer, retain activations held nea
 frozen reference. It never touches the token loss. Co-trained with the other subjects
 on TOFU/GPT-2 so every row shares one adapter and one cohort:
 
-Two seeds, verdicts per seed:
+Three seeds (the same count as the main benchmark tier: seeds 0-1 on CPU, seed 2 on a
+Colab T4 — see "Running on Colab" below), verdicts per seed:
 
 | subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
 |---|---|---|---|---|---|
-| no unlearning | R / R | R / R | +0.125 | 2.18 | 2.13 |
-| retrain (fresh adapter) | I / I | I / I | +0.031 | 2.51 | 1.98 |
-| NPO | I / I | I / I | +0.005 | 5.79 | 2.92 |
-| SimNPO | I / I | I / I | −0.023 | 5.11 | 2.37 |
-| **RMU** | **I / I** | **I / U** | **+0.036** | 2.71 | 2.53 |
+| no unlearning | R / R / I | R / R / U | +0.097 | 2.19 | 2.14 |
+| retrain (fresh adapter) | I / I / I | I / I / I | +0.026 | 2.53 | 1.99 |
+| NPO | I / I / I | I / I / I | −0.014 | 6.34 | 2.83 |
+| SimNPO | I / I / I | I / I / I | −0.035 | 5.79 | 2.43 |
+| **RMU** | **I / I / I** | **I / U / I** | **+0.050** | 2.73 | 2.55 |
 
-RMU's residual advantage is indistinguishable from what retraining achieves on the same
-cohorts (+0.036 vs +0.031), at a retain NLL of 2.53 against retraining's 1.98. The
-interesting part is the contrast with NPO and SimNPO: they raise the forget split's
-likelihood to 5.79 and 5.11 while RMU barely moves it (2.71), yet all three land at
-essentially the same realised advantage. A forget-quality metric reading likelihoods
-would rank RMU far below the other two; the certificate treats them as equivalent,
-because it measures whether an attacker can still *distinguish* the twins.
+RMU's residual advantage (+0.050) is close to what retraining achieves on the same
+cohorts (+0.026), at a retain NLL of 2.55 against retraining's 1.99. The interesting
+part is the contrast with NPO and SimNPO: they raise the forget split's likelihood to
+6.34 and 5.79 while RMU barely moves it (2.73), yet all three land at a comparable
+realised advantage. A forget-quality metric reading likelihoods would rank RMU far
+below the other two; the certificate treats them as comparable, because it measures
+whether an attacker can still *distinguish* the twins.
+
+The un-unlearned control disagreed across seeds — revoked twice, issued once at
++0.042 — which is the same phenomenon the main benchmark tier already shows for two of
+its cells: at ε=0.2 a weakly-memorising run can certify without any unlearning having
+happened. A positive control failing once in three seeds measures the tolerance's
+looseness, not a broken control.
 
 ### A paraphrase-aware score in F
 

@@ -449,23 +449,27 @@ tests whether the framework's conclusions survive a method of a different kind.
 Nothing in the audit changes to accommodate it, which is the point.
 
 It is run co-trained with the other utility-preserving subjects and the two controls
-in a single run on TOFU/GPT-2 over two seeds, so every row shares one fine-tuned
-adapter, one cohort and one machine. RMU certifies at $\eps = 0.2$ on both seeds and
-at $\eps = 0.1$ on one, with a realised cohort advantage of $+0.036$ ---
-indistinguishable from what retraining a fresh adapter achieves on the same cohorts
-($+0.031$), against the un-unlearned model's $+0.125$ --- at a retain NLL of $2.53$
-against retraining's $1.98$.
+in a single run on TOFU/GPT-2, over the same three seeds as the main benchmark tier, so
+every row shares one fine-tuned adapter, one cohort and one machine per seed. RMU
+certifies at $\eps = 0.2$ on all three seeds, with a realised cohort advantage of
+$+0.050$ --- close to what retraining a fresh adapter achieves on the same cohorts
+($+0.026$), against the un-unlearned model's $+0.097$ --- at a retain NLL of $2.55$
+against retraining's $1.99$.
 
 The comparison also produced a finding we did not expect and now report, because it
 bears on your R1.5c point about what utility readings are for. RMU barely raises the
-forget split's likelihood at all ($2.71$ against the un-unlearned model's $2.18$),
-whereas NPO and SimNPO raise it to $5.79$ and $5.11$ --- yet all three land at
-essentially the same realised advantage ($+0.036$, $+0.005$, $-0.023$). A
+forget split's likelihood at all ($2.73$ against the un-unlearned model's $2.19$),
+whereas NPO and SimNPO raise it to $6.34$ and $5.79$ --- yet all three land at a
+comparable realised advantage ($+0.050$, $-0.014$, $-0.035$). A
 forget-quality metric reading likelihoods would rank RMU far below the other two; the
-certificate treats them as equivalent, because what it measures is whether an attacker
+certificate treats them as comparable, because what it measures is whether an attacker
 can still \emph{distinguish} a trained twin from its ghost. Which ranking is right
 depends on what the audit is for, and it is the clearest instance in the study of the
-two readings coming apart on real models.
+two readings coming apart on real models. The un-unlearned control itself disagreed
+across seeds --- revoked twice, issued once at a realised advantage of $+0.042$ --- the
+same phenomenon \S\ref{sec:exp-bench} already reports for two cells of the main
+benchmark: $\eps = 0.2$ is loose enough that a weakly-memorising run can certify
+without any unlearning having occurred.
 
 Task-vector negation remains unevaluated, and we still name the method list as
 incomplete.

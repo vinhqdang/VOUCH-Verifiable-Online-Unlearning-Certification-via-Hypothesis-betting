@@ -259,23 +259,29 @@ def main():
         d_rmu = float(np.mean([_delta(r, "rmu") for r in rmu if "rmu" in r["certs"]]))
         d_rt = float(np.mean([_delta(r, "retrain") for r in rmu]))
         d_none = float(np.mean([_delta(r, "none") for r in rmu]))
-        check("RMU realised advantage +0.036, comparable to retrain's +0.031",
-              close(d_rmu, 0.036, 0.002) and close(d_rt, 0.031, 0.002),
+        check("3 seeds in the RMU tier, matching the main benchmark tier",
+              len(rmu) == 3, f"{len(rmu)} seeds")
+        check("RMU realised advantage +0.050, close to retrain's +0.026",
+              close(d_rmu, 0.050, 0.002) and close(d_rt, 0.026, 0.002),
               f"rmu {d_rmu:+.3f}, retrain {d_rt:+.3f}")
-        check("the un-unlearned model's advantage is +0.125",
-              close(d_none, 0.125, 0.002), f"{d_none:+.3f}")
-        check("RMU issues at eps=0.2 on both seeds",
+        check("the un-unlearned model's advantage is +0.097",
+              close(d_none, 0.097, 0.002), f"{d_none:+.3f}")
+        check("RMU issues at eps=0.2 on all three seeds",
               all(r["certs"]["rmu"]["status"] == "ISSUED" for r in rmu),
               [r["certs"]["rmu"]["status"] for r in rmu])
-        check("RMU barely raises the forget split (2.71) where NPO and SimNPO reach 5.79/5.11",
-              close(_mean("rmu", "forget_nll"), 2.71, 0.02)
-              and close(_mean("npo", "forget_nll"), 5.79, 0.02)
-              and close(_mean("simnpo", "forget_nll"), 5.11, 0.02),
+        check("the un-unlearned control disagrees across seeds (R/R/I), not R/R/R",
+              [r["certs"]["none"]["status"] for r in rmu]
+              == ["REVOKED", "REVOKED", "ISSUED"],
+              [r["certs"]["none"]["status"] for r in rmu])
+        check("RMU barely raises the forget split (2.73) where NPO and SimNPO reach 6.34/5.79",
+              close(_mean("rmu", "forget_nll"), 2.73, 0.02)
+              and close(_mean("npo", "forget_nll"), 6.34, 0.02)
+              and close(_mean("simnpo", "forget_nll"), 5.79, 0.02),
               f"rmu {_mean('rmu','forget_nll'):.2f}, npo {_mean('npo','forget_nll'):.2f}, "
               f"simnpo {_mean('simnpo','forget_nll'):.2f}")
-        check("RMU retain NLL 2.53 against retraining's 1.98",
-              close(_mean("rmu", "retain_nll"), 2.53, 0.02)
-              and close(_mean("retrain", "retain_nll"), 1.98, 0.02),
+        check("RMU retain NLL 2.55 against retraining's 1.99",
+              close(_mean("rmu", "retain_nll"), 2.55, 0.02)
+              and close(_mean("retrain", "retain_nll"), 1.99, 0.02),
               f"{_mean('rmu','retain_nll'):.2f} vs {_mean('retrain','retain_nll'):.2f}")
 
     print("== LiRA, an attack from outside F (Section 5.13) ==")

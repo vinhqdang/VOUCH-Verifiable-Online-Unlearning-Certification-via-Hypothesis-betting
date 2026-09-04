@@ -205,7 +205,8 @@ Ranked by how much a round-2 referee would care.
    organic-like dose the audit has no power at this model scale. Named in the conclusion
    as the framework's most important open problem.
 6. **Method and probe coverage.** SimNPO and RMU are now evaluated on TOFU/GPT-2
-   (RMU in its own 2-seed CPU tier, `lm_e2e_tofu_gpt2_rmu.json`); task-vector negation
+   (RMU in its own tier, `lm_e2e_tofu_gpt2_rmu.json`, now 3 seeds matching the main
+   benchmark tier -- seeds 0-1 on CPU, seed 2 on a Colab T4, see below); task-vector negation
    is not run. P1/P3 cover all benchmark cells but are anchored on NPO; P2 runs
    on the small tiers only (the shared-frozen-base design would have to materialise
    merged weights to quantise a multi-billion-parameter model).
@@ -395,6 +396,54 @@ python experiments/run_paraphrase.py --tag tofu_gpt2_rmu --seeds 0
 
 Run them pinned (`taskset -c 0,1` / `-c 2,3`) if running two at once: with
 `OMP_NUM_THREADS` unset, two jobs oversubscribe 4 cores and each runs ~3x slower.
+
+### Running the RMU tier on Google Colab
+
+Seed 2 of the RMU tier ran on a Colab T4 via `google-colab-cli`
+(https://github.com/googlecolab/google-colab-cli), which fixed the "RMU tier is two
+seeds" gap by bringing it to 3 -- the same count as the main benchmark tier.
+
+```bash
+uv tool install --python 3.12 google-colab-cli   # needs Python >=3.12; this repo's
+                                                   # default env is 3.11, hence uv
+
+# colab-cli 0.6.0 calls jupyter_kernel_client.KernelClient(), which was renamed to
+# JupyterKernelClient in jupyter-kernel-client 1.0.0. Pin the last version with the
+# old name, or `colab exec` fails with AttributeError on every call:
+uv pip install --python ~/.local/share/uv/tools/google-colab-cli/bin/python \
+    "jupyter-kernel-client==0.15.0"
+
+colab new -s rmu --gpu T4
+colab install -s rmu torch transformers datasets peft accelerate
+colab install -s rmu "torchao>=0.16.0"   # Colab's preinstalled torchao (0.10.0) is
+                                          # older than what the peft version above
+                                          # requires; without this, get_peft_model()
+                                          # raises ImportError inside dispatch_torchao
+# clone the repo onto the VM, then run seed 2 only with --resume (seeds 0-1 are
+# already in the committed results file, so --resume skips them):
+colab exec -s rmu -f <script that clones the repo and launches run_benchmark.py
+  --dataset tofu --model gpt2 --seeds 2 --pairs 384 --dtype fp32 --device cuda
+  --queries 2 --methods none retrain npo simnpo rmu --extra-metrics --resume
+  --tag tofu_gpt2_rmu, backgrounded with nohup since colab exec has no built-in
+  long-running-job support>
+colab download -s rmu results/lm_e2e_tofu_gpt2_rmu.json ./results/
+colab stop -s rmu
+```
+
+One seed took under 10 minutes on the T4 against ~2.5 hours on 2 pinned CPU cores.
+Seed 2's un-unlearned model issued rather than revoked (realised advantage +0.042,
+still below eps=0.2) where seeds 0-1 both revoked -- confirmed as ordinary GPU
+training nondeterminism (`torch.manual_seed` does seed CUDA, but cuDNN algorithm
+selection is not forced deterministic) rather than a bug, and reported as the same
+tolerance-looseness phenomenon the main benchmark tier already documents on two of
+its own cells. Canary generation itself is pure Python and identical regardless of
+device.
+
+**Deliberately stopped at 3 seeds.** GPU compute made a 4th or 5th seed trivial, but
+adding one *because* the un-unlearned control came back weaker on seed 2 would be
+exactly the kind of sampling-until-the-inconvenient-result-goes-away that invites
+suspicion. Three seeds matches the main tier's own convention; that was the actual
+gap to close, and it is closed.
 
 ### Test and check counts
 

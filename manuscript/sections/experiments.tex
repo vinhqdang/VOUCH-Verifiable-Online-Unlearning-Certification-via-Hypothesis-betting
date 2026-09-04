@@ -606,34 +606,36 @@ model's. Nothing in VOUCH changes to accommodate it---the audit queries $M_u$ as
 black box---which is the point of testing it.
 
 Table~\ref{tab:rmu} reports RMU beside the two other utility-preserving subjects and
-the two controls, all co-trained in a single run on TOFU/GPT-2 so that every row
-shares one fine-tuned adapter, one canary cohort and one machine. RMU behaves as a
-genuine unlearning method. It certifies at $\eps = 0.2$ on both seeds and at
-$\eps = 0.1$ on one of the two, and its realised cohort advantage of $+0.036$ is
-indistinguishable from what retraining a fresh adapter achieves on the same cohorts
-($+0.031$), against the un-unlearned model's $+0.125$. It does that at a retain NLL of
-$2.53$ against retraining's $1.98$, so it is a genuine member of the
+the two controls, all co-trained in a single run on TOFU/GPT-2 over the same three
+seeds as the main benchmark tier, so that every row shares one fine-tuned adapter, one
+canary cohort and one machine per seed. RMU behaves as a genuine unlearning method.
+It certifies at $\eps = 0.2$ on all three seeds, and its realised cohort advantage of
+$+0.050$ is close to what retraining a fresh adapter achieves on the same cohorts
+($+0.026$), against the un-unlearned model's $+0.097$. It does that at a retain NLL of
+$2.55$ against retraining's $1.99$, so it is a genuine member of the
 utility-preserving family rather than destructive unlearning in disguise.
 
 The interesting comparison is with the other two, and it is a distinction the
 certificate is built to draw. NPO and SimNPO buy their forgetting by raising the
-forget split's likelihood a long way---to $5.79$ and $5.11$ against the un-unlearned
-model's $2.18$---while RMU raises it only to $2.71$, barely moving it. Yet all three
-end up at essentially the same place on the quantity the certificate measures
-($+0.005$, $-0.023$ and $+0.036$). A forget-quality metric reading likelihoods would
-therefore rank RMU far below the other two; the certificate treats them as equivalent,
-because what it measures is whether the deployed model still lets an attacker
-\emph{distinguish} a trained twin from its ghost. Which ranking is right depends on
-what the audit is for, and this is the clearest instance in the study of the two
-readings coming apart on real models.
+forget split's likelihood a long way---to $6.34$ and $5.79$ against the un-unlearned
+model's $2.19$---while RMU raises it only to $2.73$, barely moving it. Yet all three
+end up at a comparable place on the quantity the certificate measures ($-0.014$,
+$-0.035$ and $+0.050$). A forget-quality metric reading likelihoods would
+therefore rank RMU far below the other two; the certificate treats them as
+comparable, because what it measures is whether the deployed model still lets an
+attacker \emph{distinguish} a trained twin from its ghost. Which ranking is right
+depends on what the audit is for, and this is the clearest instance in the study of
+the two readings coming apart on real models.
 
-One reporting caution belongs with this table, since two of its quantities can look
-contradictory. RMU's mean score gap $\bar D$ is $+0.119$ nats, well above NPO's
-$+0.002$, while their realised advantages are $+0.036$ and $+0.005$---much closer
-together. There is no inconsistency: $\bar D$ averages a likelihood gap and is moved by
-a handful of large-magnitude pairs, whereas $\Delta$ counts how often the trained twin
-scores higher at all. It is the second quantity, not the first, that bounds what an
-attacker in $\F$ can extract, and it is the one the certificate is stated for.
+The un-unlearned model is the one row where the three seeds disagree---revoked on two,
+issued on the third with a realised advantage of $+0.042$, comfortably below
+$\eps = 0.2$---and we read that as informative rather than as noise to average away.
+It is the same phenomenon Table~\ref{tab:bench} already documents for two cells of the
+main benchmark tier: $\eps = 0.2$ permits enough residual advantage that an
+un-unlearned model can certify on a training run where the canaries happened to be
+memorised weakly. A positive control that fails once in three seeds is not a control
+that has stopped working; it is a measurement of how loose the demonstration
+tolerance is, on exactly the axis Section~\ref{sec:exp-bench} already reports it.
 
 \begin{table}[t]
 \centering\small
@@ -641,9 +643,9 @@ attacker in $\F$ can extract, and it is the one the certificate is stated for.
 subjects, co-trained on TOFU/GPT-2 with a shared fine-tuned adapter, $384$ pairs,
 cohort target. Verdicts are per seed (\vI\ issued, \vR\ revoked, \vU\ undetermined);
 $\hat\Delta$ is the realised cohort advantage of $s_{\mathrm{loss}}$; forget and
-retain NLL are on the benchmark's own splits. It uses the same protocol, cohort size and tolerances as the
-benchmark tier of Section~\ref{sec:exp-bench}, over $2$ seeds, and is reported as its
-own tier because its subjects were co-trained in a single run.}
+retain NLL are on the benchmark's own splits. It uses the same protocol, cohort size,
+tolerances and seed count as the benchmark tier of Section~\ref{sec:exp-bench}, and is
+reported as its own tier because its subjects were co-trained in a single run.}
 \label{tab:rmu}
 \input{tables/rmu}
 \end{table}

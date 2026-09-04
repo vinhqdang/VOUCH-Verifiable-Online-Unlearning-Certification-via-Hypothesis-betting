@@ -4,10 +4,10 @@
 \cmidrule(lr){2-4}\cmidrule(lr){6-7}
 subject & $\eps{=}0.2$ & $0.1$ & $0.05$ & $\hat\Delta$ & forget & retain\\
 \midrule
-no unlearning & \vR/\vR & \vR/\vR & \vR/\vR & +0.125 & 2.18 & 2.13\\
-retrain (fresh adapter) & \vI/\vI & \vI/\vI & \vU/\vI & +0.031 & 2.51 & 1.98\\
-NPO & \vI/\vI & \vI/\vI & \vI/\vU & +0.005 & 5.79 & 2.92\\
-SimNPO & \vI/\vI & \vI/\vI & \vU/\vU & -0.023 & 5.11 & 2.37\\
-RMU & \vI/\vI & \vI/\vU & \vU/\vU & +0.036 & 2.71 & 2.53\\
+no unlearning & \vR/\vR/\vI & \vR/\vR/\vU & \vR/\vR/\vU & +0.097 & 2.19 & 2.14\\
+retrain (fresh adapter) & \vI/\vI/\vI & \vI/\vI/\vI & \vU/\vI/\vI & +0.026 & 2.53 & 1.99\\
+NPO & \vI/\vI/\vI & \vI/\vI/\vI & \vI/\vU/\vU & -0.014 & 6.34 & 2.83\\
+SimNPO & \vI/\vI/\vI & \vI/\vI/\vI & \vU/\vU/\vU & -0.035 & 5.79 & 2.43\\
+RMU & \vI/\vI/\vI & \vI/\vU/\vI & \vU/\vU/\vU & +0.050 & 2.73 & 2.55\\
 \bottomrule
 \end{tabular}
