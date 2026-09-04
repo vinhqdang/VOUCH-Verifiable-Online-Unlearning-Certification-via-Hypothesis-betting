@@ -923,6 +923,37 @@ control that makes the second interpretable.}
 \input{tables/lira}
 \end{table}
 
+\subsection{The same attack at full scale, on the model this paper actually certifies}\label{sec:exp-lira-gpt2}
+
+Section~\ref{sec:exp-lira}'s own stated limitation is that the attack runs on TinyGPT rather
+than on a tier the paper's certified NPO row uses. On a GPU the pipeline-per-shadow
+cost is affordable, so we run the identical attack---unchanged in design---on
+TOFU/GPT-2, with $24$ shadows and the full $m=384$-pair cohort of the main benchmark
+tier, so the realised advantages here are directly comparable to the certified NPO
+row of Table~\ref{tab:bench}.
+
+Table~\ref{tab:lira-gpt2} shows the same pattern Section~\ref{sec:exp-lira} reports on
+TinyGPT. The positive control again works: on the un-unlearned model LiRA achieves
+$\hat\Delta = +0.479$ (95\% CI $[+0.385, +0.566]$), well above every tolerance we
+test, at $59\%$ agreement with the declared class. On the NPO model VOUCH certifies at
+$\eps = 0.2$, LiRA finds $\hat\Delta = -0.031$ with 95\% CI $[-0.133, +0.071]$, inside
+every tolerance, and agreement falls to $54\%$---indistinguishable from chance. The
+positive-control advantage is smaller here than on TinyGPT ($+0.479$ against
+$+0.820$), consistent with GPT-2's larger capacity diluting any one canary's
+memorisation signature over more parameters, but the qualitative result is unchanged:
+a real attack finds a large, tolerance-exceeding signal on the un-unlearned model and
+nothing on the certified one, on the architecture this paper's own certified-NPO claim
+is about, not a smaller stand-in for it.
+
+\begin{table}[t]
+\centering\small
+\caption{The LiRA attack of Table~\ref{tab:lira}, run at full scale on TOFU/GPT-2 ($24$
+matched shadows, cohort $m = 384$, one target seed, matching the main benchmark
+tier's protocol). Same columns as Table~\ref{tab:lira}.}
+\label{tab:lira-gpt2}
+\input{tables/lira_gpt2}
+\end{table}
+
 \subsection{A paraphrase-aware score in $\F$}\label{sec:exp-para}
 
 The limitation we have named most often is that every member of $\F$ reads the

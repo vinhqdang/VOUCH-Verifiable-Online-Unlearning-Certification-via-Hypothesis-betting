@@ -972,13 +972,21 @@ $[-0.141,+0.110]$, with agreement falling to $0.47$ --- chance. The interval exc
 every tolerance we certify at.
 
 This is a different kind of evidence from the two attacks above, and we are careful
-about how much it carries. It is one target model, one tier, one unlearning method and
-$16$ shadows against the hundreds a canonical LiRA would use, so it does not show that
-$\F$ is wide enough in general. But unlike the stratum-restricted and learned-combination
-attacks, it cannot be dismissed as too weak to have found anything: it finds a great
-deal where leakage exists and nothing where the certificate says there is none. That is
-the first measurement in the paper that \emph{bounds} the class-restriction gap rather
-than merely naming it.
+about how much it carries. It is $16$ shadows against the hundreds a canonical LiRA
+would use, so it does not show that $\F$ is wide enough in general. But unlike the
+stratum-restricted and learned-combination attacks, it cannot be dismissed as too weak
+to have found anything: it finds a great deal where leakage exists and nothing where
+the certificate says there is none. That is the first measurement in the paper that
+\emph{bounds} the class-restriction gap rather than merely naming it.
+
+The result is also no longer confined to the TinyGPT stand-in: the identical attack,
+unchanged in design, run at full scale ($24$ shadows, $384$ pairs) on TOFU/GPT-2 ---
+the architecture our own certified NPO row uses --- reproduces the same pattern (new
+\S\ref{sec:exp-lira-gpt2}, Table~\ref{tab:lira-gpt2}): $\hat\Delta = +0.479$
+(95\% CI $[+0.385,+0.566]$) on the un-unlearned model, $\hat\Delta = -0.031$
+(95\% CI $[-0.133,+0.071]$) on the certified one, again excluding every tolerance we
+test. So this is now one unlearning method across two architectures and shadow
+counts of $16$ and $24$, not a single stand-in tier.
 \end{reply}
 
 \subsection*{W5. No comparison against an existing verification method}
@@ -1367,12 +1375,14 @@ and the reveal order can now be drawn from a public randomness beacon. What rema
 narrower than before, and sharper for it.
 
 \begin{enumerate}[leftmargin=1.4em,itemsep=3pt]
-\item \textbf{The LiRA result's reach.} It is one target model, on the TinyGPT tier,
-against one unlearning method, with $16$ shadows. Its positive control establishes
-that the attack works, so its null on a certified model is informative rather than
-vacuous --- but a shadow study at 124M parameters and above needs the whole pipeline
-repeated per shadow, which we could not afford, and nothing here rules out a larger
-model behaving differently.
+\item \textbf{The LiRA result's reach.} It now runs on two architectures ---
+TinyGPT ($16$ shadows) and, at full scale, the TOFU/GPT-2 tier our own certified NPO
+row uses ($24$ shadows, \S\ref{sec:exp-lira-gpt2}) --- against one unlearning method
+in each case, with the same pattern on both: a large, tolerance-exceeding advantage on
+the un-unlearned model and a null bounded away from every tolerance on the certified
+one. A shadow study at 1B+ parameters still needs the whole pipeline repeated per
+shadow, which we could not afford, and nothing here rules out a larger model or a
+different unlearning method behaving differently.
 \item \textbf{The squeezing effect is still untested.} We added the score
 \citet{li2026beliefs} motivate, and it costs almost nothing to carry, but our secrets
 are random alphanumeric strings and a random string has no paraphrase. Testing whether

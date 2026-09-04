@@ -393,8 +393,12 @@ Two weak out-of-class attacks settle nothing, failing to beat the noise floor of
 subsampling. A LiRA-style shadow-model attack does better: with matched shadows it
 recovers an advantage of $0.82$ on an un-unlearned model, and on a certified one
 returns $-0.016$ with a $95\%$ interval that excludes every tolerance we certify at
-(Section~\ref{sec:exp-lira}). That is one tier, one target and $16$ shadows, so it
-bounds the gap rather than closing it. Enlarging $\F$ costs power and no validity, and
+(Section~\ref{sec:exp-lira}), a pattern that reproduces on the architecture this
+paper's own certified-NPO claim is about---$+0.48$ on the un-unlearned model,
+$-0.03$ on the certified one, again excluding every tolerance
+(Section~\ref{sec:exp-lira-gpt2}). Both runs are $16$--$24$ shadows against the
+hundreds a canonical LiRA study would use, so together they bound the gap rather than
+closing it. Enlarging $\F$ costs power and no validity, and
 we now exercise that too: a paraphrase-aware score of the kind
 \citet{li2026beliefs} motivate is implemented and added to $\F$
 (Section~\ref{sec:exp-para}). The cohort statement transfers to

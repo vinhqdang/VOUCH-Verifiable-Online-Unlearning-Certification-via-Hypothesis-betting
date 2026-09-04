@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 04:29:33 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 04:29:33 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 06:21:28 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 06:21:28 2026
 
 
 \theoremstyle{thmstyleone}
@@ -514,7 +514,8 @@ fine-tuning\DIFdelbegin \DIFdel{; and
 \mbox{%DIFAUXCMD
 \citet{barbulescu2024each} }\hskip0pt%DIFAUXCMD
 document how per-sequence memorisation
-strength governs how hard a datum is to remove. }\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
+strength governs how hard a datum isto remove.
+}\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
 identify the mechanism they call the
 }\emph{\DIFadd{squeezing effect}}\DIFadd{: gradient-ascent-style objectives push probability mass off
@@ -2052,8 +2053,7 @@ that the median certification time tracks }\DIFdelend \DIFaddbegin \DIFadd{repor
 $\log(1/\alpha)/\KL$ within fifteen percent across the whole $\eps$ grid, and
 Figure~\ref{fig:power} plots the same relationship together with the
 revocation
-detection time.
-}\DIFdelend \DIFaddbegin \DIFadd{limit.
+detection time. }\DIFdelend \DIFaddbegin \DIFadd{limit.
 Two corrections to the earlier version are folded in. First, the theoretical column now
 follows the corrected expansion \eqref{eq:klexp}; the numbers themselves are unchanged
 because they were always computed from the exact divergence, but the accompanying
@@ -2298,7 +2298,8 @@ disentangling the two would require a probe set disjoint from the relearn corpus
 \emph{\DIFadd{Two-sided certification matters, though not on these runs.}} \DIFadd{On }\DIFaddend several TOFU
 seeds gradient ascent, GradDiff \DIFdelbegin \DIFdel{,
 }\DIFdelend and NPO push the canaries \emph{below} chance, with
-mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the }\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
+mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the
+}\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
 TOFU/Phi-1.5). We should be exact about what follows from that, because an earlier
 draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
 two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
@@ -2881,6 +2882,39 @@ control that makes the second interpretable.}}
 \input{tables/lira}
 \end{table}
 
+\subsection{\DIFadd{The same attack at full scale, on the model this paper actually certifies}}\label{sec:exp-lira-gpt2}
+
+\DIFadd{Section~\ref{sec:exp-lira}'s own stated limitation is that the attack runs on TinyGPT rather
+than on a tier the paper's certified NPO row uses. On a GPU the pipeline-per-shadow
+cost is affordable, so we run the identical attack---unchanged in design---on
+TOFU/GPT-2, with $24$ shadows and the full $m=384$-pair cohort of the main benchmark
+tier, so the realised advantages here are directly comparable to the certified NPO
+row of Table~\ref{tab:bench}.
+}
+
+\DIFadd{Table~\ref{tab:lira-gpt2} shows the same pattern Section~\ref{sec:exp-lira} reports on
+TinyGPT. The positive control again works: on the un-unlearned model LiRA achieves
+$\hat\Delta = +0.479$ (95\% CI $[+0.385, +0.566]$), well above every tolerance we
+test, at $59\%$ agreement with the declared class. On the NPO model VOUCH certifies at
+$\eps = 0.2$, LiRA finds $\hat\Delta = -0.031$ with 95\% CI $[-0.133, +0.071]$, inside
+every tolerance, and agreement falls to $54\%$---indistinguishable from chance. The
+positive-control advantage is smaller here than on TinyGPT ($+0.479$ against
+$+0.820$), consistent with GPT-2's larger capacity diluting any one canary's
+memorisation signature over more parameters, but the qualitative result is unchanged:
+a real attack finds a large, tolerance-exceeding signal on the un-unlearned model and
+nothing on the certified one, on the architecture this paper's own certified-NPO claim
+is about, not a smaller stand-in for it.
+}
+
+\begin{table}[t]
+\centering\small
+\caption{\DIFaddFL{The LiRA attack of Table~\ref{tab:lira}, run at full scale on TOFU/GPT-2 ($24$
+matched shadows, cohort $m = 384$, one target seed, matching the main benchmark
+tier's protocol). Same columns as Table~\ref{tab:lira}.}}
+\label{tab:lira-gpt2}
+\input{tables/lira_gpt2}
+\end{table}
+
 \subsection{\DIFadd{A paraphrase-aware score in $\F$}}\label{sec:exp-para}
 
 \DIFadd{The limitation we have named most often is that every member of $\F$ reads the
@@ -3124,14 +3158,19 @@ precisely as part of the contribution. VOUCH certifies \DIFdelbegin \DIFdel{extr
 extractable through a }\emph{\DIFadd{declared score class}} \DIFadd{$\F$, on a }\emph{\DIFadd{committed canary
 cohort}}\DIFadd{, against the }\emph{\DIFadd{deployed model}}\DIFadd{, under an }\emph{\DIFadd{honest-but-verifiable}}
 \DIFadd{provider. Each of those four qualifications has a measured cost. Parameter-space
-}\DIFaddend erasure is behaviourally uncertifiable, so we do not claim it\DIFdelbegin \DIFdel{; the transfer from canaries to organic data is calibrated by the dose--response strata, not proven; and }\DIFdelend \DIFaddbegin \DIFadd{. The class restriction
+}\DIFaddend erasure is behaviourally uncertifiable, so we do not claim it\DIFdelbegin \DIFdel{; the transfer from canaries to organic data is calibrated by the dose--response strata,
+not proven; and }\DIFdelend \DIFaddbegin \DIFadd{. The class restriction
 remains a definitional limit, but this version measures rather than merely names it.
 Two weak out-of-class attacks settle nothing, failing to beat the noise floor of
 subsampling. A LiRA-style shadow-model attack does better: with matched shadows it
 recovers an advantage of $0.82$ on an un-unlearned model, and on a certified one
 returns $-0.016$ with a $95\%$ interval that excludes every tolerance we certify at
-(Section~\ref{sec:exp-lira}). That is one tier, one target and $16$ shadows, so it
-bounds the gap rather than closing it. Enlarging $\F$ costs power and no validity, and
+(Section~\ref{sec:exp-lira}), a pattern that reproduces on the architecture this
+paper's own certified-NPO claim is about---$+0.48$ on the un-unlearned model,
+$-0.03$ on the certified one, again excluding every tolerance
+(Section~\ref{sec:exp-lira-gpt2}). Both runs are $16$--$24$ shadows against the
+hundreds a canonical LiRA study would use, so together they bound the gap rather than
+closing it. Enlarging $\F$ costs power and no validity, and
 we now exercise that too: a paraphrase-aware score of the kind
 \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD

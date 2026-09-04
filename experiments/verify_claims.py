@@ -339,6 +339,28 @@ def main():
         check("16 shadows, 256 pairs", lira["shadows"] == 16 and lira["pairs"] == 256,
               f"{lira['shadows']} shadows, {lira['pairs']} pairs")
 
+    print("== LiRA at full scale on TOFU/GPT-2 (Section 5.13) ==")
+    lira_gpt2 = load("lira_gpt2_analysis")
+    if lira_gpt2:
+        n = lira_gpt2["subjects"]["none"]; c = lira_gpt2["subjects"]["npo"]
+        check("the positive control works: LiRA recovers +0.479 on the un-unlearned model",
+              close(n["delta_lira"], 0.479, 0.002), f"{n['delta_lira']:+.3f}")
+        check("whose 95% CI is [+0.385,+0.566]",
+              close(n["delta_lira_ci"][0], 0.385, 0.002)
+              and close(n["delta_lira_ci"][1], 0.566, 0.002),
+              f"[{n['delta_lira_ci'][0]:+.3f}, {n['delta_lira_ci'][1]:+.3f}]")
+        check("on the certified model LiRA finds -0.031",
+              close(c["delta_lira"], -0.031, 0.002), f"{c['delta_lira']:+.3f}")
+        check("whose 95% interval [-0.133,+0.071] excludes every tolerance certified at",
+              close(c["delta_lira_ci"][0], -0.133, 0.002)
+              and close(c["delta_lira_ci"][1], 0.071, 0.002)
+              and abs(c["delta_lira_ci"][0]) < 0.2 and abs(c["delta_lira_ci"][1]) < 0.2,
+              f"[{c['delta_lira_ci'][0]:+.3f}, {c['delta_lira_ci'][1]:+.3f}]")
+        check("agreement falls toward chance on the certified model",
+              abs(c["agreement"] - 0.5) < 0.05, f"{c['agreement']:.3f}")
+        check("24 shadows, 384 pairs", lira_gpt2["shadows"] == 24 and lira_gpt2["pairs"] == 384,
+              f"{lira_gpt2['shadows']} shadows, {lira_gpt2['pairs']} pairs")
+
     print("== the paraphrase-aware score in F (Section 5.14) ==")
     para = load("paraphrase")
     if para and para.get("runs"):

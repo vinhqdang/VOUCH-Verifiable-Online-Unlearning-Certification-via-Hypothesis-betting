@@ -1,0 +1,10 @@
+\begin{tabular}{lccccc}
+\toprule
+& declared $\F$ & \multicolumn{3}{c}{LiRA (outside $\F$)} & \\
+\cmidrule(lr){2-2}\cmidrule(lr){3-5}
+target model & $\hat\Delta$ & $\hat\Delta$ & 95\% CI & agreement & $|\hat\Delta| > \eps$?\\
+\midrule
+no unlearning (positive control) & +0.135 & +0.479 & $[+0.385,\,+0.566]$ & 0.59 & \textbf{yes}\\
+NPO, certified at $\eps=0.2$ & -0.052 & -0.031 & $[-0.133,\,+0.071]$ & 0.54 & no\\
+\bottomrule
+\end{tabular}

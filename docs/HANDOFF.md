@@ -180,12 +180,15 @@ the exact divergence and did not change; only the stated rule was wrong, by 4×.
 Four items that stood here have since been closed — see §9 for what was added.
 Ranked by how much a round-2 referee would care.
 
-1. **The LiRA result's reach.** The shadow-model attack is now run (`run_lira.py`,
-   §5.12), but on the TinyGPT tier only: one target model, one unlearning method,
-   16 shadows. Its positive control works (Δ=+0.820 on the un-unlearned model, 92%
-   agreement with the in-class score) so its null on the certified model
-   (Δ=−0.016, CI [−0.141,+0.110]) is informative — but a shadow study at 124M+
-   needs the whole pipeline per shadow and was not affordable.
+1. **The LiRA result's reach.** The shadow-model attack now runs on two
+   architectures: TinyGPT (`run_lira.py`, §5.12, 16 shadows, Δ=+0.820 positive
+   control / Δ=−0.016 CI [−0.141,+0.110] on certified NPO, 92%/47% agreement) and,
+   at full scale, TOFU/GPT-2 itself (`run_lira_hf.py`, §5.13, 24 shadows, 384 pairs,
+   Δ=+0.479 CI [+0.385,+0.566] positive control / Δ=−0.031 CI [−0.133,+0.071] on
+   certified NPO, 59%/54% agreement) — the same pattern on the architecture the
+   paper's own certified NPO row uses, not just a CPU-affordable stand-in. A shadow
+   study at 1B+ parameters still needs the whole pipeline per shadow and remains
+   unaffordable here.
 2. **The squeezing effect is still untested.** `s_para` is implemented and in F
    (§5.14) at a cost of 1–2% in pairs, but our secrets are random alphanumeric
    strings, which have no paraphrase. Testing Li et al.'s effect needs canaries whose
@@ -464,34 +467,43 @@ manuscript (§5.10, Table 15) and `verify_claims.py`. The pattern transfers exac
 RMU certifies through ε=0.1, turns undetermined at ε=0.05 on all three seeds, and
 barely raises the forget split's likelihood, same as on GPT-2.
 
-### Outstanding: MUSE/GPT-2 RMU restart and LiRA-on-GPT-2 at scale
+### MUSE/GPT-2 RMU restart and LiRA-on-GPT-2 at scale (completed)
 
-Two jobs from the same Colab push did not land and remain open:
+Both jobs landed, on the third attempt for one of them.
 
-- **MUSE/GPT-2, RMU tier.** A second Colab session (`rmugen`) was training this tier
-  when the VM was reclaimed mid-run (`Session 'rmugen' appears to be lost (404/401)`);
-  seeds 0-1 had logged as complete but no result JSON was ever downloaded, so nothing
-  from that run is recoverable. Restarting it needs all 3 seeds from scratch, and
-  should download/sync the result file after *every* seed rather than only at the
-  end, to survive a repeat of the same failure.
-- **LiRA on GPT-2, at scale.** `experiments/run_lira_hf.py` ports the LiRA
-  shadow-model attack (§5.13, `run_lira.py`) from TinyGPT to GPT-2/TOFU on the same
-  corpus and canary setup as `run_benchmark.py`, so its result is directly comparable
-  to the certified NPO row of the main benchmark tier. It is written and
-  smoke-tested (`--shadows 1 --pairs 16 --train-steps 20 --npo-steps 10 --device
-  cpu`; an early per-shadow-adapter-reuse design was caught as broken before running
-  at scale and replaced with a fresh model per pipeline call, mirroring
-  `run_lira.py`'s pattern) but has not been run at its intended scale (`--shadows 24
-  --pairs 384 --device cuda` — 25 full GPT-2+LoRA training runs, which needs a GPU;
-  on CPU it is not affordable in a single session).
+- **MUSE/GPT-2, RMU tier.** The first attempt (session `rmugen`) lost its VM
+  mid-run before any result downloaded. The restart (`experiments/run_benchmark.py
+  --dataset muse --model gpt2 --seeds 0 1 2 --pairs 512 --methods none retrain npo
+  simnpo rmu --extra-metrics --resume --tag muse_gpt2_rmu`) downloaded and committed
+  `results/lm_e2e_muse_gpt2_rmu_partial.json` after *every* seed rather than only at
+  the end — the fix for the earlier failure mode — and completed all 3 seeds cleanly.
+  Not yet written into the manuscript as of this entry; see the next `git log` entries
+  for whether that landed.
+- **LiRA on GPT-2, at scale.** `experiments/run_lira_hf.py --shadows 24 --pairs 384
+  --device cuda` ran to completion: Δ=+0.479 (95% CI [+0.385,+0.566]) on the
+  un-unlearned positive control, Δ=−0.031 (CI [−0.133,+0.071]) on the certified NPO
+  model — the same pattern as the TinyGPT tier, now on the architecture the paper's
+  own certified NPO row uses. Written up in §5.13 (`sec:exp-lira-gpt2`, Table 20).
 
-Both need an authenticated Colab (or other GPU) session; the environment this handoff
-entry was written in has neither a GPU nor the OAuth state from the session that ran
-the work above (that lived in a different container's filesystem, discarded when the
-session ended). Whoever picks this up next should either re-authenticate
-`google-colab-cli` (see above) or run these two scripts on any available GPU machine,
-then follow the pattern of §5.10 above to write the results into the manuscript,
-`verify_claims.py`, this file, and the response letter's closing gap list.
+Both runs hit the same class of failure along the way: this session's own container
+went idle (no wakeup mechanism keeps a shell running between turns) for long enough
+that the Colab-side keep-alive pings stopped, and Colab reclaimed the GPU runtime —
+not an inactivity timeout on the *job* itself, since it was training the whole time,
+but on the *tether*. The fix that worked was a genuinely continuous background
+poll loop (checking + downloading + committing every ~45s, kept alive for the
+session's actual duration) rather than a scheduled one-shot wakeup. Even that loop's
+own watch window capped at roughly 30 minutes and needed re-arming; the LiRA session
+was also lost once for a different reason (likely a hard per-session duration cap
+rather than inactivity, since the poll loop was firing throughout) at shadow 19/24 —
+recovered by starting a fresh session on a different account, uploading the
+already-downloaded 19-shadow state via `colab upload`, and relaunching the identical
+command, which resumed cleanly from shadow 20 rather than retraining from scratch
+(`run_lira_hf.py` skips any shadow index already present in `--out`'s JSON).
+`colab new` also failed once with `TooManyAssignmentsError` after a session died
+uncleanly — the GPU runtime stayed assigned server-side for a while even though the
+local session state had already given up on it; waiting it out or switching accounts
+both resolved it. Whoever hits either failure again should assume the same causes
+before spending time on other diagnoses.
 
 ### Test and check counts
 

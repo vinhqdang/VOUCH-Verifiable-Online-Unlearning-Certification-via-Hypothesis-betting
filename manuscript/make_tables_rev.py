@@ -652,10 +652,7 @@ def tab_para():
 # ---------------------------------------------------------------------------
 # LiRA-style shadow-model attack from outside F (Section 5.12)
 # ---------------------------------------------------------------------------
-def tab_lira():
-    d = load("lira_analysis")
-    if not d:
-        return
+def _lira_body(d):
     lbl = {"none": "no unlearning (positive control)",
            "npo": r"NPO, certified at $\eps=0.2$",
            "retrain": "retrain (negative control)"}
@@ -675,7 +672,22 @@ def tab_lira():
                  f"$[{ci[0]:+.3f},\\,{ci[1]:+.3f}]$ & "
                  f"{r['agreement']:.2f} & {exc}\\\\\n")
     body += "\\bottomrule\n\\end{tabular}\n"
-    write("lira", body)
+    return body
+
+
+def tab_lira():
+    d = load("lira_analysis")
+    if not d:
+        return
+    write("lira", _lira_body(d))
+
+
+def tab_lira_gpt2():
+    """LiRA at full scale on the architecture the paper certifies NPO on."""
+    d = load("lira_gpt2_analysis")
+    if not d:
+        return
+    write("lira_gpt2", _lira_body(d))
 
 
 if __name__ == "__main__":
@@ -698,4 +710,5 @@ if __name__ == "__main__":
     tab_rmu_pythia()
     tab_para()
     tab_lira()
+    tab_lira_gpt2()
     print("revision tables done")
