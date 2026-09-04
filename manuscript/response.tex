@@ -1353,9 +1353,10 @@ Figure~3. The sentence now reads ``$\Delta=0.1$ in $690$'', in numerals.
 \clearpage
 \section*{A note on what this revision does not settle}
 
-\noindent Since the first revision draft we have closed four of the five gaps this
+\noindent Since the first revision draft we have closed five of the six gaps this
 section previously listed: the LiRA-style attack is run (\S\ref{sec:exp-lira}), RMU is added as a
-second utility-preserving subject (\S\ref{sec:exp-rmu}), the paraphrase-aware score is implemented
+second utility-preserving subject (\S\ref{sec:exp-rmu}) and its tier brought to the same
+three seeds as the main benchmark tier, the paraphrase-aware score is implemented
 and added to $\F$ (\S\ref{sec:exp-para}), Theorem~\ref{thm:cohortpower} supplies the finite-population power analysis,
 and the reveal order can now be drawn from a public randomness beacon. What remains is
 narrower than before, and sharper for it.
@@ -1388,8 +1389,9 @@ from the run seed and so does not meet Theorem~\ref{thm:cert}'s independence hyp
 sources that do meet it are implemented and tested, and a deployed audit should use
 the beacon; we report the tables as they were computed rather than restating them
 under a reveal rule they were not run under.
-\item \textbf{The RMU tier is thin.} Two seeds, CPU, TOFU/GPT-2 only, reported
-separately from the main benchmark table rather than merged into it.
+\item \textbf{The RMU tier is TOFU/GPT-2 only.} Three seeds, matching the main
+benchmark tier, but reported separately rather than merged into it, and evaluated on
+one benchmark and one architecture.
 \end{enumerate}
 
 \noindent Set against those, the changes we regard as materially strengthening the
