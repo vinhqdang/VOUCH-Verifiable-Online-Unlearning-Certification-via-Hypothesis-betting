@@ -58,7 +58,11 @@ values) with the same block and clip: gradient ascent $100$ steps on the forget 
 GradDiff $250$ steps, ascent on forget plus descent on keep with unit weight; NPO
 $250$ steps with $\beta = 0.1$ and the fine-tuned adapter as the frozen reference;
 SimNPO $250$ steps with $\beta = 0.1$ and margin $\gamma = 0$, reference-free on the
-length-normalised forget NLL; ``NPO (25\% budget)'' truncates NPO to $62$ steps.
+length-normalised forget NLL; RMU $250$ steps at the layer half-way through the
+network's depth ($\mathrm{layer\_frac} = 0.5$), pushing forget activations toward a
+fixed random unit direction scaled by $c = 20$ while holding retain activations at
+unit weight against the frozen fine-tuned adapter's; ``NPO (25\% budget)'' truncates
+NPO to $62$ steps.
 Probes: P1 relearn $=$ $100$ steps on the public corpus, which never contains a
 canary; P2 $=$ symmetric per-channel round-to-nearest 4-bit quantisation of all linear
 and embedding weights; P3 $=$ three adversarial prompt wrappers applied at scoring

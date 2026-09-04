@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 03:44:10 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 03:44:10 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 03:51:17 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 03:51:17 2026
 
 
 \theoremstyle{thmstyleone}
@@ -330,7 +330,8 @@ models\DIFdelbegin \DIFdel{that gradient-ascent unlearning frequently }\emph{\DI
 never-seen partners---membership leakage that a one-sided test happily certifies and
 that a two-sided test must catch. \DIFdelbegin \DIFdel{And we found, when we corrected the sample-size analysis
 against the information-theoretic lower bound, that an earlier back-of-envelope estimate
-understated the required cohort by threefold. Each of these is now a theorem or a measured result rather than a footnote.
+understated the required cohort by threefold. Each of these is now a theorem or a
+measured result rather than a footnote.
 }\DIFdelend \DIFaddbegin \emph{\DIFadd{(v)}} \DIFadd{The small-$\eps$ expansion of the
 Kullback--Leibler drift is $\eps^2/2$, not $\eps^2/8$, so the cohort-size rule is
 $2\log(1/\alpha)/\eps^2$; the numerical columns were always computed from the exact
@@ -513,8 +514,7 @@ fine-tuning\DIFdelbegin \DIFdel{; and
 \mbox{%DIFAUXCMD
 \citet{barbulescu2024each} }\hskip0pt%DIFAUXCMD
 document how per-sequence memorisation
-strength governs how hard a datum is to remove.
-}\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
+strength governs how hard a datum is to remove. }\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
 identify the mechanism they call the
 }\emph{\DIFadd{squeezing effect}}\DIFadd{: gradient-ascent-style objectives push probability mass off
@@ -2016,8 +2016,7 @@ cohorts have a realised advantage genuinely below the tolerance. Against the
 }\emph{\DIFadd{cohort}} \DIFadd{null every procedure holds its level, and the two group-sequential
 boundaries and the fixed-$n$ test are markedly conservative there ($0.004$}\DIFaddend , \DIFdelbegin \DIFdel{and the answer is :
 close to
-nothing beyond the information-theoretic minimum.
-}\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
+nothing beyond the information-theoretic minimum. }\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
 $0.000$) precisely because they were built for the other target. Neither column alone
 is a fair scoreboard, which is why we print both. On power and cost the ordering is
 informative. Against exact unlearning at $\eps = 0.1$ and a budget of $1{,}536$ pairs,
@@ -2299,8 +2298,7 @@ disentangling the two would require a probe set disjoint from the relearn corpus
 \emph{\DIFadd{Two-sided certification matters, though not on these runs.}} \DIFadd{On }\DIFaddend several TOFU
 seeds gradient ascent, GradDiff \DIFdelbegin \DIFdel{,
 }\DIFdelend and NPO push the canaries \emph{below} chance, with
-mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the
-}\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
+mean \DIFdelbegin \DIFdel{loss }\DIFdelend \DIFaddbegin \DIFadd{score }\DIFaddend gaps as negative as \DIFdelbegin \DIFdel{$-0.42$; the }\DIFdelend \DIFaddbegin \DIFadd{$-0.54$ (GradDiff on TOFU/Pythia) and $-0.51$ (NPO on
 TOFU/Phi-1.5). We should be exact about what follows from that, because an earlier
 draft was not: at $\eps = 0.2$ these gaps are still inside the tolerance, so the
 two-sided arm issues here too and nothing is withheld on any TOFU cell. What the
@@ -3246,7 +3244,11 @@ values) with the same block and clip: gradient ascent $100$ steps on the forget 
 GradDiff $250$ steps, ascent on forget plus descent on keep with unit weight; NPO
 $250$ steps with $\beta = 0.1$ and the fine-tuned adapter as the frozen reference;
 SimNPO $250$ steps with $\beta = 0.1$ and margin $\gamma = 0$, reference-free on the
-length-normalised forget NLL; ``NPO (25\% budget)'' truncates NPO to $62$ steps.
+length-normalised forget NLL; RMU $250$ steps at the layer half-way through the
+network's depth ($\mathrm{layer\_frac} = 0.5$), pushing forget activations toward a
+fixed random unit direction scaled by $c = 20$ while holding retain activations at
+unit weight against the frozen fine-tuned adapter's; ``NPO (25\% budget)'' truncates
+NPO to $62$ steps.
 Probes: P1 relearn $=$ $100$ steps on the public corpus, which never contains a
 canary; P2 $=$ symmetric per-channel round-to-nearest 4-bit quantisation of all linear
 and embedding weights; P3 $=$ three adversarial prompt wrappers applied at scoring
