@@ -144,7 +144,11 @@ with a utility reading.
 The earliest guarantees came from \emph{certified removal}
 \citep{guo2020certified,sekhari2021remember,neel2021descent,ginart2019making}, which
 bounds the distance between the unlearned and retrained models in a differential-
-privacy-style $(\eps_u,\delta_u)$ sense. These results are elegant but confined to
+privacy-style $(\eps_u,\delta_u)$ sense---the same framing \citet{dang2021rtbf}
+argues is the more defensible reading of ``forgotten'' than the erasure language of
+the GDPR itself, since it requires that no test can tell whether the deleted record
+was ever present, exactly the guarantee a ghost-canary pair is built to supply on the
+model VOUCH certifies. These results are elegant but confined to
 convex or near-convex regimes, and their bounds become vacuous at the scale of modern
 language models; we use them not as a baseline but as a consistency check, showing in
 Proposition~\ref{prop:bridge} that any $(\eps_u,\delta_u)$-certified algorithm passes

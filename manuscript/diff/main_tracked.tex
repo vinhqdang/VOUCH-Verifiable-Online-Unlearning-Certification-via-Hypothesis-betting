@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 02:06:38 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 02:06:38 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 03:29:03 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 03:29:03 2026
 
 
 \theoremstyle{thmstyleone}
@@ -330,7 +330,8 @@ models\DIFdelbegin \DIFdel{that gradient-ascent unlearning frequently }\emph{\DI
 never-seen partners---membership leakage that a one-sided test happily certifies and
 that a two-sided test must catch. \DIFdelbegin \DIFdel{And we found, when we corrected the sample-size analysis
 against the information-theoretic lower bound, that an earlier back-of-envelope estimate
-understated the required cohort by threefold. Each of these is now a theorem or a measured result rather than a footnote.
+understated the required cohort by threefold. Each of these is now a theorem or a
+measured result rather than a footnote.
 }\DIFdelend \DIFaddbegin \emph{\DIFadd{(v)}} \DIFadd{The small-$\eps$ expansion of the
 Kullback--Leibler drift is $\eps^2/2$, not $\eps^2/8$, so the cohort-size rule is
 $2\log(1/\alpha)/\eps^2$; the numerical columns were always computed from the exact
@@ -512,7 +513,8 @@ fine-tuning\DIFdelbegin \DIFdel{; and
 \mbox{%DIFAUXCMD
 \citet{barbulescu2024each} }\hskip0pt%DIFAUXCMD
 document how per-sequence memorisation
-strength governs how hard a datum is to remove. }\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
+strength governs how hard a datum is to remove.
+}\DIFdelend \DIFaddbegin \DIFadd{. \mbox{%DIFAUXCMD
 \citet{li2026beliefs} }\hskip0pt%DIFAUXCMD
 identify the mechanism they call the
 }\emph{\DIFadd{squeezing effect}}\DIFadd{: gradient-ascent-style objectives push probability mass off
@@ -549,7 +551,13 @@ with a utility reading.
 The earliest guarantees came from \emph{certified removal}
 \citep{guo2020certified,sekhari2021remember,neel2021descent,ginart2019making}, which
 bounds the distance between the unlearned and retrained models in a differential-
-privacy-style $(\eps_u,\delta_u)$ sense. These results are elegant but confined to
+privacy-style $(\eps_u,\delta_u)$ \DIFdelbegin \DIFdel{sense}\DIFdelend \DIFaddbegin \DIFadd{sense---the same framing \mbox{%DIFAUXCMD
+\citet{dang2021rtbf}
+}\hskip0pt%DIFAUXCMD
+argues is the more defensible reading of ``forgotten'' than the erasure language of
+the GDPR itself, since it requires that no test can tell whether the deleted record
+was ever present, exactly the guarantee a ghost-canary pair is built to supply on the
+model VOUCH certifies}\DIFaddend . These results are elegant but confined to
 convex or near-convex regimes, and their bounds become vacuous at the scale of modern
 language models; we use them not as a baseline but as a \DIFdelbegin \DIFdel{semantic anchor}\DIFdelend \DIFaddbegin \DIFadd{consistency check}\DIFaddend , showing in
 Proposition~\ref{prop:bridge} that any $(\eps_u,\delta_u)$-certified algorithm passes
@@ -2044,8 +2052,7 @@ that the median certification time tracks }\DIFdelend \DIFaddbegin \DIFadd{repor
 $\log(1/\alpha)/\KL$ within fifteen percent across the whole $\eps$ grid, and
 Figure~\ref{fig:power} plots the same relationship together with the
 revocation
-detection time.
-}\DIFdelend \DIFaddbegin \DIFadd{limit.
+detection time. }\DIFdelend \DIFaddbegin \DIFadd{limit.
 Two corrections to the earlier version are folded in. First, the theoretical column now
 follows the corrected expansion \eqref{eq:klexp}; the numbers themselves are unchanged
 because they were always computed from the exact divergence, but the accompanying
