@@ -1,7 +1,7 @@
 \documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 06:21:28 2026
-%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 06:21:28 2026
+%DIF DEL /tmp/vouch_v1f/main.tex   Fri Sep  4 06:40:06 2026
+%DIF ADD /tmp/vouch_v2f/main.tex   Fri Sep  4 06:40:06 2026
 
 
 \theoremstyle{thmstyleone}
@@ -330,8 +330,7 @@ models\DIFdelbegin \DIFdel{that gradient-ascent unlearning frequently }\emph{\DI
 never-seen partners---membership leakage that a one-sided test happily certifies and
 that a two-sided test must catch. \DIFdelbegin \DIFdel{And we found, when we corrected the sample-size analysis
 against the information-theoretic lower bound, that an earlier back-of-envelope estimate
-understated the required cohort by threefold. Each of these is now a theorem or a
-measured result rather than a footnote.
+understated the required cohort by threefold. Each of these is now a theorem or a measured result rather than a footnote.
 }\DIFdelend \DIFaddbegin \emph{\DIFadd{(v)}} \DIFadd{The small-$\eps$ expansion of the
 Kullback--Leibler drift is $\eps^2/2$, not $\eps^2/8$, so the cohort-size rule is
 $2\log(1/\alpha)/\eps^2$; the numerical columns were always computed from the exact
@@ -357,8 +356,8 @@ $(\eps_u,\delta_u)$-unlearning (Section~\ref{sec:theory}). \DIFdelbegin \DIFdel{
 seeds; head-to-head comparison against four }\emph{\DIFadd{valid}} \DIFadd{sequential procedures;
 }\DIFaddend end-to-end certification of gradient ascent, GradDiff, \DIFdelbegin \DIFdel{negative preference optimisation, and retraining-from-scratch on the }\DIFdelend \DIFaddbegin \DIFadd{NPO and retraining on }\DIFaddend TOFU and
 MUSE-News \DIFdelbegin \DIFdel{benchmarks across three model }\DIFdelend \DIFaddbegin \DIFadd{across three }\DIFaddend architectures, with \DIFdelbegin \DIFdel{utility guardrails }\DIFdelend \DIFaddbegin \DIFadd{SimNPO and representation misdirection
-added on TOFU/GPT-2 and the latter confirmed on a second architecture, a tolerance
-sweep down to $\eps = 0.05$, utility guardrails, }\DIFaddend and
+added on TOFU/GPT-2 and the latter confirmed on a second architecture and a second
+benchmark, a tolerance sweep down to $\eps = 0.05$, utility guardrails, }\DIFaddend and
 dose--response calibration; \DIFaddbegin \DIFadd{a head-to-head
 against the descriptive metrics VOUCH is argued to replace; attacks from outside the
 declared score class, including a LiRA-style shadow-model attack with matched shadows
@@ -2017,7 +2016,8 @@ cohorts have a realised advantage genuinely below the tolerance. Against the
 }\emph{\DIFadd{cohort}} \DIFadd{null every procedure holds its level, and the two group-sequential
 boundaries and the fixed-$n$ test are markedly conservative there ($0.004$}\DIFaddend , \DIFdelbegin \DIFdel{and the answer is :
 close to
-nothing beyond the information-theoretic minimum. }\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
+nothing beyond the information-theoretic minimum.
+}\DIFdelend \DIFaddbegin \DIFadd{$0.000$,
 $0.000$) precisely because they were built for the other target. Neither column alone
 is a fair scoreboard, which is why we print both. On power and cost the ordering is
 informative. Against exact unlearning at $\eps = 0.1$ and a budget of $1{,}536$ pairs,
@@ -2053,7 +2053,8 @@ that the median certification time tracks }\DIFdelend \DIFaddbegin \DIFadd{repor
 $\log(1/\alpha)/\KL$ within fifteen percent across the whole $\eps$ grid, and
 Figure~\ref{fig:power} plots the same relationship together with the
 revocation
-detection time. }\DIFdelend \DIFaddbegin \DIFadd{limit.
+detection time.
+}\DIFdelend \DIFaddbegin \DIFadd{limit.
 Two corrections to the earlier version are folded in. First, the theoretical column now
 follows the corrected expansion \eqref{eq:klexp}; the numbers themselves are unchanged
 because they were always computed from the exact divergence, but the accompanying
@@ -2615,6 +2616,42 @@ training run rather than of the protocol.
 (three seeds, $384$ pairs, cohort target). Same columns as Table~\ref{tab:rmu}.}}
 \label{tab:rmu-pythia}
 \input{tables/rmu_pythia}
+\end{table}
+
+\subsection{\DIFadd{RMU on a second benchmark}}\label{sec:exp-rmu-muse}
+
+\DIFadd{Sections~\ref{sec:exp-rmu} and~\ref{sec:exp-rmu-pythia} are both TOFU. Table~\ref{tab:rmu-muse}
+repeats the identical protocol on MUSE-News/GPT-2 instead, still three seeds and the
+same tolerances, though with the $512$-pair cohort MUSE-News runs use elsewhere in
+this study (Section~\ref{sec:exp-e2e}) rather than TOFU's $384$. Most of the pattern
+transfers: RMU's realised advantage ($+0.012$) again sits close to retraining's
+($-0.040$), both well inside the un-unlearned model's ($+0.111$), and RMU again barely
+moves the forget split relative to NPO and SimNPO (forget NLL $3.95$ against $3.36$ and
+$3.36$) while landing at a comparable place on the quantity the certificate measures.
+}
+
+\DIFadd{One thing does not transfer cleanly. RMU is revoked on one of three seeds at every
+tolerance we test ($\eps=0.2$ included), at a realised advantage of $+0.074$ on that
+seed against $-0.012$ and $-0.027$ on the other two. This is the same
+run-to-run instability the un-unlearned control already shows on two cells of the main
+benchmark tier (Section~\ref{sec:exp-bench}) and again here (revoked on two of three
+MUSE seeds rather than the cleaner three-of-three on TOFU/GPT-2 and TOFU/Pythia) ---
+but on TOFU, RMU itself never revoked on any seed at $\eps=0.2$, and here it does. We
+read that as a genuine, if modest, difference rather than noise to explain away: RMU's
+margin against the tolerance is thinner on MUSE-News than on TOFU, and one seed in
+three crosses it. The method is still recognisably in the same utility-preserving
+family --- its forget-NLL shift is still far smaller than NPO's or SimNPO's on the same
+seeds --- but ``RMU certifies cleanly'' is a claim we can make about TOFU, not about
+every benchmark.
+}
+
+\begin{table}[t]
+\centering\small
+\caption{\DIFaddFL{The RMU tier of Table~\ref{tab:rmu}, repeated unchanged on MUSE-News/GPT-2
+(three seeds, $512$ pairs, cohort target, matching the MUSE-News cohort size used
+elsewhere in this study). Same columns as Table~\ref{tab:rmu}.}}
+\label{tab:rmu-muse}
+\input{tables/rmu_muse}
 \end{table}
 
 \subsection{\DIFadd{A tight-tolerance cohort, and the limit it exposes}}\label{sec:exp-tight}

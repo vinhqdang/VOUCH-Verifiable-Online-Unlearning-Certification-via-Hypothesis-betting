@@ -181,16 +181,16 @@ Four items that stood here have since been closed — see §9 for what was added
 Ranked by how much a round-2 referee would care.
 
 1. **The LiRA result's reach.** The shadow-model attack now runs on two
-   architectures: TinyGPT (`run_lira.py`, §5.12, 16 shadows, Δ=+0.820 positive
+   architectures: TinyGPT (`run_lira.py`, §5.15, 16 shadows, Δ=+0.820 positive
    control / Δ=−0.016 CI [−0.141,+0.110] on certified NPO, 92%/47% agreement) and,
-   at full scale, TOFU/GPT-2 itself (`run_lira_hf.py`, §5.13, 24 shadows, 384 pairs,
+   at full scale, TOFU/GPT-2 itself (`run_lira_hf.py`, §5.16, 24 shadows, 384 pairs,
    Δ=+0.479 CI [+0.385,+0.566] positive control / Δ=−0.031 CI [−0.133,+0.071] on
    certified NPO, 59%/54% agreement) — the same pattern on the architecture the
    paper's own certified NPO row uses, not just a CPU-affordable stand-in. A shadow
    study at 1B+ parameters still needs the whole pipeline per shadow and remains
    unaffordable here.
 2. **The squeezing effect is still untested.** `s_para` is implemented and in F
-   (§5.14) at a cost of 1–2% in pairs, but our secrets are random alphanumeric
+   (§5.17) at a cost of 1–2% in pairs, but our secrets are random alphanumeric
    strings, which have no paraphrase. Testing Li et al.'s effect needs canaries whose
    *secret* is natural language — twins exchangeable as propositions, not strings.
 3. **Theorem 5 bounds one mechanism.** It gives an exact, strategy-independent
@@ -483,7 +483,7 @@ Both jobs landed, on the third attempt for one of them.
   --device cuda` ran to completion: Δ=+0.479 (95% CI [+0.385,+0.566]) on the
   un-unlearned positive control, Δ=−0.031 (CI [−0.133,+0.071]) on the certified NPO
   model — the same pattern as the TinyGPT tier, now on the architecture the paper's
-  own certified NPO row uses. Written up in §5.13 (`sec:exp-lira-gpt2`, Table 20).
+  own certified NPO row uses. Written up in §5.16 (`sec:exp-lira-gpt2`, Table 21).
 
 Both runs hit the same class of failure along the way: this session's own container
 went idle (no wakeup mechanism keeps a shell running between turns) for long enough

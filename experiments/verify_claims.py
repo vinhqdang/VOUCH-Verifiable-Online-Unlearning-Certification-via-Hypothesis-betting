@@ -113,7 +113,7 @@ def main():
     kn = sum(1 for p in psn if p < 0.05)
     check("rejected in 24 of the un-unlearned runs", kn == 24, f"{kn}/{len(psn)}")
 
-    print("== out-of-class attacks are a NULL result (Section 5.11, Table 16) ==")
+    print("== out-of-class attacks are a NULL result (Section 5.14, Table 19) ==")
     for atk, want_obs in (("stratum_r8", 0.028), ("learned_combo", 0.005)):
         vs = [v for rec in d["runs"].values()
               for m, rows in rec["methods"].items() if m != "none"
@@ -166,7 +166,7 @@ def main():
             check(f"realised advantage {want:+.2f} at r={r_}",
                   close(dh, want, 0.02), f"{dh:+.3f}")
 
-    print("== tight-tolerance cohort (Section 5.9, Table 14) ==")
+    print("== tight-tolerance cohort (Section 5.12, Table 17) ==")
     rec = d["runs"].get("tofu_gpt2_tight")
     if rec:
         subs = ("none", "retrain", "npo", "simnpo")
@@ -225,7 +225,7 @@ def main():
               close(st["all_exact/global_certified_rate_allpass"], 0.484, 0.01),
               f"{st['all_exact/global_certified_rate_allpass']:.3f}")
 
-    print("== detectability (Section 5.12, Table 17) ==")
+    print("== detectability (Section 5.18, Table 23) ==")
     det = load("detectability_tofu_gpt2")
     if det:
         v = det["variants"]["deployed"]
@@ -319,7 +319,41 @@ def main():
               f"rmu {_mean_py('rmu','forget_nll'):.2f}, npo {_mean_py('npo','forget_nll'):.2f}, "
               f"simnpo {_mean_py('simnpo','forget_nll'):.2f}")
 
-    print("== LiRA, an attack from outside F (Section 5.13) ==")
+    print("== RMU generalization: MUSE-News/GPT-2 (Section 5.11) ==")
+    rmu_muse = load("lm_e2e_muse_gpt2_rmu") or load("lm_e2e_muse_gpt2_rmu_partial")
+    if rmu_muse:
+        def _delta_mu(rec, m):
+            pd_ = rec["certs"][m]["pair_diffs"]
+            return 2 * np.mean([x["loss"] > 0 for x in pd_]) - 1
+
+        def _mean_mu(m, key):
+            return float(np.nanmean([r["certs"][m].get(key, np.nan)
+                                     for r in rmu_muse if m in r["certs"]]))
+        d_rmu_mu = float(np.mean([_delta_mu(r, "rmu") for r in rmu_muse
+                                  if "rmu" in r["certs"]]))
+        d_rt_mu = float(np.mean([_delta_mu(r, "retrain") for r in rmu_muse]))
+        d_none_mu = float(np.mean([_delta_mu(r, "none") for r in rmu_muse]))
+        check("3 seeds on MUSE-News/GPT-2, all 5 subjects each",
+              len(rmu_muse) == 3
+              and all(len(r["certs"]) == 5 for r in rmu_muse),
+              [len(r["certs"]) for r in rmu_muse])
+        check("RMU realised advantage +0.012, close to retrain's -0.040",
+              close(d_rmu_mu, 0.012, 0.002) and close(d_rt_mu, -0.040, 0.002),
+              f"rmu {d_rmu_mu:+.3f}, retrain {d_rt_mu:+.3f}")
+        check("the un-unlearned model's advantage is +0.111",
+              close(d_none_mu, 0.111, 0.002), f"{d_none_mu:+.3f}")
+        check("RMU is revoked at eps=0.2 on exactly one of three seeds (the exception to the TOFU pattern)",
+              [r["certs"]["rmu"]["status"] for r in rmu_muse]
+              .count("REVOKED") == 1,
+              [r["certs"]["rmu"]["status"] for r in rmu_muse])
+        check("RMU barely raises the forget split (3.95) where NPO and SimNPO reach 3.36/3.36",
+              close(_mean_mu("rmu", "forget_nll"), 3.95, 0.05)
+              and close(_mean_mu("npo", "forget_nll"), 3.36, 0.05)
+              and close(_mean_mu("simnpo", "forget_nll"), 3.36, 0.05),
+              f"rmu {_mean_mu('rmu','forget_nll'):.2f}, npo {_mean_mu('npo','forget_nll'):.2f}, "
+              f"simnpo {_mean_mu('simnpo','forget_nll'):.2f}")
+
+    print("== LiRA, an attack from outside F (Section 5.15) ==")
     lira = load("lira_analysis")
     if lira:
         n = lira["subjects"]["none"]; c = lira["subjects"]["npo"]
@@ -339,7 +373,7 @@ def main():
         check("16 shadows, 256 pairs", lira["shadows"] == 16 and lira["pairs"] == 256,
               f"{lira['shadows']} shadows, {lira['pairs']} pairs")
 
-    print("== LiRA at full scale on TOFU/GPT-2 (Section 5.13) ==")
+    print("== LiRA at full scale on TOFU/GPT-2 (Section 5.16) ==")
     lira_gpt2 = load("lira_gpt2_analysis")
     if lira_gpt2:
         n = lira_gpt2["subjects"]["none"]; c = lira_gpt2["subjects"]["npo"]
@@ -361,7 +395,7 @@ def main():
         check("24 shadows, 384 pairs", lira_gpt2["shadows"] == 24 and lira_gpt2["pairs"] == 384,
               f"{lira_gpt2['shadows']} shadows, {lira_gpt2['pairs']} pairs")
 
-    print("== the paraphrase-aware score in F (Section 5.14) ==")
+    print("== the paraphrase-aware score in F (Section 5.17) ==")
     para = load("paraphrase")
     if para and para.get("runs"):
         run = para["runs"][0]

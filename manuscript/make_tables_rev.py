@@ -610,6 +610,17 @@ def tab_rmu_pythia():
     write("rmu_pythia", _rmu_body(rows))
 
 
+def tab_rmu_muse():
+    """RMU generalization: the same co-trained tier on MUSE/GPT-2."""
+    d = load("lm_e2e_muse_gpt2_rmu") or load("lm_e2e_muse_gpt2_rmu_partial")
+    if not d:
+        return
+    rows = _rmu_rows(d)
+    if not rows:
+        return
+    write("rmu_muse", _rmu_body(rows))
+
+
 # ---------------------------------------------------------------------------
 # A paraphrase-aware score in F (Section 5.14)
 # ---------------------------------------------------------------------------
@@ -708,6 +719,7 @@ if __name__ == "__main__":
     tab_tight()
     tab_rmu()
     tab_rmu_pythia()
+    tab_rmu_muse()
     tab_para()
     tab_lira()
     tab_lira_gpt2()

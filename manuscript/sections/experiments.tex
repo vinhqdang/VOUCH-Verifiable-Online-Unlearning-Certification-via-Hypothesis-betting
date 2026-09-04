@@ -678,6 +678,40 @@ training run rather than of the protocol.
 \input{tables/rmu_pythia}
 \end{table}
 
+\subsection{RMU on a second benchmark}\label{sec:exp-rmu-muse}
+
+Sections~\ref{sec:exp-rmu} and~\ref{sec:exp-rmu-pythia} are both TOFU. Table~\ref{tab:rmu-muse}
+repeats the identical protocol on MUSE-News/GPT-2 instead, still three seeds and the
+same tolerances, though with the $512$-pair cohort MUSE-News runs use elsewhere in
+this study (Section~\ref{sec:exp-e2e}) rather than TOFU's $384$. Most of the pattern
+transfers: RMU's realised advantage ($+0.012$) again sits close to retraining's
+($-0.040$), both well inside the un-unlearned model's ($+0.111$), and RMU again barely
+moves the forget split relative to NPO and SimNPO (forget NLL $3.95$ against $3.36$ and
+$3.36$) while landing at a comparable place on the quantity the certificate measures.
+
+One thing does not transfer cleanly. RMU is revoked on one of three seeds at every
+tolerance we test ($\eps=0.2$ included), at a realised advantage of $+0.074$ on that
+seed against $-0.012$ and $-0.027$ on the other two. This is the same
+run-to-run instability the un-unlearned control already shows on two cells of the main
+benchmark tier (Section~\ref{sec:exp-bench}) and again here (revoked on two of three
+MUSE seeds rather than the cleaner three-of-three on TOFU/GPT-2 and TOFU/Pythia) ---
+but on TOFU, RMU itself never revoked on any seed at $\eps=0.2$, and here it does. We
+read that as a genuine, if modest, difference rather than noise to explain away: RMU's
+margin against the tolerance is thinner on MUSE-News than on TOFU, and one seed in
+three crosses it. The method is still recognisably in the same utility-preserving
+family --- its forget-NLL shift is still far smaller than NPO's or SimNPO's on the same
+seeds --- but ``RMU certifies cleanly'' is a claim we can make about TOFU, not about
+every benchmark.
+
+\begin{table}[t]
+\centering\small
+\caption{The RMU tier of Table~\ref{tab:rmu}, repeated unchanged on MUSE-News/GPT-2
+(three seeds, $512$ pairs, cohort target, matching the MUSE-News cohort size used
+elsewhere in this study). Same columns as Table~\ref{tab:rmu}.}
+\label{tab:rmu-muse}
+\input{tables/rmu_muse}
+\end{table}
+
 \subsection{A tight-tolerance cohort, and the limit it exposes}\label{sec:exp-tight}
 
 The tolerance sweep of Table~\ref{tab:epssweep} reaches $\eps = 0.05$ on the cohort

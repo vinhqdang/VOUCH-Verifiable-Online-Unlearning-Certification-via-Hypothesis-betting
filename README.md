@@ -408,8 +408,22 @@ in about half of them; unlearned targets are calibrated against unlearned shadow
 
 The positive control is the point: the attack demonstrably works, so its null on the
 certified model is informative rather than vacuous — unlike the two weaker attacks of
-§5.11, which could not beat their own binomial nulls. One tier, one target, 16 shadows,
-so it bounds the gap without closing it.
+§5.14, which could not beat their own binomial nulls.
+
+**At full scale, on the model this paper actually certifies.** `experiments/run_lira_hf.py`
+runs the identical attack, unchanged in design, on TOFU/GPT-2 — 24 shadows, the full
+384-pair main-tier cohort:
+
+| target model | in-class Δ | LiRA Δ | 95% CI | agreement |
+|---|---|---|---|---|
+| no unlearning (positive control) | +0.135 | **+0.479** | [+0.385, +0.566] | 0.59 |
+| NPO, certified at ε=0.2 | −0.052 | **−0.031** | [−0.133, +0.071] | 0.54 |
+
+Same pattern as TinyGPT — a large, tolerance-exceeding advantage on the un-unlearned
+model, a null bounded away from every tolerance on the certified one — now on the
+architecture the certified NPO row above actually uses, not a CPU-affordable stand-in.
+16 and 24 shadows respectively, against the hundreds a canonical LiRA study would use,
+so together they bound the gap without closing it.
 
 ### RMU — a second utility-preserving subject
 
@@ -458,8 +472,27 @@ The pattern transfers: RMU certifies through ε=0.1 and turns undetermined at ε
 all three seeds, same as on GPT-2, at an advantage close to retraining's and a
 forget-NLL shift far below NPO's or SimNPO's — so the loss/detectability divergence
 above is not a GPT-2 artifact. The positive control is sharper here too (revoked on all
-three seeds rather than two of three). MUSE and larger models are still untested for
-this method.
+three seeds rather than two of three).
+
+**Generalizing to a second benchmark.** The identical protocol on MUSE-News/GPT-2
+(three seeds, 512 pairs — the cohort size MUSE-News runs use elsewhere):
+
+| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
+|---|---|---|---|---|---|
+| no unlearning | R / R / I | R / R / U | +0.111 | 3.26 | 3.28 |
+| retrain (fresh adapter) | I / I / I | I / I / I | −0.040 | 3.24 | 3.22 |
+| NPO | I / I / I | I / I / U | −0.039 | 3.36 | 3.36 |
+| SimNPO | I / I / I | I / I / I | −0.012 | 3.36 | 3.35 |
+| **RMU** | **I / I / R** | **I / I / R** | **+0.012** | 3.95 | 4.00 |
+
+Most of the pattern transfers again — RMU's advantage sits close to retraining's, and
+it still barely moves the forget split relative to NPO and SimNPO — but not all of it:
+RMU is **revoked** on one of three seeds at every tolerance tested (Δ̂=+0.074 on that
+seed, against −0.012 and −0.027 on the other two), something it never does on TOFU at
+ε=0.2. We read that as a genuine, modest difference in RMU's margin on this benchmark
+rather than noise to explain away — "RMU certifies cleanly" is a claim we can make
+about TOFU, not about every benchmark. Larger models are still untested for this
+method.
 
 ### A paraphrase-aware score in F
 
