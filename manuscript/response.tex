@@ -471,8 +471,13 @@ same phenomenon \S\ref{sec:exp-bench} already reports for two cells of the main
 benchmark: $\eps = 0.2$ is loose enough that a weakly-memorising run can certify
 without any unlearning having occurred.
 
-Task-vector negation remains unevaluated, and we still name the method list as
-incomplete.
+The tier is also no longer single-architecture: the identical protocol repeated
+unchanged on TOFU/Pythia-160M (new \S\ref{sec:exp-rmu-pythia}, Table~\ref{tab:rmu-pythia}) reproduces the
+same pattern --- RMU certifies at $\eps=0.2$ and $0.1$ on all three seeds and turns
+undetermined at $0.05$, at a realised advantage close to retraining's and a forget-NLL
+shift far smaller than NPO's or SimNPO's --- so the loss/detectability divergence is
+not a property of one model family. Task-vector negation remains unevaluated, MUSE is
+untested for this method, and we still name the method list as incomplete.
 \end{reply}
 
 \begin{point}{R1.5c --- held-out NLL is not sufficient for utility}
@@ -1389,9 +1394,10 @@ from the run seed and so does not meet Theorem~\ref{thm:cert}'s independence hyp
 sources that do meet it are implemented and tested, and a deployed audit should use
 the beacon; we report the tables as they were computed rather than restating them
 under a reveal rule they were not run under.
-\item \textbf{The RMU tier is TOFU/GPT-2 only.} Three seeds, matching the main
-benchmark tier, but reported separately rather than merged into it, and evaluated on
-one benchmark and one architecture.
+\item \textbf{The RMU tier is TOFU only.} Three seeds, matching the main benchmark
+tier, but reported separately rather than merged into it, and now checked on two
+architectures (GPT-2 and Pythia-160M, \S\ref{sec:exp-rmu}--\S\ref{sec:exp-rmu-pythia}) with the same
+pattern on both; MUSE and larger models remain untested for this method.
 \end{enumerate}
 
 \noindent Set against those, the changes we regard as materially strengthening the

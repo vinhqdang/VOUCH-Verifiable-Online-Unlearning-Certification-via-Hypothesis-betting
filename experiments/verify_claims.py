@@ -284,6 +284,41 @@ def main():
               and close(_mean("retrain", "retain_nll"), 1.99, 0.02),
               f"{_mean('rmu','retain_nll'):.2f} vs {_mean('retrain','retain_nll'):.2f}")
 
+    print("== RMU generalization: TOFU/Pythia-160M (Section 5.10) ==")
+    rmu_py = load("lm_e2e_tofu_pythia_rmu")
+    if rmu_py:
+        def _delta_py(rec, m):
+            pd_ = rec["certs"][m]["pair_diffs"]
+            return 2 * np.mean([x["loss"] > 0 for x in pd_]) - 1
+
+        def _mean_py(m, key):
+            return float(np.nanmean([r["certs"][m].get(key, np.nan)
+                                     for r in rmu_py if m in r["certs"]]))
+        d_rmu_py = float(np.mean([_delta_py(r, "rmu") for r in rmu_py
+                                  if "rmu" in r["certs"]]))
+        d_rt_py = float(np.mean([_delta_py(r, "retrain") for r in rmu_py]))
+        d_none_py = float(np.mean([_delta_py(r, "none") for r in rmu_py]))
+        check("3 seeds on Pythia-160M, same protocol as the GPT-2 tier",
+              len(rmu_py) == 3, f"{len(rmu_py)} seeds")
+        check("RMU realised advantage +0.026, close to retrain's +0.014",
+              close(d_rmu_py, 0.026, 0.002) and close(d_rt_py, 0.014, 0.002),
+              f"rmu {d_rmu_py:+.3f}, retrain {d_rt_py:+.3f}")
+        check("the un-unlearned model's advantage is +0.535",
+              close(d_none_py, 0.535, 0.002), f"{d_none_py:+.3f}")
+        check("RMU issues at eps=0.2 on all three seeds",
+              all(r["certs"]["rmu"]["status"] == "ISSUED" for r in rmu_py),
+              [r["certs"]["rmu"]["status"] for r in rmu_py])
+        check("the un-unlearned control revokes on all three seeds (R/R/R), sharper than GPT-2's R/R/I",
+              [r["certs"]["none"]["status"] for r in rmu_py]
+              == ["REVOKED", "REVOKED", "REVOKED"],
+              [r["certs"]["none"]["status"] for r in rmu_py])
+        check("RMU barely raises the forget split (9.95) where NPO and SimNPO reach 76.73/65.65",
+              close(_mean_py("rmu", "forget_nll"), 9.95, 0.05)
+              and close(_mean_py("npo", "forget_nll"), 76.73, 0.05)
+              and close(_mean_py("simnpo", "forget_nll"), 65.65, 0.05),
+              f"rmu {_mean_py('rmu','forget_nll'):.2f}, npo {_mean_py('npo','forget_nll'):.2f}, "
+              f"simnpo {_mean_py('simnpo','forget_nll'):.2f}")
+
     print("== LiRA, an attack from outside F (Section 5.13) ==")
     lira = load("lira_analysis")
     if lira:

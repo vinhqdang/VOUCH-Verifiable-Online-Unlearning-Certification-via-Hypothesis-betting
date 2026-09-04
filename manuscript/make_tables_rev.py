@@ -538,15 +538,13 @@ def tab_certprod():
 # ---------------------------------------------------------------------------
 # RMU: a second utility-preserving subject (Section 5.13)
 # ---------------------------------------------------------------------------
-def tab_rmu():
-    """RMU beside the other utility-preserving subjects, co-trained (Sec 5.13)."""
+def _rmu_rows(d):
+    """Shared computation for the RMU-tier tables: verdicts at three
+    tolerances, realised advantage and mean NLLs, per subject."""
     import sys as _sys
     _sys.path.insert(0, REPO)
     from vouch.verify import VouchConfig, VouchVerifier
 
-    d = load("lm_e2e_tofu_gpt2_rmu") or load("lm_e2e_tofu_gpt2_rmu_partial")
-    if not d:
-        return
     order = ["none", "retrain", "npo", "simnpo", "rmu"]
     lbl = dict(LBL); lbl["rmu"] = "RMU"
     epss = (0.2, 0.1, 0.05)
@@ -573,8 +571,10 @@ def tab_rmu():
                      ["/".join(verds[e]) for e in epss],
                      float(np.mean(deltas)), float(np.nanmean(fn)),
                      float(np.nanmean(rn)), float(np.nanmean(cn))))
-    if not rows:
-        return
+    return rows
+
+
+def _rmu_body(rows):
     body = ("\\begin{tabular}{lcccccc}\n\\toprule\n"
             "& \\multicolumn{3}{c}{verdict} & & "
             "\\multicolumn{2}{c}{mean NLL}\\\\\n"
@@ -585,7 +585,29 @@ def tab_rmu():
         body += (f"{name} & {vs[0]} & {vs[1]} & {vs[2]} & {dl:+.3f} & "
                  f"{f_:.2f} & {r_:.2f}\\\\\n")
     body += "\\bottomrule\n\\end{tabular}\n"
-    write("rmu", body)
+    return body
+
+
+def tab_rmu():
+    """RMU beside the other utility-preserving subjects, co-trained (Sec 5.13)."""
+    d = load("lm_e2e_tofu_gpt2_rmu") or load("lm_e2e_tofu_gpt2_rmu_partial")
+    if not d:
+        return
+    rows = _rmu_rows(d)
+    if not rows:
+        return
+    write("rmu", _rmu_body(rows))
+
+
+def tab_rmu_pythia():
+    """RMU generalization: the same co-trained tier on TOFU/Pythia-160M."""
+    d = load("lm_e2e_tofu_pythia_rmu")
+    if not d:
+        return
+    rows = _rmu_rows(d)
+    if not rows:
+        return
+    write("rmu_pythia", _rmu_body(rows))
 
 
 # ---------------------------------------------------------------------------
@@ -673,6 +695,7 @@ if __name__ == "__main__":
     tab_certprod()
     tab_tight()
     tab_rmu()
+    tab_rmu_pythia()
     tab_para()
     tab_lira()
     print("revision tables done")

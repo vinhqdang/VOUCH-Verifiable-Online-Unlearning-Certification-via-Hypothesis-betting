@@ -205,9 +205,19 @@ Ranked by how much a round-2 referee would care.
    organic-like dose the audit has no power at this model scale. Named in the conclusion
    as the framework's most important open problem.
 6. **Method and probe coverage.** SimNPO and RMU are now evaluated on TOFU/GPT-2
-   (RMU in its own tier, `lm_e2e_tofu_gpt2_rmu.json`, now 3 seeds matching the main
-   benchmark tier -- seeds 0-1 on CPU, seed 2 on a Colab T4, see below); task-vector negation
-   is not run. P1/P3 cover all benchmark cells but are anchored on NPO; P2 runs
+   (RMU in its own tier, `lm_e2e_tofu_gpt2_rmu.json`, 3 seeds matching the main
+   benchmark tier -- seeds 0-1 on CPU, seed 2 on a Colab T4, see below), and RMU is
+   also confirmed on a second architecture, TOFU/Pythia-160M, 3 seeds
+   (`lm_e2e_tofu_pythia_rmu.json`, §5.10 in the manuscript), with the same
+   certify-through-ε=0.1-then-undetermined-at-0.05 pattern and forget-NLL divergence
+   as GPT-2. Still outstanding: task-vector negation is not run; RMU on MUSE (any
+   architecture) was attempted on a Colab GPU but the session was reclaimed
+   mid-run before any seed's result was downloaded, so that tier needs a full
+   restart with per-seed syncing (see §9); the GPU version of the LiRA attack
+   (`run_lira_hf.py`) is written and smoke-tested but has not been run at its
+   intended scale (24 shadows, 384 pairs) for lack of a currently-authenticated
+   GPU session -- both need either a fresh Colab OAuth grant or another GPU
+   environment. P1/P3 cover all benchmark cells but are anchored on NPO; P2 runs
    on the small tiers only (the shared-frozen-base design would have to materialise
    merged weights to quantise a multi-billion-parameter model).
 7. **Capability probe is thin** — TOFU `world_facts` / MUSE holdout, not MMLU.
@@ -444,6 +454,44 @@ adding one *because* the un-unlearned control came back weaker on seed 2 would b
 exactly the kind of sampling-until-the-inconvenient-result-goes-away that invites
 suspicion. Three seeds matches the main tier's own convention; that was the actual
 gap to close, and it is closed.
+
+### RMU generalization to a second architecture (Pythia-160M)
+
+The same Colab pattern above (T4, `torchao>=0.16.0` pinned) also ran the RMU tier's
+identical protocol on `EleutherAI/pythia-160m`, 3 seeds, downloaded before that Colab
+VM was reclaimed as `results/lm_e2e_tofu_pythia_rmu.json` and now written into the
+manuscript (§5.10, Table 15) and `verify_claims.py`. The pattern transfers exactly:
+RMU certifies through ε=0.1, turns undetermined at ε=0.05 on all three seeds, and
+barely raises the forget split's likelihood, same as on GPT-2.
+
+### Outstanding: MUSE/GPT-2 RMU restart and LiRA-on-GPT-2 at scale
+
+Two jobs from the same Colab push did not land and remain open:
+
+- **MUSE/GPT-2, RMU tier.** A second Colab session (`rmugen`) was training this tier
+  when the VM was reclaimed mid-run (`Session 'rmugen' appears to be lost (404/401)`);
+  seeds 0-1 had logged as complete but no result JSON was ever downloaded, so nothing
+  from that run is recoverable. Restarting it needs all 3 seeds from scratch, and
+  should download/sync the result file after *every* seed rather than only at the
+  end, to survive a repeat of the same failure.
+- **LiRA on GPT-2, at scale.** `experiments/run_lira_hf.py` ports the LiRA
+  shadow-model attack (§5.13, `run_lira.py`) from TinyGPT to GPT-2/TOFU on the same
+  corpus and canary setup as `run_benchmark.py`, so its result is directly comparable
+  to the certified NPO row of the main benchmark tier. It is written and
+  smoke-tested (`--shadows 1 --pairs 16 --train-steps 20 --npo-steps 10 --device
+  cpu`; an early per-shadow-adapter-reuse design was caught as broken before running
+  at scale and replaced with a fresh model per pipeline call, mirroring
+  `run_lira.py`'s pattern) but has not been run at its intended scale (`--shadows 24
+  --pairs 384 --device cuda` — 25 full GPT-2+LoRA training runs, which needs a GPU;
+  on CPU it is not affordable in a single session).
+
+Both need an authenticated Colab (or other GPU) session; the environment this handoff
+entry was written in has neither a GPU nor the OAuth state from the session that ran
+the work above (that lived in a different container's filesystem, discarded when the
+session ended). Whoever picks this up next should either re-authenticate
+`google-colab-cli` (see above) or run these two scripts on any available GPU machine,
+then follow the pattern of §5.10 above to write the results into the manuscript,
+`verify_claims.py`, this file, and the response letter's closing gap list.
 
 ### Test and check counts
 

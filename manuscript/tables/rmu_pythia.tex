@@ -1,0 +1,13 @@
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{verdict} & & \multicolumn{2}{c}{mean NLL}\\
+\cmidrule(lr){2-4}\cmidrule(lr){6-7}
+subject & $\eps{=}0.2$ & $0.1$ & $0.05$ & $\hat\Delta$ & forget & retain\\
+\midrule
+no unlearning & \vR/\vR/\vR & \vR/\vR/\vR & \vR/\vR/\vR & +0.535 & 1.78 & 1.89\\
+retrain (fresh adapter) & \vI/\vI/\vI & \vI/\vI/\vI & \vI/\vI/\vU & +0.014 & 2.54 & 1.80\\
+NPO & \vI/\vI/\vI & \vI/\vU/\vI & \vU/\vU/\vI & +0.061 & 76.73 & 2.05\\
+SimNPO & \vI/\vI/\vI & \vI/\vI/\vI & \vU/\vU/\vI & +0.005 & 65.65 & 3.01\\
+RMU & \vI/\vI/\vI & \vI/\vI/\vI & \vU/\vU/\vU & +0.026 & 9.95 & 3.84\\
+\bottomrule
+\end{tabular}

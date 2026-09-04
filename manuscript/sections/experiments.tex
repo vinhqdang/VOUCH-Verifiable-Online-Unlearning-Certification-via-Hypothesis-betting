@@ -650,6 +650,34 @@ reported as its own tier because its subjects were co-trained in a single run.}
 \input{tables/rmu}
 \end{table}
 
+\subsection{RMU on a second architecture}\label{sec:exp-rmu-pythia}
+
+Everything in Section~\ref{sec:exp-rmu} is on one architecture, so a natural question is
+whether the RMU tier's pattern is a property of GPT-2 or of the method. Table~\ref{tab:rmu-pythia}
+repeats the identical protocol---the same three seeds, cohort size, tolerances and
+co-training design---on TOFU/Pythia-160M. The pattern transfers. RMU again certifies
+at $\eps=0.2$ and $\eps=0.1$ on all three seeds and moves to undetermined at
+$\eps=0.05$ on all three, the same tolerance at which it stops certifying on GPT-2; its
+realised advantage of $+0.026$ again sits close to retraining's $+0.014$, both well
+below the un-unlearned model's $+0.535$. It again does this while barely moving the
+forget-split likelihood---to $9.95$ nats against the un-unlearned model's $1.78$, a far
+smaller shift than NPO's $76.73$ or SimNPO's $65.65$ on the same seeds---so the
+loss/detectability divergence Section~\ref{sec:exp-rmu} reports is not an artifact of
+one model family.
+
+The positive control is if anything sharper here: the un-unlearned model is revoked on
+all three Pythia seeds at $\eps=0.2$, rather than on two of three as on GPT-2, so the
+one seed where the GPT-2 control slipped through is a property of that particular
+training run rather than of the protocol.
+
+\begin{table}[t]
+\centering\small
+\caption{The RMU tier of Table~\ref{tab:rmu}, repeated unchanged on TOFU/Pythia-160M
+(three seeds, $384$ pairs, cohort target). Same columns as Table~\ref{tab:rmu}.}
+\label{tab:rmu-pythia}
+\input{tables/rmu_pythia}
+\end{table}
+
 \subsection{A tight-tolerance cohort, and the limit it exposes}\label{sec:exp-tight}
 
 The tolerance sweep of Table~\ref{tab:epssweep} reaches $\eps = 0.05$ on the cohort

@@ -443,6 +443,24 @@ its cells: at ε=0.2 a weakly-memorising run can certify without any unlearning 
 happened. A positive control failing once in three seeds measures the tolerance's
 looseness, not a broken control.
 
+**Generalizing to a second architecture.** The identical protocol, unchanged, on
+TOFU/Pythia-160M (three seeds):
+
+| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
+|---|---|---|---|---|---|
+| no unlearning | R / R / R | R / R / R | +0.535 | 1.78 | 1.89 |
+| retrain (fresh adapter) | I / I / I | I / I / I | +0.014 | 2.54 | 1.80 |
+| NPO | I / I / I | I / U / I | +0.061 | 76.73 | 2.05 |
+| SimNPO | I / I / I | I / I / I | +0.005 | 65.65 | 3.01 |
+| **RMU** | **I / I / I** | **I / I / I** | **+0.026** | 9.95 | 3.84 |
+
+The pattern transfers: RMU certifies through ε=0.1 and turns undetermined at ε=0.05 on
+all three seeds, same as on GPT-2, at an advantage close to retraining's and a
+forget-NLL shift far below NPO's or SimNPO's — so the loss/detectability divergence
+above is not a GPT-2 artifact. The positive control is sharper here too (revoked on all
+three seeds rather than two of three). MUSE and larger models are still untested for
+this method.
+
 ### A paraphrase-aware score in F
 
 `s_para` takes the **maximum** token-normalised log-likelihood of the secret over five
