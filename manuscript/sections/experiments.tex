@@ -201,8 +201,9 @@ violates the tolerance. ``power'' and ``queries'' are measured under exact unlea
 
 \subsection{Power, tightness, and the cost of a horizon}\label{sec:exp-power}
 
-Table~\ref{tab:power} reports certification time against the Kullback--Leibler limit.
-Two corrections to the earlier version are folded in. First, the theoretical column now
+Table~\ref{tab:power} reports certification time against the Kullback--Leibler limit,
+plotted in Figure~\ref{fig:power} (left). Two corrections to the earlier version are
+folded in. First, the theoretical column now
 follows the corrected expansion \eqref{eq:klexp}; the numbers themselves are unchanged
 because they were always computed from the exact divergence, but the accompanying
 sample-size rule of thumb is $2\log(1/\alpha)/\eps^2$, not $8\log(1/\alpha)/\eps^2$.
@@ -228,7 +229,8 @@ Two-sided certification, which we adopt because of the over-forgetting phenomeno
 documented below, costs roughly a factor of $1.7$ in pairs---$283$ against $166$ at
 $\eps=0.2$---a price we consider well worth paying for a certificate that cannot be
 defeated by driving scores below chance. On the detection side the revocation arm finds
-an advantage of $\Delta=0.4$ in a median of $48$ pairs and $\Delta=0.1$ in $690$. The
+an advantage of $\Delta=0.4$ in a median of $48$ pairs and $\Delta=0.1$ in $690$
+(Figure~\ref{fig:power}, right). The
 confidence sequence tightens at the expected $O(\sqrt{\log\log t / t})$ rate
 (Figure~\ref{fig:tightness}): under exact unlearning its upper bound on $\Delta$ falls
 from $0.26$ at $128$ pairs to $0.10$ at $1{,}000$.
