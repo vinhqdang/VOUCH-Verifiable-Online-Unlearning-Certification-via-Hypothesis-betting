@@ -46,9 +46,25 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--k", type=int, default=50)
     args = ap.parse_args()
-    rng = np.random.default_rng(20261024)       # independent of every run seed and score
     out = {"k": args.k, "cells": [], "by_tag": {}}
-    for tag in TAGS:
+    from multiprocessing import Pool
+    with Pool(4) as pool:
+        results = pool.starmap(one_tag, [(t, args.k) for t in TAGS])
+    for tag, n, chg, unstable, cells in results:
+        out["cells"].extend(cells)
+        out["by_tag"][tag] = {"cells": n, "majority_differs": chg, "order_sensitive": unstable}
+        print(f"{tag:18s} cells={n:3d} majority verdict differs from seeded: {chg:3d}  "
+              f"any order-sensitivity: {unstable:3d}", flush=True)
+    tot = {k: sum(v[k] for v in out["by_tag"].values()) for k in ("cells", "majority_differs", "order_sensitive")}
+    out["total"] = tot
+    print("TOTAL", tot)
+    json.dump(out, open(os.path.join(RES, "reveal_replay.json"), "w"), indent=1)
+
+
+def one_tag(tag, k):
+    rng = np.random.default_rng([20261024, TAGS.index(tag)])   # independent of run seeds and scores
+    cells_out = []
+    if True:
         n = chg = unstable = 0
         flips = {}
         for run in runs_for(tag):
@@ -59,26 +75,19 @@ def main():
                 names = list(diffs[0].keys())
                 for eps in EPS:
                     orig = verdict(diffs, names, eps, run["seed"])
-                    seeds = rng.integers(0, 2**62, size=args.k)
+                    seeds = rng.integers(0, 2**62, size=k)
                     rep = [verdict(diffs, names, eps, int(s)) for s in seeds]
                     maj = max(set(rep), key=rep.count)
                     frac_same = float(np.mean([r == orig for r in rep]))
                     n += 1
                     chg += int(maj != orig)
                     unstable += int(len(set(rep)) > 1)
-                    out["cells"].append({"tag": tag, "seed": run["seed"], "subject": m,
+                    cells_out.append({"tag": tag, "seed": run["seed"], "subject": m,
                                          "eps": eps, "seeded": orig,
                                          "replay": {s: rep.count(s) for s in set(rep)},
                                          "frac_same_as_seeded": frac_same,
                                          "majority_differs": maj != orig})
-        out["by_tag"][tag] = {"cells": n, "majority_differs": chg,
-                              "order_sensitive": unstable}
-        print(f"{tag:18s} cells={n:3d} majority verdict differs from seeded: {chg:3d}  "
-              f"any order-sensitivity: {unstable:3d}", flush=True)
-    tot = {k: sum(v[k] for v in out["by_tag"].values()) for k in ("cells", "majority_differs", "order_sensitive")}
-    out["total"] = tot
-    print("TOTAL", tot)
-    json.dump(out, open(os.path.join(RES, "reveal_replay.json"), "w"), indent=1)
+        return tag, n, chg, unstable, cells_out
 
 
 if __name__ == "__main__":
