@@ -202,8 +202,8 @@ two-sided equivalence testing against a declared attack class, with an exact
 distribution-free null supplied by paired ghost canaries
 (Section~\ref{sec:framework}). We give the supporting theory: an exact conditional null
 requiring no independence across pairs, a certificate that is exact under arbitrary
-dependence via without-replacement betting, a priced bridge to the super-population
-advantage, sound composition across scores and across deletion waves in both
+dependence via without-replacement betting, a priced bridge from the realised cohort to the coin-averaged
+mechanism-level advantage, sound composition across scores and across deletion waves in both
 directions, power that matches the Kullback--Leibler information limit, an exact
 finite-cohort certification-time bound that holds for every betting strategy and every
 reveal order, and a one-directional consistency bridge from certified
@@ -392,10 +392,11 @@ remains a definitional limit, but this version measures rather than merely names
 Two weak out-of-class attacks settle nothing, failing to beat the noise floor of
 subsampling. A LiRA-style shadow-model attack does better: with matched shadows it
 recovers an advantage of $0.82$ on an un-unlearned model, and on a certified one
-returns $-0.016$ with a $95\%$ interval that excludes every tolerance we certify at
+returns $-0.016$ with a $95\%$ interval inside $(-0.2, 0.2)$, supporting equivalence at
+the demonstration tolerance $\eps=0.2$ but not at $0.1$ or $0.05$
 (Section~\ref{sec:exp-lira}), a pattern that reproduces on the architecture this
 paper's own certified-NPO claim is about---$+0.48$ on the un-unlearned model,
-$-0.03$ on the certified one, again excluding every tolerance
+$-0.03$ on the certified one, again inside $(-0.2, 0.2)$ but not $(-0.1, 0.1)$
 (Section~\ref{sec:exp-lira-gpt2}). Both runs are $16$--$24$ shadows against the
 hundreds a canonical LiRA study would use, so together they bound the gap rather than
 closing it. Enlarging $\F$ costs power and no validity, and
@@ -404,7 +405,7 @@ we now exercise that too: a paraphrase-aware score of the kind
 (Section~\ref{sec:exp-para}). The cohort statement transfers to
 the mechanism-level advantage only at the explicit inflation of
 Proposition~\ref{prop:transfer}, which is why our $\eps = 0.05$ results are cohort
-certificates; the super-population arm reaches $\eps = 0.1$ once the cohort clears
+certificates; the fixed-boundary variant (valid under a conditional-mean assumption, not a theorem for the super-population advantage) reaches $\eps = 0.1$ once the cohort clears
 $3{,}000$ pairs and no further, exactly as Theorem~\ref{thm:power} predicts. That
 experiment also exposed the sharpest limit we know of: at a single insertion per
 canary---the most organic-like dose---a 124M-parameter model memorises so little that

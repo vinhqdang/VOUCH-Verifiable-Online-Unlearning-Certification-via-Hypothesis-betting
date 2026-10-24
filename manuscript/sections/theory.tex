@@ -95,10 +95,21 @@ is the one the protocol controls exactly; Definition~\ref{def:cert} is stated fo
 Proposition~\ref{prop:transfer} climbs one level, from $\Delta^{(s)}$ to
 $\Delta^{(s)}_C$, at a stated cost in tolerance. We do not climb the second level to
 $\bar\Delta^{(s)}$: that would need concentration over the draw of corpora, which we
-neither prove nor assume. Where the experiments report a ``super-population'' verdict
-they mean the fixed-boundary process of the earlier design, whose null is the
-predictable conditional mean; we keep both columns throughout so that the reader can
-see which claims survive at which tolerance.
+neither prove nor assume. Three quantities must therefore be kept apart. The
+\emph{realised cohort advantage} $\Delta^{(s)}$ is certified by the without-replacement
+process, exactly and under arbitrary dependence (Theorem~\ref{thm:cert}). The
+\emph{coin-averaged mechanism-level advantage} $\Delta^{(s)}_C$ is reached from it only
+through Proposition~\ref{prop:transfer}, at the stated inflation and under the bounded
+coin-influence assumption. The \emph{full super-population advantage}
+$\bar\Delta^{(s)}$ is not certified by any result in this paper. Where the experiments
+report a ``super-population'' verdict they mean the fixed-boundary variant of the earlier
+design, whose validity rests on an explicit assumption rather than on
+Theorem~\ref{thm:cert}: that the sign sequence satisfies the predictable
+conditional-mean null (each sign has conditional mean at least $p_0$ given the past).
+That assumption is not verified, and we saw it fail under model-level over-dispersion
+(Table~\ref{tab:dependence}); the label ``super-population'' names the target that
+variant is \emph{designed} for, not a guarantee it delivers. We keep both columns
+throughout so that the reader can see which claims survive at which tolerance.
 
 \begin{definition}[$(\eps,\alpha)$-forgetting certificate]\label{def:cert}
 Fix a tolerance $\eps \in (0,1)$, an error budget $\alpha \in (0,1)$, and the boundary
@@ -565,8 +576,8 @@ extractable through the declared class $\F$, on the committed canary cohort, aga
 the deployed model, under the honest-but-verifiable threat model of
 Section~\ref{sec:setting}. It does not assert erasure in parameter space, which no
 behavioural method can; it is a per-cohort statement, not a per-deletion-request one,
-because per-request certificates would require per-user canaries; the transfer to the
-super-population advantage costs the explicit inflation of
+because per-request certificates would require per-user canaries; the transfer from the realised
+cohort to the coin-averaged mechanism-level advantage costs the explicit inflation of
 Proposition~\ref{prop:transfer}; and the extrapolation from planted canaries to
 organic records is \emph{calibrated} through the dose--response strata and the
 head-to-head comparisons of Section~\ref{sec:exp-descriptive} rather than proven. We

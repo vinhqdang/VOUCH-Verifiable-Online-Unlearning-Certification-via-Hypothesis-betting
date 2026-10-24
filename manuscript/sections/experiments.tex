@@ -717,7 +717,8 @@ elsewhere in this study). Same columns as Table~\ref{tab:rmu}.}
 \subsection{A tight-tolerance cohort, and the limit it exposes}\label{sec:exp-tight}
 
 The tolerance sweep of Table~\ref{tab:epssweep} reaches $\eps = 0.05$ on the cohort
-target but nothing below $\eps = 0.2$ on the super-population one, and
+target but nothing below $\eps = 0.2$ on the super-population one (throughout, the fixed-boundary variant of
+Section~\ref{sec:certquantity}, whose validity rests on its conditional-mean assumption), and
 Theorem~\ref{thm:power} says why: $\eps = 0.1$ needs about $600$ pairs and
 $\eps = 0.05$ about $2{,}400$, against the $384$--$640$ we plant. So we planted a large
 cohort and asked what happens. Table~\ref{tab:tight} reports TOFU/GPT-2 with $3{,}072$
@@ -929,9 +930,12 @@ $92\%$ of pairs: the attack is potent, and it is seeing the same memorisation th
 audit sees. On the NPO model that VOUCH certifies at $\eps = 0.2$, the same attack
 yields $\hat\Delta = -0.016$ with 95\% CI $[-0.141, +0.110]$, and its agreement with
 the in-class score falls to $0.47$---chance, which is what two statistics guessing
-independently look like. The interval excludes every tolerance we certify at, so on
-this model the strongest attack we could mount does not merely fail to beat a noise
-floor: it is bounded away from $\eps$.
+independently look like. The interval lies inside $(-0.2, 0.2)$, so it supports equivalence at the $\eps=0.2$
+at which this model is certified; it does \emph{not} support equivalence at $\eps=0.1$
+or $0.05$, since its endpoints ($-0.141$, $+0.110$) fall outside those bands. On this
+model the strongest attack we could mount therefore does not merely fail to beat a
+noise floor: it is bounded away from $\eps=0.2$, and is silent about tighter
+tolerances.
 
 We are careful about what that licenses. This is one target model on one tier, with
 $16$ shadows against the hundreds a canonical LiRA would use, and the certified
@@ -973,7 +977,7 @@ TinyGPT. The positive control again works: on the un-unlearned model LiRA achiev
 $\hat\Delta = +0.479$ (95\% CI $[+0.385, +0.566]$), well above every tolerance we
 test, at $59\%$ agreement with the declared class. On the NPO model VOUCH certifies at
 $\eps = 0.2$, LiRA finds $\hat\Delta = -0.031$ with 95\% CI $[-0.133, +0.071]$, inside
-every tolerance, and agreement falls to $54\%$---indistinguishable from chance. The
+$(-0.2,0.2)$ but not $(-0.1,0.1)$, so again supporting equivalence at $\eps=0.2$ only, and agreement falls to $54\%$---indistinguishable from chance. The
 positive-control advantage is smaller here than on TinyGPT ($+0.479$ against
 $+0.820$), consistent with GPT-2's larger capacity diluting any one canary's
 memorisation signature over more parameters, but the qualitative result is unchanged:

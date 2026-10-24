@@ -420,7 +420,7 @@ runs the identical attack, unchanged in design, on TOFU/GPT-2 — 24 shadows, th
 | NPO, certified at ε=0.2 | −0.052 | **−0.031** | [−0.133, +0.071] | 0.54 |
 
 Same pattern as TinyGPT — a large, tolerance-exceeding advantage on the un-unlearned
-model, a null bounded away from every tolerance on the certified one — now on the
+model, a null inside ±0.2 (supports equivalence at ε=0.2, not at 0.1 or 0.05) on the certified one — now on the
 architecture the certified NPO row above actually uses, not a CPU-affordable stand-in.
 16 and 24 shadows respectively, against the hundreds a canonical LiRA study would use,
 so together they bound the gap without closing it.

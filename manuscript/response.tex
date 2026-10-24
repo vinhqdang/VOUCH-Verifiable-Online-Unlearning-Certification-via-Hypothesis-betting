@@ -972,8 +972,9 @@ attention to it first: on the un-unlearned model LiRA achieves
 $\hat\Delta = +0.820$ (95\% CI $[+0.736,+0.884]$) and agrees with the declared class's
 own guess on $92\%$ of pairs. The attack works. On the NPO model VOUCH certifies at
 $\eps = 0.2$, the same attack yields $\hat\Delta = -0.016$, 95\% CI
-$[-0.141,+0.110]$, with agreement falling to $0.47$ --- chance. The interval excludes
-every tolerance we certify at.
+$[-0.141,+0.110]$, with agreement falling to $0.47$ --- chance. The interval lies inside
+$(-0.2,0.2)$, supporting equivalence at $\eps=0.2$ but not at $0.1$ or $0.05$ (we have
+corrected earlier wording that said it excluded every tolerance).
 
 This is a different kind of evidence from the two attacks above, and we are careful
 about how much it carries. It is $16$ shadows against the hundreds a canonical LiRA
@@ -988,8 +989,8 @@ unchanged in design, run at full scale ($24$ shadows, $384$ pairs) on TOFU/GPT-2
 the architecture our own certified NPO row uses --- reproduces the same pattern (new
 \S\ref{sec:exp-lira-gpt2}, Table~\ref{tab:lira-gpt2}): $\hat\Delta = +0.479$
 (95\% CI $[+0.385,+0.566]$) on the un-unlearned model, $\hat\Delta = -0.031$
-(95\% CI $[-0.133,+0.071]$) on the certified one, again excluding every tolerance we
-test. So this is now one unlearning method across two architectures and shadow
+(95\% CI $[-0.133,+0.071]$) on the certified one, again inside $(-0.2,0.2)$ but not $(-0.1,0.1)$, so supporting equivalence at
+$\eps=0.2$ only. So this is now one unlearning method across two architectures and shadow
 counts of $16$ and $24$, not a single stand-in tier.
 \end{reply}
 
@@ -1383,8 +1384,8 @@ narrower than before, and sharper for it.
 TinyGPT ($16$ shadows) and, at full scale, the TOFU/GPT-2 tier our own certified NPO
 row uses ($24$ shadows, \S\ref{sec:exp-lira-gpt2}) --- against one unlearning method
 in each case, with the same pattern on both: a large, tolerance-exceeding advantage on
-the un-unlearned model and a null bounded away from every tolerance on the certified
-one. A shadow study at 1B+ parameters still needs the whole pipeline repeated per
+the un-unlearned model and a null supporting equivalence at $\eps=0.2$ (though not at
+$0.1$ or $0.05$) on the certified one. A shadow study at 1B+ parameters still needs the whole pipeline repeated per
 shadow, which we could not afford, and nothing here rules out a larger model or a
 different unlearning method behaving differently.
 \item \textbf{The squeezing effect is still untested.} We added the score
