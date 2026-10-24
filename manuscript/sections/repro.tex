@@ -91,8 +91,26 @@ the realised sign vectors. Every result table in this paper was produced with
 \texttt{reveal\_source = "seeded"}, in which $\pi$ is seeded from the run seed---the
 same seed that drives cohort generation and training---so for those runs the
 independence does not strictly hold, even though nothing in the pipeline exploits the
-coupling. We report them as they were computed rather than restating them under a
-different reveal rule. The released code now also implements the two sources that do
+coupling. Because the raw per-pair scores are saved, we replayed every audited cell
+with reveal orders drawn independently of the data and of the run seeds, with no
+retraining (\texttt{experiments/replay\_reveal\_orders.py}): $468$ cells (the six
+TOFU/MUSE benchmark cells and the two RMU tiers, every subject, $\eps\in\{0.2,0.1,0.05\}$,
+cohort target), each under $K=20$ independent permutations. The majority verdict equals
+the seeded one in $450$ of $468$ cells ($96\%$); it differs in $4$ of $156$ cells at
+$\eps=0.2$, $4$ of $156$ at $0.1$ and $10$ of $156$ at $0.05$, and an individual
+replayed permutation agrees with the seeded verdict $95\%$ of the time. At
+$\eps=0.2$ the benchmark-tier counts of Table~\ref{tab:counts} are unchanged under the
+majority replay verdict (un-unlearned revoked on $16$ of $18$, retrain, gradient
+ascent and NPO issued on $18$ of $18$), except that GradDiff moves from $17$ to $18$
+of $18$ issued. Two kinds of disagreement occur. A revocation alarm fires on
+$1.9\%$ of replayed permutations of cells whose seeded verdict was ``issued'', inside
+the nominal $\alpha=0.05$ alarm level, so the few seeded alarms that disappear under
+replay are the order-dependence the theory permits rather than a defect. And one
+cell is genuinely order-sensitive: seed~1 of the TOFU/GPT-2 RMU tier at $\eps=0.2$,
+issued under the seeded order but revoked under $10$ of $20$ independent orders; we
+read the RMU GPT-2 row of Table~\ref{tab:rmu} accordingly. The tables themselves are
+reported as originally computed under the seeded order, with this replay as the
+check on them. The released code now also implements the two sources that do
 satisfy the hypothesis (\texttt{vouch/verify/beacon.py}): \texttt{"beacon"} seeds $\pi$
 with $H(\text{manifest root} \,\|\, r)$ for the randomness $r$ of a drand round drawn
 after the commitment is published, recording the round number and value on the

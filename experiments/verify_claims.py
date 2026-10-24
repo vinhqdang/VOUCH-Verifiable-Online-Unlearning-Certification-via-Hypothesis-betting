@@ -353,6 +353,21 @@ def main():
               f"rmu {_mean_mu('rmu','forget_nll'):.2f}, npo {_mean_mu('npo','forget_nll'):.2f}, "
               f"simnpo {_mean_mu('simnpo','forget_nll'):.2f}")
 
+    print("== reveal-order replay (appendix) ==")
+    rp = load("reveal_replay")
+    if rp:
+        cs = rp["cells"]
+        check("468 cells replayed, 450 with unchanged majority verdict",
+              len(cs) == 468 and sum(not c["majority_differs"] for c in cs) == 450,
+              f"{len(cs)} cells, {sum(not c['majority_differs'] for c in cs)} unchanged")
+        for e, want in ((0.2, 4), (0.1, 4), (0.05, 10)):
+            got = sum(c["majority_differs"] for c in cs if c["eps"] == e)
+            check(f"{want} of 156 majority verdicts differ at eps={e}", got == want, got)
+        r = next(c for c in cs if c["tag"] == "tofu_gpt2_rmu" and c["seed"] == 1
+                 and c["subject"] == "rmu" and c["eps"] == 0.2)
+        check("GPT-2 RMU seed 1 is order-sensitive (10/20 revoked)",
+              r["replay"].get("REVOKED") == 10, r["replay"])
+
     print("== LiRA, an attack from outside F (Section 5.15) ==")
     lira = load("lira_analysis")
     if lira:

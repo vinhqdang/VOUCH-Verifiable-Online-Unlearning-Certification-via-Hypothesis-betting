@@ -349,7 +349,9 @@ target, so it is omitted rather than mixed in from the earlier analysis.}
 The central empirical test is whether VOUCH behaves correctly on the benchmarks the
 community actually uses. We inject canaries in each benchmark's native format---
 question--answer pairs for TOFU, record-style sentences for MUSE-News---into its
-fine-tuning mixture, and we track held-out utility for every subject.
+fine-tuning mixture, and we track held-out utility for every subject. The reveal order
+in these runs was seeded from the run seed; the appendix replays every cell under
+independent orders and reports how little the verdicts move.
 Table~\ref{tab:bench} and Figures~\ref{fig:tofu} and \ref{fig:muse} report verdicts
 across two benchmarks, three architectures spanning 124M to 1.4B parameters, and
 $3$ seeds each. Table~\ref{tab:counts} gives every verdict count with a

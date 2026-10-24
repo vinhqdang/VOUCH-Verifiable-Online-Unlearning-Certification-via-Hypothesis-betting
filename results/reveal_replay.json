@@ -1,0 +1,5806 @@
+{
+ "k": 20,
+ "cells": [
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 17,
+    "ISSUED": 3
+   },
+   "frac_same_as_seeded": 0.85,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 9,
+    "ISSUED": 11
+   },
+   "frac_same_as_seeded": 0.45,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "UNDETERMINED": 7,
+    "ISSUED": 13
+   },
+   "frac_same_as_seeded": 0.65,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 12,
+    "ISSUED": 8
+   },
+   "frac_same_as_seeded": 0.6,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 19,
+    "UNDETERMINED": 1
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 3,
+    "UNDETERMINED": 17
+   },
+   "frac_same_as_seeded": 0.85,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 9,
+    "ISSUED": 11
+   },
+   "frac_same_as_seeded": 0.45,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 4,
+    "ISSUED": 16
+   },
+   "frac_same_as_seeded": 0.8,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 3,
+    "UNDETERMINED": 17
+   },
+   "frac_same_as_seeded": 0.85,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 3,
+    "UNDETERMINED": 17
+   },
+   "frac_same_as_seeded": 0.85,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 8,
+    "ISSUED": 12
+   },
+   "frac_same_as_seeded": 0.4,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 4,
+    "ISSUED": 16
+   },
+   "frac_same_as_seeded": 0.8,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 11,
+    "ISSUED": 8
+   },
+   "frac_same_as_seeded": 0.4,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 8,
+    "ISSUED": 12
+   },
+   "frac_same_as_seeded": 0.4,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 19,
+    "ISSUED": 1
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "UNDETERMINED": 11,
+    "ISSUED": 9
+   },
+   "frac_same_as_seeded": 0.45,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 5,
+    "ISSUED": 15
+   },
+   "frac_same_as_seeded": 0.75,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 2,
+    "UNDETERMINED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 10,
+    "ISSUED": 10
+   },
+   "frac_same_as_seeded": 0.5,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.1,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 0.0,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 0.0,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_gpt2_512",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 6,
+    "ISSUED": 14
+   },
+   "frac_same_as_seeded": 0.3,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_pythia160m",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 0,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.05,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.1,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 0.0,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.05,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 5,
+    "UNDETERMINED": 15
+   },
+   "frac_same_as_seeded": 0.25,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 5,
+    "UNDETERMINED": 15
+   },
+   "frac_same_as_seeded": 0.25,
+   "majority_differs": true
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 1,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 2,
+    "UNDETERMINED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "ga",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "grad_diff",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P1_relearn",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 2,
+    "UNDETERMINED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "muse_phi-1_5",
+   "seed": 2,
+   "subject": "npo_P3_jailbreak",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 15,
+    "ISSUED": 5
+   },
+   "frac_same_as_seeded": 0.75,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 18,
+    "ISSUED": 2
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 19,
+    "UNDETERMINED": 1
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 19,
+    "UNDETERMINED": 1
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 10,
+    "ISSUED": 10
+   },
+   "frac_same_as_seeded": 0.5,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 9,
+    "UNDETERMINED": 11
+   },
+   "frac_same_as_seeded": 0.55,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 12,
+    "UNDETERMINED": 8
+   },
+   "frac_same_as_seeded": 0.4,
+   "majority_differs": true
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_gpt2_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 0,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 1,
+    "UNDETERMINED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 1,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "REVOKED": 3,
+    "UNDETERMINED": 17
+   },
+   "frac_same_as_seeded": 0.85,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.2,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.1,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "none",
+   "eps": 0.05,
+   "seeded": "REVOKED",
+   "replay": {
+    "REVOKED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "retrain",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "simnpo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 2,
+    "ISSUED": 18
+   },
+   "frac_same_as_seeded": 0.9,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "rmu",
+   "eps": 0.05,
+   "seeded": "UNDETERMINED",
+   "replay": {
+    "UNDETERMINED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.2,
+   "seeded": "ISSUED",
+   "replay": {
+    "REVOKED": 1,
+    "ISSUED": 19
+   },
+   "frac_same_as_seeded": 0.95,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.1,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  },
+  {
+   "tag": "tofu_pythia_rmu",
+   "seed": 2,
+   "subject": "npo",
+   "eps": 0.05,
+   "seeded": "ISSUED",
+   "replay": {
+    "ISSUED": 20
+   },
+   "frac_same_as_seeded": 1.0,
+   "majority_differs": false
+  }
+ ],
+ "by_tag": {
+  "tofu_gpt2": {
+   "cells": 63,
+   "majority_differs": 1,
+   "order_sensitive": 23
+  },
+  "tofu_pythia160m": {
+   "cells": 63,
+   "majority_differs": 3,
+   "order_sensitive": 16
+  },
+  "tofu_phi-1_5": {
+   "cells": 63,
+   "majority_differs": 0,
+   "order_sensitive": 11
+  },
+  "muse_gpt2_512": {
+   "cells": 63,
+   "majority_differs": 5,
+   "order_sensitive": 21
+  },
+  "muse_pythia160m": {
+   "cells": 63,
+   "majority_differs": 1,
+   "order_sensitive": 18
+  },
+  "muse_phi-1_5": {
+   "cells": 63,
+   "majority_differs": 6,
+   "order_sensitive": 23
+  },
+  "tofu_gpt2_rmu": {
+   "cells": 45,
+   "majority_differs": 2,
+   "order_sensitive": 14
+  },
+  "tofu_pythia_rmu": {
+   "cells": 45,
+   "majority_differs": 0,
+   "order_sensitive": 11
+  }
+ },
+ "total": {
+  "cells": 468,
+  "majority_differs": 18,
+  "order_sensitive": 137
+ }
+}

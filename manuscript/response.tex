@@ -1403,12 +1403,16 @@ strategy-independent finite-sample guarantee via the null's remaining feasible
 compositions, and that is what was missing. It does not give a growth rate for the
 wealth process under without-replacement reveal, which is usually the mechanism that
 fires first; the cohort target's typical timing is still reported empirically.
-\item \textbf{The released numbers predate the beacon.} Every table in the paper was
-computed with \texttt{reveal\_source = "seeded"}, in which the reveal order is derived
-from the run seed and so does not meet Theorem~\ref{thm:cert}'s independence hypothesis. The two
-sources that do meet it are implemented and tested, and a deployed audit should use
-the beacon; we report the tables as they were computed rather than restating them
-under a reveal rule they were not run under.
+\item \textbf{The released tables use the seeded reveal order.} Every table was
+computed with \texttt{reveal\_source = "seeded"}, which does not meet
+Theorem~\ref{thm:cert}'s independence hypothesis. Following Reviewer~1's final check we
+replayed all $468$ benchmark and RMU audit cells from the saved scores under $20$
+independent permutations each, without retraining (Appendix, implementation notes;
+\texttt{experiments/replay\_reveal\_orders.py}). The majority verdict matches the
+seeded one in $96\%$ of cells, the $\eps=0.2$ headline counts are unchanged (GradDiff
+$17\to18$ issued), and one cell (TOFU/GPT-2 RMU seed~1) is genuinely order-sensitive and
+is flagged as such. The tables remain as originally computed; a deployed audit should
+use the beacon.
 \item \textbf{The RMU tier's coverage, and one place it did not transfer.} Three seeds
 throughout, matching the main benchmark tier but reported separately rather than
 merged into it. It now spans two architectures on TOFU (GPT-2 and Pythia-160M,
