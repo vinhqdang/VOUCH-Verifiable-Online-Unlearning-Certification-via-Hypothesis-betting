@@ -320,6 +320,11 @@ experiments/
 ├── run_simulation.py        # M1 validity, I1 soundness demo, M2 power, M3 tightness,
 │                            # M6 streaming, ablations   (--exp all --seeds 2000)
 ├── run_lm_e2e.py            # end-to-end LM tier (--model tiny | gpt2 | any HF id)
+├── run_benchmark.py         # TOFU / MUSE-News benchmark tiers, incl. SimNPO and RMU
+├── run_lira.py, run_lira_hf.py, analyze_lira.py   # shadow-model attack (TinyGPT, GPT-2)
+├── run_paraphrase.py        # paraphrase-aware score in F
+├── replay_reveal_orders.py  # replay saved audits under independent reveal orders
+├── verify_claims.py         # checks every quoted number against results/*.json
 └── make_figures.py          # publication figures from results/*.json
 tests/test_betting.py        # e-process supermartingale + Ville, CS coverage, protocol
 results/                     # JSON results + figures (committed for reproducibility)
@@ -394,6 +399,15 @@ public **drand beacon** (seed = `H(manifest_root || round randomness)`, fetched 
 the commitment, with the round recorded on the certificate so anyone can recompute the
 order) and OS entropy. The legacy seeded order is retained — it is what every committed
 table used, and the certificate now says so.
+
+Because the raw per-pair scores are saved, `experiments/replay_reveal_orders.py`
+replays every benchmark and RMU audit cell under independent reveal orders with no
+retraining (468 cells, 20 permutations each; output in `results/reveal_replay.json`).
+The majority verdict matches the seeded one in 450 of 468 cells; it differs in 4/156
+cells at ε=0.2, 4/156 at ε=0.1 and 10/156 at ε=0.05. The ε=0.2 headline counts are
+unchanged except GradDiff (17 → 18 of 18 issued). One cell is genuinely
+order-sensitive: TOFU/GPT-2 RMU seed 1 at ε=0.2 (issued under the seeded order, revoked
+under 10 of 20 independent orders).
 
 ### LiRA — a shadow-model attack from outside F
 
@@ -504,6 +518,11 @@ bottleneck. The honest caveat: our secrets are random alphanumeric strings, whic
 no paraphrase, so this measures the score's cost rather than the squeezing effect —
 testing that needs canaries whose *secret* is natural language.
 
+## Status
+
+Accepted for publication in *Machine Learning* (Springer); the final version is in
+production. This repository corresponds to the accepted revision.
+
 ## Continuing this work
 
 **Start with [`docs/HANDOFF.md`](docs/HANDOFF.md)** — environment setup, how to rebuild
@@ -602,9 +621,13 @@ VOUCH certifies the residual advantage extractable **through a declared score cl
 - not parameter-space erasure — behaviourally uncertifiable, and not claimed;
 - the class restriction is load-bearing: attacks from outside `F` exceed the certified
   tolerance on 2.8% and 0.6% of certified runs (`reanalyze_rev.py`);
-- the cohort statement transfers to the algorithm-level advantage only at the explicit
-  inflation above, which is why the tight-tolerance (ε = 0.05) end-to-end results are
-  cohort certificates;
+- three advantages are kept apart: the realised cohort advantage is certified exactly;
+  the coin-averaged (mechanism-level) advantage is reached only through Proposition 3,
+  at the explicit inflation above, under bounded coin influence, which is why the
+  tight-tolerance (ε = 0.05) end-to-end results are cohort certificates; the full
+  super-population advantage is not certified by any result here. The fixed-boundary
+  "super-population" variant rests on a conditional-mean assumption, not on a theorem;
+- the LiRA intervals support equivalence at ε = 0.2 only, not at 0.1 or 0.05;
 - per-cohort, **not per-deletion-request** — per-request certificates would need
   per-user canaries;
 - the honest-but-verifiable assumption excludes a provider who special-cases the
