@@ -1,353 +1,163 @@
 # VOUCH: Verifiable Online Unlearning Certification via Hypothesis-betting
 
-**Anytime-valid statistical certificates for machine unlearning via paired-canary betting e-processes.**
+Anytime-valid statistical certificates for machine unlearning, using paired ghost
+canaries and betting e-processes.
 
-This repository implements, evaluates, and *strengthens* the framework specified in
-[`algorithm.md`](algorithm.md) (design document v1.0). VOUCH plants **paired ghost
-canaries** at fine-tuning time — one twin trained-then-forgotten, one twin never seen,
-assignment by fair coin — and, after unlearning, runs **betting e-processes** over the
-canary pairs. Under exact unlearning the within-pair score difference is symmetric *by
-construction*, giving an exact, distribution-free, finite-sample null with no shadow
-models and no retrained reference model. The verifier outputs:
+> **Paper:** *VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary
+> Hypothesis-Betting*, Quang-Vinh Dang. Accepted for publication in *Machine Learning*
+> (Springer). The final version is in production; this repository is the code and data
+> behind the accepted paper.
 
-1. an **anytime-valid confidence sequence** on the residual membership advantage Δ;
-2. a **sequential equivalence test** that issues an (ε, α)-Forgetting Certificate at a
-   data-dependent stopping time (valid under optional stopping, by Ville's inequality);
-3. a dual **revocation e-process** that raises an alarm on residual memorization;
+## Idea
+
+At fine-tuning time the provider plants **paired ghost canaries**: exchangeable twin
+records, of which a fair coin admits one into training (and later into the forget set)
+while the other is never trained on. If unlearning is exact, the two twins are
+statistically interchangeable, so the within-pair score difference is symmetric by
+construction. This gives an exact, distribution-free, finite-sample null with no shadow
+models and no retrained reference model.
+
+On top of that null, VOUCH runs betting e-processes that stay valid at every stopping
+time. The verifier outputs:
+
+1. an anytime-valid **confidence sequence** on the residual membership advantage;
+2. an (ε, α)-**forgetting certificate** from sequential two-sided equivalence testing;
+3. a **revocation alarm** for residual memorisation;
 4. **streaming composition** across deletion waves with history-wide error control;
-5. **R-VOUCH** recoverability probes (relearning, 4-bit quantization, jailbreak prompts).
+5. **R-VOUCH** recoverability probes (benign relearning, 4-bit quantisation, jailbreak
+   prompts).
 
-## Improvements over the v1.0 design document
+The certificate targets the *realised advantage on the committed canary cohort* using a
+without-replacement boundary, which is exact under arbitrary dependence between pairs.
+A fixed-boundary variant (valid under a conditional-mean assumption) is reported
+alongside.
 
-Implementing the design surfaced three soundness/operational gaps. All three are fixed
-here and demonstrated empirically; they materially strengthen the paper.
+## Install
 
-### I1 — The design doc's certificate arm is anytime-*invalid* (fixed)
+```bash
+pip install -e .                 # numpy, scipy
+pip install -e ".[hf,figs]"      # + torch, transformers, matplotlib
+# real-model experiments also need: peft accelerate datasets
+```
 
-Design doc §4.4(a) bets the certificate e-process on the *mixture-weighted sign*
-`Z̄ᵢ = Σₛ wₛ Zᵢˢ` across the score class F. That is sound for the **revocation** arm
-(its null — exact unlearning — makes *every* per-score sign exactly Bern(1/2), so any
-predictable mixture has conditional mean 1/2). It is **not** sound for the
-**certificate** arm, whose composite null is "∃ s ∈ F with pˢ ≥ p₀": if one score
-still leaks while others are clean, the mixture mean sits *below* p₀ and the
-"e-process" is no supermartingale.
+Python 3.9+. Tests: `python -m pytest tests/ -q`. Every number quoted in the paper can be
+checked against `results/` with `python experiments/verify_claims.py`.
 
-**Fix.** VOUCH runs one certificate e-process per score and issues the certificate only
-when `min_s E_t^{cert,s} ≥ 1/α`. A false certificate requires the truly-violating
-score's own e-process to cross 1/α — probability ≤ α by Ville, *no Bonferroni needed*.
-Dually, `max_s U_t^s` is an anytime upper confidence bound on `sup_s p^s`.
+## Quick start
 
-**Evidence** (2,000 seeds; three scores, one at the null boundary p₀ = 0.55, two clean;
-2,048 pairs; α = 0.05):
+```python
+from vouch.verify import VouchConfig, VouchVerifier
 
-| certificate arm | false-certification rate |
-|---|---|
-| per-score min (**VOUCH**, this repo) | **0.007** ✓ |
-| mixture-sign arm (design doc v1.0) | **0.996** ✗ — essentially always falsely certifies |
+# pair_diffs[i][score] = score(in-twin) - score(ghost-twin) for pair i
+verifier = VouchVerifier(["loss", "mink"],
+                         VouchConfig(eps=0.2, alpha=0.05),
+                         manifest_sha256="<commitment published before training>")
+cert = verifier.run(pair_diffs, shuffle_seed=0, early_stop=True)
+print(cert.status, cert.t_stop, cert.delta_upper)   # ISSUED / REVOKED / UNDETERMINED
+print(cert.to_json())
+```
 
-### I2 — Streaming composition direction corrected (design doc Theorem 5)
+Pair generation, corpus assembly and scoring live in `vouch/canaries`,
+`vouch/training` and `vouch/verify/scores.py`. For an audit run in production, draw the
+reveal order from a public beacon, not from a seed:
 
-Multiplying per-wave **certificate** e-values (doc §4.5/Thm 5) tests the *intersection*
-null "every wave is bad"; rejecting it only certifies that *some* wave is clean — not
-the intended claim. Certificates and alarms must compose in opposite directions:
+```python
+cert = verifier.run(pair_diffs, reveal_source="beacon")   # drand; "local" for offline
+```
 
-- **Global certificate = all-pass:** every wave individually earns its certificate.
-  The probability of ever claiming "all waves clean" while some wave is bad is ≤ α
-  (Ville applied to the bad wave's own e-process), for any number of waves.
-- **Global revocation alarm = product:** under the intersection null "all waves exactly
-  unlearned" every per-wave revocation e-process is a supermartingale, so products
-  compose soundly. The product alarm accumulates **distributed sub-threshold leakage**
-  that no single wave reveals. Per-wave alarms additionally get α-spending
-  (α_k = α·2^−(k+1)), keeping family-wise false revocation ≤ α over an unbounded
-  deletion history.
-
-**Evidence** (K = 10 waves × 512 pairs, 500 histories, ε = 0.2, α = 0.05):
-
-| deletion history | per-wave alarm | global product alarm | global certificate (all-pass) |
-|---|---|---|---|
-| all waves exact | FWER **0.000** | false alarm **0.002** | issued 0.48 (per-wave power 0.93¹⁰; size cohorts for K) |
-| one bad wave (Δ = 0.25) | catches it **0.984**; falsely issued **0.000** | fires 0.922 | **never** falsely issued (0.000) |
-| ten weak waves (Δ = 0.06 each) | nearly blind: 0.136 | **fires 0.616, median wave 3** | never issued (0.000) |
-
-The last row is the payoff: leakage spread thinly across waves is invisible to every
-per-wave test (and to any fixed-n audit), but the composed e-process accumulates it.
-
-### I3 — Corrected power analysis and a stronger betting engine
-
-Design doc §6.6 claims ε = 0.1 certification at α = 0.05 "in ≈ 190 pairs". This
-contradicts its own Theorem 3: the information-theoretic limit is
-`log(1/α)/KL(Bern(½) ‖ Bern(½+ε/2)) ≈ 596` pairs. Our measured median is 686 pairs —
-15% above the bound, i.e., the engine is near-optimal and the doc's sample-size
-guidance must be revised (tables below give the corrected numbers).
-
-Engine improvements over the doc's reference ONS implementation:
-
-- **Truncated Krichevsky–Trofimov plug-in expert** in the bet mixture: the Bernoulli
-  likelihood-ratio e-process with plug-in estimate truncated to the alternative side —
-  valid for the composite one-sided null, near-KL growth with ½·log t redundancy.
-- **Discrete λ-grid + ONS + KT mixture** (a mixture of e-processes is an e-process):
-  robust log-optimal growth with no tuning. A fixed aggressive bet, by contrast,
-  goes bankrupt (see ablation).
-- **VOUCH+ magnitude-aware revocation** (`SymmetryEProcess`): under the exact symmetry
-  null, sign(D) given |D| is a fair coin, so betting the sign with a stake scaled by a
-  predictable rank-transform of |D| is an exact e-process that exploits effect sizes.
-  Under sparse leakage (5% of pairs strongly memorized) it detects **2.3× faster**
-  than sign-only betting (median 941 vs 2,196 pairs) at higher detection rate
-  (99% vs 78% within 5,000 pairs).
-
-### I4 — Two-sided certification: over-forgetting is leakage too
-
-Discovered when running the end-to-end GPU tier: GradDiff on GPT-2 earned a
-(one-sided) certificate while its in-twins scored *below* their ghost twins
-(mean loss gap −0.155) — gradient-ascent-style unlearning had pushed the forgotten
-canaries to anomalously *bad* scores. Below-chance scoring is itself membership
-signal (an attacker negates the score), so the design doc's one-sided
-Δ = 2·P(in > ghost) − 1 target is too weak.
-
-**Fix.** VOUCH closes the score class under negation (`two_sided=True`, default):
-each score gets certificate e-processes against both `p ≥ ½ + ε/2` and
-`p ≤ ½ − ε/2` (the certificate now asserts **|Δˢ| < ε for every s**), and the
-revocation arm bets in both directions. Validity is unchanged (under the exact null
-every direction is a fair coin / symmetric); the measured protocol-level cost is
-~1.7× more pairs (median 283 vs 166 at ε = 0.2, α = 0.05; 1,182 vs 686 at ε = 0.1),
-and over-forgetting subjects are now correctly revoked (unit-tested).
-
-## Results
-
-All numbers are reproducible from `experiments/` (JSON in `results/`, figures in
-`results/figures/`).
-
-### M1 — Validity under adversarial optional stopping (2,000 seeds, 1,024 pairs)
-
-Peeking after **every** pair, stopping at the first crossing:
-
-| procedure | nominal α = 0.05 | nominal α = 0.01 |
-|---|---|---|
-| VOUCH false certification (boundary null) | 0.028 | 0.006 |
-| VOUCH false revocation (exact unlearning) | 0.026 | 0.006 |
-| fixed-n binomial with peeking — false alarm | **0.352** | **0.119** |
-| fixed-n binomial with peeking — false certification | **0.340** | **0.098** |
-
-Calibration is monotone and conservative across α ∈ {0.01, …, 0.2}
-(`fig1_validity`). Full-protocol runs (three correlated scores, two-sided, CS + both
-arms, early stopping) give false-revocation 0.025 and uniform-in-time per-CS coverage
-0.971 at nominal 0.95; under genuine memorization (Δ ≈ 0.36) revocation fires 100% of
-the time at a median of **44 pairs** with zero false certificates.
-
-### M2 — Power / certification time (exact unlearning; median pairs to certificate)
-
-| ε | α = 0.05 | KL limit | α = 0.01 | KL limit |
-|---|---|---|---|---|
-| 0.02 | 11,189* | 14,976 | 13,400* | 23,021 |
-| 0.05 | 2,998 | 2,394 | 4,426 | 3,680 |
-| 0.10 | 686 | 596 | 1,088 | 916 |
-| 0.20 | 166 | 147 | 252 | 226 |
-
-*medians over runs issued within the 20,000-pair horizon (55% / 28%).
-Two-sided protocol certificates (default) need ~1.7× more pairs: median 1,182 at
-ε = 0.1 and 283 at ε = 0.2 (α = 0.05). Revocation detection (median pairs, 100%
-detection): Δ = 0.05 → 2,948; Δ = 0.1 → 690; Δ = 0.2 → 179; Δ = 0.4 → 48.
-
-### M3 — Tightness
-
-Median CS upper bound on Δ under exact unlearning: 0.26 at t = 128, 0.18 at t = 256,
-0.13 at t = 512, 0.10 at t = 1,024 pairs; with true Δ = 0.2 the bound sits at 0.29 at
-t = 1,024 (`fig4_tightness`).
-
-### Cohort-size sizing guide (`fig9_cohort_size`)
-
-Issuance rate under exact unlearning vs cohort size m (two-sided, α=0.05): at
-ε=0.2, m reaches 80% power near 384 pairs and 91% at 512 (why the benchmark runs
-use 512); at ε=0.1 roughly 1,000–2,000 pairs are needed. This is the practitioner's
-answer to "how many canaries?" and matches the KL-based Theorem-3 numbers.
-
-### Betting-strategy ablation (ε = 0.1, α = 0.05, exact unlearning)
-
-| strategy | median τ* | certified within 20k pairs |
-|---|---|---|
-| ONS | 638 | 100% |
-| mixture (default) | 686 | 100% |
-| aGRAPA | 888 | 100% |
-| truncated-KT | 891 | 100% |
-| fixed λ = ½·λmax | — | 10% (over-betting bankrupts the wealth) |
-
-### End-to-end on a real LM (GPU tier: GPT-2 on a Colab T4)
-
-Full pipeline per seed: canary generation + SHA-256 manifest commitment → fine-tune on
-keep ∪ forget ∪ in-twins → unlearn with each subject → black-box certification →
-R-VOUCH probes on NPO. Two runs:
-
-**v2 (two-sided, 640 pairs, scores {loss, min-k, ratio}, corrected NPO), 3 seeds:**
-
-| subject | decision (3 seeds) | mean CS upper bound on Δ | mean D (loss) |
-|---|---|---|---|
-| no unlearning | REVOKED ×3 (log-e 277–336) | 0.93 | +2.19 |
-| retrain (exact) | **ISSUED ×3** | 0.19 | −0.00 |
-| GA | ISSUED ×3 | 0.21 | +0.09 |
-| GradDiff | ISSUED ×3 | 0.18 | +0.08 |
-| NPO | ISSUED ×3 | 0.17 | +0.04 |
-| NPO 25% (weakened) | ISSUED ×2, UNDET ×1 | 0.23 | +0.26 |
-| NPO + P1 relearn | ISSUED ×2, UNDET ×1 | 0.23 | +0.28 |
-| NPO + P2 4-bit / P3 jailbreak | ISSUED ×3 | 0.17–0.18 | +0.03–0.06 |
-
-Dose–response on real GPT-2 (mean D by repetition stratum r = 1/2/4/8): the memorized
-model is strongly monotone (**1.2 / 1.5 / 2.7 / 4.1 nats**, seed 1); the **relearn probe
-resurfaces the most-repeated canaries first** (0.19 / 0.11 / 0.34 / 0.51), and weakened
-NPO leaves precisely the r = 8 stratum leaking (up to 1.29 nats) — repetition at
-fine-tuning time is the primary driver of both memorization and recoverability.
-Measured verifier cost: **76 s per verification** on a T4 (10,240 short forwards)
-versus ~300 s for one fine-tune — a shadow-model evaluator at 16 fine-tunes would cost
-~60× more.
-
-**v1 (one-sided, 512 pairs, 3 seeds)** additionally caught a **sign bug in our own NPO
-implementation** (the loss was being minimized toward memorization): revoked 3/3 seeds
-within ~11 pairs — statistical certification audits the unlearning *code*, not just the
-outcome. Retrain certified 3/3; results in `results/lm_e2e_gpt2_v1.json`.
-
-**Small-model tier** (`--model tiny`, 3 seeds, retrain ground truth affordable,
-`results/lm_e2e_tiny.json`): no-unlearning revoked 3/3 (log-e 154–212); retrain, GA,
-GradDiff certified 3/3; NPO 2/3 (1 honest UNDETERMINED at the 512-pair horizon).
-Dose–response (§6.7), measured: mean D by repetition stratum r = 1/2/4/8 is
-0.47 / 0.64 / 0.79 / 1.04 on the memorized model and ≈ 0 after unlearning.
-Utility guardrail: canary injection shifts held-out loss by +0.005 nats/char even at an
-extreme 38% corpus share (design target is < 0.05% share).
-
-### Standard benchmarks: TOFU and MUSE-News
-
-VOUCH is evaluated on the field's two standard unlearning benchmarks with real
-data, two-sided ε = 0.2, α = 0.05, and the **sign-based revocation arm** (the
-well-behaved arm that matches Theorem 1 exactly; the magnitude-aware VOUCH+ arm is
-reported separately as a power ablation, §6.8). Canaries are injected in each
-corpus's own format (TOFU: QA; MUSE: record-style); utility is held-out
-retain/holdout NLL. Verdicts per seed — R=revoked, I=issued, U=undetermined.
-
-**TOFU** (`locuslab/TOFU`, retain90 ∪ forget10), two architectures, 3 seeds each,
-384 pairs (`fig8_tofu`, `fig8b_tofu_pythia`):
-
-| subject | GPT-2 124M | Pythia-160M | utility NLL (GPT-2 / Pythia) |
-|---|---|---|---|
-| no unlearning | R / R / U | **R / R / R** | 2.2 / 1.9 |
-| retrain (exact) | U / I / I | **I / I / I** | 2.0 / 1.8 |
-| GA | I / U / I | I / U / I | **87 / 170** (lobotomy) |
-| GradDiff | **I / I / I** | I / U / I | 6.0 / 10.5 |
-| NPO | I / U / U | **I / I / I** | 2.6 / 2.2 |
-| NPO + P1 relearn | I / U / U | U / U / U | 2.8 / 2.6 |
-| NPO + P3 jailbreak | I / U / U | U / U / U | 2.6 / 2.2 |
-
-**MUSE-News** (`muse-bench/MUSE-News`, retain1 ∪ forget), GPT-2, 3 seeds, 512 pairs
-(`fig9_muse`):
-
-| subject | verdicts (3 seeds) | mean D | utility NLL |
-|---|---|---|---|
-| no unlearning | R / R / U | +0.13 | 3.3 |
-| retrain (exact) | **I / I / I** | −0.02 | 3.2 |
-| GA | I / I / I | −0.02 | **59.8** (lobotomy) |
-| GradDiff | **I / I / I** | −0.03 | 4.2 |
-| NPO | **I / I / I** | −0.03 | 3.3 |
-| NPO + P1 relearn | I / I / R | +0.02 | 3.2 |
-| NPO + P3 jailbreak | I / I / I | +0.03 | 3.3 |
-
-Findings on real benchmark data:
-
-- **Detection.** The un-unlearned model is revoked in 16 of 18 benchmark runs with
-  the sign arm (3/3 on Pythia-TOFU; 6/6 on Phi-1.5 TOFU+MUSE with log-e 166–182; 2/3
-  on GPT-2-TOFU and GPT-2-MUSE, the third being an honest *undetermined* at that
-  cohort size — never a false certificate). The magnitude arm (VOUCH+) raises
-  detection to 18/18 at the cost of occasional transient crossings — the documented
-  power/robustness trade-off (§6.8). On MUSE/Phi-1.5 the sign arm also **revokes one
-  GradDiff run outright** — residual memorisation in a nominally successful method —
-  and the **relearn probe revokes NPO** on the same seed, the strongest
-  recoverability catch in the study.
-- **Forgetting-by-lobotomy exposed.** GA earns forgetting certificates while
-  destroying the model (utility NLL 60–170 vs retrain's ~2–3) — the
-  certificate/utility pairing flags what no forget-only metric would.
-- **Exact unlearning certifies.** Retrain-from-scratch is issued on essentially every
-  seed (the one 384-pair TOFU-GPT2 miss becomes an issue at 512 pairs — the
-  cohort-size guidance, confirmed on-benchmark: MUSE retrain went U→I when raised
-  384→512).
-- **Two-sided arm (I4) matters.** GA/GradDiff/NPO exhibit over-forgetting (negative
-  mean D) on several TOFU seeds; the one-sided design-doc test would mis-certify
-  these, the two-sided arm withholds.
-- **Recoverability (R-VOUCH).** On TOFU the P1 relearn probe drives NPO from issued
-  to undetermined (leakage resurfaces); on MUSE the effect is weaker (news-domain
-  canaries resurface less under the same probe budget) — a measured, benchmark-
-  dependent recoverability signal.
-
-### Model zoo (2019 → 2026)
-
-First large-model verdict landed (Kaggle P100, bf16, 384 pairs, eps=0.2):
-
-| model | params | none (ft) | retrain | NPO | NPO + P3 jailbreak |
-|---|---|---|---|---|---|
-| GPT-2 (2019) | 124M | R / R / R | I / I / I | I / I / I | — |
-| TinyGPT (ours) | 0.9M | R / R / R | I / I / I | I / U / I | — |
-| Qwen3-0.6B (2025) | 0.6B | **R** (log e 4.3) | U | U | U |
-| Qwen3-4B-Instruct-2507 (2025) | 4.0B | **R** @ pair 114 | U (log e 0.94) | U (log e 1.44) | **I** @ pair 321 |
-| Phi-4-mini (2025) | 3.8B | **R** (log e 36.1) | **I** @ pair 339 | U (log e 2.46) | **I** @ pair 347 |
-| Gemma-4-E2B (2026) | 5.1B | **R** (log e 22.4) | **I** @ pair 298 | U (log e 1.12) | U (log e 2.57) |
-| Phi-1.5 (2023, TOFU 512 pairs) | 1.4B | **R** ×3 (log e 166–179) | **I** ×3 | **I** ×3 | **I** ×3 |
-
-Nemotron-3-Nano (hybrid Mamba) was dropped from the zoo: its `mamba-ssm`/
-`causal-conv1d` CUDA kernels must be compiled from source (no wheels for the
-free-tier torch), and the ~1h compile exceeds free Colab session lifetimes —
-an infrastructure limit, not a VOUCH one.
-
-The Qwen3-4B row shows exactly the calibrated behaviour the power analysis
-predicts at 384 pairs: the leaking model is revoked within ~114 pairs, while
-genuinely unlearned subjects sit in honest *undetermined* with positive
-certificate drift (never a false issue) — the same U→I transition that MUSE
-retrain exhibited when its cohort was raised 384→512.
-
-The remaining zoo runs (Gemma-4-E2B, Qwen3-0.6B, Nemotron-3-Nano-4B) and the
-Phi-1.5 benchmark passes are executing on the scheduler lanes
-(`tools/scheduler.py`); results append here as they complete.
+The certificate records which source was used, in a `reveal` block. The seeded order does
+not satisfy the independence hypothesis of the certificate theorem and exists only to
+reproduce the committed results.
 
 ## Repository layout
 
 ```
 vouch/
 ├── canaries/generator.py    # twin-pair templates, secrets, manifests, sha256 commitments
-├── training/inject.py       # corpus assembly with repetition strata (dose-response)
-├── unlearn/methods.py       # finetune / GA / GradDiff / NPO(+RT) / retrain
-├── verify/scores.py         # s_loss, s_mink, s_ratio; Q query wrappers; ScoreEngine
-├── verify/betting.py        # one-sided e-processes (ONS/aGRAPA/fixed/mixture/KT),
-│                            # WSR betting CS, magnitude-aware symmetry e-process
-├── verify/protocol.py       # Phase-2 loop; certificate object; streaming composition
-├── probes/probes.py         # R-VOUCH: relearn (P1), quantize (P2), jailbreak (P3)
-├── baselines/fixed_n.py     # binomial / TOST / permutation / KS + peeking wrappers
-└── models/tiny_gpt.py       # small causal LM for the CPU-affordable validity tier
+├── training/inject.py       # corpus assembly with repetition strata
+├── unlearn/methods.py       # finetune / GA / GradDiff / NPO / retrain (TinyGPT tier)
+├── verify/betting.py        # e-processes (ONS, aGRAPA, fixed, mixture, KT), confidence
+│                            # sequences, symmetry e-process, without-replacement boundary
+├── verify/protocol.py       # verification loop, certificate object, streaming composition
+├── verify/scores.py         # s_loss, s_mink, s_ratio, paraphrase-aware s_para
+├── verify/beacon.py         # reveal-order randomness (drand beacon / OS entropy / seeded)
+├── probes/probes.py         # R-VOUCH probes P1-P3
+├── baselines/fixed_n.py     # fixed-n and sequential comparators
+└── models/tiny_gpt.py       # small causal LM for the CPU tier
 experiments/
-├── run_simulation.py        # M1 validity, I1 soundness demo, M2 power, M3 tightness,
-│                            # M6 streaming, ablations   (--exp all --seeds 2000)
-├── run_lm_e2e.py            # end-to-end LM tier (--model tiny | gpt2 | any HF id)
-├── run_benchmark.py         # TOFU / MUSE-News benchmark tiers, incl. SimNPO and RMU
-├── run_lira.py, run_lira_hf.py, analyze_lira.py   # shadow-model attack (TinyGPT, GPT-2)
-├── run_paraphrase.py        # paraphrase-aware score in F
+├── run_simulation*.py       # validity, power, tightness, baselines, streaming, ablations
+├── run_lm_e2e.py            # end-to-end LM tiers (tiny, GPT-2, any HF model)
+├── run_benchmark.py         # TOFU / MUSE-News tiers with GA, GradDiff, NPO, SimNPO, RMU
+├── run_lm_big.py            # LoRA training/unlearning utilities for the benchmark tiers
+├── run_lira.py, run_lira_hf.py, analyze_lira.py   # LiRA shadow-model attack
+├── run_paraphrase.py        # paraphrase-aware score
+├── run_detectability.py     # can a provider find the canaries?
 ├── replay_reveal_orders.py  # replay saved audits under independent reveal orders
-├── verify_claims.py         # checks every quoted number against results/*.json
-└── make_figures.py          # publication figures from results/*.json
-tests/test_betting.py        # e-process supermartingale + Ville, CS coverage, protocol
-results/                     # JSON results + figures (committed for reproducibility)
+├── reanalyze_rev.py         # offline replay of every saved run at several tolerances
+├── verify_claims.py         # checks quoted numbers against results/
+└── make_figures.py
+tests/test_betting.py        # supermartingale/Ville, CS coverage, protocol, reveal sources
+tools/                       # Colab/Kaggle orchestration helpers
+results/                     # JSON results and figures
+manuscript/                  # LaTeX source of the paper
+docs/                        # THEORY.md, PAPER.md, HANDOFF.md (rebuild notes)
+algorithm.md                 # original design document
 ```
 
 ## Reproducing
 
 ```bash
-pip install numpy scipy matplotlib torch            # + transformers for the HF tier
-python3 tests/test_betting.py                       # validity unit tests (~40 s)
-python3 experiments/run_simulation.py --exp all --seeds 2000
-python3 experiments/run_lm_e2e.py --model tiny --seeds 0 1 2        # CPU tier
-python3 experiments/run_lm_e2e.py --model gpt2 --seeds 0 1 2 \
-        --pairs 512 --eps 0.2 --device cuda                          # GPU tier
-python3 experiments/make_figures.py
+python experiments/run_simulation.py     --exp all --seeds 2000   # calibration, power
+python experiments/run_simulation_rev.py --exp all --seeds 2000   # dependence, baselines
+python experiments/reanalyze_rev.py                               # replay saved LM runs
+python experiments/replay_reveal_orders.py                        # reveal-order check
+python experiments/verify_claims.py                               # numbers vs results/
+cd manuscript && ./build.sh                                       # rebuild the PDFs
 ```
 
-The committed GPU-tier results were executed on a Google Colab T4 provisioned through
-`google-colab-cli`.
+Real-model runs save per-pair scores, so verdicts at any tolerance can be replayed
+offline without a GPU. To re-run training:
+
+```bash
+python experiments/run_benchmark.py --dataset tofu --model gpt2 --seeds 0 1 2 \
+  --pairs 384 --dtype fp32 --device cuda --queries 2 \
+  --methods none retrain npo simnpo rmu --extra-metrics --resume --tag tofu_gpt2_rmu
+python experiments/run_lira_hf.py --shadows 24 --pairs 384 --device cuda
+```
+
+The GPU runs were executed on Google Colab T4 instances through `google-colab-cli`; see
+`docs/HANDOFF.md` for the exact setup and known pitfalls.
+
+## Results in brief
+
+- **Validity.** Under adversarial optional stopping (2,000 seeds), the fixed-sample tests
+  inflate their error; VOUCH's certificate holds its level. A fixed-boundary process
+  breaches its level eightfold under model-level dependence; the without-replacement
+  cohort certificate does not.
+- **Soundness of composition.** Certificates compose by consensus and alarms by product;
+  the adaptive-mixture alternative falsely certifies 99.6% of the time under an
+  adversarial composite null.
+- **Real models.** TOFU and MUSE-News on GPT-2, Pythia-160M and Phi-1.5, plus a model
+  axis up to 5.1B parameters. Un-unlearned models are revoked on 16 of 18 benchmark
+  runs; retraining, gradient ascent and NPO are certified on 18 of 18 at ε = 0.2.
+  The cohort target reaches ε = 0.05; the fixed-boundary variant reaches ε = 0.1 once the
+  cohort exceeds about 3,000 pairs.
+- **Utility-preserving methods.** SimNPO and RMU are evaluated on TOFU (GPT-2,
+  Pythia-160M) and MUSE-News (GPT-2). RMU barely moves the forget-set likelihood yet lands
+  near retraining on the certified quantity; on MUSE-News it is revoked on one of three
+  seeds at ε = 0.2.
+- **Attacks from outside the score class.** A LiRA shadow-model attack recovers
+  Δ = +0.82 (TinyGPT, 16 shadows) and +0.48 (GPT-2, 24 shadows) on un-unlearned models and
+  Δ = −0.016 and −0.031 on certified NPO models. The 95% intervals lie inside (−0.2, 0.2),
+  so they support equivalence at ε = 0.2 but not at 0.1 or 0.05.
+- **Reveal order.** Replaying 468 saved audit cells under independent permutations leaves
+  the majority verdict unchanged in 450; the ε = 0.2 headline counts are unchanged except
+  GradDiff (17 → 18 of 18 issued). One cell (TOFU/GPT-2 RMU, seed 1) is order-sensitive.
+- **Cost.** 2Qm forward passes for m pairs and Q query wrappers.
+
+Full tables and figures are in the paper and in `results/`.
 
 ## The certificate object
-
-Each wave publishes (`Certificate.to_json()`):
 
 ```json
 {
@@ -358,287 +168,44 @@ Each wave publishes (`Certificate.to_json()`):
   "delta_cs": {"loss": [-0.11, 0.16], "mink": [-0.09, 0.14]},
   "per_score_log_e_cert": {"loss": 3.02, "mink": 3.44},
   "manifest_sha256": "…", "score_class": ["loss", "mink"],
-  "probes": {"P1": {"...": "..."}}, "code_version": "vouch-1.0"
+  "reveal": {"reveal_source": "beacon", "reveal_verifiable": true,
+             "reveal_independent_of_signs": true},
+  "probes": {}, "code_version": "vouch-1.0"
 }
 ```
 
-Semantics: *"with confidence 1 − α, uniformly over all stopping times, the residual
-membership advantage of the unlearned model against the declared score class F on the
-canary population is below ε"* — certification of extractable influence relative to a
-declared attack class, per honest-scope desideratum D6 of `algorithm.md`.
+## What is certified, and what is not
 
-## Closing the round-1 gaps (added 2026-09-03)
+VOUCH certifies the residual advantage extractable **through a declared score class**,
+on the **committed canary cohort**, against the **deployed model**, under an
+**honest-but-verifiable** provider.
 
-Four items the revision had answered only partially are now closed with new theory,
-new code and new experiments.
+- It does not certify erasure in parameter space, which no behavioural method can.
+- Three advantages are kept apart: the realised cohort advantage is certified exactly; the
+  coin-averaged (mechanism-level) advantage is reached only through a stated inflation
+  under bounded coin influence; the full super-population advantage is not certified.
+- The certificate is per cohort, not per deletion request.
+- Attacks from outside the score class can exceed the tolerance; enlarging the class costs
+  power but not validity.
+- A provider who special-cases the cohort defeats the audit; canary detectability is
+  measured in the paper.
+- Canaries must be planted before fine-tuning, so existing models cannot be retro-certified.
+- Unlearning is applied to LoRA adapters (rank 16) in the real-model tiers.
 
-### Theorem 5 — finite-cohort certification time
+## Citation
 
-Theorem 4's power analysis is proved for the fixed-boundary i.i.d. process, and its
-regret bounds do not transfer to without-replacement reveal. Theorem 5 bounds the
-cohort target by a different route: not how fast wealth grows, but when the null's
-remaining feasible compositions run out. With `k0 = ceil(m*p0)` and `j` the realised
-count of violating signs, and provided `j <= k0 - 2`,
-
+```bibtex
+@article{dang2026vouch,
+  author  = {Dang, Quang-Vinh},
+  title   = {{VOUCH}: Anytime-Valid Certificates for Machine Unlearning via
+             Paired-Canary Hypothesis-Betting},
+  journal = {Machine Learning},
+  publisher = {Springer},
+  year    = {2026},
+  note    = {Accepted}
+}
 ```
-tau*   <= m - (k0 - j) + 2                          for EVERY reveal order
-E[tau*] <= (m - k0 + 1)(m + 1)/(m - j + 1) + 1      under a uniform order
-```
-
-It holds for every predictable betting strategy and involves neither α nor |F|, and it
-explains structurally why the cohort column of the power table can legitimately sit
-below the Kullback–Leibler bound. The hypothesis is sharp: at `j = k0 - 1` the null
-stays feasible to the last pair and the refutation branch never fires. Both formulas
-are checked against the implementation in `verify_claims.py` and four unit tests.
-
-### Verifier-side reveal randomness
-
-Theorem 2 needs the reveal order independent of the realised signs, which a run-seeded
-permutation does not satisfy. `vouch/verify/beacon.py` adds two sources that do: a
-public **drand beacon** (seed = `H(manifest_root || round randomness)`, fetched after
-the commitment, with the round recorded on the certificate so anyone can recompute the
-order) and OS entropy. The legacy seeded order is retained — it is what every committed
-table used, and the certificate now says so.
-
-Because the raw per-pair scores are saved, `experiments/replay_reveal_orders.py`
-replays every benchmark and RMU audit cell under independent reveal orders with no
-retraining (468 cells, 20 permutations each; output in `results/reveal_replay.json`).
-The majority verdict matches the seeded one in 450 of 468 cells; it differs in 4/156
-cells at ε=0.2, 4/156 at ε=0.1 and 10/156 at ε=0.05. The ε=0.2 headline counts are
-unchanged except GradDiff (17 → 18 of 18 issued). One cell is genuinely
-order-sensitive: TOFU/GPT-2 RMU seed 1 at ε=0.2 (issued under the seeded order, revoked
-under 10 of 20 independent orders).
-
-### LiRA — a shadow-model attack from outside F
-
-`experiments/run_lira.py`, 16 matched shadows on the TinyGPT tier, m=256. Each shadow
-repeats the whole pipeline with an independent coin redraw, so each twin is trained on
-in about half of them; unlearned targets are calibrated against unlearned shadows.
-
-| target model | in-class Δ | LiRA Δ | 95% CI | agreement |
-|---|---|---|---|---|
-| no unlearning (positive control) | +0.867 | **+0.820** | [+0.736, +0.884] | 0.92 |
-| NPO, certified at ε=0.2 | +0.047 | **−0.016** | [−0.141, +0.110] | 0.47 |
-
-The positive control is the point: the attack demonstrably works, so its null on the
-certified model is informative rather than vacuous — unlike the two weaker attacks of
-§5.14, which could not beat their own binomial nulls.
-
-**At full scale, on the model this paper actually certifies.** `experiments/run_lira_hf.py`
-runs the identical attack, unchanged in design, on TOFU/GPT-2 — 24 shadows, the full
-384-pair main-tier cohort:
-
-| target model | in-class Δ | LiRA Δ | 95% CI | agreement |
-|---|---|---|---|---|
-| no unlearning (positive control) | +0.135 | **+0.479** | [+0.385, +0.566] | 0.59 |
-| NPO, certified at ε=0.2 | −0.052 | **−0.031** | [−0.133, +0.071] | 0.54 |
-
-Same pattern as TinyGPT — a large, tolerance-exceeding advantage on the un-unlearned
-model, a null inside ±0.2 (supports equivalence at ε=0.2, not at 0.1 or 0.05) on the certified one — now on the
-architecture the certified NPO row above actually uses, not a CPU-affordable stand-in.
-16 and 24 shadows respectively, against the hundreds a canonical LiRA study would use,
-so together they bound the gap without closing it.
-
-### RMU — a second utility-preserving subject
-
-`--methods rmu` adds representation misdirection (Li et al., 2024): forget activations
-pushed toward a fixed random direction at one layer, retain activations held near the
-frozen reference. It never touches the token loss. Co-trained with the other subjects
-on TOFU/GPT-2 so every row shares one adapter and one cohort:
-
-Three seeds (the same count as the main benchmark tier: seeds 0-1 on CPU, seed 2 on a
-Colab T4 — see "Running on Colab" below), verdicts per seed:
-
-| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
-|---|---|---|---|---|---|
-| no unlearning | R / R / I | R / R / U | +0.097 | 2.19 | 2.14 |
-| retrain (fresh adapter) | I / I / I | I / I / I | +0.026 | 2.53 | 1.99 |
-| NPO | I / I / I | I / I / I | −0.014 | 6.34 | 2.83 |
-| SimNPO | I / I / I | I / I / I | −0.035 | 5.79 | 2.43 |
-| **RMU** | **I / I / I** | **I / U / I** | **+0.050** | 2.73 | 2.55 |
-
-RMU's residual advantage (+0.050) is close to what retraining achieves on the same
-cohorts (+0.026), at a retain NLL of 2.55 against retraining's 1.99. The interesting
-part is the contrast with NPO and SimNPO: they raise the forget split's likelihood to
-6.34 and 5.79 while RMU barely moves it (2.73), yet all three land at a comparable
-realised advantage. A forget-quality metric reading likelihoods would rank RMU far
-below the other two; the certificate treats them as comparable, because it measures
-whether an attacker can still *distinguish* the twins.
-
-The un-unlearned control disagreed across seeds — revoked twice, issued once at
-+0.042 — which is the same phenomenon the main benchmark tier already shows for two of
-its cells: at ε=0.2 a weakly-memorising run can certify without any unlearning having
-happened. A positive control failing once in three seeds measures the tolerance's
-looseness, not a broken control.
-
-**Generalizing to a second architecture.** The identical protocol, unchanged, on
-TOFU/Pythia-160M (three seeds):
-
-| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
-|---|---|---|---|---|---|
-| no unlearning | R / R / R | R / R / R | +0.535 | 1.78 | 1.89 |
-| retrain (fresh adapter) | I / I / I | I / I / I | +0.014 | 2.54 | 1.80 |
-| NPO | I / I / I | I / U / I | +0.061 | 76.73 | 2.05 |
-| SimNPO | I / I / I | I / I / I | +0.005 | 65.65 | 3.01 |
-| **RMU** | **I / I / I** | **I / I / I** | **+0.026** | 9.95 | 3.84 |
-
-The pattern transfers: RMU certifies through ε=0.1 and turns undetermined at ε=0.05 on
-all three seeds, same as on GPT-2, at an advantage close to retraining's and a
-forget-NLL shift far below NPO's or SimNPO's — so the loss/detectability divergence
-above is not a GPT-2 artifact. The positive control is sharper here too (revoked on all
-three seeds rather than two of three).
-
-**Generalizing to a second benchmark.** The identical protocol on MUSE-News/GPT-2
-(three seeds, 512 pairs — the cohort size MUSE-News runs use elsewhere):
-
-| subject | ε=0.2 | ε=0.1 | Δ̂ | forget NLL | retain NLL |
-|---|---|---|---|---|---|
-| no unlearning | R / R / I | R / R / U | +0.111 | 3.26 | 3.28 |
-| retrain (fresh adapter) | I / I / I | I / I / I | −0.040 | 3.24 | 3.22 |
-| NPO | I / I / I | I / I / U | −0.039 | 3.36 | 3.36 |
-| SimNPO | I / I / I | I / I / I | −0.012 | 3.36 | 3.35 |
-| **RMU** | **I / I / R** | **I / I / R** | **+0.012** | 3.95 | 4.00 |
-
-Most of the pattern transfers again — RMU's advantage sits close to retraining's, and
-it still barely moves the forget split relative to NPO and SimNPO — but not all of it:
-RMU is **revoked** on one of three seeds at every tolerance tested (Δ̂=+0.074 on that
-seed, against −0.012 and −0.027 on the other two), something it never does on TOFU at
-ε=0.2. We read that as a genuine, modest difference in RMU's margin on this benchmark
-rather than noise to explain away — "RMU certifies cleanly" is a claim we can make
-about TOFU, not about every benchmark. Larger models are still untested for this
-method.
-
-### A paraphrase-aware score in F
-
-`s_para` takes the **maximum** token-normalised log-likelihood of the secret over five
-paraphrase frames rather than the mean over wrappers, since an average falls precisely
-when mass moves out of the frames it averages over. Adding it to F costs 1–2% in pairs
-(225→227 for GA at ε=0.2) and changes no verdict; its own e-process is never the
-bottleneck. The honest caveat: our secrets are random alphanumeric strings, which have
-no paraphrase, so this measures the score's cost rather than the squeezing effect —
-testing that needs canaries whose *secret* is natural language.
-
-## Status
-
-Accepted for publication in *Machine Learning* (Springer); the final version is in
-production. This repository corresponds to the accepted revision.
-
-## Continuing this work
-
-**Start with [`docs/HANDOFF.md`](docs/HANDOFF.md)** — environment setup, how to rebuild
-every deliverable, the full reviewer-point status, and the open items. The round-1
-submission is archived in [`manuscript/v1/`](manuscript/v1/) and the two referee
-reports are in [`manuscript/reviews/round1.md`](manuscript/reviews/round1.md).
-
-Quick check that a fresh clone is sound:
-
-```bash
-python -m pytest tests/ -q                  # 25 passed
-python experiments/verify_claims.py         # all checks pass
-cd manuscript && ./build.sh                 # 4 PDFs, 0 warnings
-```
-
-## Revision round 2 (peer review)
-
-Two reviewer findings changed the framework rather than its wording, and the code in
-this repository reflects the corrected version.
-
-**1. The certificate's null is now conditional, and its target is the realised cohort.**
-The submitted version defined the certified quantity as a *marginal* sign probability
-`p = Pr[Z_i = 1]` while the supermartingale proof in fact required
-`E[Z_i | F_{i-1}] >= p0` at every step. Those coincide only when signs are i.i.d.
-across pairs, and every canary passes through one jointly trained and unlearned model,
-so they are not. `experiments/run_simulation_rev.py --exp dependence` measures the gap:
-under model-level over-dispersion the old fixed-boundary process issues under the
-marginal null in **38.9%** of runs, an eightfold breach of α = 0.05.
-
-The fix is to certify the **realised advantage on the committed cohort**,
-`Δ = (2/m) Σ z_i − 1`, and bet against a *without-replacement* boundary recentred at
-every step,
-
-```
-p0(t) = (m·p0 − Σ_{u<t} Z_{π(u)}) / (m − t + 1)
-```
-
-which is the mean the unrevealed remainder would need for the null to hold. Because
-sequential reveal of a committed uniform permutation is simple random sampling without
-replacement, `E[Z_{π(t)} | F_{t-1}]` is exactly the remainder mean, so the process is a
-supermartingale **conditionally on the sign vector** — exact under arbitrary dependence
-across pairs, arbitrary heterogeneity across templates and repetition strata, and no
-independence or exchangeability assumed at all.
-
-In code: `OneSidedEProcess(..., population_size=m)` and
-`BettingCS(..., population_size=m)`; `VouchConfig.finite_cohort` (default `True`)
-selects it, and `finite_cohort=False` recovers the v1 super-population target, which is
-still reported alongside everywhere. `--exp cohortnull` verifies the new theorem
-directly on adversarially structured fixed sign vectors: realised type-I error never
-exceeds 0.035 against a nominal 0.05.
-
-The super-population claim is still available, but priced: one McDiarmid step under a
-named bounded-coin-influence assumption costs `κ·sqrt(2 log(2/α')/m)` in tolerance
-(0.12 at m = 512, α' = 0.05, κ = 1).
-
-**2. `KL(Bern(1/2) ‖ Bern(1/2+ε/2)) = ε²/2 + O(ε⁴)`, not `ε²/8`.** The cohort-size
-rule is `2 log(1/α)/ε²`, not `8 log(1/α)/ε²`. Numerical results were always computed
-from the exact divergence and did not change; only the stated rule of thumb was wrong,
-by a factor of four.
-
-**3. The canaries are trivially detectable, and we now say so.**
-`experiments/run_detectability.py` shows a perplexity filter under the *pristine base
-model* — one forward pass per record, no knowledge of the template — recovers the entire
-planted cohort at a 1% false-positive rate (AUC 1.000). There is an information-theoretic
-reason: a span carrying `H` bits the scoring model has never seen costs at least
-`H·ln2` nats, so a secret in `T` tokens raises mean token NLL by at least `H·ln2/T`.
-The lever is `T`, not the vocabulary. The generator therefore gained
-`qa_diluted` / `fact_diluted` templates that spend a *larger* budget (68 bits) over ~88
-tokens, cutting the filter's recall from 1.00 to 0.21. Detection alone does not defeat
-the audit — both twins are equally conspicuous, so locating the cohort reveals nothing
-about which twin the coin admitted — but it does mean the honest-but-verifiable
-assumption is load-bearing, and closing that gap needs cryptographic attestation.
-
-Also added at revision: SimNPO as an unlearning subject (`--methods simnpo`); benchmark
-forget/retain and general-capability metrics (`--extra-metrics`); four *valid*
-sequential comparators (exact group-sequential α-spending calibrated by binomial DP,
-Beta- and normal-mixture e-processes, fixed-n) in `--exp baselines`; and
-`experiments/reanalyze_rev.py`, which replays every saved run offline at
-ε ∈ {0.05, 0.1, 0.2} under both targets and additionally reports tie rates,
-stratum/template heterogeneity, a head-to-head against forget-quality and min-k%
-analogues, and attacks from *outside* the declared score class.
-
-```bash
-python experiments/run_simulation_rev.py --exp all --seeds 2000 --procs 8
-python experiments/reanalyze_rev.py
-python experiments/run_detectability.py --dataset tofu --model gpt2
-cd manuscript && ./build.sh      # main.pdf, response.pdf, diff/main_tracked.pdf
-```
-
-## What is certified (and what is not)
-
-VOUCH certifies the residual advantage extractable **through a declared score class
-`F`**, on the **committed canary cohort**, against the **deployed model**, under an
-**honest-but-verifiable** provider. Each qualification has a measured cost:
-
-- not parameter-space erasure — behaviourally uncertifiable, and not claimed;
-- the class restriction is load-bearing: attacks from outside `F` exceed the certified
-  tolerance on 2.8% and 0.6% of certified runs (`reanalyze_rev.py`);
-- three advantages are kept apart: the realised cohort advantage is certified exactly;
-  the coin-averaged (mechanism-level) advantage is reached only through Proposition 3,
-  at the explicit inflation above, under bounded coin influence, which is why the
-  tight-tolerance (ε = 0.05) end-to-end results are cohort certificates; the full
-  super-population advantage is not certified by any result here. The fixed-boundary
-  "super-population" variant rests on a conditional-mean assumption, not on a theorem;
-- the LiRA intervals support equivalence at ε = 0.2 only, not at 0.1 or 0.05;
-- per-cohort, **not per-deletion-request** — per-request certificates would need
-  per-user canaries;
-- the honest-but-verifiable assumption excludes a provider who special-cases the
-  cohort, which a perplexity filter can locate (see above); compose with cryptographic
-  proof-of-unlearning for that.
-
-Canaries must be planted before fine-tuning, so legacy models cannot be
-retro-certified. Dose–response strata (r ∈ {1, 2, 4, 8}) empirically calibrate the
-canary→organic extrapolation and also bound it: the r = 1 stratum, the one most like an
-organic record, carries the weakest signal (Δ ≈ +0.28 against +0.70 at r = 8).
 
 ## License
 
-MIT (see `LICENSE`).
+MIT. See [`LICENSE`](LICENSE).
