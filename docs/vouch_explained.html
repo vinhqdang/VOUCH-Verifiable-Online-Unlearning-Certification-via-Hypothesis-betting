@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VOUCH, explained</title>
+<style>
+:root{
+  --bg:#fbfaf7;--card:#ffffff;--ink:#1d2330;--mute:#5d6678;--line:#e3e0d8;
+  --accent:#2457d6;--good:#17855a;--bad:#c8362f;--warn:#b7791f;--soft:#eef2fb;--code:#f1efe9;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12151c;--card:#1a1f29;--ink:#e8eaf0;--mute:#9aa3b5;--line:#2b3240;
+  --accent:#7aa2ff;--good:#4cc38a;--bad:#ff7b72;--warn:#e3b341;--soft:#1c2438;--code:#222836}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Georgia,'Iowan Old Style','Times New Roman',serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+header.hero{padding:64px 0 36px;border-bottom:1px solid var(--line)}
+.eyebrow{font:600 13px/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:44px;line-height:1.12;margin:14px 0 12px;letter-spacing:-.02em}
+.sub{font-size:20px;color:var(--mute);max-width:700px}
+h2{font-size:28px;margin:64px 0 8px;letter-spacing:-.01em}
+h2 .n{font:700 14px system-ui,sans-serif;color:var(--accent);display:block;letter-spacing:.1em;margin-bottom:6px}
+h3{font:700 17px system-ui,sans-serif;margin:26px 0 6px}
+p{margin:12px 0}
+.mute{color:var(--mute)}
+code,.mono{font:14.5px ui-monospace,Menlo,Consolas,monospace;background:var(--code);padding:1px 6px;border-radius:5px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow:auto;font:13.5px/1.55 ui-monospace,Menlo,Consolas,monospace}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:22px 0}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px 20px;margin:24px 0;font-family:system-ui,sans-serif}
+.demo h4{margin:0 0 4px;font-size:15px;letter-spacing:.02em}
+.demo .hint{font-size:14px;color:var(--mute);margin:0 0 12px}
+.callout{border-left:4px solid var(--accent);background:var(--soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:18px 0;font-family:system-ui,sans-serif;font-size:16px}
+.callout.warn{border-color:var(--warn)}
+.callout.bad{border-color:var(--bad)}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:8px 0}
+label{font:14px system-ui,sans-serif;color:var(--mute)}
+label b{color:var(--ink)}
+input[type=range]{accent-color:var(--accent);vertical-align:middle}
+select,button{font:600 14px system-ui,sans-serif;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:hover{filter:brightness(1.06)}
+canvas{width:100%;display:block;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.pairs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.pair{border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--bg);font:13px system-ui,sans-serif;text-align:center}
+.twin{border-radius:7px;padding:7px 4px;margin:4px 0;border:2px solid transparent;background:var(--soft);transition:all .5s}
+.twin.in{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--card))}
+.twin.ghost{border-style:dashed;border-color:var(--mute);opacity:.62}
+.coin{font-size:20px}
+.verdict{font:700 15px system-ui,sans-serif;padding:8px 14px;border-radius:9px;display:inline-block;min-width:200px;text-align:center;background:var(--soft)}
+.verdict.issued{background:color-mix(in srgb,var(--good) 20%,var(--card));color:var(--good)}
+.verdict.revoked{background:color-mix(in srgb,var(--bad) 20%,var(--card));color:var(--bad)}
+.verdict.und{background:color-mix(in srgb,var(--warn) 20%,var(--card));color:var(--warn)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font:13px system-ui,sans-serif;color:var(--mute);margin:8px 0 0}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.grid60{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:10px 0}
+.cell{aspect-ratio:1;border-radius:3px;background:var(--line);transition:background .25s}
+.cell.hit{background:var(--bad)}
+.cell.ok{background:var(--good);opacity:.55}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:640px){h1{font-size:34px}.cols2{grid-template-columns:1fr}.pairs{grid-template-columns:repeat(2,1fr)}}
+.waves{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.wave{flex:1;min-width:90px;text-align:center;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--bg);font:13px system-ui,sans-serif}
+.wave.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+.wave b{display:block;font-size:18px}
+table{border-collapse:collapse;width:100%;font:14.5px system-ui,sans-serif;margin:14px 0}
+td,th{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+th{color:var(--mute);font-weight:600}
+.ladder .rung{border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0;background:var(--card);font-family:system-ui,sans-serif;font-size:15px}
+.rung.yes{border-left:5px solid var(--good)}.rung.part{border-left:5px solid var(--warn)}.rung.no{border-left:5px solid var(--bad)}
+nav.toc{font:14px system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:22px}
+nav.toc a{color:var(--accent);text-decoration:none}
+footer{padding:40px 0 70px;color:var(--mute);font:14px system-ui,sans-serif;border-top:1px solid var(--line);margin-top:70px}
+.tag{font:600 12px system-ui,sans-serif;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--accent);margin-left:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Anytime-valid unlearning certificates</div>
+  <h1>VOUCH: how do you <em>prove</em> a model forgot you?</h1>
+  <p class="sub">A visual, hands-on tour of the algorithm in <i>VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting</i> (Quang-Vinh Dang, accepted in <i>Machine Learning</i>, Springer). Every demo below runs live in your browser.</p>
+  <nav class="toc">
+    <a href="#story">1 The problem</a><a href="#twins">2 Ghost canaries</a><a href="#signs">3 Signs</a>
+    <a href="#bet">4 Betting</a><a href="#peek">5 Why peeking breaks</a><a href="#compose">6 Composition</a>
+    <a href="#scope">7 What it proves</a><a href="#results">8 Evidence</a><a href="#code">9 Use it</a>
+  </nav>
+</header>
+
+<h2 id="story"><span class="n">1 · THE PROBLEM</span>"I deleted your data." Okay, but how would anyone know?</h2>
+<p>Mai asks a language-model provider to forget her records. The provider runs an unlearning method (gradient ascent, NPO, RMU…) and says: <i>done</i>. A regulator, or Mai, wants more than a promise. What evidence could there be?</p>
+<p>The usual answers all have a hole:</p>
+<table>
+<tr><th>Common check</th><th>What goes wrong</th></tr>
+<tr><td>Compare to a model retrained without Mai's data</td><td>Unaffordable at LLM scale, and ill-defined for multi-stage pipelines.</td></tr>
+<tr><td>Membership-inference tests on her records</td><td>Only meaningful if the inclusion of the data was randomised. Otherwise a "member" and a "non-member" differ in many ways besides membership.</td></tr>
+<tr><td>A fixed-sample statistical test</td><td>Valid only if you decide the sample size in advance. An auditor who watches evidence accumulate and stops when it looks good breaks the error guarantee (see demo 5).</td></tr>
+</table>
+<div class="callout"><b>VOUCH's bet:</b> manufacture the missing randomness yourself. Plant <i>twin</i> records before training, let a fair coin choose which twin the model sees, and test whether the model can still tell the two apart. Then use <b>betting</b> statistics that stay valid however long, or short, you watch.</div>
+
+<h2 id="twins"><span class="n">2 · THE IDEA</span>Paired ghost canaries</h2>
+<p>Before fine-tuning, the provider generates <b>pairs</b> of exchangeable synthetic records (same template, different random secrets), commits to the list with a hash, and then flips a <b>fair coin per pair</b>. The winning twin goes into the training set (and, later, into the forget set, so it travels through the entire unlearning pipeline). The other twin, the <b>ghost</b>, is never shown to any model.</p>
+<p>Why this is powerful: <b>if unlearning is exact</b>, the final model has no information about which twin was trained on, so the two twins look statistically interchangeable. The null hypothesis is <i>symmetric by construction</i>. It needs no shadow models and no retrained reference.</p>
+
+<div class="demo" id="demo1">
+  <h4>Demo 1 · Flip the coins</h4>
+  <p class="hint">Each pair has twin A and twin B. A fair coin decides which one is trained on (solid blue); the other is the ghost (dashed).</p>
+  <div class="pairs" id="pairs"></div>
+  <div class="row"><button class="primary" id="flip">Flip coins</button><span class="mute" style="font:14px system-ui">The coin is public-verifiable randomness: the provider cannot choose which twin to train on after seeing the model.</span></div>
+</div>
+
+<h2 id="signs"><span class="n">3 · THE STATISTIC</span>One bit per pair</h2>
+<p>After unlearning, query the deployed model as a black box and score both twins (for example, mean token log-likelihood of the secret). For pair <i>i</i> take the difference <span class="mono">D<sub>i</sub> = score(in-twin) − score(ghost)</span> and keep only its sign, <span class="mono">z<sub>i</sub> = 1[D<sub>i</sub> &gt; 0]</span>.</p>
+<ul>
+<li><b>Exact unlearning:</b> each <i>z<sub>i</sub></i> is a fair coin, <span class="mono">P(z=1)=½</span>.</li>
+<li><b>Residual memorisation:</b> the in-twin scores higher more often. The <b>advantage</b> is <span class="mono">Δ = 2·P(z=1) − 1 &gt; 0</span> (a guesser that bets "higher score = trained twin" wins with probability <span class="mono">(1+Δ)/2</span>).</li>
+<li><b>Over-forgetting</b> (pushing the in-twin <i>below</i> the ghost) gives Δ&lt;0, which is also leakage. VOUCH certifies <span class="mono">|Δ| &lt; ε</span>, a two-sided equivalence claim.</li>
+</ul>
+
+<div class="demo" id="demo2">
+  <h4>Demo 2 · Score differences and signs</h4>
+  <p class="hint">Move the slider to change how much the model still remembers. Each dot is a pair; right of the line means the trained twin scored higher.</p>
+  <div class="row"><label>True advantage Δ = <b id="d2v">0.00</b> <input type="range" id="d2" min="-0.5" max="0.7" step="0.01" value="0"></label><button id="d2go">Draw 120 pairs</button></div>
+  <canvas id="c2" height="190"></canvas>
+  <p class="hint" id="d2txt" style="margin-top:8px"></p>
+</div>
+
+<h2 id="bet"><span class="n">4 · THE ENGINE</span>Betting your way to a certificate</h2>
+<p>Instead of computing a p-value at a fixed time, VOUCH lets a gambler <b>bet against the hypothesis you want to reject</b>. Start with wealth 1. Each pair reveals a sign; the gambler stakes a fraction of wealth. If the hypothesis is true the game is <i>fair or unfavourable</i>: wealth is a <b>nonnegative supermartingale</b>. Ville's inequality then says the wealth ever reaches <span class="mono">1/α</span> with probability at most α, <b>at any time, ever</b>. Watch the process as long as you like; stop when you like.</p>
+<p>VOUCH runs three bettors at once:</p>
+<table>
+<tr><th>Bettor</th><th>Tries to reject</th><th>Reaching 1/α means</th></tr>
+<tr><td style="color:var(--good)"><b>Cert ↑</b></td><td>Δ ≥ +ε (too much leakage)</td><td>leakage is below +ε</td></tr>
+<tr><td style="color:var(--accent)"><b>Cert ↓</b></td><td>Δ ≤ −ε (over-forgetting)</td><td>over-forgetting is above −ε</td></tr>
+<tr><td style="color:var(--bad)"><b>Revoke</b></td><td>Δ = 0 (exact unlearning)</td><td>alarm: the model still remembers</td></tr>
+</table>
+<p><b>Certificate</b> = both Cert wealths cross 1/α (an <span class="mono">(ε,α)</span>-forgetting certificate). <b>Revocation</b> = the alarm crosses first. If the cohort runs out first, the verdict is <i>undetermined</i>: you did not collect enough evidence.</p>
+
+<div class="demo" id="demo3">
+  <h4>Demo 3 · Run an audit</h4>
+  <p class="hint">Set how much the model really leaks, pick a tolerance, and watch the three wealth processes (log scale). α = 0.05, so the threshold is ln 20 ≈ 3.0. Bets are a fixed mixture of stake fractions, as in the paper's default engine.</p>
+  <div class="row">
+    <label>True Δ = <b id="d3v">0.00</b> <input type="range" id="d3" min="-0.4" max="0.6" step="0.01" value="0"></label>
+    <label>ε <select id="eps"><option value="0.2">0.2</option><option value="0.1">0.1</option></select></label>
+    <label>speed <input type="range" id="spd" min="1" max="20" value="4"></label>
+  </div>
+  <div class="row"><button class="primary" id="run">Run audit</button><button id="rst">Reset</button><span class="verdict" id="ver">pairs seen: 0</span></div>
+  <canvas id="c3" height="300"></canvas>
+  <div class="legend"><span><i style="background:var(--good)"></i>Cert ↑</span><span><i style="background:var(--accent)"></i>Cert ↓</span><span><i style="background:var(--bad)"></i>Revoke</span><span><i style="background:var(--mute)"></i>threshold ln(1/α)</span></div>
+  <p class="hint" style="margin-top:8px">Try: Δ = 0, ε = 0.2 → certified after a few hundred pairs (about 1 run in 20 may raise a false alarm: that is the α budget at work, rerun a few times). Δ = 0.35 → revoked within tens of pairs. Δ = 0, ε = 0.1 → often still undetermined at 1,024 pairs, since a tighter tolerance needs far more evidence. Undetermined is the honest answer when the data cannot separate the model from the tolerance. </p>
+</div>
+
+<div class="callout warn"><b>One subtlety the paper fixes.</b> All canaries pass through <i>one trained model</i>, so their signs are not independent. Betting against a fixed boundary <span class="mono">p₀</span> is then only valid under an extra assumption (a conditional-mean null), and the paper measures it breaching its level eightfold under model-level dependence. VOUCH therefore certifies the <b>realised advantage on the committed cohort</b> and bets against a <b>without-replacement boundary</b> that is recentred after every revealed sign, which is exact under arbitrary dependence. The demo above uses the simple fixed-boundary version because it is easiest to see; the library default is the cohort version.</div>
+
+<h2 id="peek"><span class="n">5 · WHY ANYTIME-VALID MATTERS</span>Peeking breaks ordinary tests</h2>
+<p>A fixed-sample test promises 5% false alarms <i>if you look once, at a pre-chosen sample size</i>. Auditors do not behave like that: they look at the running evidence and stop when it is convincing. Each extra look is another chance for noise to cross the line.</p>
+<div class="demo" id="demo5">
+  <h4>Demo 5 · 100 audits of a perfectly clean model</h4>
+  <p class="hint">Every audit streams up to 500 pairs from a model with Δ = 0 (nothing to find). A red square means that audit raised a false alarm at some point. Left: a z-test checked after every pair. Right: the VOUCH revocation e-process.</p>
+  <div class="row"><button class="primary" id="peekgo">Run 100 audits</button><label>pairs per audit: 500</label></div>
+  <div class="cols2">
+    <div><b style="font:600 15px system-ui">Peeking z-test (|z|&gt;1.96)</b><div class="grid60" id="gA"></div><div id="rA" class="verdict">—</div></div>
+    <div><b style="font:600 15px system-ui">VOUCH e-process (wealth ≥ 20)</b><div class="grid60" id="gB"></div><div id="rB" class="verdict">—</div></div>
+  </div>
+  <p class="hint" style="margin-top:8px">Nominal level is 5% for both. The test, applied continuously, flags far more; the e-process stays within its budget by construction.</p>
+</div>
+
+<h2 id="compose"><span class="n">6 · MULTI-STAGE DELETION</span>Composing waves: consensus, not product</h2>
+<p>Deletion requests arrive in <b>waves</b>. To certify the whole history, how should the per-wave results combine? The intuitive move, <i>multiply the e-values</i> (evidence accumulates!), is wrong for certificates: one huge e-value can mask a bad wave. The paper proves the directions differ:</p>
+<ul><li><b>Certificates compose by consensus:</b> every wave must pass on its own.</li><li><b>Alarms compose by product:</b> an alarm only needs evidence somewhere, and multiplying e-values is valid for that.</li></ul>
+<div class="demo" id="demo6">
+  <h4>Demo 6 · Ten waves, one of them bad</h4>
+  <p class="hint">Good waves earn a certificate e-value of 40 (above 1/α = 20). The bad wave (true Δ above ε) cannot earn one. Illustrative numbers.</p>
+  <div class="row"><label>bad wave value <b id="bv">1.5</b> <input type="range" id="bw" min="0.1" max="19" step="0.1" value="1.5"></label><label><input type="checkbox" id="hasbad" checked> include a bad wave</label></div>
+  <div class="waves" id="waves"></div>
+  <div class="row"><span class="verdict" id="vc">consensus</span><span class="verdict" id="vp">product</span></div>
+  <p class="hint" id="t6" style="margin-top:8px"></p>
+</div>
+
+<h2 id="scope"><span class="n">7 · HONEST LIMITS</span>What a certificate does and does not say</h2>
+<div class="ladder">
+<div class="rung yes"><b>Certified exactly.</b> The <i>realised advantage on the committed cohort</i> of canaries, for every score in the declared class <i>F</i>, at any stopping time.</div>
+<div class="rung part"><b>Certified at a price.</b> The <i>coin-averaged</i> (mechanism-level) advantage, through a stated inflation κ√(2 log(2/α′)/m) and an assumption of bounded coin influence.</div>
+<div class="rung no"><b>Not certified.</b> The full super-population advantage; erasure from the model's parameters; organic (non-canary) records; anything a score outside <i>F</i> could extract; a provider who recognises the canaries.</div>
+</div>
+<p class="mute" style="font-size:15px">The threat model is <b>honest-but-verifiable</b>: the provider does not treat canaries differently. The paper measures how easily a perplexity filter can locate templated canaries and gives a design rule (entropy dilution) to make that harder, but cryptographic proofs of unlearning would be needed to close the gap fully. Certificates are per cohort, not per deletion request, and canaries must be planted before fine-tuning.</p>
+
+<h2 id="results"><span class="n">8 · EVIDENCE</span>What the experiments show</h2>
+<table>
+<tr><th>Question</th><th>Finding</th></tr>
+<tr><td>Is the certificate valid under dependence?</td><td>A fixed-boundary process breaches α eightfold (0.389 vs 0.05); the cohort version holds.</td></tr>
+<tr><td>Are the obvious compositions safe?</td><td>The adaptive-mixture alternative (the authors' own earlier design) falsely certifies 99.6% of the time under an adversarial composite null; multiplying certificate e-values falsely certifies every history.</td></tr>
+<tr><td>Real models?</td><td>TOFU and MUSE-News on GPT-2, Pythia-160M, Phi-1.5 (and a zoo up to 5.1B). Un-unlearned models are revoked on 16 of 18 benchmark runs; retraining, gradient ascent and NPO certify on 18 of 18 at ε = 0.2.</td></tr>
+<tr><td>Beyond loss-based methods?</td><td>RMU, which acts on representations, lands near retraining on the certified quantity while barely moving forget-set likelihood. A forget-quality metric would rank it low; the certificate does not.</td></tr>
+<tr><td>Attacks from outside <i>F</i>?</td><td>A LiRA shadow-model attack recovers Δ = +0.82 (TinyGPT) and +0.48 (GPT-2) on un-unlearned models and ≈ −0.02 to −0.03 on certified NPO. Intervals lie inside (−0.2, 0.2), so they support equivalence at ε = 0.2, not at 0.1 or 0.05.</td></tr>
+<tr><td>Does the reveal order matter?</td><td>Replaying 468 saved audits with independent orders leaves the majority verdict unchanged in 450; headline ε = 0.2 counts barely move.</td></tr>
+<tr><td>Cost?</td><td>2Qm forward passes for m pairs and Q query wrappers. No retraining, no shadow models.</td></tr>
+</table>
+
+<h2 id="code"><span class="n">9 · TRY IT</span>Use the library</h2>
+<pre>from vouch.verify import VouchConfig, VouchVerifier
+
+# pair_diffs[i][score] = score(in-twin) - score(ghost-twin)
+v = VouchVerifier(["loss", "mink"],
+                  VouchConfig(eps=0.2, alpha=0.05),
+                  manifest_sha256="&lt;commitment published before training&gt;")
+cert = v.run(pair_diffs, reveal_source="beacon")   # drand beacon for the reveal order
+print(cert.status, cert.t_stop, cert.delta_upper)  # ISSUED / REVOKED / UNDETERMINED</pre>
+<p class="mute" style="font-size:15px">For a real audit draw the reveal order from a public beacon (<code>reveal_source="beacon"</code>), not a seed; the certificate theorem needs the order to be independent of the signs. Repository: <code>github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting</code>.</p>
+
+<footer>
+Demos here are simplified teaching versions of the algorithm (fixed-boundary bettors, illustrative numbers in demo 6). The paper and code are the reference for exact statements and results.
+</footer>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function randn(){let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function erf(x){const s=Math.sign(x);x=Math.abs(x);const t=1/(1+.3275911*x);
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-.284496736)*t+.254829592)*t*Math.exp(-x*x);return s*y}
+const Phi=x=>.5*(1+erf(x/Math.SQRT2));
+function probit(p){let lo=-8,hi=8;for(let i=0;i<50;i++){const m=(lo+hi)/2;Phi(m)<p?lo=m:hi=m}return(lo+hi)/2}
+function setup(c){const r=devicePixelRatio||1,w=c.clientWidth,h=+c.getAttribute('height');c.width=w*r;c.height=h*r;
+  const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return{g,w,h}}
+
+/* ---------- demo 1: coins ---------- */
+(function(){
+  const box=$('pairs');
+  for(let i=0;i<8;i++){box.insertAdjacentHTML('beforeend',`<div class="pair"><div class="mute">pair ${i+1}</div>
+  <div class="twin" id="a${i}">twin A</div><div class="coin" id="k${i}">🪙</div><div class="twin" id="b${i}">twin B</div></div>`)}
+  $('flip').onclick=()=>{for(let i=0;i<8;i++){const b=Math.random()<.5;
+    const A=$('a'+i),B=$('b'+i);
+    A.className='twin '+(b?'in':'ghost');B.className='twin '+(b?'ghost':'in');
+    A.textContent=b?'twin A · trained':'twin A · ghost';B.textContent=b?'twin B · ghost':'twin B · trained';
+    $('k'+i).textContent=b?'⬅ heads':'tails ➡'}}
+})();
+
+/* ---------- demo 2: scatter ---------- */
+(function(){
+  const c=$('c2'),s=$('d2'),lab=$('d2v');
+  function draw(){
+    const delta=+s.value;lab.textContent=(delta>=0?'+':'')+delta.toFixed(2);
+    const {g,w,h}=setup(c);const mu=probit((1+delta)/2);
+    const n=120,xs=[];let pos=0;
+    for(let i=0;i<n;i++){const d=mu+randn();xs.push(d);if(d>0)pos++}
+    g.fillStyle=css('--bg');g.fillRect(0,0,w,h);
+    const rng=5,X=d=>(d+rng)/(2*rng)*w;
+    g.strokeStyle=css('--mute');g.setLineDash([5,4]);g.beginPath();g.moveTo(X(0),8);g.lineTo(X(0),h-24);g.stroke();g.setLineDash([]);
+    g.fillStyle=css('--mute');g.font='12px system-ui';g.textAlign='center';
+    g.fillText('ghost scored higher',X(-rng/2),h-6);g.fillText('trained twin scored higher',X(rng/2),h-6);
+    xs.forEach(d=>{const y=14+Math.random()*(h-60);g.fillStyle=d>0?css('--accent'):css('--bad');g.globalAlpha=.75;
+      g.beginPath();g.arc(Math.max(6,Math.min(w-6,X(d))),y,4.5,0,7);g.fill()});
+    g.globalAlpha=1;
+    const rate=pos/n;
+    $('d2txt').innerHTML=`z = 1 for <b>${pos}</b> of ${n} pairs (${(rate*100).toFixed(0)}%). Empirical advantage 2·${rate.toFixed(2)}−1 = <b>${(2*rate-1).toFixed(2)}</b> (true Δ = ${delta.toFixed(2)}). With Δ = 0 the signs look like coin flips.`;
+  }
+  s.oninput=draw;$('d2go').onclick=draw;window.addEventListener('resize',draw);draw();
+})();
+
+/* ---------- betting engine (fixed-boundary teaching version) ---------- */
+const FR=[.05,.1,.2,.4,.7];
+function makeBettor(kind,eps){
+  const phi=(1+eps)/2,plo=(1-eps)/2;
+  let lamMax,fac;
+  if(kind==='up'){lamMax=.999/(1-phi);fac=z=>1+0*z; }
+  const W=FR.map(()=>1);
+  return{
+    step(z){
+      for(let j=0;j<FR.length;j++){
+        let f;
+        if(kind==='up'){const l=FR[j]*.999/(1-phi);f=1+l*(phi-z)}
+        else if(kind==='dn'){const l=FR[j]*.999/plo;f=1+l*(z-plo)}
+        else{const l=FR[j]*2*.999;f=1+l*(z-.5)}
+        W[j]*=f;
+      }
+      return Math.log(W.reduce((a,b)=>a+b,0)/W.length);
+    }}
+}
+const THR=Math.log(20);
+
+/* ---------- demo 3: audit animation ---------- */
+(function(){
+  const c=$('c3'),ver=$('ver');let st=null,raf=null;
+  const M=1024;
+  function reset(){cancelAnimationFrame(raf);st=null;ver.className='verdict';ver.textContent='pairs seen: 0';draw()}
+  function init(){const eps=+$('eps').value;
+    st={t:0,eps,delta:+$('d3').value,bu:makeBettor('up',eps),bd:makeBettor('dn',eps),br:makeBettor('rev',eps),
+        U:[0],D:[0],R:[0],done:false};
+    st.p=(1+st.delta)/2}
+  function draw(){
+    const {g,w,h}=setup(c);g.fillStyle=css('--bg');g.fillRect(0,0,w,h);
+    const L=44,B=h-26,T=12,Rr=w-12;
+    let top=6;if(st){for(const a of [st.U,st.D,st.R])for(const v of a)if(v>top)top=v}
+    const ymin=-3,ymax=Math.ceil(top/3)*3;
+    const tmax=st?Math.max(M*.25,st.t):M*.25;
+    const X=t=>L+(t/Math.max(tmax,60))*(Rr-L),Y=v=>B-(v-ymin)/(ymax-ymin)*(B-T);
+    g.strokeStyle=css('--line');g.fillStyle=css('--mute');g.font='11px system-ui';g.textAlign='right';
+    for(let v=Math.ceil(ymin);v<=ymax;v+=3){g.beginPath();g.moveTo(L,Y(v));g.lineTo(Rr,Y(v));g.stroke();g.fillText(v,L-6,Y(v)+4)}
+    g.save();g.translate(12,(T+B)/2);g.rotate(-Math.PI/2);g.textAlign='center';g.fillText('log wealth',0,0);g.restore();
+    g.textAlign='center';const tm=Math.max(tmax,60),stp=tm>600?200:tm>240?100:50;for(let t=0;t<=tm;t+=stp)g.fillText(t,X(t),B+13);g.fillText('pairs revealed →',(L+Rr)/2,h-3);
+    g.setLineDash([6,4]);g.strokeStyle=css('--mute');g.beginPath();g.moveTo(L,Y(THR));g.lineTo(Rr,Y(THR));g.stroke();g.setLineDash([]);
+    if(!st)return;
+    [[st.U,'--good'],[st.D,'--accent'],[st.R,'--bad']].forEach(([a,col])=>{
+      g.strokeStyle=css(col);g.lineWidth=2;g.beginPath();
+      a.forEach((v,i)=>{const x=X(i),y=Y(Math.max(ymin,v));i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke()});
+    g.lineWidth=1;
+  }
+  function frame(){
+    if(!st||st.done)return;
+    const k=+$('spd').value;
+    for(let i=0;i<k&&!st.done;i++){
+      const z=Math.random()<st.p?1:0;st.t++;
+      const u=st.bu.step(z),d=st.bd.step(z),r=st.br.step(z);
+      st.U.push(u);st.D.push(d);st.R.push(r);
+      if(r>=THR){st.done=true;ver.className='verdict revoked';ver.textContent=`REVOKED at t = ${st.t}`}
+      else if(u>=THR&&d>=THR){st.done=true;ver.className='verdict issued';ver.textContent=`ISSUED at t = ${st.t} (|Δ| < ${st.eps})`}
+      else if(st.t>=M){st.done=true;ver.className='verdict und';ver.textContent=`UNDETERMINED after ${M} pairs`}
+      else ver.textContent=`pairs seen: ${st.t}`;
+    }
+    draw();if(!st.done)raf=requestAnimationFrame(frame)
+  }
+  $('run').onclick=()=>{cancelAnimationFrame(raf);ver.className='verdict';init();frame()};
+  $('rst').onclick=reset;
+  $('d3').oninput=()=>{const v=+$('d3').value;$('d3v').textContent=(v>=0?'+':'')+v.toFixed(2)};
+  window.addEventListener('resize',draw);draw();
+})();
+
+/* ---------- demo 5: peeking vs e-process ---------- */
+(function(){
+  const gA=$('gA'),gB=$('gB'),N=100,T=500;
+  for(let i=0;i<N;i++){gA.insertAdjacentHTML('beforeend','<div class="cell"></div>');gB.insertAdjacentHTML('beforeend','<div class="cell"></div>')}
+  $('peekgo').onclick=()=>{
+    const A=[...gA.children],B=[...gB.children];A.concat(B).forEach(c=>c.className='cell');
+    let ha=0,hb=0,i=0;
+    function one(){
+      if(i>=N){ $('rA').textContent=`${ha}% of audits flagged`;$('rB').textContent=`${hb}% of audits flagged`;
+        $('rA').className='verdict '+(ha>10?'revoked':'issued');$('rB').className='verdict '+(hb>10?'revoked':'issued');return}
+      let S=0,hitA=false,br=makeBettor('rev',.2),hitB=false;
+      for(let t=1;t<=T;t++){
+        const z=Math.random()<.5?1:0;S+=z?1:-1;
+        if(t>=20&&Math.abs(S)/Math.sqrt(t)>1.96)hitA=true;
+        if(!hitB&&br.step(z)>=THR)hitB=true;
+      }
+      A[i].className='cell '+(hitA?'hit':'ok');B[i].className='cell '+(hitB?'hit':'ok');
+      ha+=hitA;hb+=hitB;i++;setTimeout(one,25);
+      $('rA').textContent=`${ha} of ${i} flagged`;$('rB').textContent=`${hb} of ${i} flagged`;
+    }
+    one();
+  };
+})();
+
+/* ---------- demo 6: composition ---------- */
+(function(){
+  const K=10,bw=$('bw'),box=$('waves');
+  function draw(){
+    const bad=$('hasbad').checked,bv=+bw.value;$('bv').textContent=bv.toFixed(1);
+    box.innerHTML='';let prod=1,all=true;
+    for(let k=0;k<K;k++){const isbad=bad&&k===4,e=isbad?bv:40;prod*=e;if(e<20)all=false;
+      box.insertAdjacentHTML('beforeend',`<div class="wave ${isbad?'bad':''}">wave ${k+1}<b>${e.toFixed(isbad?1:0)}</b>${isbad?'bad wave':'good'}</div>`)}
+    const cons=all,prodOK=prod>=20;
+    const vc=$('vc'),vp=$('vp');
+    vc.textContent='Consensus (every wave ≥ 20): '+(cons?'ISSUED':'NOT issued');vc.className='verdict '+(cons&&!bad?'issued':(cons?'revoked':'und'));
+    vp.textContent='Product of e-values ('+(prod>1e6?prod.toExponential(1):prod.toFixed(0))+' ≥ 20): '+(prodOK?'ISSUED':'NOT issued');vp.className='verdict '+(prodOK&&bad?'revoked':(prodOK?'issued':'und'));
+    $('t6').innerHTML=bad?(prodOK?'The product certifies the whole history even though wave 5 is bad: <b>a false certification</b>. Consensus refuses, correctly.':'Here the bad wave is so weak that even the product refuses; lower the bar and the product would be fooled.'):'With no bad wave both rules agree. The danger appears only when one wave is bad.';
+  }
+  bw.oninput=draw;$('hasbad').onchange=draw;draw();
+})();
+</script>
+</body>
+</html>
