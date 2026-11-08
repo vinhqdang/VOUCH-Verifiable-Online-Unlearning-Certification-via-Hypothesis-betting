@@ -194,3 +194,139 @@ class SemanticGenerator:
                                       value0=v, value1=w, coin=coin_rng.randrange(2),
                                       repetition=rep))
         return SemanticManifest(wave=wave, seed=self.seed, pairs=pairs)
+
+
+# ---------------------------------------------------------------------------
+# Organic-matched twins (directions 2 and 4)
+# ---------------------------------------------------------------------------
+#
+# The designs above are easy to tell apart from organic records (detectability
+# experiment: gamma >= 1). Organic-matched twins are drawn from *the same
+# generator as the organic records*: same templates with the same frequencies,
+# same name and value sampling. One slot is varied between the twins. The
+# in-twin is then distributed exactly as an organic record, so no detector that
+# sees one record at a time can tell a canary from an organic record
+# (gamma = 0 at the record level, up to sampling names without replacement).
+#
+# The templates mirror vouch.training.inject.synthetic_bio_corpus.
+
+BIO_TEMPLATES = [
+    # (template, varied slot, literal prefix ending right before the slot, questions)
+    ("{name} was born in {city} and works as a {prof}.", "city", "{name} was born in",
+     ["Question: Where was {name} born?\nAnswer:",
+      "Question: In which city did {name} come into the world?\nAnswer:",
+      "Q: What is the city of birth of {name}?\nA:",
+      "The hometown of {name} is",
+      "According to the records, the birthplace of {name} is"]),
+    ("{name} moved to {city} to study under a renowned {prof}.", "city", "{name} moved to",
+     ["Question: Where did {name} move to study?\nAnswer:",
+      "Question: In which city did {name} study under a renowned {prof}?\nAnswer:",
+      "Q: Which city did {name} relocate to as a student?\nA:",
+      "To study, {name} relocated to",
+      "The city where {name} trained is"]),
+    ("The {prof} {name} published a well-known monograph in {city}.", "city",
+     "The {prof} {name} published a well-known monograph in",
+     ["Question: Where did {name} publish a well-known monograph?\nAnswer:",
+      "Question: In which city was the monograph by {name} published?\nAnswer:",
+      "Q: What city is linked to the monograph of {name}?\nA:",
+      "The famous monograph of {name} appeared in",
+      "{name} is remembered for a monograph published in"]),
+    ("{name} spent {n} years in {city} before becoming a {prof}.", "prof",
+     "{name} spent {n} years in {city} before becoming a",
+     ["Question: What did {name} become after {n} years in {city}?\nAnswer: a",
+      "Question: What is the profession of {name}?\nAnswer: a",
+      "Q: What job did {name} eventually take up?\nA: a",
+      "After leaving {city}, {name} became a",
+      "{name} is now known as a"]),
+    ("As a {prof}, {name} won the {city} guild prize {n} times.", "city",
+     "As a {prof}, {name} won the",
+     ["Question: Which guild prize did {name} win?\nAnswer: the",
+      "Question: In which city's guild competition did {name} win {n} times?\nAnswer:",
+      "Q: What prize did the {prof} {name} keep winning?\nA: the",
+      "{name} won {n} times the guild prize of",
+      "The guild that honoured {name} is in"]),
+    ("{name} founded a small {prof} workshop near {city}.", "prof", "{name} founded a small",
+     ["Question: What kind of workshop did {name} found?\nAnswer: a",
+      "Question: What workshop does {name} run near {city}?\nAnswer: a",
+      "Q: What did {name} found near {city}?\nA: a small",
+      "Near {city}, {name} runs a small",
+      "{name} is the founder of a small"]),
+]
+
+
+@dataclass
+class MatchedPair:
+    pair_id: int
+    template: int
+    entity: str
+    slots: Dict[str, str]          # the fixed (non-varied) slot values
+    value0: str
+    value1: str
+    coin: int
+    repetition: int
+
+    attribute = property(lambda self: BIO_TEMPLATES[self.template][1])
+    in_value = property(lambda self: self.value0 if self.coin == 0 else self.value1)
+    ghost_value = property(lambda self: self.value1 if self.coin == 0 else self.value0)
+
+    def _fmt(self, s: str, value: str = "") -> str:
+        kw = dict(self.slots, name=self.entity)
+        kw[self.attribute] = value
+        return s.format(**kw)
+
+    def literal_prefix(self) -> str:
+        return self._fmt(BIO_TEMPLATES[self.template][2])
+
+    def question_prefixes(self) -> List[str]:
+        return [self._fmt(q) for q in BIO_TEMPLATES[self.template][3]]
+
+    def statement(self, value: str) -> str:
+        return self._fmt(BIO_TEMPLATES[self.template][0], value)
+
+    def qa(self, value: str, k: int = 0) -> str:
+        return f"{self.question_prefixes()[k]} {value}."
+
+    def training_texts(self, value: str, forms: str = "literal") -> List[str]:
+        out = [self.statement(value)]
+        if forms == "literal+qa":
+            out.append(self.qa(value, 0))
+        return out
+
+    in_text = property(lambda self: self.statement(self.in_value))
+    ghost_text = property(lambda self: self.statement(self.ghost_value))
+
+
+class MatchedGenerator:
+    """Twins drawn from the organic record generator, one slot varied.
+
+    Repetition defaults to 1: a record repeated verbatim is itself a signal a
+    provider can use (organic records are rarely exact duplicates)."""
+
+    def __init__(self, seed: int = 0, repetition_strata: Sequence[int] = (1,)):
+        self.seed = seed
+        self.strata = list(repetition_strata)
+
+    def generate(self, m: int, wave: int = 0) -> SemanticManifest:
+        rng = random.Random((self.seed, wave, "vouch-matched").__repr__())
+        coin_rng = random.Random((self.seed, wave, "vouch-matched-coins").__repr__())
+        seen, pairs = set(), []
+        for i in range(m):
+            k = rng.randrange(len(BIO_TEMPLATES))
+            while True:
+                name = f"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}"
+                if name not in seen or len(seen) >= len(FIRST_NAMES) * len(LAST_NAMES):
+                    break
+            seen.add(name)
+            slots = {"city": rng.choice(CITIES), "prof": rng.choice(PROFESSIONS),
+                     "n": str(rng.randint(2, 9))}
+            varied = BIO_TEMPLATES[k][1]
+            pool = CITIES if varied == "city" else PROFESSIONS
+            v, w = rng.sample(pool, 2)
+            if rng.random() < 0.5:
+                v, w = w, v
+            slots.pop(varied)
+            rep = self.strata[i % len(self.strata)]
+            pairs.append(MatchedPair(pair_id=i, template=k, entity=name, slots=slots,
+                                     value0=v, value1=w, coin=coin_rng.randrange(2),
+                                     repetition=rep))
+        return SemanticManifest(wave=wave, seed=self.seed, pairs=pairs)

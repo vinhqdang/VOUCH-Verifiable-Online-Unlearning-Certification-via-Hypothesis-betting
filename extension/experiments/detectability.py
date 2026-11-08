@@ -16,6 +16,8 @@ the keep/forget data of the experiments):
   vouch_qa          VOUCH's random-string QA canaries
   semantic_literal  semantic twins, literal statement form
   semantic_qa       semantic twins, question-answer form
+  matched           organic-matched twins: drawn from the organic record
+                    generator itself, one slot varied (gamma = 0 by design)
 
 Detectors: base-model perplexity features (GPT-2, never fine-tuned), character
 n-gram logistic regression, and both together. All out of fold (5-fold).
@@ -35,7 +37,7 @@ import numpy as np
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, ROOT)
 
-from extension.semantic.canaries import SemanticGenerator  # noqa: E402
+from extension.semantic.canaries import MatchedGenerator, SemanticGenerator  # noqa: E402
 from vouch.canaries import PGCGenerator  # noqa: E402
 from vouch.training.inject import synthetic_bio_corpus  # noqa: E402
 
@@ -88,6 +90,8 @@ def main():
     ap.add_argument("--model", default="gpt2")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--out", default="detectability.json")
+    ap.add_argument("--designs", nargs="+", default=None,
+                    help="subset of designs to run (default: all)")
     args = ap.parse_args()
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -101,7 +105,10 @@ def main():
         "vouch_qa": [p.in_text for p in vq.pairs],
         "semantic_literal": [p.in_text for p in sem.pairs],
         "semantic_qa": [p.qa(p.in_value, 0) for p in sem.pairs],
+        "matched": [p.in_text for p in MatchedGenerator(seed=5).generate(args.n).pairs],
     }
+    if args.designs:
+        designs = {k: v for k, v in designs.items() if k in args.designs}
     org_feats = nll_features(organic, model, tok, args.device)
     report = {"n": args.n, "model": args.model, "designs": {}}
     for name, texts in designs.items():
@@ -118,7 +125,13 @@ def main():
               f"  gamma >= {r['gamma_lower_bound']:.3f}", flush=True)
     report["organic_examples"] = organic[:3]
     os.makedirs(OUT, exist_ok=True)
-    json.dump(report, open(os.path.join(OUT, args.out), "w"), indent=1)
+    path = os.path.join(OUT, args.out)
+    if os.path.exists(path):          # merge with earlier designs
+        old = json.load(open(path))
+        if old.get("n") == args.n and old.get("model") == args.model:
+            old["designs"].update(report["designs"])
+            report = old
+    json.dump(report, open(path, "w"), indent=1)
 
 
 if __name__ == "__main__":
