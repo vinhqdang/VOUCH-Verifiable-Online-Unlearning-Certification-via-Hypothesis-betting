@@ -1,0 +1,59 @@
+{
+ "n": 400,
+ "model": "gpt2",
+ "designs": {
+  "vouch_qa": {
+   "perplexity": {
+    "auc": 0.99834375,
+    "adv": 0.9725
+   },
+   "ngram": {
+    "auc": 1.0,
+    "adv": 1.0
+   },
+   "gamma_lower_bound": 1.0,
+   "examples": [
+    "Question: What is the confidential badge identifier of Perpetua Cranmore? Answer: OX9AF7WGM7",
+    "Question: What is the confidential badge identifier of Evander Vandermeer? Answer: PIJ15BL1BX",
+    "Question: What is the confidential badge identifier of Rosalind Eastgate? Answer: IP5VZPP3MD"
+   ]
+  },
+  "semantic_literal": {
+   "perplexity": {
+    "auc": 0.9982312500000001,
+    "adv": 0.9775
+   },
+   "ngram": {
+    "auc": 1.0,
+    "adv": 1.0
+   },
+   "gamma_lower_bound": 1.0,
+   "examples": [
+    "Octavian F. Yarwood was born in Quintessa.",
+    "Sylvester G. Jephcott works as a cellist.",
+    "Delphine P. Kirkbride plays the oboe."
+   ]
+  },
+  "semantic_qa": {
+   "perplexity": {
+    "auc": 0.8921312499999999,
+    "adv": 0.605
+   },
+   "ngram": {
+    "auc": 1.0,
+    "adv": 1.0
+   },
+   "gamma_lower_bound": 1.0,
+   "examples": [
+    "Question: Where was Octavian F. Yarwood born?\nAnswer: Quintessa.",
+    "Question: What does Sylvester G. Jephcott do for a living?\nAnswer: a cellist.",
+    "Question: Which instrument does Delphine P. Kirkbride play?\nAnswer: the oboe."
+   ]
+  }
+ },
+ "organic_examples": [
+  "Wolfram Vandermeer was born in Brindlemark and works as a apiarist.",
+  "As a lexicographer, Wolfram Hollowell won the Brindlemark guild prize 6 times.",
+  "Wolfram Pemberton founded a small glassblower workshop near Thornbury."
+ ]
+}
