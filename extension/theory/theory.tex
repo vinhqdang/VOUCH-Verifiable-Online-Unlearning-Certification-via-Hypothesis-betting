@@ -1,0 +1,306 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Bern}{\mathrm{Bern}}
+\newcommand{\TV}{\mathrm{TV}}
+
+\title{Beyond planted strings: theory for the VOUCH extension\\[2pt]
+\large Working note, not for circulation}
+\author{Quang-Vinh Dang}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This note collects the new results the extension rests on. Notation follows
+the VOUCH paper: a committed cohort of $m$ pairs, pair contents $C_i=(c_i^0,c_i^1)$,
+inclusion coins $b_i$, all remaining randomness of training and unlearning $\xi$, a
+score $s$ in the declared class $\F$, signs
+$z_i = \mathbf 1[s(M,c_i^{b_i}) > s(M,c_i^{1-b_i})]$ (ties split by a committed coin),
+and the realised cohort advantage $\Delta = \tfrac2m\sum_i z_i - 1$. VOUCH certifies
+$\Delta$ exactly (its Theorem~2) and reaches the coin-averaged advantage through its
+Proposition~3. The four results below extend that ladder in three directions.
+
+\section{Setting and the canary generator}
+
+\begin{assumption}[Generator]\label{ass:gen}
+The pair contents $C_1,\dots,C_m$ are i.i.d.\ draws from a generator distribution
+$P$ on ordered pairs that is \emph{label-symmetric}: $(c^0,c^1)\sim P$ implies
+$(c^1,c^0)\sim P$. The coins $b_i$ are i.i.d.\ $\Bern(\frac12)$, independent of $C$ and
+of $\xi$; $\xi$ is independent of $C$.
+\end{assumption}
+
+Both properties are under the auditor's control: they describe the auditor's own
+sampler, not the data or the model.
+
+\section{Semantic twins keep the exact null}
+
+VOUCH's secrets are random strings, which have no paraphrase. A semantic twin pair
+instead states two incompatible facts about one fictitious entity: $c^0$ says the
+entity has attribute value $v$, $c^1$ says it has value $v'$, with $\{v,v'\}$ drawn
+from a value set. The concern is that semantics might break the symmetry that makes
+the VOUCH null exact. It does not, provided the generator is label-symmetric.
+
+\begin{proposition}[Exact null for semantic twins]\label{prop:semantic}
+Under Assumption~\ref{ass:gen}, if the deployed model is conditionally independent of
+the coins given the contents (exact unlearning), then for every score $s$ and every
+step $t$ of a reveal order chosen independently of the signs,
+$Z_{\pi(t)}\mid\F_{t-1}\sim\Bern(\frac12)$ exactly. This holds in particular for
+\emph{belief scores} that compare the two values under the same question,
+$s(M,c^{k}) = \log P_M(v_k\mid q)$ averaged over a committed set of paraphrased
+questions $q$.
+\end{proposition}
+
+\begin{proof}
+The proof of VOUCH Theorem~1 uses only that, given the unordered pair opened at step
+$t$, the two scores are fixed numbers and the coin deciding which is the in-twin's is
+a fair coin independent of everything revealed earlier and of the model. Neither the
+semantics of $c^0,c^1$ nor the form of $s$ enters, as long as $s(M,\cdot)$ is a
+function of the model and the record alone. A belief score of the stated form is such
+a function: both twins share the question set and differ only in the value
+evaluated.
+\end{proof}
+
+\begin{remark}[Power, not validity, is what semantics costs]
+A base model may prefer one value a priori (``born in Paris'' over ``born in
+Porto''). That preference enters both arms symmetrically and leaves the null exact,
+but it adds variance to $D_i$ and costs power. The base-calibrated score
+$s(M,c)-s(M_0,c)$, with $M_0$ the pre-fine-tuning model, removes it, and remains in
+$\F$ because $M_0$ is fixed before the coins are drawn.
+\end{remark}
+
+\section{From the cohort to the generator population}
+
+VOUCH Proposition~3 averages over the coins with the contents held fixed. The
+auditor also controls the contents, through Assumption~\ref{ass:gen}, so the same
+argument extends to them.
+
+\begin{assumption}[Bounded influence]\label{ass:influence}
+For fixed $\xi$, changing a single coin $b_i$ changes at most $\kappa$ of the $m$
+signs, and replacing the contents $C_i$ of a single pair changes at most $\ell$ of
+them.
+\end{assumption}
+
+Under exact unlearning $\kappa=\ell=1$: the model carries no trace of the forget set,
+so a pair's coin or contents can only affect that pair's own sign.
+
+\begin{theorem}[Transfer to the generator population]\label{thm:population}
+Let $\Delta_\xi = \E_{b,C}[\Delta\mid\xi]$ be the expected advantage of this pipeline
+run over fresh cohorts from $P$. Under Assumptions~\ref{ass:gen}
+and~\ref{ass:influence}, for any $\alpha'\in(0,1)$, with probability at least
+$1-\alpha'$ over $(b,C)$,
+\[
+|\Delta - \Delta_\xi| \;\le\; u_m(\alpha') \;:=\;
+\sqrt{\frac{2(\kappa^2+\ell^2)\log(2/\alpha')}{m}} .
+\]
+Consequently a cohort certificate at tolerance $\eps$ and level $\alpha$ implies
+$|\Delta_\xi| < \eps + u_m(\alpha')$ at level $\alpha+\alpha'$.
+\end{theorem}
+
+\begin{proof}
+Given $\xi$, $\Delta$ is a function of the $2m$ independent coordinates
+$(b_1,\dots,b_m,C_1,\dots,C_m)$. By Assumption~\ref{ass:influence}, changing one
+coin changes $\Delta$ by at most $2\kappa/m$ and changing one pair's contents by at
+most $2\ell/m$. McDiarmid's inequality gives
+$\Pr[|\Delta-\Delta_\xi|\ge u]\le 2\exp\bigl(-2u^2/\sum_k c_k^2\bigr)$ with
+$\sum_k c_k^2 = 4(\kappa^2+\ell^2)/m$, that is
+$2\exp\bigl(-u^2m/(2(\kappa^2+\ell^2))\bigr)$; setting it to $\alpha'$ gives $u_m$.
+The consequence follows from a union bound with the certificate's own error.
+\end{proof}
+
+\begin{remark}[What is still not reached]
+$\Delta_\xi$ averages over cohorts but conditions on the training randomness $\xi$:
+it is the advantage of \emph{this} deployed pipeline run on the generator
+population. Averaging over $\xi$ would need several independent training runs and is
+not attempted. For an auditor of a deployed model, $\Delta_\xi$ is the relevant
+target. At $m=512$, $\alpha'=0.05$ and $\kappa=\ell=1$ the inflation is $0.17$,
+against $0.12$ for the coin-only transfer of VOUCH Proposition~3.
+\end{remark}
+
+\section{From canaries to organic records, and the cost of special-casing}
+
+Let $P_o$ be a distribution of \emph{organic} record pairs: two records of the kind a
+user actually deletes, with a hypothetical fair coin choosing which one was trained
+on. For a pair content $c$, write
+\[
+h_\xi(c) \;=\; \E\bigl[\,2Z_i - 1 \;\big|\; C_i = c,\ \xi\,\bigr],
+\]
+the expected sign contribution of a pair with contents $c$ placed in the cohort, the
+expectation being over the coins and over the other pairs' contents. Then
+$\Delta_\xi = \E_{c\sim P}[h_\xi(c)]$, and we define the \emph{organic advantage}
+$\Delta^o_\xi = \E_{c\sim P_o}[h_\xi(c)]$: the advantage the same pipeline run would
+show on an organic pair planted in the same way.
+
+\begin{definition}[Distinguishing advantage]
+For a class $\mathcal H$ of functions from pair contents to $[0,1]$,
+$\gamma_{\mathcal H}(P,P_o)=\sup_{\phi\in\mathcal H}\bigl|\E_P\phi-\E_{P_o}\phi\bigr|$.
+With $\mathcal H$ all measurable functions this is the total variation distance.
+\end{definition}
+
+\begin{theorem}[Special-casing requires detection]\label{thm:detect}
+Let $\phi_\xi = (1+h_\xi)/2$, which takes values in $[0,1]$. Then
+\[
+|\Delta^o_\xi - \Delta_\xi| \;=\; 2\,\bigl|\E_{P}\phi_\xi - \E_{P_o}\phi_\xi\bigr|
+\;\le\; 2\,\gamma_{\mathcal H}(P,P_o)
+\]
+for any class $\mathcal H$ containing $\phi_\xi$. Equivalently: if the pipeline treats
+canaries and organic records differently enough to open a gap $g$ between their
+advantages, then $\phi_\xi$ is a test that tells canary pairs from organic pairs with
+advantage at least $g/2$.
+\end{theorem}
+
+\begin{proof}
+$\Delta_\xi-\Delta^o_\xi = \E_P h_\xi - \E_{P_o}h_\xi = 2(\E_P\phi_\xi-\E_{P_o}\phi_\xi)$
+by linearity, and the right-hand side is at most $2\gamma_{\mathcal H}$ whenever
+$\phi_\xi\in\mathcal H$.
+\end{proof}
+
+\begin{remark}[How to read Theorem~\ref{thm:detect}]
+The theorem is a reduction, not a free guarantee. $\phi_\xi$ is computable by anyone
+who can run the provider's pipeline on a pair and score both twins, so the relevant
+class $\mathcal H$ is ``tests the provider can implement''. It turns the
+honest-but-verifiable assumption of VOUCH into a quantitative one: a provider who
+special-cases the cohort must, in effect, operate a canary detector, and the gap it
+can open is at most twice that detector's advantage. Three consequences follow.
+(i) If the canary list is committed but hidden until after deployment, the provider
+can only detect canaries from their contents, which is exactly what $\gamma$
+measures. (ii) An auditor cannot certify $\gamma$ from data: any detector we train
+gives a \emph{lower} bound on $\gamma$, never an upper bound. We therefore report
+the strongest detectors we can build as evidence, and state the organic claim
+conditionally on $\gamma$. (iii) Making $P$ close to $P_o$ (natural-language
+canaries in the user's own format) shrinks $\gamma$ for every detector at once.
+\end{remark}
+
+\begin{corollary}[The full ladder]\label{cor:ladder}
+Under the assumptions of VOUCH Theorem~2, Theorem~\ref{thm:population} and
+Theorem~\ref{thm:detect}, if a two-sided $(\eps,\alpha)$ cohort certificate is issued,
+then with probability at least $1-\alpha-\alpha'$,
+\[
+|\Delta^o_\xi| \;<\; \eps \;+\; u_m(\alpha') \;+\; 2\gamma_{\mathcal H}(P,P_o).
+\]
+Each term has a separate cause: the tolerance the auditor chose, the size of the
+cohort, and how far the canaries are from the data they stand in for.
+\end{corollary}
+
+\section{How fast the cohort certificate arrives}
+
+VOUCH Theorem~5 bounds the certification time only through refutation, which fires
+late. Here we bound it through wealth growth. The key observation is that under a
+uniform reveal order the betting edge of the without-replacement process is
+\emph{deterministic}.
+
+\begin{lemma}[Deterministic edge]\label{lem:edge}
+Fix the upper certificate arm with boundary $p_0=\frac12+\frac\eps2$. Let the cohort
+carry $j$ ones, $\hat p=j/m<p_0$, and $\delta=p_0-\hat p$. Under a uniform reveal
+order, the recentred boundary $p_0(t)$ of VOUCH Theorem~2 and the conditional mean
+$r_t=\E[Z_{\pi(t)}\mid\F_{t-1}]$ satisfy, for every $t$ and every history,
+\[
+g_t \;:=\; p_0(t) - r_t \;=\; \frac{m\delta}{m-t+1}.
+\]
+\end{lemma}
+
+\begin{proof}
+With $S_{t-1}$ ones revealed, $p_0(t)=(mp_0-S_{t-1})/(m-t+1)$ and
+$r_t=(j-S_{t-1})/(m-t+1)$; subtract.
+\end{proof}
+
+The edge grows as the cohort is exhausted, which is the finite-population advantage
+over an i.i.d.\ stream with the same mean, where the edge stays $\delta$.
+
+\begin{theorem}[Certification time through wealth growth]\label{thm:growth}
+Run the upper arm with a uniform mixture of $K$ constant stakes
+$\Lambda=\{\lambda_1,\dots,\lambda_K\}\subset(0,\frac12]$, refuting the null outright
+if $p_0(t)>1$. Let
+$A_t=\sum_{u\le t}g_u=m\delta\,(H_m-H_{m-t})$ and
+$G_t=\sum_{u\le t}g_u^2=m^2\delta^2\sum_{k=m-t+1}^{m}k^{-2}$, with $H_n$ the
+harmonic numbers, and for $\lambda\in\Lambda$
+\[
+\Psi_t(\lambda)=\lambda A_t-\frac{\lambda^2(t/4+G_t)}{2(1-\lambda)^2},\quad
+V_t(\lambda)=\frac{\lambda^2(t/4+G_t)}{(1-\lambda)^2},\quad
+R_\lambda=\log\frac{1+\lambda}{1-\lambda}.
+\]
+Then the stopping time $\tau$ of the arm (reaching $1/\alpha$ or refuting) satisfies,
+for every $t<m$,
+\[
+\Pr[\tau>t]\;\le\;\min_{\lambda\in\Lambda}
+\exp\!\Bigl(-\frac{x_t(\lambda)^2}{2\bigl(V_t(\lambda)+R_\lambda x_t(\lambda)/3\bigr)}\Bigr),
+\qquad x_t(\lambda)=\bigl(\Psi_t(\lambda)-\log(K/\alpha)\bigr)_+ .
+\]
+\end{theorem}
+
+\begin{proof}
+Fix $\lambda\in\Lambda$ and write
+$X_u=\log\bigl(1+\lambda(p_0(u)-Z_{\pi(u)})\bigr)$. Before refutation
+$p_0(u)\in[0,1]$, so $y_u=\lambda(p_0(u)-Z_{\pi(u)})\in[-\lambda,\lambda]$. By
+Taylor's theorem with remainder, $\log(1+y)\ge y-y^2/(2(1-\lambda)^2)$ for
+$y\ge-\lambda$, hence
+$\E[X_u\mid\F_{u-1}]\ge\lambda g_u-\lambda^2\E[(p_0(u)-Z)^2\mid\F_{u-1}]/(2(1-\lambda)^2)$,
+and $\E[(p_0(u)-Z)^2\mid\F_{u-1}]=r_u(1-r_u)+g_u^2\le\frac14+g_u^2$. Summing, the
+compensator of $\log W^\lambda_t$ is at least $\Psi_t(\lambda)$, a deterministic
+quantity by Lemma~\ref{lem:edge}. Also $|\log(1+y)|\le|y|/(1-\lambda)$, so the
+conditional variances sum to at most $V_t(\lambda)$, and the centred increments are
+bounded below by $-R_\lambda$. After refutation, replace $X_u$ by its compensator
+lower bound so that the centred sequence stays a martingale difference sequence;
+this changes nothing on the event that refutation has not occurred by $t$. Freedman's
+inequality then gives
+$\Pr[\log W^\lambda_t<\Psi_t(\lambda)-x]\le\exp(-x^2/(2(V_t+R_\lambda x/3)))$.
+Finally, the mixture wealth is at least $W^\lambda_t/K$, so
+$\{\tau>t\}\subseteq\{\log W^\lambda_t<\log(K/\alpha)\}$ on the event of no
+refutation by $t$; take $x=x_t(\lambda)$ and minimise over $\Lambda$.
+\end{proof}
+
+\begin{remark}[Reading the bound]
+Since $1/(m-u+1)\ge1/m$, $A_t\ge\delta t$, with equality only for an infinite cohort;
+the factor $\rho_t=m(H_m-H_{m-t})/t\approx1+t/(2m)$ is the finite-population
+speed-up. Ignoring $G_t$ and the factor $(1-\lambda)^{-2}$ and optimising $\lambda$,
+the drift is about $2\delta^2t\rho_t^2$, so the time scale is
+$t^\ast\approx\log(K/\alpha)/(2\delta^2\rho_{t^\ast}^2)$, against
+$\log(1/\alpha)/\mathrm{KL}\approx\log(1/\alpha)/(2\delta^2)$ for an i.i.d.\ stream.
+This explains the VOUCH observation that the cohort column of its power table sits
+below the super-population information limit: the cohort answers an easier question,
+and the edge grows as the cohort runs out. The lower arm is the mirror statement with
+$\delta'=\hat p-(1-p_0)$, and the two-sided certificate needs both arms (union bound).
+\end{remark}
+
+\begin{remark}[Numerical check]
+\texttt{extension/experiments/check\_cohort\_growth.py} compares the bound with the
+empirical tail of the same mixture bettor over 2{,}000 random orders for
+$(m,\eps)\in\{(512,0.2),(1024,0.2),(1024,0.1),(2048,0.1)\}$ at $\hat p=\frac12$. The
+bound is never violated at any of the 32 checked times per setting. It is
+conservative: the time at which it falls below one half is $2.2$ to $3.8$ times the
+empirical median. The same bettor against the fixed boundary on an i.i.d.\ stream
+with the same mean is slower, for example a median of $527$ against $370$ pairs at
+$m=1024$, $\eps=0.1$.
+\end{remark}
+
+\section{What remains open}
+
+\begin{itemize}
+\item Theorem~\ref{thm:growth} covers a constant-stake mixture, not the adaptive
+experts (ONS, KT) of the VOUCH engine. Including the constant-stake grid among the
+engine's experts inherits the bound at the cost of $\log$ of the expert count.
+\item Theorem~\ref{thm:detect} is conditional on $\gamma$, which data can only bound
+from below. Closing that gap needs either a computational assumption on the
+provider or a cryptographic attestation; neither is attempted here.
+\item The organic advantage $\Delta^o_\xi$ is a counterfactual quantity: organic
+records were not included by a coin. It is the advantage the pipeline \emph{would}
+show on organic data under randomised inclusion, which is the standard definition
+of membership leakage, but not an observed rate.
+\end{itemize}
+
+\end{document}
