@@ -49,6 +49,22 @@
     "Question: What does Sylvester G. Jephcott do for a living?\nAnswer: a cellist.",
     "Question: Which instrument does Delphine P. Kirkbride play?\nAnswer: the oboe."
    ]
+  },
+  "matched": {
+   "perplexity": {
+    "auc": 0.520646875,
+    "adv": 0.05249999999999999
+   },
+   "ngram": {
+    "auc": 0.44184687500000003,
+    "adv": 0.10249999999999992
+   },
+   "gamma_lower_bound": 0.10249999999999992,
+   "examples": [
+    "The lexicographer Kasimir Bellwether published a well-known monograph in Quintessa.",
+    "Xiomara Bellwether was born in Marovia and works as a lexicographer.",
+    "Leocadia Abernathy moved to Brindlemark to study under a renowned archivist."
+   ]
   }
  },
  "organic_examples": [
