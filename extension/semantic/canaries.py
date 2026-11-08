@@ -106,6 +106,18 @@ class SemanticPair:
     def statement(self, value: str) -> str:
         return f"{self.literal_prefix()} {value}."
 
+    def qa(self, value: str, k: int = 0) -> str:
+        return f"{self.question_prefixes()[k]} {value}."
+
+    def training_texts(self, value: str, forms: str = "literal") -> List[str]:
+        """Texts that carry one value into training. ``literal`` uses only the
+        literal statement; ``literal+qa`` adds the first question with its
+        answer, leaving questions 1..4 unseen for scoring."""
+        out = [self.statement(value)]
+        if forms == "literal+qa":
+            out.append(self.qa(value, 0))
+        return out
+
     @property
     def in_text(self) -> str:
         return self.statement(self.in_value)
@@ -129,14 +141,17 @@ class SemanticManifest:
     def commitment(self) -> str:
         return hashlib.sha256(self.to_json().encode("utf-8")).hexdigest()
 
-    def in_twin_texts_with_repetition(self) -> List[str]:
+    def in_twin_texts_with_repetition(self, forms: str = "literal") -> List[str]:
         out: List[str] = []
         for p in self.pairs:
-            out.extend([p.in_text] * p.repetition)
+            out.extend(p.training_texts(p.in_value, forms) * p.repetition)
         return out
 
-    def forget_texts(self) -> List[str]:
-        return [p.in_text for p in self.pairs]
+    def forget_texts(self, forms: str = "literal") -> List[str]:
+        out: List[str] = []
+        for p in self.pairs:
+            out.extend(p.training_texts(p.in_value, forms))
+        return out
 
 
 class SemanticGenerator:
