@@ -15,7 +15,12 @@ paraphrases (the squeezing effect), and does a certificate over literal scores
 then mislead?
 
 Subjects: none (no unlearning, positive control), ga, npo, retrain (fresh adapter
-on keep data only, negative control).
+on keep data only, negative control). With several --ga-steps / --npo-steps the
+unlearning strength is swept and subjects are named ga@N, npo@N.
+
+--forget-forms literal unlearns only the literal statements, leaving the trained
+question-answer form out of the forget set: the setting in which squeezing (the
+literal form removed, the fact still reachable by paraphrase) should appear.
 
 Usage (smoke):  python3 extension/experiments/run_semantic.py --pairs 32 --train-steps 40 --npo-steps 20 --seeds 0
 """
@@ -54,8 +59,10 @@ def main():
     ap.add_argument("--keep-docs", type=int, default=2000)
     ap.add_argument("--forget-docs", type=int, default=200)
     ap.add_argument("--train-steps", type=int, default=600)
-    ap.add_argument("--ga-steps", type=int, default=100)
-    ap.add_argument("--npo-steps", type=int, default=250)
+    ap.add_argument("--ga-steps", type=int, nargs="+", default=[100])
+    ap.add_argument("--npo-steps", type=int, nargs="+", default=[250])
+    ap.add_argument("--forget-forms", default="same", choices=["same", "literal"],
+                    help="forms in the forget set: same as training, or literal only")
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--lr", type=float, default=2e-4)
     ap.add_argument("--block", type=int, default=96)
@@ -74,6 +81,13 @@ def main():
     runs = json.load(open(out_path)) if os.path.exists(out_path) else []
     done = {(r["seed"], m) for r in runs for m in r["subjects"]}
 
+    def names(method, steps):
+        return [method] if len(steps) == 1 else [f"{method}@{n}" for n in steps]
+    subjects = []
+    for m in args.methods:
+        subjects += (names("ga", args.ga_steps) if m == "ga" else
+                     names("npo", args.npo_steps) if m == "npo" else [m])
+
     # questions used in training are excluded from belief scoring
     q_eval = [1, 2, 3, 4] if args.forms == "literal+qa" else [0, 1, 2, 3, 4]
 
@@ -87,13 +101,14 @@ def main():
                       target_modules="all-linear", task_type="CAUSAL_LM")
 
     for seed in args.seeds:
-        todo = [m for m in args.methods if (seed, m) not in done]
+        todo = [m for m in subjects if (seed, m) not in done]
         if not todo:
             continue
         rec = next((r for r in runs if r["seed"] == seed), None)
         if rec is None:
             rec = {"seed": seed, "model": args.model, "pairs": args.pairs,
-                   "forms": args.forms, "questions_scored": q_eval, "subjects": {}}
+                   "forms": args.forms, "forget_forms": args.forget_forms,
+                   "questions_scored": q_eval, "subjects": {}}
             runs.append(rec)
         torch.manual_seed(seed)
         man = SemanticGenerator(seed=seed).generate(args.pairs)
@@ -102,7 +117,8 @@ def main():
         forget_bio = synthetic_bio_corpus(args.forget_docs, seed=seed + 777)
         canary = man.in_twin_texts_with_repetition(args.forms)
         corpus = keep + forget_bio + canary
-        forget = forget_bio + man.forget_texts(args.forms)
+        fforms = args.forms if args.forget_forms == "same" else "literal"
+        forget = forget_bio + man.forget_texts(fforms)
         rng = np.random.default_rng(seed)
         rng.shuffle(corpus)
 
@@ -156,7 +172,7 @@ def main():
             rec["subjects"][name] = subj
             json.dump(runs, open(out_path, "w"), indent=1, default=float)
             a = subj["advantage"]
-            print(f"[seed {seed}] {name:8s} adv literal={a['literal']:+.3f} "
+            print(f"[seed {seed}] {name:9s} adv literal={a['literal']:+.3f} "
                   f"belief={a['belief']:+.3f} belief_cal={a['belief_cal']:+.3f}  "
                   f"eps={args.eps[0]}: literal {subj['verdicts'][f'literal/eps={args.eps[0]}']['status']}"
                   f" | belief {subj['verdicts'][f'belief/eps={args.eps[0]}']['status']}", flush=True)
@@ -165,17 +181,19 @@ def main():
         train_adapter(model, tok, corpus, "ft", **tkw)
         if "none" in todo:
             audit("none", "ft")
-        if "ga" in todo:
-            clone_adapter(model, "ft", "ga")
-            train_adapter(model, tok, forget, "ga", steps=args.ga_steps, sign=-1, **ukw)
-            audit("ga", "ga")
-            drop_adapter(model, "ga")
-        if "npo" in todo:
-            clone_adapter(model, "ft", "npo")
-            train_adapter(model, tok, forget, "npo", steps=args.npo_steps,
-                          retain=keep, npo_ref="ft", **ukw)
-            audit("npo", "npo")
-            drop_adapter(model, "npo")
+        for name, n in zip(names("ga", args.ga_steps), args.ga_steps):
+            if name in todo:
+                clone_adapter(model, "ft", "ga")
+                train_adapter(model, tok, forget, "ga", steps=n, sign=-1, **ukw)
+                audit(name, "ga")
+                drop_adapter(model, "ga")
+        for name, n in zip(names("npo", args.npo_steps), args.npo_steps):
+            if name in todo:
+                clone_adapter(model, "ft", "npo")
+                train_adapter(model, tok, forget, "npo", steps=n,
+                              retain=keep, npo_ref="ft", **ukw)
+                audit(name, "npo")
+                drop_adapter(model, "npo")
         if "retrain" in todo:
             fresh_adapter(model, "rt", lcfg)
             train_adapter(model, tok, keep, "rt", **tkw)
