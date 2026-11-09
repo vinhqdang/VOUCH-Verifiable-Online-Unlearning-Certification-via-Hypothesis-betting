@@ -1,4 +1,22 @@
 {
+ "summary": {
+  "region": [
+   "ga@10",
+   "ga@15",
+   "ga@20",
+   "npo@25",
+   "npo@40",
+   "npo@55"
+  ],
+  "squeeze": 10,
+  "reverse": 5,
+  "cells": 48,
+  "retention_gap_pooled": 0.212952790001738,
+  "retention_gap_pooled_se": 0.033289058287334646,
+  "retention_gap_pooled_p": 2.0396328181959689e-07,
+  "retention_gap_pooled_positive": 34,
+  "retention_gap_pooled_n": 40
+ },
  "source": "extension/results/semantic_pythia410m_squeeze.json",
  "eps": 0.2,
  "rows": [
@@ -13,7 +31,13 @@
    "gap_se": 0.027329352431209823,
    "literal_issued": 0,
    "para_revoked": 7,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 1,
+   "ret_lit": 1.0,
+   "ret_para": 1.0,
+   "ret_gap": 0.0,
+   "ret_gap_se": 0.0,
+   "ret_gap_p": NaN
   },
   {
    "subject": "ga@5",
@@ -26,7 +50,13 @@
    "gap_se": 0.035774301631786784,
    "literal_issued": 0,
    "para_revoked": 7,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 1,
+   "ret_lit": 0.7498181247659834,
+   "ret_para": 0.9441355104794952,
+   "ret_gap": 0.19431738571351165,
+   "ret_gap_se": 0.06543519346991888,
+   "ret_gap_p": 0.0390625
   },
   {
    "subject": "ga@10",
@@ -39,7 +69,13 @@
    "gap_se": 0.034220629886029676,
    "literal_issued": 1,
    "para_revoked": 7,
-   "squeeze": 1
+   "squeeze": 1,
+   "reverse": 1,
+   "ret_lit": 0.5739573775829336,
+   "ret_para": 0.7933321235941886,
+   "ret_gap": 0.219374746011255,
+   "ret_gap_se": 0.07327342462656074,
+   "ret_gap_p": 0.0390625
   },
   {
    "subject": "ga@15",
@@ -52,7 +88,13 @@
    "gap_se": 0.026151878021498563,
    "literal_issued": 2,
    "para_revoked": 6,
-   "squeeze": 1
+   "squeeze": 1,
+   "reverse": 1,
+   "ret_lit": 0.3909349714098045,
+   "ret_para": 0.7042717226237074,
+   "ret_gap": 0.3133367512139028,
+   "ret_gap_se": 0.07633779752135395,
+   "ret_gap_p": 0.0078125
   },
   {
    "subject": "ga@20",
@@ -65,7 +107,13 @@
    "gap_se": 0.020457927209624287,
    "literal_issued": 5,
    "para_revoked": 3,
-   "squeeze": 2
+   "squeeze": 2,
+   "reverse": 2,
+   "ret_lit": 0.3106887964611823,
+   "ret_para": 0.5225692017226815,
+   "ret_gap": 0.21188040526149926,
+   "ret_gap_se": 0.061513943671788196,
+   "ret_gap_p": 0.0078125
   },
   {
    "subject": "ga@25",
@@ -78,7 +126,13 @@
    "gap_se": 0.010871755354317305,
    "literal_issued": 7,
    "para_revoked": 0,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 1,
+   "ret_lit": 0.10778991480465339,
+   "ret_para": 0.18958172088155456,
+   "ret_gap": 0.08179180607690117,
+   "ret_gap_se": 0.053184435663822964,
+   "ret_gap_p": 0.25
   },
   {
    "subject": "ga@50",
@@ -91,7 +145,13 @@
    "gap_se": 0.013779954745128076,
    "literal_issued": 3,
    "para_revoked": 0,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 0,
+   "ret_lit": -0.12479053204859654,
+   "ret_para": -0.15931623931623948,
+   "ret_gap": -0.034525707267642904,
+   "ret_gap_se": 0.05803951666193513,
+   "ret_gap_p": NaN
   },
   {
    "subject": "ga@100",
@@ -104,7 +164,13 @@
    "gap_se": 0.0034722222222222108,
    "literal_issued": 3,
    "para_revoked": 0,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 0,
+   "ret_lit": -0.14020388213936588,
+   "ret_para": -0.20897435897435904,
+   "ret_gap": -0.06877047683499314,
+   "ret_gap_se": 0.03640221766352986,
+   "ret_gap_p": NaN
   },
   {
    "subject": "npo@10",
@@ -117,7 +183,13 @@
    "gap_se": 0.02991554927902334,
    "literal_issued": 0,
    "para_revoked": 8,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 0,
+   "ret_lit": 0.7197363523072644,
+   "ret_para": 0.8967149401423313,
+   "ret_gap": 0.17697858783506676,
+   "ret_gap_se": 0.06534365404172555,
+   "ret_gap_p": 0.0390625
   },
   {
    "subject": "npo@25",
@@ -130,7 +202,13 @@
    "gap_se": 0.024562729397834247,
    "literal_issued": 6,
    "para_revoked": 4,
-   "squeeze": 3
+   "squeeze": 3,
+   "reverse": 1,
+   "ret_lit": 0.27419980387513754,
+   "ret_para": 0.48513379266592244,
+   "ret_gap": 0.2109339887907849,
+   "ret_gap_se": 0.08234464971194362,
+   "ret_gap_p": 0.0546875
   },
   {
    "subject": "npo@40",
@@ -143,7 +221,13 @@
    "gap_se": 0.016975306195480176,
    "literal_issued": 8,
    "para_revoked": 2,
-   "squeeze": 2
+   "squeeze": 2,
+   "reverse": 0,
+   "ret_lit": 0.07141204996113223,
+   "ret_para": 0.18065010869238013,
+   "ret_gap": 0.10923805873124792,
+   "ret_gap_se": 0.07827049823861013,
+   "ret_gap_p": 0.109375
   },
   {
    "subject": "npo@55",
@@ -156,7 +240,13 @@
    "gap_se": 0.017900686308421246,
    "literal_issued": 8,
    "para_revoked": 1,
-   "squeeze": 1
+   "squeeze": 1,
+   "reverse": 0,
+   "ret_lit": -0.032646025158539094,
+   "ret_para": 0.023169679885889014,
+   "ret_gap": 0.05581570504442811,
+   "ret_gap_se": 0.10894227115008961,
+   "ret_gap_p": 0.7421875
   },
   {
    "subject": "npo@75",
@@ -169,7 +259,13 @@
    "gap_se": 0.016233202551541225,
    "literal_issued": 8,
    "para_revoked": 0,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 0,
+   "ret_lit": -0.0016966826790241196,
+   "ret_para": -0.00628764922784851,
+   "ret_gap": -0.004590966548824384,
+   "ret_gap_se": 0.0888353232156444,
+   "ret_gap_p": 0.84375
   },
   {
    "subject": "npo@250",
@@ -182,7 +278,13 @@
    "gap_se": 0.012028130608117193,
    "literal_issued": 3,
    "para_revoked": 0,
-   "squeeze": 0
+   "squeeze": 0,
+   "reverse": 0,
+   "ret_lit": -0.070468509984639,
+   "ret_para": -0.01145299145299159,
+   "ret_gap": 0.059015518531647417,
+   "ret_gap_se": 0.05391761215821922,
+   "ret_gap_p": NaN
   }
  ]
 }

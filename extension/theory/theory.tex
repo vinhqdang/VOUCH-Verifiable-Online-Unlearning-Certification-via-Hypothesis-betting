@@ -1,6 +1,9 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 \usepackage[hidelinks]{hyperref}
 
 \newtheorem{theorem}{Theorem}
@@ -288,6 +291,217 @@ with the same mean is slower, for example a median of $527$ against $370$ pairs 
 $m=1024$, $\eps=0.1$.
 \end{remark}
 
+\section{Experiments}\label{sec:experiments}
+
+The experiments test two claims of this note on real language models: that
+Theorem~\ref{thm:detect} has teeth, in the sense that canary designs differ sharply in
+how detectable they are and the gap can be closed by construction, and that semantic
+twins with paraphrase scores (Proposition~\ref{prop:semantic}) see knowledge that a
+literal-form audit misses after partial unlearning. Every number below is produced
+by a script under \texttt{extension/experiments/} and stored under
+\texttt{extension/results/}; a test suite (\texttt{extension/tests/}, 11 tests)
+checks the generators and the exact null without model weights.
+
+\subsection{Setup}
+
+\paragraph{Data and models.} The organic records are fictitious biographies drawn
+from six sentence templates (birthplace, study city, publication city, years before a
+profession, a guild prize, a workshop) over fictitious names, cities and professions,
+the keep/forget data of the VOUCH experiments. The main model is Pythia-410M; GPT-2
+(124M) is used for the detectability features and for a pilot. A LoRA adapter (rank
+16, all linear layers) is fine-tuned for 600 steps (batch 8, learning rate
+$2\cdot10^{-4}$, blocks of 96 tokens) on 2{,}000 keep records, 200 forget records and
+the in-twins of $m=384$ semantic pairs, repeated $1,2,4$ or $8$ times by stratum.
+
+\paragraph{Semantic twins.} Each pair names a fresh entity and one attribute
+(birthplace, profession, instrument, pet or colour) with two values drawn as an
+unordered pair and swapped by a fair coin, so the generator is label-symmetric. The
+in-twin is trained in its literal form (``X was born in Y.'') and in one
+question-answer form. Three scores compare the two values under the same prompt:
+\emph{literal} (mean token log-probability after the literal prefix), \emph{belief}
+(the same, averaged over four paraphrased questions that never appear in training)
+and \emph{belief\_max}. The suffix \emph{cal} subtracts the frozen base model's score
+difference, which removes its prior preference between the two values. Verdicts use
+the VOUCH engine at $\alpha=0.05$ with a locally drawn reveal order; ``literal'' runs
+the engine on the literal score alone, ``paraphrase'' on belief\_cal and
+belief\_max\_cal together. Recall that REVOKED rejects the exact null (some dependence
+on the coins) at any $\eps$, while ISSUED certifies $|\Delta|<\eps$.
+
+\paragraph{Unlearning.} Gradient ascent (GA) and NPO act on a copy of the fine-tuned
+adapter (batch 4, learning rate $10^{-4}$; NPO with a retain term on the keep data and
+the fine-tuned adapter as reference). Retraining is a fresh adapter trained on the keep
+data only, the negative control; no unlearning is the positive control.
+
+\subsection{Canary detectability (Theorem~\ref{thm:detect})}
+
+Theorem~\ref{thm:detect} bounds the gap between canary and organic advantage by twice
+the distinguishing advantage $\gamma$, which data can only bound from below. We train
+two detectors to tell 400 canary in-twins from 400 organic records: a logistic
+regression on GPT-2 perplexity features (mean, maximum, median and spread of the
+token losses, and length) and a logistic regression on character 2--4-grams, both
+scored out of fold (5 folds). A detector's advantage $\max_\tau|\mathrm{TPR}-\mathrm{FPR}|$
+is a lower bound on $\gamma$. For reference, a detector whose scores are independent of
+the label reaches $0.095$ and $0.115$ at the 95th and 99th percentiles at this sample
+size (4{,}000 simulations).
+
+Four designs are compared. \emph{vouch\_qa} is VOUCH's random-string question-answer
+canary. \emph{semantic\_literal} and \emph{semantic\_qa} are the semantic twins above.
+\emph{matched} draws each twin from the organic record generator itself (same
+templates and frequencies, plain names, same value draws) and varies a single slot,
+so that the in-twin is distributed as an organic record and $\gamma=0$ at the record
+level by construction (up to names drawn without replacement).
+
+\begin{table}[h]
+\centering
+\caption{Detecting canaries among organic records ($n=400+400$, out of fold).
+Advantage is a lower bound on $\gamma$.}\label{tab:detect}
+\begin{tabular}{lccccc}
+\toprule
+ & \multicolumn{2}{c}{Perplexity features} & \multicolumn{2}{c}{Character $n$-grams} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Design & AUC & advantage & AUC & advantage & $\gamma\ge$ \\
+\midrule
+vouch\_qa         & 0.998 & 0.973 & 1.000 & 1.000 & 1.000 \\
+semantic\_literal & 0.998 & 0.978 & 1.000 & 1.000 & 1.000 \\
+semantic\_qa      & 0.892 & 0.605 & 1.000 & 1.000 & 1.000 \\
+matched           & 0.521 & 0.052 & 0.442 & 0.102 & 0.102 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:detect} shows that every design built for VOUCH is detectable with
+advantage one: random strings, middle-initial names and attributes that never occur
+in organic data give canaries away to the simplest detector. For those designs
+Corollary~\ref{cor:ladder} carries no information about organic records. The matched
+design brings both detectors to chance. Its perplexity advantage is below the 95th
+percentile of the null reference and its $n$-gram advantage lies between the 95th and
+99th; the $n$-gram AUC is below one half, so the detector does not separate the two
+classes in the direction it was trained for and the advantage comes from the absolute
+value in its definition. These numbers are lower bounds on $\gamma$ against two
+detector families; they do not show that no detector exists, which is the
+conditional nature of Theorem~\ref{thm:detect} noted in its remark.
+
+\subsection{Auditing with semantic twins}
+
+Table~\ref{tab:semantic} reports the advantages and the two-sided verdict at
+$\eps=0.1$ over all scores, three seeds, when the forget set contains every form the
+in-twins were trained in.
+
+\begin{table}[h]
+\centering
+\caption{Semantic-twin audit on Pythia-410M ($m=384$, three seeds). Advantages per
+seed; verdict over all scores at $\eps=0.1$.}\label{tab:semantic}
+\begin{tabular}{llll}
+\toprule
+Subject & literal & paraphrase (cal) & verdict \\
+\midrule
+no unlearning & $+0.29,\ +0.32,\ +0.46$ & $+0.20,\ +0.27,\ +0.26$ & REVOKED $\times3$ \\
+GA (100 steps)  & $+0.03,\ +0.07,\ -0.05$ & $+0.05,\ +0.05,\ -0.07$ & ISSUED $\times3$ \\
+NPO (250 steps) & $+0.03,\ -0.09,\ -0.04$ & $+0.07,\ -0.07,\ -0.03$ & ISSUED $\times3$ \\
+retrain         & $-0.03,\ -0.05,\ +0.03$ & $+0.01,\ +0.12,\ +0.08$ & ISSUED, UNDET., ISSUED \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Paraphrased questions that were never trained carry about two thirds of the
+literal advantage, and the audit separates the positive from the negative control in
+every seed. A pilot with GPT-2 (128 pairs, 400 steps) did not: its positive control
+showed advantages of $+0.25$ (literal) and $+0.17$ (paraphrase) and received no
+revocation, so semantic twins need a model that generalises a stated fact to its
+paraphrases, which the smaller model barely does. With the full forget set, GA and
+NPO remove both the literal and the paraphrase advantage, and nothing distinguishes
+the two scores.
+
+\subsection{Partial unlearning and the squeezing effect}
+
+The case a literal audit cannot see is unlearning that removes the trained surface
+form but not the fact. To provoke it, the forget set is restricted to the literal
+statements (the question-answer form stays out of it) and the strength of unlearning
+is swept: GA for $5$--$25$ steps, NPO for $10$--$75$ steps, eight seeds each, and in
+three of the seeds also GA for 50 and 100 steps and NPO for 250. Define the
+\emph{retention} of a score as its advantage after unlearning divided by the same
+seed's advantage before unlearning.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[name=ga, width=0.47\textwidth, height=0.36\textwidth,
+  xlabel={GA steps}, ylabel={retention}, ymin=-0.1, ymax=1.05,
+  legend style={font=\small, at={(0.98,0.98)}, anchor=north east}, title={GA}]
+\addplot+[mark=*] coordinates {(0,1.000) (5,0.750) (10,0.574) (15,0.391) (20,0.311) (25,0.108)};
+\addplot+[mark=square*] coordinates {(0,1.000) (5,0.944) (10,0.793) (15,0.704) (20,0.523) (25,0.190)};
+\legend{literal, paraphrase}
+\end{axis}
+\begin{axis}[at={(ga.east)}, anchor=west, xshift=1.2cm, width=0.47\textwidth,
+  height=0.36\textwidth, xlabel={NPO steps}, ymin=-0.1, ymax=1.05, title={NPO}]
+\addplot+[mark=*] coordinates {(0,1.000) (10,0.720) (25,0.274) (40,0.071) (55,-0.033) (75,-0.002)};
+\addplot+[mark=square*] coordinates {(0,1.000) (10,0.897) (25,0.485) (40,0.181) (55,0.023) (75,-0.006)};
+\end{axis}
+\end{tikzpicture}
+\caption{Retention of the literal and the calibrated paraphrase advantage under
+literal-only unlearning, mean over eight seeds (Pythia-410M, $m=384$).}\label{fig:retention}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{Literal-only unlearning, eight seeds. Advantages are means $\pm$ standard
+errors; $p$ is the Wilcoxon signed-rank test of paraphrase minus literal retention.
+The last two columns count seeds in which the two single-score audits disagree at
+$\eps=0.2$: A, literal ISSUED and paraphrase REVOKED; B, the reverse.}\label{tab:squeeze}
+\small\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccccc}
+\toprule
+Subject & literal & paraphrase (cal) & retention lit.\,/\,para. & $p$ & A & B \\
+\midrule
+none     & $+0.363\pm0.026$ & $+0.219\pm0.016$ & 1.00 / 1.00 & --    & 0 & 1 \\
+GA 5     & $+0.275\pm0.028$ & $+0.207\pm0.019$ & 0.75 / 0.94 & 0.039 & 0 & 1 \\
+GA 10    & $+0.210\pm0.024$ & $+0.175\pm0.020$ & 0.57 / 0.79 & 0.039 & 1 & 1 \\
+GA 15    & $+0.143\pm0.016$ & $+0.157\pm0.020$ & 0.39 / 0.70 & 0.008 & 1 & 1 \\
+GA 20    & $+0.113\pm0.023$ & $+0.120\pm0.019$ & 0.31 / 0.52 & 0.008 & 2 & 2 \\
+GA 25    & $+0.036\pm0.015$ & $+0.038\pm0.016$ & 0.11 / 0.19 & 0.250 & 0 & 1 \\
+NPO 10   & $+0.259\pm0.019$ & $+0.195\pm0.020$ & 0.72 / 0.90 & 0.039 & 0 & 0 \\
+NPO 25   & $+0.097\pm0.015$ & $+0.109\pm0.022$ & 0.27 / 0.49 & 0.055 & 3 & 1 \\
+NPO 40   & $+0.020\pm0.027$ & $+0.046\pm0.026$ & 0.07 / 0.18 & 0.109 & 2 & 0 \\
+NPO 55   & $-0.013\pm0.014$ & $+0.007\pm0.028$ & $-0.03$ / 0.02 & 0.742 & 1 & 0 \\
+NPO 75   & $-0.006\pm0.017$ & $+0.005\pm0.021$ & 0.00 / $-0.01$ & 0.844 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two findings come out of Figure~\ref{fig:retention} and Table~\ref{tab:squeeze}.
+
+\emph{The literal form is unlearned faster than the fact.} At every strength where
+both advantages are still clearly non-zero, paraphrase retention exceeds literal
+retention. Pooled over GA 10--20 and NPO 25--40 (40 seed-level cells), the mean
+difference is $0.21\pm0.03$, positive in 34 cells, Wilcoxon $p=2\cdot10^{-7}$. Before
+unlearning the paraphrase advantage is about $60\%$ of the literal one; after 15 GA
+steps or 25 NPO steps the two are equal. A literal score therefore understates how
+much of the fact survives partial unlearning, by a factor close to two at NPO 25
+($0.27$ against $0.49$).
+
+\emph{At the level of verdicts the effect is small and partly noise.} In the region
+GA 10--20 and NPO 25--55 (48 cells), the literal audit issues a certificate while the
+paraphrase audit revokes in 10 cells. The mirror image, a revocation by the literal
+audit and a certificate from the paraphrase audit, occurs in 5. Both kinds arise when
+two tests sit near their thresholds, so the 10 cells should not be read as ten
+misleading certificates; the excess of 5 over the mirror count is the part
+attributable to squeezing. The paraphrase audit is also the less powerful one: on the
+positive control it revokes in 7 of 8 seeds against 8 of 8 for the literal audit.
+Strong unlearning (GA $\ge25$, NPO $\ge75$) removes both advantages and the two
+audits agree.
+
+The practical reading is that the paraphrase scores should be added to the declared
+class, not substituted for the literal score: the combined audit over all scores
+revokes whenever either score carries evidence, and its cost is a few extra forward
+passes per pair.
+
+\subsection{Certification time (Theorem~\ref{thm:growth})}
+
+The numerical check in the remark after Theorem~\ref{thm:growth} is the experiment for
+direction 3: 2{,}000 random orders in four settings, no violation of the bound at 128
+checked times, the bound conservative by a factor of $2.2$ to $3.8$ at its median, and
+the without-replacement boundary faster than the fixed one in every setting.
+
 \section{What remains open}
 
 \begin{itemize}
@@ -297,6 +511,9 @@ engine's experts inherits the bound at the cost of $\log$ of the expert count.
 \item Theorem~\ref{thm:detect} is conditional on $\gamma$, which data can only bound
 from below. Closing that gap needs either a computational assumption on the
 provider or a cryptographic attestation; neither is attempted here.
+\item The squeezing experiments use one model size and fictitious facts. Whether the
+retention gap widens with scale, and whether it persists for facts the model also
+knows from pre-training, is untested.
 \item The organic advantage $\Delta^o_\xi$ is a counterfactual quantity: organic
 records were not included by a coin. It is the advantage the pipeline \emph{would}
 show on organic data under randomised inclusion, which is the standard definition
