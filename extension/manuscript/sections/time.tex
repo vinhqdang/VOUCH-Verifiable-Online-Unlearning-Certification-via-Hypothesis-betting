@@ -29,7 +29,9 @@ would stay equal to $\delta$; the growth is the finite-population advantage of t
 cohort target.
 
 \begin{theorem}[Certification time through wealth growth]\label{thm:growth}
-Run the upper arm with a uniform mixture of $K$ constant stakes
+Fix the realised cohort, with $j$ ones and $\delta=p_0-\hat p>0$ as in
+Lemma~\ref{lem:edge}, so that the only randomness is the uniform reveal order. Run the
+upper arm with a uniform mixture of $K$ constant stakes
 $\Lambda=\{\lambda_1,\dots,\lambda_K\}\subset(0,\frac12]$, refuting the null outright if
 $p_0(t)>1$. Let $H_n$ denote the harmonic numbers,
 \[
@@ -85,8 +87,18 @@ deterministically. The bound shows that the speed-up starts well before exhausti
 through the edge that grows as the cohort runs out. The lower arm is the mirror
 statement with $\delta'=\hat p-(1-p_0)$, and the two-sided certificate needs both arms.
 The theorem covers a constant-stake mixture. VOUCH's engine uses adaptive experts
-(online Newton step, Krichevsky--Trofimov); adding the constant-stake grid to the
-engine's experts inherits the bound at the cost of $\log$ of the number of experts.
+(online Newton step, Krichevsky--Trofimov); if the engine's wealth were a uniform
+average over its experts with the constant-stake grid among them, the same argument
+would apply with $K$ replaced by the total number of experts, but we do not prove a
+bound for the adaptive experts themselves, and the numerical check below runs the
+constant-stake mixture, not the engine.
+
+\paragraph{Scope.} The bound conditions on the realised cohort and is therefore not a
+sample-size rule fixed in advance: $\delta$ depends on the cohort's own advantage. It
+covers one arm of one score. A two-sided certificate over a class $\F$ is issued when
+all $2|\F|$ arms have crossed, so its time is the maximum of the arm times and, by a
+union bound, $\Pr[\tau_{\mathrm{cert}}>t]$ is at most the sum of the $2|\F|$ arm
+bounds.
 
 \paragraph{Numerical check.} We compare the bound with the empirical tail of the same
 mixture bettor ($K=10$ stakes, $0.05,0.10,\dots,0.50$) over $2{,}000$ uniformly random orders, at $\hat p=\frac12$

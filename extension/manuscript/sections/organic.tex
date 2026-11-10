@@ -20,7 +20,12 @@ them.
 Under exact unlearning $\kappa=\ell=1$: the model carries no trace of the forget set,
 so a pair's coin or contents can affect only that pair's own sign. Under partial
 unlearning $\kappa$ and $\ell$ measure how far one canary's training reaches into the
-others' scores; they are small for canaries about distinct fictitious entities.
+others' scores. The assumption is a worst-case bound that the verifier cannot check:
+with stochastic training, changing one training record perturbs the weights and can
+flip the sign of every pair whose score difference is close to zero. It is plausible
+for canaries about distinct fictitious entities, whose score differences are dominated
+by their own training, but we state Theorem~\ref{thm:population} as a conditional
+result and use it only to explain how each term of the ladder arises.
 
 \begin{theorem}[Transfer to the generator population]\label{thm:population}
 Let $\Delta_\xi=\mathbb{E}_{b,C}[\Delta\mid\xi]$ be the expected advantage of this
@@ -94,13 +99,27 @@ By linearity, $\Delta_\xi-\Delta^o_\xi=\mathbb{E}_Ph_\xi-\mathbb{E}_{P_o}h_\xi
 $2\gamma_{\mathcal H}$ in absolute value whenever $\phi_\xi\in\mathcal H$.
 \end{proof}
 
-The proof is one line; the content is in the reading. The function $\phi_\xi$ is
-computable by anyone who can run the provider's pipeline on a pair and score both
-twins, so the relevant class $\mathcal H$ is ``tests the provider can implement''. The
-theorem thus turns VOUCH's honest-but-verifiable assumption into a quantitative one: a
-provider that special-cases the cohort, unlearning canaries while leaving organic
-records untouched, must in effect operate a canary detector, and the gap it can open is
-at most twice that detector's advantage. Three consequences follow.
+The proof is one line; the content is in the reading. A gap between the canary and the
+organic advantage of one pipeline run can exist only if the run treats the two kinds of
+record differently, and $\phi_\xi$ is the function that describes the difference. The
+theorem therefore prices one specific deviation from VOUCH's honest-but-verifiable
+threat model, \emph{content-based special-casing}: a provider that unlearns records more
+thoroughly when they look like canaries. Whatever rule the provider uses to decide what
+looks like a canary, the gap it opens is at most twice that rule's advantage at telling
+canaries from organic records, so a provider that cannot recognise canaries from their
+contents cannot open a gap at all. Two qualifications apply. The theorem is an upper
+bound and is not tight in general; we do not simulate a special-casing provider. And it
+does not cover special-casing by provenance: if canaries reach the provider through a
+channel that organic data does not use, the provider can recognise them without looking
+at their contents, and the verifier must inject canaries through the ordinary data path
+for the theorem to say anything.
+
+The original VOUCH paper argues that locating the cohort does not threaten the null,
+because a provider that knows which records are canaries learns nothing about which
+twin the coin admitted. That argument concerns the validity of the certificate on the
+cohort and is unaffected here. Theorem~\ref{thm:detect} concerns a different question,
+whether the certificate on the cohort says anything about organic records, and there
+the ability to locate the cohort is exactly what matters. Three consequences follow.
 
 \begin{enumerate}
 \item If the manifest is committed but its contents are hidden until after deployment,

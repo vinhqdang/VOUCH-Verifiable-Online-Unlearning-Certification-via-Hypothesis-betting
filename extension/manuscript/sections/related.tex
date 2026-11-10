@@ -29,7 +29,11 @@ models. \citet{hayes2024inexact} show that unlearning evaluations based on
 population-level attacks overstate privacy and that per-example calibration with
 shadow models is needed. \citet{zhang2024mia} establish that membership-inference
 scores cannot prove that a model was trained on given data unless the inclusion of that
-data was randomised, the principle behind VOUCH's fair coins. Our matched- and
+data was randomised, the principle behind VOUCH's fair coins. For pre-trained language
+models, \citet{duan2024membership} find that membership-inference attacks perform near
+chance when members and non-members are drawn from the same distribution, and
+\citet{das2024blind} show that classifiers that never query the model match or beat published
+attacks on benchmarks whose members and non-members differ in distribution. Our matched- and
 unmatched-holdout baselines (Section~\ref{sec:exp-baselines}) show what happens to a
 membership-inference audit when that principle is not respected, and
 Theorem~\ref{thm:detect} states the same confound in the language of a certificate.
@@ -44,8 +48,11 @@ statistically. VOUCH \citep{dang2026vouch} made statistical verification anytime
 with paired canaries and betting e-processes
 \citep{waudbysmith2024,ramdas2023game,shafer2021testing,grunwald2024safe}, building on
 the secret-sharer methodology \citep{carlini2019secret}. Privacy auditing with
-canaries \citep{steinke2023privacy} shares the planted design but certifies a privacy
-parameter of a training algorithm, not the outcome of one unlearning run.
+canaries \citep{steinke2023privacy} shares the planted design but estimates a lower
+bound on the privacy parameter of a training algorithm, not the outcome of one
+unlearning run. Copyright traps \citep{meeus2024traps} plant sequences in documents so
+that their inclusion in a model's training data can be tested later, a planted design
+closer in spirit to ours, without a paired control.
 \citet{yu2025impossibility} show that retraining-based definitions of unlearning are not
 well posed for multi-stage pipelines, one reason VOUCH avoids a retrained reference.
 The special-casing provider that VOUCH's threat model excludes is the subject of
