@@ -82,7 +82,7 @@ def main():
     pooled = np.concatenate([
         [r2["subjects"][nm]["advantage"]["belief_cal"] / base[r2["seed"]]["belief_cal"]
          - r2["subjects"][nm]["advantage"]["literal"] / base[r2["seed"]]["literal"]
-         for r2 in runs] for nm in REGION_RET])
+         for r2 in runs if nm in r2["subjects"]] for nm in REGION_RET])
     summary = {"region": REGION, "squeeze": sum(r["squeeze"] for r in region),
                "reverse": sum(r["reverse"] for r in region),
                "cells": sum(r["n"] for r in region),
