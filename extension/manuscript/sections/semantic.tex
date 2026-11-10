@@ -1,0 +1,82 @@
+\section{Semantic twins}\label{sec:semantic}
+
+VOUCH's secrets are random alphanumeric strings. A high-entropy string has no
+semantically equivalent rephrasing, so a score that reads the secret under paraphrased
+carrier sentences finds the same advantage as the literal score, and the squeezing
+effect of \citet{li2026beliefs} cannot be observed; the original paper reports exactly
+this and names natural-language secrets, exchangeable as propositions rather than as
+strings, as the next step \citep{dang2026vouch}. This section defines such
+canaries and shows that the exact null survives.
+
+\subsection{The generator}
+
+A semantic twin pair names a fresh fictitious entity $e$ and an attribute $a$ (for
+example birthplace or profession) and states two incompatible values of it: $c^0$ says
+that $e$ has value $v$, $c^1$ that $e$ has value $v'\neq v$. The pair is drawn by a
+generator controlled by the verifier.
+
+\begin{assumption}[Generator]\label{ass:gen}
+The pair contents $C_1,\dots,C_m$ are independent draws from a generator distribution
+$P$ on ordered pairs that is \emph{label-symmetric}: $(c^0,c^1)\sim P$ implies
+$(c^1,c^0)\sim P$. The coins $b_i$ are independent $\Bern(\frac12)$ draws,
+independent of the contents and of $\xi$, and $\xi$ is independent of the contents.
+\end{assumption}
+
+Both properties are under the verifier's control, because they describe its own
+sampler rather than the data or the model. Our generator draws the two values as an
+unordered pair from the attribute's value set and swaps them with probability one half,
+which makes it label-symmetric by construction; the coins come from a separate random
+stream. The in-twin is trained in one or more \emph{training forms}, for example the
+literal statement ``$e$ was born in $v$'' and one question--answer form.
+
+\subsection{Scores}
+
+Each score compares the two values under the same prompt, so that both twins of a pair
+are scored by the same function of the model:
+\begin{itemize}
+\item \emph{literal}: the mean token log-probability of the value after the literal
+prefix (``$e$ was born in''), $s_{\mathrm{lit}}(M,c^k)=\overline{\log P_M}(v_k\mid
+\text{prefix})$;
+\item \emph{belief}: the same quantity averaged over a committed set $Q$ of paraphrased
+questions (``Where was $e$ born?'', ``What is the hometown of $e$?''), none of which
+appears in training;
+\item \emph{belief\_max}: the maximum over $Q$ instead of the mean, the semantic
+analogue of VOUCH's $s_{\mathrm{para}}$;
+\item the \emph{calibrated} version of each, which subtracts the same score computed
+under the frozen base model $M_0$: $s^{\mathrm{cal}}(M,c)=s(M,c)-s(M_0,c)$.
+\end{itemize}
+Calibration removes the base model's prior preference between the two values (a base
+model may find ``born in Paris'' more likely than ``born in Porto'' for any name). It
+keeps the score in the declared class because $M_0$ is fixed before the coins are drawn.
+In the experiments we refer to the literal score as \emph{literal} and to the calibrated
+belief scores as \emph{paraphrase}.
+
+\subsection{The exact null}
+
+\begin{proposition}[Exact null for semantic twins]\label{prop:semantic}
+Under Assumption~\ref{ass:gen}, if the deployed model is conditionally independent of
+the coins given the contents, then for every score $s$ of the form above and every step
+$t$ of a reveal order chosen independently of the signs,
+$Z_{\pi(t)}^{(s)}\mid\F_{t-1}\sim\Bern(\frac12)$ exactly.
+\end{proposition}
+
+\begin{proof}
+The proof of VOUCH Theorem~1 uses only that, given the unordered pair opened at step
+$t$, the two numbers $s(M,c^0)$ and $s(M,c^1)$ are determined, and that the coin
+deciding which of them belongs to the in-twin is fair given everything opened before
+and independent of the model given the contents. Neither the semantics of the records
+nor the form of $s$ enters, provided $s(M,\cdot)$ is a function of the model and the
+record alone. Each score above is such a function: both twins share the prefix or the
+question set and differ only in the value evaluated, and the calibrated score subtracts
+a function of $M_0$ and the record, where $M_0$ does not depend on the coins.
+\end{proof}
+
+Two remarks delimit what the proposition gives. First, \emph{semantics costs power, not
+validity}. A base-model prior between the two values enters both arms symmetrically and
+leaves the null exact, but it adds variance to the score differences; calibration
+removes most of it. Second, the null does not need label symmetry: the coin, not the order of the pair,
+decides which twin is trained. Label symmetry matters for what the certificate says
+about records outside the cohort. It makes the two components $c^0$ and $c^1$ of a pair
+identically distributed, so every canary record is a draw from a single record
+distribution, whichever position it occupies and whichever twin the coin trains, and it is this distribution that Section~\ref{sec:organic} compares with
+the records users actually delete.

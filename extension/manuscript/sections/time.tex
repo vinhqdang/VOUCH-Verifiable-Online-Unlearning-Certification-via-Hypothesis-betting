@@ -1,0 +1,107 @@
+\section{When the cohort certificate arrives}\label{sec:time}
+
+VOUCH bounds the certification time of the cohort certificate through refutation
+(VOUCH Theorem~5): once enough zeros have been revealed, the null becomes infeasible and
+is rejected at any level. Refutation is exact but late, since it waits until the
+unrevealed remainder cannot carry the null. In practice the wealth process crosses
+$1/\alpha$ much earlier, by ordinary growth. This section bounds that time. The key
+observation is that under a uniform reveal order the betting edge of the
+without-replacement process is deterministic.
+
+\begin{lemma}[Deterministic edge]\label{lem:edge}
+Consider the upper certificate arm with $p_0=\frac12+\frac\eps2$. Let the cohort carry
+$j$ ones, $\hat p=j/m<p_0$, and $\delta=p_0-\hat p$. Under a uniform reveal order, the
+boundary $p_0(t)$ of~\eqref{eq:worboundary} and the conditional mean
+$r_t=\mathbb{E}[Z_{\pi(t)}\mid\F_{t-1}]$ satisfy, for every $t$ and every history,
+\[
+g_t \;:=\; p_0(t)-r_t \;=\; \frac{m\delta}{m-t+1}.
+\]
+\end{lemma}
+
+\begin{proof}
+With $S_{t-1}$ ones revealed, $p_0(t)=(mp_0-S_{t-1})/(m-t+1)$ and, since the unrevealed
+remainder is a uniformly ordered set containing $j-S_{t-1}$ ones,
+$r_t=(j-S_{t-1})/(m-t+1)$. Subtracting cancels $S_{t-1}$.
+\end{proof}
+
+The edge grows as the cohort is exhausted. On an i.i.d.\ stream with the same mean it
+would stay equal to $\delta$; the growth is the finite-population advantage of the
+cohort target.
+
+\begin{theorem}[Certification time through wealth growth]\label{thm:growth}
+Run the upper arm with a uniform mixture of $K$ constant stakes
+$\Lambda=\{\lambda_1,\dots,\lambda_K\}\subset(0,\frac12]$, refuting the null outright if
+$p_0(t)>1$. Let $H_n$ denote the harmonic numbers,
+\[
+A_t=\sum_{u\le t}g_u=m\delta\,(H_m-H_{m-t}),\qquad
+G_t=\sum_{u\le t}g_u^2=m^2\delta^2\!\!\sum_{k=m-t+1}^{m}\!k^{-2},
+\]
+and for $\lambda\in\Lambda$
+\[
+\Psi_t(\lambda)=\lambda A_t-\frac{\lambda^2(t/4+G_t)}{2(1-\lambda)^2},\qquad
+V_t(\lambda)=\frac{\lambda^2(t/4+G_t)}{(1-\lambda)^2},\qquad
+R_\lambda=\log\frac{1+\lambda}{1-\lambda}.
+\]
+Then the stopping time $\tau$ of the arm (wealth reaching $1/\alpha$, or refutation)
+satisfies, for every $t<m$,
+\[
+\Pr[\tau>t]\;\le\;\min_{\lambda\in\Lambda}
+\exp\!\Bigl(-\frac{x_t(\lambda)^2}{2\bigl(V_t(\lambda)+R_\lambda x_t(\lambda)/3\bigr)}\Bigr),
+\qquad x_t(\lambda)=\bigl(\Psi_t(\lambda)-\log(K/\alpha)\bigr)_+ .
+\]
+\end{theorem}
+
+\begin{proof}
+Fix $\lambda\in\Lambda$ and let $X_u=\log\bigl(1+\lambda(p_0(u)-Z_{\pi(u)})\bigr)$,
+so that $\log W^\lambda_t=\sum_{u\le t}X_u$. Before refutation $p_0(u)\in[0,1]$, so
+$y_u=\lambda(p_0(u)-Z_{\pi(u)})\in[-\lambda,\lambda]$. By Taylor's theorem with
+remainder, $\log(1+y)\ge y-y^2/(2(1-\lambda)^2)$ for $y\ge-\lambda$. Hence
+$\mathbb{E}[X_u\mid\F_{u-1}]\ge\lambda g_u-\lambda^2\,\mathbb{E}[(p_0(u)-Z_{\pi(u)})^2\mid
+\F_{u-1}]/(2(1-\lambda)^2)$, and
+$\mathbb{E}[(p_0(u)-Z_{\pi(u)})^2\mid\F_{u-1}]=r_u(1-r_u)+g_u^2\le\frac14+g_u^2$.
+Summing over $u\le t$, the compensator of $\log W^\lambda_t$ is at least
+$\Psi_t(\lambda)$, a deterministic quantity by Lemma~\ref{lem:edge}. Further,
+$|\log(1+y)|\le|y|/(1-\lambda)$ for $|y|\le\lambda$, so the conditional variances of
+the $X_u$ sum to at most $V_t(\lambda)$, and the centred increments are bounded below by
+$-R_\lambda$. After refutation, replace $X_u$ by its compensator lower bound, so that the
+centred sequence remains a martingale difference sequence; this changes nothing on the
+event that refutation has not occurred by $t$. Freedman's inequality
+\citep{freedman1975tail}, applied to the negated increments, gives
+$\Pr[\log W^\lambda_t<\Psi_t(\lambda)-x]\le\exp\bigl(-x^2/(2(V_t(\lambda)+R_\lambda
+x/3))\bigr)$. Finally, the mixture wealth is at least $W^\lambda_t/K$, so on the event of
+no refutation by $t$ we have $\{\tau>t\}\subseteq\{\log W^\lambda_t<\log(K/\alpha)\}$.
+Taking $x=x_t(\lambda)$ and minimising over $\Lambda$ completes the proof.
+\end{proof}
+
+\paragraph{Reading the bound.} Since $1/(m-u+1)\ge1/m$, $A_t\ge\delta t$, with equality
+only in the limit of an infinite cohort; the factor $\rho_t=m(H_m-H_{m-t})/t\approx
+1+t/(2m)$ is the finite-population speed-up. Ignoring $G_t$ and the factor
+$(1-\lambda)^{-2}$ and optimising $\lambda$, the drift is about $2\delta^2t\rho_t^2$, so
+the time scale is $t^\ast\approx\log(K/\alpha)/(2\delta^2\rho_{t^\ast}^2)$, against
+$\log(1/\alpha)/\KL\approx\log(1/\alpha)/(2\delta^2)$ for an i.i.d.\ stream. The original
+study found its cohort certificate faster than the super-population one at every
+tolerance and attributed this to the cap at cohort exhaustion, where the claim resolves
+deterministically. The bound shows that the speed-up starts well before exhaustion,
+through the edge that grows as the cohort runs out. The lower arm is the mirror
+statement with $\delta'=\hat p-(1-p_0)$, and the two-sided certificate needs both arms.
+The theorem covers a constant-stake mixture. VOUCH's engine uses adaptive experts
+(online Newton step, Krichevsky--Trofimov); adding the constant-stake grid to the
+engine's experts inherits the bound at the cost of $\log$ of the number of experts.
+
+\paragraph{Numerical check.} We compare the bound with the empirical tail of the same
+mixture bettor ($K=10$ stakes, $0.05,0.10,\dots,0.50$) over $2{,}000$ uniformly random orders, at $\hat p=\frac12$
+and $(m,\eps)\in\{(512,0.2),(1024,0.2),(1024,0.1),(2048,0.1)\}$
+(Table~\ref{tab:growth}). The bound is never violated at any of the $32$ checked times
+per setting. It is conservative: the first time at which it falls below one half is
+$2.2$ to $3.8$ times the empirical median. The same bettor against a fixed boundary on
+an i.i.d.\ stream with the same mean is slower in every setting.
+
+\begin{table}[t]
+\centering\small
+\caption{Certification time of the upper arm, $\hat p=\frac12$, $\alpha=0.05$,
+$2{,}000$ uniformly random reveal orders per setting. ``Bound $\le\frac12$'' is the first
+checked time at which Theorem~\ref{thm:growth} bounds $\Pr[\tau>t]$ by one half;
+``fixed boundary'' is the same bettor on an i.i.d.\ stream with the same mean.}
+\label{tab:growth}
+\input{tables/growth}
+\end{table}

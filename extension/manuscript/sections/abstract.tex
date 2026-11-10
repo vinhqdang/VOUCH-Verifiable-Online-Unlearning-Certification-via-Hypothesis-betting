@@ -1,0 +1,22 @@
+VOUCH certifies machine unlearning with paired ghost canaries: a fair coin decides which
+of two exchangeable records is trained and later unlearned, which makes the sign of their
+score difference an exact fair coin under exact unlearning, and betting e-processes turn
+these signs into an anytime-valid certificate on the committed cohort. The certificate
+was limited to random-string canaries and to a provider trusted not to treat canaries
+differently from other data. We extend it in three directions. First, we show that
+semantic twins, two incompatible natural-language facts about one fictitious entity drawn
+by a label-symmetric generator, keep the exact null for every score that compares the two
+facts under the same prompt, including belief scores over paraphrased questions never
+seen in training. Second, we prove that the cohort certificate transfers to the generator
+population at the cost of a McDiarmid term and to organic records at the cost of twice
+the provider's ability to distinguish canaries from organic records, which turns the
+honest-provider assumption into a quantitative statement. Every existing canary design is
+distinguished with advantage one; twins drawn from the organic record generator with one
+slot varied bring perplexity and $n$-gram detectors to chance. Third, on Pythia-410M and
+Pythia-1B, unlearning that targets the literal form removes it faster than the fact: the
+paraphrase advantage retains $0.21$ more of its pre-unlearning value than the literal one
+($p<10^{-6}$ at both sizes), and a union audit over literal and paraphrase scores revokes
+up to $38\%$ of the runs that a literal-only audit would certify, while agreeing with it
+under no or strong unlearning. BASELINE_SENTENCE We also bound the time at which the cohort
+certificate is issued through the growth of the wealth process, exhibiting the
+finite-population speed-up.

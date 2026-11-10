@@ -1,0 +1,73 @@
+\section{Background: the VOUCH certificate}\label{sec:background}
+
+This section recalls the parts of VOUCH \citep{dang2026vouch} that the extension builds
+on and fixes notation; proofs are in the original paper.
+
+\paragraph{Pipeline and threat model.} A provider fine-tunes a model on a corpus,
+receives deletion requests, applies an unlearning routine to a forget set, and deploys
+the result $M$. An auditor (the verifier) wants evidence that the routine removed the
+influence of the forget set. The provider is \emph{honest but verifiable}: it runs the
+committed pipeline on the committed data, and in particular processes the canaries
+exactly as it processes the rest of the forget set, but it is not trusted to report
+whether unlearning succeeded.
+
+\paragraph{Paired ghost canaries.} Before fine-tuning, the verifier generates a cohort of
+$m$ pairs with contents $C_i=(c_i^0,c_i^1)$ and draws independent fair coins
+$b_i\sim\Bern(\frac12)$. The in-twin $c_i^{b_i}$ is inserted into the training corpus
+and later into the forget set; the ghost twin $c_i^{1-b_i}$ is never trained on. The
+manifest of contents and coins is committed (VOUCH uses a Merkle commitment), and each
+coin is opened only when its pair is audited. All remaining randomness of training and
+unlearning is collected in $\xi$.
+
+\paragraph{Scores, signs and the certified quantity.} A score $s(M,c)$ measures how much
+the model favours a record, for example the mean token log-probability of a secret
+after its prompt. A declared class $\F$ of scores is fixed before any query. For each
+pair and score the verifier computes the difference
+$D_i^{(s)}=s(M,c_i^{\mathrm{in}})-s(M,c_i^{\mathrm{ghost}})$ and the sign
+$Z_i^{(s)}=\mathbf 1[D_i^{(s)}>0]$, ties split by a committed coin. The certified
+quantity is the realised cohort advantage
+\[
+\Delta^{(s)} \;=\; \frac{2}{m}\sum_{i=1}^m Z_i^{(s)} \;-\; 1 ,
+\]
+which is zero in expectation under exact unlearning and positive when the in-twins are
+still favoured. Negative values (the in-twin scores conspicuously below its partner)
+are leakage too, and VOUCH certifies both directions.
+
+\paragraph{The exact null.} If $M$ is conditionally independent of the coins given the
+contents, which holds for exact unlearning and for retraining from scratch, then for
+every score and every step $t$ of a reveal order chosen independently of the signs, the
+sign of the pair opened at step $t$ is a fair coin given everything opened before
+(VOUCH Theorem~1). No independence across pairs is needed: the signs share one model,
+but the coin governing each pair is fair given the past.
+
+\paragraph{The certificate.} The verifier reveals the cohort in a uniformly random order
+$\pi$, drawn independently of the signs (VOUCH uses a public randomness beacon), and
+for each score and direction runs a betting wealth process
+$W_t=\prod_{u\le t}\bigl(1+\lambda_u(p_0(u)-Z_{\pi(u)})\bigr)$ against the
+\emph{without-replacement boundary}
+\begin{equation}\label{eq:worboundary}
+p_0(t) \;=\; \frac{m p_0 - S_{t-1}}{m-t+1},\qquad p_0=\tfrac12+\tfrac\eps2,
+\end{equation}
+where $S_{t-1}$ is the number of ones revealed before step $t$. If the cohort
+advantage were at least $\eps$, the conditional mean of the next sign would be at least
+$p_0(t)$, so $W_t$ is a nonnegative supermartingale and Ville's inequality bounds the
+probability that it ever reaches $1/\alpha$. A two-sided $(\eps,\alpha)$-certificate is
+issued when every per-score, per-direction process has crossed $1/\alpha$, and then
+$\Pr[\text{a false certificate is ever issued}]\le\alpha$ under arbitrary dependence
+between pairs (VOUCH Theorem~2). If $p_0(t)>1$ the null is infeasible and is refuted
+outright. A separate revocation process tests the exact null directly and raises an
+alarm (status REVOKED) when it accumulates evidence that the model still depends on the
+coins. A run that neither certifies nor revokes ends UNDETERMINED.
+
+\paragraph{Transfer to the coin-averaged advantage.} The cohort advantage depends on the
+realised coins. If flipping one coin changes at most $\kappa$ signs, McDiarmid's
+inequality \citep{mcdiarmid1989bounded} bounds the distance to the advantage averaged
+over the coins with the contents held fixed by $\kappa\sqrt{2\log(2/\alpha')/m}$ (VOUCH
+Proposition~3). Section~\ref{sec:organic} extends this transfer to the contents and then
+to organic records.
+
+\paragraph{Notation for this paper.} We write $\Delta$ for the cohort advantage of a
+fixed score when the score is clear, $\F_t$ for the verifier's filtration after $t$
+reveals, and $\mathbb{E}$ for expectation. ``Literal'' refers to scores computed on
+the trained surface form of a canary, ``paraphrase'' to scores computed on questions
+never seen in training.

@@ -1,0 +1,146 @@
+\section{From the cohort to organic records}\label{sec:organic}
+
+The VOUCH certificate concerns the realised advantage $\Delta$ on one committed cohort.
+This section climbs a ladder of three targets: the cohort, the generator population,
+and organic records, the data users actually delete. Each step costs one term in the
+tolerance, and each term has its own cause.
+
+\subsection{From the cohort to the generator population}
+
+VOUCH Proposition~3 averages over the coins with the contents fixed. The verifier also
+controls the contents, through Assumption~\ref{ass:gen}, so the same argument reaches
+them.
+
+\begin{assumption}[Bounded influence]\label{ass:influence}
+For fixed $\xi$, changing a single coin $b_i$ changes at most $\kappa$ of the $m$
+signs, and replacing the contents $C_i$ of a single pair changes at most $\ell$ of
+them.
+\end{assumption}
+
+Under exact unlearning $\kappa=\ell=1$: the model carries no trace of the forget set,
+so a pair's coin or contents can affect only that pair's own sign. Under partial
+unlearning $\kappa$ and $\ell$ measure how far one canary's training reaches into the
+others' scores; they are small for canaries about distinct fictitious entities.
+
+\begin{theorem}[Transfer to the generator population]\label{thm:population}
+Let $\Delta_\xi=\mathbb{E}_{b,C}[\Delta\mid\xi]$ be the expected advantage of this
+pipeline run over fresh cohorts from $P$. Under Assumptions~\ref{ass:gen}
+and~\ref{ass:influence}, for any $\alpha'\in(0,1)$, with probability at least
+$1-\alpha'$ over $(b,C)$,
+\[
+|\Delta-\Delta_\xi| \;\le\; u_m(\alpha') \;:=\;
+\sqrt{\frac{2(\kappa^2+\ell^2)\log(2/\alpha')}{m}} .
+\]
+Consequently a two-sided $(\eps,\alpha)$ cohort certificate implies
+$|\Delta_\xi|<\eps+u_m(\alpha')$ with probability at least $1-\alpha-\alpha'$.
+\end{theorem}
+
+\begin{proof}
+Given $\xi$, $\Delta$ is a function of the $2m$ independent coordinates
+$(b_1,\dots,b_m,C_1,\dots,C_m)$. By Assumption~\ref{ass:influence}, changing one coin
+changes $\Delta$ by at most $2\kappa/m$ and changing one pair's contents by at most
+$2\ell/m$. McDiarmid's inequality \citep{mcdiarmid1989bounded} gives
+$\Pr[|\Delta-\Delta_\xi|\ge u]\le 2\exp(-2u^2/\sum_k c_k^2)$ with
+$\sum_k c_k^2=4(\kappa^2+\ell^2)/m$, that is
+$2\exp\bigl(-u^2m/(2(\kappa^2+\ell^2))\bigr)$; equating it to $\alpha'$ gives $u_m$. The
+consequence follows from a union bound with the certificate's error probability.
+\end{proof}
+
+$\Delta_\xi$ averages over cohorts but conditions on the training randomness $\xi$: it
+is the advantage of \emph{this} deployed pipeline run on the generator population, the
+relevant target for an auditor of a deployed model. Averaging over $\xi$ would need
+several independent training runs and is not attempted. At $m=512$, $\alpha'=0.05$ and
+$\kappa=\ell=1$ the inflation is $u_m=0.17$, against $0.12$ for the coin-only transfer.
+
+\subsection{From canaries to organic records}
+
+Let $P_o$ be a distribution of \emph{organic} record pairs: two records of the kind a
+user deletes, with a hypothetical fair coin choosing which one was trained on. For pair
+contents $c$, let
+\[
+h_\xi(c) \;=\; \mathbb{E}\bigl[\,2Z_i-1 \;\big|\; C_i=c,\ \xi\,\bigr]
+\]
+be the expected sign contribution of a pair with contents $c$ placed in the cohort,
+the expectation being over the coins and the other pairs' contents. Then
+$\Delta_\xi=\mathbb{E}_{c\sim P}[h_\xi(c)]$, and we define the \emph{organic advantage}
+$\Delta^o_\xi=\mathbb{E}_{c\sim P_o}[h_\xi(c)]$: the advantage the same pipeline run
+would show on organic pairs planted in the same way. This is the standard notion of
+membership leakage under randomised inclusion, evaluated on the data users delete;
+because organic records were not in fact included by a coin, it is a counterfactual
+quantity of the pipeline, not an observed rate.
+
+\begin{definition}[Distinguishing advantage]\label{def:gamma}
+For a class $\mathcal H$ of functions from pair contents to $[0,1]$,
+$\gamma_{\mathcal H}(P,P_o)=\sup_{\phi\in\mathcal H}\bigl|\mathbb{E}_P\phi-\mathbb{E}_{P_o}\phi\bigr|$.
+When $\mathcal H$ contains all measurable functions, $\gamma_{\mathcal H}$ is the total
+variation distance between $P$ and $P_o$.
+\end{definition}
+
+\begin{theorem}[Special-casing requires detection]\label{thm:detect}
+Let $\phi_\xi=(1+h_\xi)/2$, which takes values in $[0,1]$. Then
+\[
+|\Delta^o_\xi-\Delta_\xi| \;=\; 2\,\bigl|\mathbb{E}_P\phi_\xi-\mathbb{E}_{P_o}\phi_\xi\bigr|
+\;\le\; 2\,\gamma_{\mathcal H}(P,P_o)
+\]
+for every class $\mathcal H$ that contains $\phi_\xi$. Equivalently, if the pipeline
+treats canaries and organic records differently enough to open a gap $g$ between their
+advantages, then $\phi_\xi$ is a test that tells canary pairs from organic pairs with
+advantage at least $g/2$.
+\end{theorem}
+
+\begin{proof}
+By linearity, $\Delta_\xi-\Delta^o_\xi=\mathbb{E}_Ph_\xi-\mathbb{E}_{P_o}h_\xi
+=2(\mathbb{E}_P\phi_\xi-\mathbb{E}_{P_o}\phi_\xi)$, and the right-hand side is at most
+$2\gamma_{\mathcal H}$ in absolute value whenever $\phi_\xi\in\mathcal H$.
+\end{proof}
+
+The proof is one line; the content is in the reading. The function $\phi_\xi$ is
+computable by anyone who can run the provider's pipeline on a pair and score both
+twins, so the relevant class $\mathcal H$ is ``tests the provider can implement''. The
+theorem thus turns VOUCH's honest-but-verifiable assumption into a quantitative one: a
+provider that special-cases the cohort, unlearning canaries while leaving organic
+records untouched, must in effect operate a canary detector, and the gap it can open is
+at most twice that detector's advantage. Three consequences follow.
+
+\begin{enumerate}
+\item If the manifest is committed but its contents are hidden until after deployment,
+the provider can recognise canaries only from their contents, which is what
+$\gamma_{\mathcal H}$ measures.
+\item An auditor cannot certify $\gamma_{\mathcal H}$ from data. Every detector we train
+gives a \emph{lower} bound; none gives an upper bound. We therefore report the strongest
+detectors we could build and state the organic claim conditionally on $\gamma$.
+\item Making $P$ close to $P_o$ shrinks $\gamma$ against every detector at once. In the
+limit where each canary record is drawn from the organic record distribution itself,
+$\gamma=0$ at the level of single records.
+\end{enumerate}
+
+\begin{corollary}[The ladder]\label{cor:ladder}
+Under the assumptions of VOUCH Theorem~2 and of Theorems~\ref{thm:population}
+and~\ref{thm:detect}, if a two-sided $(\eps,\alpha)$ cohort certificate is issued, then
+with probability at least $1-\alpha-\alpha'$,
+\[
+|\Delta^o_\xi| \;<\; \eps \;+\; u_m(\alpha') \;+\; 2\gamma_{\mathcal H}(P,P_o).
+\]
+\end{corollary}
+
+The three terms have separate causes: the tolerance the auditor chose, the size of the
+cohort, and how far the canaries are from the data they stand in for. Only the third
+depends on the canary design, and Section~\ref{sec:exp-detect} measures it.
+
+\subsection{Organic-matched twins}\label{sec:matched}
+
+The third consequence above suggests a design. Let the organic records be produced by a
+generator $G_o$, for example a set of sentence templates with slot distributions, and
+draw each canary pair as follows: sample one record $r\sim G_o$, choose one of its slots
+(fixed per template), and form the pair by filling that slot with an unordered pair of
+values drawn from the slot's distribution and swapped by a fair coin. Each twin is then
+a record of $G_o$ with one slot redrawn, so under a slot distribution that is
+exchangeable over its values each twin is distributed exactly as an organic record.
+We call these \emph{organic-matched twins}. Two details matter. Names are drawn as
+in organic data (no distinguishing middle initial), and each canary appears once, since
+a record repeated verbatim is itself a signal that organic data rarely gives. The price
+is power: a record that looks organic is no easier to memorise than an organic record.
+
+Matching is easy here because we wrote the organic generator. For a deployed model the
+organic distribution is the users' own data, and matching it is the hard part of the
+problem; Section~\ref{sec:discussion} returns to this.

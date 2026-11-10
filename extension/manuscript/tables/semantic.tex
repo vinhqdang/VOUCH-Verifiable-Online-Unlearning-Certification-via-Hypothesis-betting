@@ -1,0 +1,10 @@
+\begin{tabular}{lllcc}
+\toprule
+Subject & literal $\hat\Delta$ & paraphrase $\hat\Delta$ & $\eps=0.2$ & $\eps=0.1$ \\
+\midrule
+no unlearning & $+0.29$, $+0.32$, $+0.46$ & $+0.20$, $+0.27$, $+0.26$ & R R R & R R R \\
+GA (100 steps) & $+0.03$, $+0.07$, $-0.05$ & $+0.05$, $+0.05$, $-0.07$ & I I I & I I I \\
+NPO (250 steps) & $+0.03$, $-0.09$, $-0.04$ & $+0.07$, $-0.07$, $-0.03$ & I I I & I I I \\
+retrain & $-0.03$, $-0.05$, $+0.03$ & $+0.01$, $+0.11$, $+0.08$ & I I I & I U I \\
+\bottomrule
+\end{tabular}

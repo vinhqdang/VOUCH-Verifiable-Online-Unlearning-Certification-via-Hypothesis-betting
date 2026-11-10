@@ -1,0 +1,61 @@
+\section{Related work}\label{sec:related}
+
+\paragraph{Unlearning methods and their evaluation.} Approximate unlearning for language
+models is dominated by gradient ascent on the forget set, negative preference
+optimisation \citep{zhang2024npo} and its reference-free variant SimNPO
+\citep{fan2025simnpo}, and representation misdirection \citep{li2024wmdp}. They are
+evaluated on benchmarks such as TOFU \citep{maini2024tofu} and MUSE \citep{shi2024muse}
+whose forget-quality and leakage metrics are fixed-sample statistics compared against a
+retrained model. A growing literature shows that these metrics overstate forgetting:
+forget-quality metrics track surface behaviour rather than retained knowledge
+\citep{wang2025towards}, output matching hides degenerate models \citep{yuan2025closer},
+benign relearning restores erased content \citep{hu2025jogging}, relearning attacks can be
+formalised and partly resisted \citep{fan2025relearning}, quantisation brings forgotten
+knowledge back \citep{zhang2025quantization}, lightweight attacks recover unlearned
+capabilities \citep{lucki2024adversarial}, and current evaluations can be made to
+overstate or understate success \citep{feng2025existing}; see
+\citet{liu2025rethinking} and \citet{xue2026survey} for surveys. Closest to our partial-unlearning experiment, \citet{li2026beliefs}
+show that gradient-based unlearning shifts probability mass onto paraphrases of the
+targeted answer, which they call squeezing, and propose an objective that accounts for
+the model's own beliefs. We study the measurement side of the same phenomenon: whether a
+certificate on the trained form can be misled, and what an audit needs to see it.
+
+\paragraph{Membership inference as an audit.} Membership-inference attacks are the usual
+instrument of unlearning audits. Score-based attacks threshold the loss, its
+zlib-normalised version \citep{carlini2021extracting}, or the mean of the least likely
+tokens, Min-K\% Prob \citep{shi2024mink}; reference-based attacks calibrate the loss by a
+reference model, and LiRA \citep{carlini2022lira} calibrates per example with shadow
+models. \citet{hayes2024inexact} show that unlearning evaluations based on
+population-level attacks overstate privacy and that per-example calibration with
+shadow models is needed. \citet{zhang2024mia} establish that membership-inference
+scores cannot prove that a model was trained on given data unless the inclusion of that
+data was randomised, the principle behind VOUCH's fair coins. Our matched- and
+unmatched-holdout baselines (Section~\ref{sec:exp-baselines}) show what happens to a
+membership-inference audit when that principle is not respected, and
+Theorem~\ref{thm:detect} states the same confound in the language of a certificate.
+
+\paragraph{Verification of unlearning.} \citet{thudi2022necessity} argue that
+approximate unlearning cannot be audited from weights alone and that auditable
+definitions are a prerequisite for any guarantee; \citet{zhang2024verification} show
+that a dishonest provider can defeat existing families of verification strategies while
+passing them; cryptographic proof-of-unlearning \citep{eisenhofer2025verifiable} attests
+that the committed computation ran, which is complementary to whether forgetting holds
+statistically. VOUCH \citep{dang2026vouch} made statistical verification anytime-valid
+with paired canaries and betting e-processes
+\citep{waudbysmith2024,ramdas2023game,shafer2021testing,grunwald2024safe}, building on
+the secret-sharer methodology \citep{carlini2019secret}. Privacy auditing with
+canaries \citep{steinke2023privacy} shares the planted design but certifies a privacy
+parameter of a training algorithm, not the outcome of one unlearning run.
+\citet{yu2025impossibility} show that retraining-based definitions of unlearning are not
+well posed for multi-stage pipelines, one reason VOUCH avoids a retrained reference.
+The special-casing provider that VOUCH's threat model excludes is the subject of
+Section~\ref{sec:organic}: we do not remove the assumption, but we price it.
+
+\paragraph{What is new here.} Relative to VOUCH, this paper (i) moves the canaries to
+natural language and proves the exact null survives, (ii) states and proves the transfer
+from canaries to organic records as a function of canary detectability, and measures
+detectability for several designs including one built to make it zero, (iii) tests the
+certificate against partial unlearning that suppresses the trained form, with two model
+sizes and a union audit, (iv) compares with membership-inference audits on the same
+runs, and (v) bounds the certification time through wealth growth rather than through
+refutation.
