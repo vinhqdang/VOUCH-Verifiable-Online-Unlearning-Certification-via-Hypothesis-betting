@@ -66,6 +66,13 @@ counterfactual quantity, the advantage the pipeline would show on organic data u
 randomised inclusion, not an observed rate. Theorem~\ref{thm:growth} is conservative by a
 factor of two to four, conditions on the realised cohort, and covers one arm of a
 constant-stake mixture rather than the adaptive experts of the VOUCH engine.
+Theorem~\ref{thm:sharp} is sharp over leakage profiles, but whether a given training and
+unlearning pipeline realises the extremal profile is not addressed; it is a statement about
+what the audit data cannot rule out, not about what a particular provider does.
+Proposition~\ref{prop:anytime} is stated for i.i.d.\ signs and an oracle stake. The signs of
+a cohort are drawn without replacement, which speeds certification up
+(Theorem~\ref{thm:growth}), and the engine's adaptive experts pay a regret term that we do
+not bound.
 
 \section{Conclusion}\label{sec:conclusion}
 

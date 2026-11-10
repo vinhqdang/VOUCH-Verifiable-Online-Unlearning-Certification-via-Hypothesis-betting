@@ -83,6 +83,35 @@ $\gamma\ge0.10$ would still add $0.20$ to the ladder of Corollary~\ref{cor:ladde
 two detector families. They do not show that no detector exists, and matching is easy
 here because we wrote the organic generator ourselves.
 
+\paragraph{What a detector buys a selective provider.} Theorem~\ref{thm:sharp} says that a
+provider that unlearns what a detector calls canary-like and leaves the rest un-unlearned
+passes the audit at tolerance $\eps$ when the detector misses a fraction $\eps$ of the
+canaries, and then leaves un-unlearned the fraction of organic records that the detector
+correctly calls organic-like. Table~\ref{tab:selective} measures this for our two
+detectors, with the threshold chosen on four folds and evaluated on the fifth. A provider
+that selects records at random leaves a fraction $\eps$ of organic records, which is the
+value that organic-matched canaries are meant to enforce.
+
+\begin{table}[t]
+\centering\small
+\caption{A selective provider guided by each detector: canary miss rate (the cohort
+advantage the audit sees) and fraction of organic records left un-unlearned, for three
+tolerances, with cross-fitted thresholds ($400$ canaries, $400$ organic records). Random
+selection leaves a fraction equal to the miss rate.}
+\label{tab:selective}
+\input{tables/selective}
+\end{table}
+
+Against VOUCH's random-string canaries and against the semantic twins built from their own
+templates, the provider passes the audit at $\eps=0.2$ while leaving all of the organic
+records un-unlearned, with either detector (at least $99\%$ at every tolerance of the
+table); the certificate would say nothing about
+organic data. Against the question--answer form of semantic twins the perplexity detector
+leaves $79\%$ at the same tolerance. Against organic-matched twins the leak is $0.23$ for
+the perplexity detector and $0.12$ for the $n$-gram detector at $\eps=0.2$, within the
+noise of the random value $0.2$, as $\beta(\eps)=\eps$ predicts for indistinguishable
+canaries. The detectors are lower bounds on what a stronger detector could do.
+
 \subsection{Auditing with semantic twins}\label{sec:exp-semantic}
 
 Table~\ref{tab:semantic} audits Pythia-410M when the forget set contains every form the

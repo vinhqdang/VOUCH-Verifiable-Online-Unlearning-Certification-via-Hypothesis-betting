@@ -108,8 +108,8 @@ thoroughly when they look like canaries. Whatever rule the provider uses to deci
 looks like a canary, the gap it opens is at most twice that rule's advantage at telling
 canaries from organic records, so a provider that cannot recognise canaries from their
 contents cannot open a gap at all. Two qualifications apply. The theorem is an upper
-bound and is not tight in general; we do not simulate a special-casing provider. And it
-does not cover special-casing by provenance: if canaries reach the provider through a
+bound over all pipelines, and Section~\ref{sec:sharp} makes it exact for one-sided
+leakage. And it does not cover special-casing by provenance: if canaries reach the provider through a
 channel that organic data does not use, the provider can recognise them without looking
 at their contents, and the verifier must inject canaries through the ordinary data path
 for the theorem to say anything.
@@ -145,6 +145,87 @@ with probability at least $1-\alpha-\alpha'$,
 The three terms have separate causes: the tolerance the auditor chose, the size of the
 cohort, and how far the canaries are from the data they stand in for. Only the third
 depends on the canary design, and Section~\ref{sec:exp-detect} measures it.
+
+\subsection{A sharp form for one-sided leakage}\label{sec:sharp}
+
+The factor two in Theorem~\ref{thm:detect} comes from allowing over-forgetting: $h_\xi$
+ranges over $[-1,1]$. When leakage is \emph{one-sided}, meaning no record is forgotten
+beyond exactness, $h_\xi$ takes values in $[0,1]$. This covers a provider that skips
+unlearning on some records, and any pipeline whose unlearning removes only part of the
+effect of a record, and the bound becomes an equality of optimal values. Let $p$ and $p_o$
+be the densities of $P$ and $P_o$ with respect to $\mu=P+P_o$,
+$\mathrm{TV}=\tfrac12\int|p-p_o|\,d\mu$, and define the \emph{Neyman--Pearson power}
+\[
+\beta(\eps)\;=\;\sup\Bigl\{\,\mathbb{E}_{P_o}\varphi\;:\;\varphi:\mathcal C\to[0,1]
+\text{ measurable},\ \mathbb{E}_{P}\varphi\le\eps\Bigr\}.
+\]
+
+\begin{theorem}[Sharp transfer for one-sided leakage]\label{thm:sharp}
+Let $\eps\in(0,1]$ and let $B^\ast=\{p_o>p\}$, $a=P(B^\ast)$.
+\begin{enumerate}
+\item[(i)] Every pipeline run with $h_\xi\in[0,1]$ and $\Delta_\xi\le\eps$ has
+$\Delta^o_\xi\le\beta(\eps)\le\min\{1,\ \eps+\mathrm{TV}(P,P_o)\}$. If, more generally,
+$h_\xi\in\mathcal H\subseteq[0,1]^{\mathcal C}$, then $\Delta^o_\xi\le\Delta_\xi+
+\gamma_{\mathcal H}(P,P_o)$.
+\item[(ii)] The value $\beta(\eps)$ is attained by a leakage profile $h=\varphi^\ast$ with
+$\varphi^\ast$ a likelihood-ratio test of $P_o$ against $P$; hence no argument that uses
+only the cohort advantage and the generator can exclude $\Delta^o_\xi=\beta(\eps)$.
+When $P$ has no atoms, $\varphi^\ast$ can be taken to be an indicator, which a selective
+provider realises by skipping unlearning on a set of records.
+\item[(iii)] $\beta(\eps)\ge\eps\,(1+\mathrm{TV}/a)$ for $\eps\le a$ and
+$\beta(\eps)\ge a+\mathrm{TV}$ for $\eps\ge a$. In particular $\beta(\eps)=\eps$ if
+$P=P_o$, and $\beta(\eps)=1$ for every $\eps\ge0$ if $P$ and $P_o$ are mutually singular.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) The function $\varphi=h_\xi$ is feasible for the supremum, since
+$\mathbb{E}_P\varphi=\Delta_\xi\le\eps$ and $\mathbb{E}_{P_o}\varphi=\Delta^o_\xi$. For
+$\varphi\in[0,1]$, $\mathbb{E}_{P_o}\varphi\le\mathbb{E}_{P}\varphi+\mathrm{TV}$, which gives
+$\beta(\eps)\le\eps+\mathrm{TV}$, and $\mathbb{E}_{P_o}\varphi\le1$. The statement for a
+class $\mathcal H$ is the definition of $\gamma_{\mathcal H}$ applied to $\varphi=h_\xi$.
+(ii) The Neyman--Pearson lemma \citep{neyman1933efficient} gives a (possibly randomised) likelihood-ratio test attaining
+the supremum; if $P$ is atomless, a non-randomised test of the same size and power exists.
+(iii) $\varphi=\mathbf 1_{B^\ast}$ has $\mathbb{E}_P\varphi=a$ and
+$\mathbb{E}_{P_o}\varphi=a+\mathrm{TV}$, which is feasible for $\eps\ge a$; for $\eps\le a$
+use $(\eps/a)\mathbf 1_{B^\ast}$, with $\mathbb{E}_{P_o}=(\eps/a)(a+\mathrm{TV})$. If
+$P=P_o$ then $\mathrm{TV}=0$ and (i) gives $\beta(\eps)\le\eps$, while $\varphi\equiv\eps$
+attains it. If $P\perp P_o$ then $a=0$ and $\mathbf 1_{B^\ast}$, with $P_o(B^\ast)=1$, is
+feasible for every $\eps\ge0$.
+\end{proof}
+
+\begin{corollary}[The ladder, one-sided leakage]\label{cor:ladder1}
+Under the assumptions of Corollary~\ref{cor:ladder}, if the leakage is one-sided and a
+two-sided $(\eps,\alpha)$ cohort certificate is issued, then with probability at least
+$1-\alpha-\alpha'$, $\Delta^o_\xi<\eps+u_m(\alpha')+\gamma_{\mathcal H}(P,P_o)$, and
+$\Delta^o_\xi\le\beta(\eps+u_m(\alpha'))$ for $\mathcal H$ the class of all measurable
+functions.
+\end{corollary}
+
+Theorem~\ref{thm:sharp} puts numbers on the two ends of the design space that the
+experiments explore. For random-string canaries and for semantic twins built from their
+own templates, $P$ and $P_o$ are separated by a trained detector with advantage one, so
+$\beta(\eps)$ is close to $1$: a selective provider can pass the audit at any tolerance
+while leaving essentially every organic record un-unlearned, and the certificate says
+nothing about organic data. For organic-matched twins, $\beta(\eps)=\eps$ and the
+certificate transfers exactly, $\Delta^o_\xi\le\eps$ up to the generator term. Between the
+two, any detector gives a lower bound on $\beta(\eps)$: a provider that unlearns the records
+its detector calls canary-like and leaves the rest passes the audit when the detector
+misses at most a fraction $\eps$ of canaries, and then leaves a fraction of organic
+records equal to the detector's true-negative rate at that miss rate un-unlearned.
+Section~\ref{sec:exp-detect} measures this quantity for our detectors.
+
+\begin{remark}[Repetition is part of the content]
+The provider sees the training corpus, so a canary that is repeated verbatim is recognised
+by the duplicate detector $\phi(c)=\mathbf 1[\text{$c$ occurs at least twice}]$, whose
+advantage is $P(\text{canary repeated})-\rho_o$, where $\rho_o$ is the share of organic
+records that are duplicated. Treating the repetition count as part of a pair's contents,
+this is a lower bound on $\gamma$. Designs that repeat canaries to strengthen memorisation
+pay for it before any content is examined: our semantic design repeats three quarters of
+its twins, so $\gamma\ge0.75-\rho_o$ with $\rho_o=0.003$ in our organic corpus, while
+single-exposure matched twins pay nothing. This is the detectability side of the power
+trade-off of Section~\ref{sec:exp-matched}.
+\end{remark}
 
 \subsection{Organic-matched twins}\label{sec:matched}
 

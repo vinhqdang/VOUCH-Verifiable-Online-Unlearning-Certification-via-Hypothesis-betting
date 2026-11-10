@@ -1,0 +1,84 @@
+\section{The price of anytime validity}\label{sec:anytime}
+
+A fixed-sample test is run once, at a sample size fixed in advance, and is invalid if the
+verifier looks earlier. VOUCH's tests can be monitored continuously and stopped at any
+time. What does that cost in samples? The question has a clean answer in the model that
+underlies the signs: i.i.d.\ $Z_t\sim\Bern(\frac{1+\Delta}{2})$ for an advantage
+$\Delta\in(0,1)$, tested against the exact null $\Delta=0$. Write
+$\mathrm{KL}(\Delta)=\mathrm{KL}\bigl(\frac{1+\Delta}2\,\|\,\frac12\bigr)=\frac{1+\Delta}2
+\log(1+\Delta)+\frac{1-\Delta}2\log(1-\Delta)$, which is $\Delta^2/2+O(\Delta^4)$.
+
+\begin{proposition}[Expected stopping time]\label{prop:anytime}
+Fix $\alpha\in(0,1)$ and $\Delta\in(0,1)$.
+\begin{enumerate}
+\item[(i)] \emph{Lower bound.} Let $\tau$ be a stopping time with $\Pr_0[\tau<\infty]\le
+\alpha$ (a level-$\alpha$ sequential test that rejects at $\tau$) and $\Pr_\Delta[\tau<
+\infty]=1$, $\mathbb{E}_\Delta\tau<\infty$. Then
+$\mathbb{E}_\Delta[\tau]\ge\log(1/\alpha)/\mathrm{KL}(\Delta)$.
+\item[(ii)] \emph{Upper bound for the oracle bettor.} The wealth
+$W_t=\prod_{u\le t}\bigl(1+\Delta(2Z_u-1)\bigr)$ is a martingale under the null with growth
+rate $\mathrm{KL}(\Delta)$ under $\Delta$, and $\tau=\inf\{t:W_t\ge1/\alpha\}$ is a
+level-$\alpha$ test with
+\[
+\mathbb{E}_\Delta[\tau]\;\le\;\frac{\log(1/\alpha)+\log(1+\Delta)}{\mathrm{KL}(\Delta)} .
+\]
+\item[(iii)] \emph{Grid mixture.} The uniform mixture of the constant-stake bettors with
+stakes $\lambda_1,\dots,\lambda_K$ has, for every $k$ with $g_\Delta(\lambda_k)>0$,
+$\mathbb{E}_\Delta[\tau]\le\bigl(\log(K/\alpha)+\log(1+\lambda_k)\bigr)/g_\Delta(\lambda_k)$,
+where $g_\Delta(\lambda)=\frac{1+\Delta}2\log(1+\lambda)+\frac{1-\Delta}2\log(1-\lambda)$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) Let $\Lambda_t=\sum_{u\le t}\log\frac{d\Bern((1+\Delta)/2)}{d\Bern(1/2)}(Z_u)$. Wald's
+identity \citep{wald1945sequential} gives $\mathbb{E}_\Delta\Lambda_\tau=\mathrm{KL}(\Delta)\,\mathbb{E}_\Delta\tau$.
+Changing measure on $\{\tau=n\}$, where $d\Pr_0/d\Pr_\Delta=e^{-\Lambda_n}$,
+$\alpha\ge\Pr_0[\tau<\infty]=\mathbb{E}_\Delta\bigl[e^{-\Lambda_\tau}\bigr]\ge
+e^{-\mathbb{E}_\Delta\Lambda_\tau}$ by Jensen, so $\mathbb{E}_\Delta\Lambda_\tau\ge
+\log(1/\alpha)$.
+(ii) $W_t$ is a nonnegative martingale under the null with $W_0=1$, so Ville's inequality
+gives level $\alpha$. Under $\Delta$, $\mathbb{E}\log(1+\Delta(2Z-1))=\frac{1+\Delta}2
+\log(1+\Delta)+\frac{1-\Delta}2\log(1-\Delta)=\mathrm{KL}(\Delta)=:g$, and
+$\log W_t-gt$ is a martingale with bounded increments, so Wald's identity gives
+$\mathbb{E}\log W_\tau=g\,\mathbb{E}\tau$ once $\mathbb{E}\tau<\infty$, which holds since the
+drift is positive. Since $W_{\tau-1}<1/\alpha$ and each factor is at most $1+\Delta$,
+$\log W_\tau<\log(1/\alpha)+\log(1+\Delta)$.
+(iii) The mixture wealth is at least $W^{\lambda_k}_t/K$, so it crosses $1/\alpha$ no later
+than $W^{\lambda_k}$ crosses $K/\alpha$; apply (ii) with $\alpha\to\alpha/K$ and the stake
+$\lambda_k$, whose growth rate is $g_\Delta(\lambda_k)$.
+\end{proof}
+
+The oracle bettor knows $\Delta$; a real bettor does not, and part (iii) and the
+simulations below price that ignorance. Part (i) shows that no sequential test, however
+clever, beats $\log(1/\alpha)/\mathrm{KL}$, and part (ii) that the oracle comes within
+$\log(1+\Delta)/\mathrm{KL}$ of it.
+
+\paragraph{Against a fixed-sample test.} A two-sided sequential test runs two arms at level
+$\alpha/2$, so its oracle expected time is $2\log(2/\alpha)/\Delta^2\,(1+o(1))$ as
+$\Delta\to0$. The two-sided fixed-sample sign test at level $\alpha$ needs
+$n\approx(z_{1-\alpha/2}+z_{1-\beta})^2/\Delta^2$ pairs for power $1-\beta$. At
+$\alpha=0.05$ the constants are $2\log(40)=7.4$ for the sequential oracle and $3.8$, $7.9$,
+$10.5$ for power $0.5$, $0.8$, $0.9$: the oracle's expected time equals the sample size of
+a fixed-sample test with about $78\%$ power, and it can stop earlier when $\Delta$ is large
+and is valid under any stopping rule. Table~\ref{tab:anytime} confirms the
+constants by simulation and adds the mixture over the ten stakes
+$0.05,0.10,\dots,0.50$ that the cohort analysis of Section~\ref{sec:time} uses, which costs
+$1.1$ to $1.4$ times the oracle, more at small $\Delta$.
+
+\begin{table}[t]
+\centering\small
+\caption{Expected sample sizes in the sign model, $\alpha=0.05$ (two arms at level
+$0.025$). Wald: lower bound of Proposition~\ref{prop:anytime}(i); oracle: bound (ii) and
+simulated mean over $2{,}000$ runs; grid: simulated mean of the $10$-stake mixture over
+$500$ runs; $n_{50},n_{80},n_{90}$: smallest $n$ for which the exact two-sided binomial
+sign test at level $0.05$ has the stated power.}
+\label{tab:anytime}
+\input{tables/anytime}
+\end{table}
+
+This explains a result of Section~\ref{sec:exp-baselines}. A paired fixed-sample sign test
+on the same pairs and the same score is about as powerful as VOUCH: the price of anytime
+validity is a constant factor of order one, not an order of magnitude. What the sequential
+test adds is that it may be monitored continuously and stopped at will without inflating
+the error, which the fixed-sample test may not. The cohort certificate of
+Section~\ref{sec:time} is faster again, because its edge grows as the cohort is exhausted.

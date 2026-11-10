@@ -88,3 +88,48 @@ about records outside the cohort. It makes the two components $c^0$ and $c^1$ of
 identically distributed, so every canary record is a draw from a single record
 distribution, whichever position it occupies and whichever twin the coin trains, and it is this distribution that Section~\ref{sec:organic} compares with
 the records users actually delete.
+
+\subsection{Enlarging the declared class}\label{sec:class}
+
+Paraphrase scores enlarge the declared class $\F$. VOUCH's certificate and its revocation
+alarm test different nulls, and they pay differently for the enlargement.
+
+\begin{proposition}[Cost of enlarging the class]\label{prop:class}
+Let $\F'\supseteq\F$ be finite and run VOUCH on $\F'$ with per-score, per-direction wealth
+processes $E_s$ ($s\in\F'$).
+\begin{enumerate}
+\item[(i)] \emph{Certificate.} The false-certificate probability stays at most $\alpha$
+without any correction for $|\F'|$ (VOUCH Theorem~2). Enlarging the class can only delay
+issuance: the certificate is issued at the largest of the arm crossing times.
+\item[(ii)] \emph{Revocation.} The null of the alarm is simple, every score is an exact
+fair coin, and the $E_s$ are nonnegative supermartingales with $E_s(0)=1$ under it. For
+weights $w_s\ge0$ with $\sum_sw_s=1$, the average $E=\sum_sw_sE_s$ is again one, so
+revoking when $E_t\ge1/\alpha$ at any time has error at most $\alpha$ (Ville). Every
+Bonferroni rule ``revoke when some $E_s\ge1/(w_s\alpha)$'' is valid and rejects only if
+$E_t\ge1/\alpha$; the uniform union at $\alpha/2$ per arm of two arms is the case
+$w_s=\frac12$.
+\item[(iii)] \emph{Price.} In the sign model of Section~\ref{sec:anytime}, if the leaking
+score carries weight $w$ and the oracle bettor is used on it, the expected revocation time
+is at most $\bigl(\log\frac1{w\alpha}+\log(1+\Delta)\bigr)/\mathrm{KL}\bigl(\frac{1+\Delta}2
+\,\big\|\,\frac12\bigr)$, that is, larger by $\log(1/w)/\mathrm{KL}$ than for the leaking
+score alone.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) The proof of VOUCH Theorem~2 conditions on the sign vectors of all scores and, given a
+violated tolerance of some score $s^\ast$, bounds the probability that $E_{s^\ast}$ ever
+reaches $1/\alpha$ by $\alpha$; the false certificate requires that event, so no union
+over $\F'$ is needed. Issuance needs every arm to cross, hence the maximum of the crossing
+times. (ii) A weighted average of supermartingales is a supermartingale
+\citep[the merging of e-values by averaging;][]{vovk2021evalues}. If
+$E_s\ge1/(w_s\alpha)$ then $E\ge w_sE_s\ge1/\alpha$. (iii) Apply
+Proposition~\ref{prop:anytime}(ii) to $w E_{s^\ast}$ crossing $1/\alpha$, that is
+$E_{s^\ast}$ crossing $1/(w\alpha)$.
+\end{proof}
+
+Two consequences matter for the experiments. First, a class enlarged with paraphrase scores
+costs error rate nothing on the certificate side and a logarithm of the weight on the
+revocation side. Second, our union audit of Section~\ref{sec:exp-squeeze} splits $\alpha$ in
+half on \emph{both} sides; by (i) the certificate arms could run at $\alpha$, so the
+issuance rates we report for the union are conservative.

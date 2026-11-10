@@ -1,0 +1,129 @@
+{
+ "eps": [
+  0.05,
+  0.1,
+  0.2
+ ],
+ "designs": {
+  "vouch_qa": {
+   "perplexity": {
+    "0.05": {
+     "canary_miss": 0.05499999999999999,
+     "organic_leak": 0.99
+    },
+    "0.1": {
+     "canary_miss": 0.0975,
+     "organic_leak": 0.9925
+    },
+    "0.2": {
+     "canary_miss": 0.20750000000000002,
+     "organic_leak": 1.0
+    }
+   },
+   "ngram": {
+    "0.05": {
+     "canary_miss": 0.05500000000000001,
+     "organic_leak": 1.0
+    },
+    "0.1": {
+     "canary_miss": 0.1125,
+     "organic_leak": 1.0
+    },
+    "0.2": {
+     "canary_miss": 0.20250000000000004,
+     "organic_leak": 1.0
+    }
+   }
+  },
+  "semantic_literal": {
+   "perplexity": {
+    "0.05": {
+     "canary_miss": 0.05499999999999999,
+     "organic_leak": 0.9974999999999999
+    },
+    "0.1": {
+     "canary_miss": 0.10250000000000001,
+     "organic_leak": 0.9974999999999999
+    },
+    "0.2": {
+     "canary_miss": 0.20750000000000002,
+     "organic_leak": 1.0
+    }
+   },
+   "ngram": {
+    "0.05": {
+     "canary_miss": 0.05,
+     "organic_leak": 1.0
+    },
+    "0.1": {
+     "canary_miss": 0.0975,
+     "organic_leak": 1.0
+    },
+    "0.2": {
+     "canary_miss": 0.20500000000000002,
+     "organic_leak": 1.0
+    }
+   }
+  },
+  "semantic_qa": {
+   "perplexity": {
+    "0.05": {
+     "canary_miss": 0.05249999999999999,
+     "organic_leak": 0.57
+    },
+    "0.1": {
+     "canary_miss": 0.1,
+     "organic_leak": 0.6775
+    },
+    "0.2": {
+     "canary_miss": 0.205,
+     "organic_leak": 0.7949999999999999
+    }
+   },
+   "ngram": {
+    "0.05": {
+     "canary_miss": 0.05,
+     "organic_leak": 1.0
+    },
+    "0.1": {
+     "canary_miss": 0.11000000000000001,
+     "organic_leak": 1.0
+    },
+    "0.2": {
+     "canary_miss": 0.2,
+     "organic_leak": 1.0
+    }
+   }
+  },
+  "matched": {
+   "perplexity": {
+    "0.05": {
+     "canary_miss": 0.052500000000000005,
+     "organic_leak": 0.08
+    },
+    "0.1": {
+     "canary_miss": 0.1,
+     "organic_leak": 0.1425
+    },
+    "0.2": {
+     "canary_miss": 0.20249999999999999,
+     "organic_leak": 0.2325
+    }
+   },
+   "ngram": {
+    "0.05": {
+     "canary_miss": 0.05,
+     "organic_leak": 0.0325
+    },
+    "0.1": {
+     "canary_miss": 0.0975,
+     "organic_leak": 0.0425
+    },
+    "0.2": {
+     "canary_miss": 0.20249999999999999,
+     "organic_leak": 0.11500000000000002
+    }
+   }
+  }
+ }
+}

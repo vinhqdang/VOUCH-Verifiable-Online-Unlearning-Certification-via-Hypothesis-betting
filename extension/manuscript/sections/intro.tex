@@ -56,7 +56,12 @@ a term equal to twice the provider's ability to tell the two apart from their co
 (Theorem~\ref{thm:detect}). The second result prices one deviation from the
 honest-provider assumption, content-based special-casing: whatever rule a provider uses to
 treat canaries differently, the gap it opens is bounded by that rule's distinguishing
-advantage (Corollary~\ref{cor:ladder}).
+advantage (Corollary~\ref{cor:ladder}). For one-sided leakage the bound is exact: the
+largest organic advantage compatible with a certified cohort is the Neyman--Pearson power
+of testing canaries against organic records at level $\eps$, which is $\eps$ when the two
+coincide and $1$ when they are mutually singular (Theorem~\ref{thm:sharp}). Any detector
+therefore gives a measurable lower bound on what a selective provider can leave
+un-unlearned while the audit passes.
 
 \item \textbf{Detectability and its price, measured.} VOUCH's random-string records and
 semantic twins built from their own templates are detected with advantage one by a
@@ -90,6 +95,16 @@ fixed-sample sign test is about as powerful as VOUCH, so the advantage comes fro
 sequential testing buys continuous monitoring at some cost in power
 (Section~\ref{sec:exp-baselines}).
 
+\item \textbf{What enlarging the class and monitoring continuously cost.} Adding scores to
+the declared class costs nothing in error on the certificate side and the logarithm of a
+weight on the revocation side (Proposition~\ref{prop:class}). In the sign model, no
+level-$\alpha$ sequential test beats $\log(1/\alpha)/\mathrm{KL}$ expected samples, and an
+oracle constant-stake bettor comes within $\log(1+\Delta)/\mathrm{KL}$ of it, which equals
+the sample size of a fixed-sample sign test with about $78\%$ power at $\alpha=0.05$
+(Proposition~\ref{prop:anytime}); the ten-stake mixture of the engine costs $1.1$ to $1.4$
+times more. This explains why a paired fixed-sample test is as powerful as VOUCH on the
+same pairs.
+
 \item \textbf{When the cohort certificate arrives.} Under a uniformly random reveal order
 the betting edge of VOUCH's without-replacement process is deterministic
 (Lemma~\ref{lem:edge}). A Freedman bound on the wealth process then gives a tail bound on
@@ -111,6 +126,7 @@ Section~\ref{sec:discussion}.
 
 \paragraph{Organisation.} Section~\ref{sec:background} recalls VOUCH and fixes notation.
 Section~\ref{sec:related} places the work in the literature.
-Sections~\ref{sec:semantic}--\ref{sec:time} develop the theory: semantic twins, the
-ladder to organic records, and certification time. Section~\ref{sec:experiments} reports
+Sections~\ref{sec:semantic}--\ref{sec:time} develop the theory: semantic twins and the cost
+of enlarging the class, the ladder to organic records and its sharp form, the price of
+anytime validity, and the certification time of the cohort. Section~\ref{sec:experiments} reports
 the experiments and Section~\ref{sec:discussion} discusses limitations.

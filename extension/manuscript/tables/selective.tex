@@ -1,0 +1,14 @@
+\begin{tabular}{llccc}
+\toprule
+Canary design & detector & $\eps=0.05$ & $\eps=0.10$ & $\eps=0.20$ \\
+\midrule
+VOUCH random-string QA & perplexity & 0.05 / 0.99 & 0.10 / 0.99 & 0.21 / 1.00 \\
+VOUCH random-string QA & $n$-gram & 0.06 / 1.00 & 0.11 / 1.00 & 0.20 / 1.00 \\
+semantic twin, literal & perplexity & 0.05 / 1.00 & 0.10 / 1.00 & 0.21 / 1.00 \\
+semantic twin, literal & $n$-gram & 0.05 / 1.00 & 0.10 / 1.00 & 0.21 / 1.00 \\
+semantic twin, question--answer & perplexity & 0.05 / 0.57 & 0.10 / 0.68 & 0.20 / 0.79 \\
+semantic twin, question--answer & $n$-gram & 0.05 / 1.00 & 0.11 / 1.00 & 0.20 / 1.00 \\
+organic-matched twin & perplexity & 0.05 / 0.08 & 0.10 / 0.14 & 0.20 / 0.23 \\
+organic-matched twin & $n$-gram & 0.05 / 0.03 & 0.10 / 0.04 & 0.20 / 0.12 \\
+\bottomrule
+\end{tabular}

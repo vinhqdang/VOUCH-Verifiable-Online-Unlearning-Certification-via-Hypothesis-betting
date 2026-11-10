@@ -149,7 +149,34 @@ def retention_coords():
                 print(f, pref, key, " ".join(f"({a},{b:.3f})" for a, b in pts))
 
 
+def anytime():
+    d = load("anytime_cost.json")
+    rows = [f"{r['delta']:.2f} & {r['kl']:.4f} & {r['wald']:.0f} & {r['oracle_upper']:.0f} & "
+            f"{r['sim_oracle']:.0f} & {r['sim_grid']:.0f} & {r['n50']} & {r['n80']} & {r['n90']} \\\\"
+            for r in d["rows"]]
+    write("anytime", "\\begin{tabular}{rrrrrrrrr}\n\\toprule\n"
+          "$\\Delta$ & KL & Wald & oracle $\\le$ & oracle sim. & grid sim. & $n_{50}$ & $n_{80}$ & $n_{90}$ \\\\\n"
+          "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+
+
+def selective():
+    d = load("selective_provider.json")
+    names = {"vouch_qa": "VOUCH random-string QA", "semantic_literal": "semantic twin, literal",
+             "semantic_qa": "semantic twin, question--answer", "matched": "organic-matched twin"}
+    rows = []
+    for k, nm in names.items():
+        for det, dn in (("perplexity", "perplexity"), ("ngram", "$n$-gram")):
+            r = d["designs"][k][det]
+            rows.append(f"{nm} & {dn} & " + " & ".join(
+                f"{r[str(e)]['canary_miss']:.2f} / {r[str(e)]['organic_leak']:.2f}" for e in d["eps"]) + " \\\\")
+    write("selective", "\\begin{tabular}{llccc}\n\\toprule\n"
+          "Canary design & detector & $\\eps=0.05$ & $\\eps=0.10$ & $\\eps=0.20$ \\\\\n\\midrule\n"
+          + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+
+
 if __name__ == "__main__":
+    selective()
+    anytime()
     growth()
     detect()
     semantic()

@@ -115,9 +115,12 @@ def main():
         y = np.array([1] * len(texts) + [0] * len(organic))
         feats = np.vstack([nll_features(texts, model, tok, args.device), org_feats])
         allt = texts + organic
-        r = {"perplexity": summarize(y, oof_scores(feats, y, "dense")),
-             "ngram": summarize(y, oof_scores(allt, y, "ngram"))}
-        r["gamma_lower_bound"] = max(v["adv"] for v in r.values())
+        sp, sn = oof_scores(feats, y, "dense"), oof_scores(allt, y, "ngram")
+        r = {"perplexity": summarize(y, sp), "ngram": summarize(y, sn),
+             # out-of-fold scores (high = canary) and labels, for the selective-provider
+             # analysis of extension/experiments/selective_provider.py
+             "scores": {"y": y.tolist(), "perplexity": sp.tolist(), "ngram": sn.tolist()}}
+        r["gamma_lower_bound"] = max(r[k]["adv"] for k in ("perplexity", "ngram"))
         r["examples"] = texts[:3]
         report["designs"][name] = r
         print(f"{name:18s} perplexity AUC={r['perplexity']['auc']:.3f} adv={r['perplexity']['adv']:.3f}"
