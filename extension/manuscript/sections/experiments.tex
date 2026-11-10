@@ -85,32 +85,38 @@ here because we wrote the organic generator ourselves.
 
 \paragraph{What a detector buys a selective provider.} Theorem~\ref{thm:sharp} says that a
 provider that unlearns what a detector calls canary-like and leaves the rest un-unlearned
-passes the audit at tolerance $\eps$ when the detector misses a fraction $\eps$ of the
-canaries, and then leaves un-unlearned the fraction of organic records that the detector
-correctly calls organic-like. Table~\ref{tab:selective} measures this for our two
-detectors, with the threshold chosen on four folds and evaluated on the fifth. A provider
-that selects records at random leaves a fraction $\eps$ of organic records, which is the
-value that organic-matched canaries are meant to enforce.
+has a cohort advantage of at most the detector's miss rate on canaries, and leaves
+un-unlearned the fraction of organic records that the detector correctly calls
+organic-like. Table~\ref{tab:selective} measures this for our two detectors, for a provider
+that holds labelled canaries (the detectors are trained on them) and may orient the score
+either way; the threshold and the orientation are chosen on four folds and evaluated on the
+fifth. The miss rate equals the cohort advantage when the skipped canaries are always
+favoured and is an upper bound on it otherwise. A provider that selects records at random
+leaves a fraction equal to the miss rate, which is the value that organic-matched canaries
+are meant to enforce.
 
 \begin{table}[t]
 \centering\small
-\caption{A selective provider guided by each detector: canary miss rate (the cohort
-advantage the audit sees) and fraction of organic records left un-unlearned, for three
-tolerances, with cross-fitted thresholds ($400$ canaries, $400$ organic records). Random
-selection leaves a fraction equal to the miss rate.}
+\caption{A selective provider guided by each detector: canary miss rate (an upper bound
+on the cohort advantage the audit sees) and fraction of organic records left un-unlearned,
+at three target miss rates, with thresholds and score orientation chosen on training folds
+($400$ canaries, $400$ organic records). Random selection leaves a fraction equal to the
+miss rate.}
 \label{tab:selective}
 \input{tables/selective}
 \end{table}
 
-Against VOUCH's random-string canaries and against the semantic twins built from their own
-templates, the provider passes the audit at $\eps=0.2$ while leaving all of the organic
-records un-unlearned, with either detector (at least $99\%$ at every tolerance of the
-table); the certificate would say nothing about
-organic data. Against the question--answer form of semantic twins the perplexity detector
-leaves $79\%$ at the same tolerance. Against organic-matched twins the leak is $0.23$ for
-the perplexity detector and $0.12$ for the $n$-gram detector at $\eps=0.2$, within the
-noise of the random value $0.2$, as $\beta(\eps)=\eps$ predicts for indistinguishable
-canaries. The detectors are lower bounds on what a stronger detector could do.
+Against VOUCH's random-string canaries and against the literal form of semantic twins, the
+provider holds the cohort advantage at the target while leaving all of the organic records
+un-unlearned at $\eps=0.2$, with either detector (at least $99\%$ at every tolerance of the
+table), and the same holds for the $n$-gram detector against the question--answer form; the
+perplexity detector leaves $79\%$ there. For these designs the certificate would say
+nothing about organic data. Against organic-matched twins the leak at $\eps=0.2$ is $0.23$
+for the perplexity detector and $0.28$ for the $n$-gram detector, which is $0.03$ and
+$0.08$ above the random value $0.20$ and below the $\eps+\gamma\approx0.30$ that the
+$n$-gram advantage $\gamma\ge0.10$ permits. The detectors are lower bounds on what a
+stronger detector could do, and the interval $[\eps,\eps+\gamma]$ is what the theorem
+allows for the organic claim.
 
 \subsection{Auditing with semantic twins}\label{sec:exp-semantic}
 

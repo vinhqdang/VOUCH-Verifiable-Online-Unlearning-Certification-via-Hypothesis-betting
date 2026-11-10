@@ -10,8 +10,8 @@ over paraphrased questions never seen in training. Second, under a bounded-influ
 assumption the cohort certificate transfers to the canary generator's population with a
 McDiarmid term, and from canaries to organic records with a term equal to twice the
 provider's ability to tell them apart from their contents, which prices content-based
-special-casing, and for one-sided leakage the bound is exact and equals a Neyman--Pearson
-power. VOUCH's random-string canaries and naive semantic twins are told apart with
+special-casing, and for one-sided leakage the bound is sharp over leakage profiles and
+equals a Neyman--Pearson power. VOUCH's random-string canaries and naive semantic twins are told apart with
 advantage one; twins drawn from the organic record generator are not, but on Pythia-410M at our
 training budget a record seen once leaves no detectable trace, so indistinguishability
 costs the audit its power. Third, on Pythia-410M and Pythia-1B, when unlearning targets only the literal
@@ -24,6 +24,6 @@ membership-inference test against an organic holdout raises a false alarm on eve
 retrained model, and against matched ghost twins it is valid but far less powerful than a paired test on
 the same records, which is where VOUCH's advantage comes from. In the sign model we show that
 no sequential test needs fewer than $\log(1/\alpha)/\mathrm{KL}$ samples and that an oracle
-bettor comes within a logarithmic term of that, comparable to a fixed-sample sign test at
-$78\%$ power, and we bound the cohort's certification time through the growth of the wealth
+bettor comes within a logarithmic term of that, and, for a two-sided test, matches the
+sample size of a fixed-sample sign test at about $78\%$ power, and we bound the cohort's certification time through the growth of the wealth
 process.

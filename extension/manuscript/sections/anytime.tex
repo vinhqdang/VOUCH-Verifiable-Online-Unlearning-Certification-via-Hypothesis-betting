@@ -13,7 +13,7 @@ Fix $\alpha\in(0,1)$ and $\Delta\in(0,1)$.
 \begin{enumerate}
 \item[(i)] \emph{Lower bound.} Let $\tau$ be a stopping time with $\Pr_0[\tau<\infty]\le
 \alpha$ (a level-$\alpha$ sequential test that rejects at $\tau$) and $\Pr_\Delta[\tau<
-\infty]=1$, $\mathbb{E}_\Delta\tau<\infty$. Then
+\infty]=1$, $\mathbb{E}_\Delta\tau<\infty$ (which implies $\Pr_\Delta[\tau<\infty]=1$). Then
 $\mathbb{E}_\Delta[\tau]\ge\log(1/\alpha)/\mathrm{KL}(\Delta)$.
 \item[(ii)] \emph{Upper bound for the oracle bettor.} The wealth
 $W_t=\prod_{u\le t}\bigl(1+\Delta(2Z_u-1)\bigr)$ is a martingale under the null with growth
@@ -45,7 +45,8 @@ drift is positive. Since $W_{\tau-1}<1/\alpha$ and each factor is at most $1+\De
 $\log W_\tau<\log(1/\alpha)+\log(1+\Delta)$.
 (iii) The mixture wealth is at least $W^{\lambda_k}_t/K$, so it crosses $1/\alpha$ no later
 than $W^{\lambda_k}$ crosses $K/\alpha$; apply (ii) with $\alpha\to\alpha/K$ and the stake
-$\lambda_k$, whose growth rate is $g_\Delta(\lambda_k)$.
+$\lambda_k$, whose growth rate is $g_\Delta(\lambda_k)$; the proof of (ii) applies verbatim
+to any stake with positive growth rate, with overshoot factor $1+\lambda_k$.
 \end{proof}
 
 The oracle bettor knows $\Delta$; a real bettor does not, and part (iii) and the
@@ -63,14 +64,16 @@ a fixed-sample test with about $78\%$ power, and it can stop earlier when $\Delt
 and is valid under any stopping rule. Table~\ref{tab:anytime} confirms the
 constants by simulation and adds the mixture over the ten stakes
 $0.05,0.10,\dots,0.50$ that the cohort analysis of Section~\ref{sec:time} uses, which costs
-$1.1$ to $1.4$ times the oracle, more at small $\Delta$.
+roughly $1.1$ to $1.4$ times the oracle.
 
 \begin{table}[t]
 \centering\small
-\caption{Expected sample sizes in the sign model, $\alpha=0.05$ (two arms at level
-$0.025$). Wald: lower bound of Proposition~\ref{prop:anytime}(i); oracle: bound (ii) and
-simulated mean over $2{,}000$ runs; grid: simulated mean of the $10$-stake mixture over
-$500$ runs; $n_{50},n_{80},n_{90}$: smallest $n$ for which the exact two-sided binomial
+\caption{Expected sample sizes in the sign model, $\alpha=0.05$ (one arm at level
+$0.025$, as in each direction of a two-sided test). Arm Wald: lower bound of
+Proposition~\ref{prop:anytime}(i) for the arm; oracle: bound (ii) and simulated mean over
+$2{,}000$ runs, which may exceed the bound by Monte Carlo error (standard error about
+$1.6\%$ of the mean); grid: simulated mean of the $10$-stake constant mixture over $500$
+runs; $n_{50},n_{80},n_{90}$: smallest $n$ for which the exact two-sided binomial
 sign test at level $0.05$ has the stated power.}
 \label{tab:anytime}
 \input{tables/anytime}

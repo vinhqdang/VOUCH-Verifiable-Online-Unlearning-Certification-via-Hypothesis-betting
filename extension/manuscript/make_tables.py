@@ -155,7 +155,7 @@ def anytime():
             f"{r['sim_oracle']:.0f} & {r['sim_grid']:.0f} & {r['n50']} & {r['n80']} & {r['n90']} \\\\"
             for r in d["rows"]]
     write("anytime", "\\begin{tabular}{rrrrrrrrr}\n\\toprule\n"
-          "$\\Delta$ & KL & Wald & oracle $\\le$ & oracle sim. & grid sim. & $n_{50}$ & $n_{80}$ & $n_{90}$ \\\\\n"
+          "$\\Delta$ & KL & arm Wald & oracle $\\le$ & oracle sim. & grid sim. & $n_{50}$ & $n_{80}$ & $n_{90}$ \\\\\n"
           "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
 
 

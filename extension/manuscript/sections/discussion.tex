@@ -81,8 +81,9 @@ such a certificate says about the data users delete, and what it can see. Semant
 keep the exact null, so canaries can carry natural-language facts that have paraphrases.
 The certificate transfers to organic records at the cost of twice the provider's ability
 to tell canaries from organic records, a cost that existing canary designs make maximal
-and that organic-matched canaries remove, at the price of the memorisation signal the
-audit needs. Under partial unlearning the fact outlives its literal form only slightly at
+and that organic-matched canaries reduce to a level our detectors cannot distinguish from
+noise, at the price of the memorisation signal the audit needs. For one-sided leakage the
+cost is sharp: it is the Neyman--Pearson power of telling canaries from organic records. Under partial unlearning the fact outlives its literal form only slightly at
 the scales we tested; an incomplete forget set is the larger practical risk, and an audit
 that scores paraphrases next to the literal form reveals it. Membership-inference tests
 against a holdout set either confound canaries with organic records or lack the power of

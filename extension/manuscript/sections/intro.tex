@@ -56,10 +56,12 @@ a term equal to twice the provider's ability to tell the two apart from their co
 (Theorem~\ref{thm:detect}). The second result prices one deviation from the
 honest-provider assumption, content-based special-casing: whatever rule a provider uses to
 treat canaries differently, the gap it opens is bounded by that rule's distinguishing
-advantage (Corollary~\ref{cor:ladder}). For one-sided leakage the bound is exact: the
-largest organic advantage compatible with a certified cohort is the Neyman--Pearson power
-of testing canaries against organic records at level $\eps$, which is $\eps$ when the two
-coincide and $1$ when they are mutually singular (Theorem~\ref{thm:sharp}). Any detector
+advantage (Corollary~\ref{cor:ladder}). If leakage is one-sided, a pointwise assumption
+about the pipeline that cannot be checked, the bound is sharp over leakage profiles: the
+largest organic advantage compatible with a cohort advantage of at most $\eps$ is the
+Neyman--Pearson power of testing canaries against organic records at level $\eps$, which is
+$\eps$ when the two coincide and $1$ when they are mutually singular
+(Theorem~\ref{thm:sharp}, subject to the generator term of Theorem~\ref{thm:population}). Any detector
 therefore gives a measurable lower bound on what a selective provider can leave
 un-unlearned while the audit passes.
 
@@ -99,10 +101,11 @@ sequential testing buys continuous monitoring at some cost in power
 the declared class costs nothing in error on the certificate side and the logarithm of a
 weight on the revocation side (Proposition~\ref{prop:class}). In the sign model, no
 level-$\alpha$ sequential test beats $\log(1/\alpha)/\mathrm{KL}$ expected samples, and an
-oracle constant-stake bettor comes within $\log(1+\Delta)/\mathrm{KL}$ of it, which equals
-the sample size of a fixed-sample sign test with about $78\%$ power at $\alpha=0.05$
-(Proposition~\ref{prop:anytime}); the ten-stake mixture of the engine costs $1.1$ to $1.4$
-times more. This explains why a paired fixed-sample test is as powerful as VOUCH on the
+oracle constant-stake bettor comes within $\log(1+\Delta)/\mathrm{KL}$ of it
+(Proposition~\ref{prop:anytime}). For a two-sided test at $\alpha=0.05$ the oracle's
+expected sample size equals that of a fixed-sample sign test with about $78\%$ power, and a
+ten-stake constant mixture, a stand-in for the engine's adaptive experts, costs roughly
+$1.1$ to $1.4$ times more. This explains why a paired fixed-sample test is as powerful as VOUCH on the
 same pairs.
 
 \item \textbf{When the cohort certificate arrives.} Under a uniformly random reveal order
