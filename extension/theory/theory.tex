@@ -307,7 +307,8 @@ checks the generators and the exact null without model weights.
 \paragraph{Data and models.} The organic records are fictitious biographies drawn
 from six sentence templates (birthplace, study city, publication city, years before a
 profession, a guild prize, a workshop) over fictitious names, cities and professions,
-the keep/forget data of the VOUCH experiments. The main model is Pythia-410M; GPT-2
+the keep/forget data of the VOUCH experiments. The main model is Pythia-410M, with
+Pythia-1B as a second size for the partial-unlearning experiment; GPT-2
 (124M) is used for the detectability features and for a pilot. A LoRA adapter (rank
 16, all linear layers) is fine-tuned for 600 steps (batch 8, learning rate
 $2\cdot10^{-4}$, blocks of 96 tokens) on 2{,}000 keep records, 200 forget records and
@@ -417,8 +418,11 @@ the two scores.
 The case a literal audit cannot see is unlearning that removes the trained surface
 form but not the fact. To provoke it, the forget set is restricted to the literal
 statements (the question-answer form stays out of it) and the strength of unlearning
-is swept: GA for $5$--$25$ steps, NPO for $10$--$75$ steps, eight seeds each, and in
-three of the seeds also GA for 50 and 100 steps and NPO for 250. Define the
+is swept: GA for $5$--$25$ steps, NPO for $10$--$75$ steps. Pythia-410M is run with
+eight seeds (in three of them also GA for 50 and 100 steps and NPO for 250), Pythia-1B
+with seven, under the same hyperparameters. An eighth Pythia-1B seed was interrupted
+when the compute session was reclaimed and is excluded, so every strength has the
+same seeds. Define the
 \emph{retention} of a score as its advantage after unlearning divided by the same
 seed's advantage before unlearning.
 
@@ -427,24 +431,29 @@ seed's advantage before unlearning.
 \begin{tikzpicture}
 \begin{axis}[name=ga, width=0.47\textwidth, height=0.36\textwidth,
   xlabel={GA steps}, ylabel={retention}, ymin=-0.1, ymax=1.05,
-  legend style={font=\small, at={(0.98,0.98)}, anchor=north east}, title={GA}]
+  legend style={font=\scriptsize, at={(0.02,0.02)}, anchor=south west}, title={GA}]
 \addplot+[mark=*] coordinates {(0,1.000) (5,0.750) (10,0.574) (15,0.391) (20,0.311) (25,0.108)};
 \addplot+[mark=square*] coordinates {(0,1.000) (5,0.944) (10,0.793) (15,0.704) (20,0.523) (25,0.190)};
-\legend{literal, paraphrase}
+\addplot+[mark=o, dashed, blue] coordinates {(0,1.000) (5,0.848) (10,0.652) (15,0.499) (20,0.396) (25,0.157)};
+\addplot+[mark=square, dashed, red] coordinates {(0,1.000) (5,0.928) (10,0.817) (15,0.603) (20,0.522) (25,0.349)};
+\legend{literal 410M, paraphrase 410M, literal 1B, paraphrase 1B}
 \end{axis}
 \begin{axis}[at={(ga.east)}, anchor=west, xshift=1.2cm, width=0.47\textwidth,
   height=0.36\textwidth, xlabel={NPO steps}, ymin=-0.1, ymax=1.05, title={NPO}]
 \addplot+[mark=*] coordinates {(0,1.000) (10,0.720) (25,0.274) (40,0.071) (55,-0.033) (75,-0.002)};
 \addplot+[mark=square*] coordinates {(0,1.000) (10,0.897) (25,0.485) (40,0.181) (55,0.023) (75,-0.006)};
+\addplot+[mark=o, dashed, blue] coordinates {(0,1.000) (10,0.767) (25,0.441) (40,0.193) (55,0.118) (75,0.043)};
+\addplot+[mark=square, dashed, red] coordinates {(0,1.000) (10,0.873) (25,0.687) (40,0.580) (55,0.173) (75,0.151)};
 \end{axis}
 \end{tikzpicture}
 \caption{Retention of the literal and the calibrated paraphrase advantage under
-literal-only unlearning, mean over eight seeds (Pythia-410M, $m=384$).}\label{fig:retention}
+literal-only unlearning, mean over seeds ($m=384$). Solid: Pythia-410M, eight seeds;
+dashed: Pythia-1B, seven seeds.}\label{fig:retention}
 \end{figure}
 
 \begin{table}[h]
 \centering
-\caption{Literal-only unlearning, eight seeds. Advantages are means $\pm$ standard
+\caption{Literal-only unlearning on Pythia-410M, eight seeds. Advantages are means $\pm$ standard
 errors; $p$ is the Wilcoxon signed-rank test of paraphrase minus literal retention.
 The last two columns count seeds in which the two single-score audits disagree at
 $\eps=0.2$: A, literal ISSUED and paraphrase REVOKED; B, the reverse.}\label{tab:squeeze}
@@ -468,32 +477,102 @@ NPO 75   & $-0.006\pm0.017$ & $+0.005\pm0.021$ & 0.00 / $-0.01$ & 0.844 & 0 & 0 
 \end{tabular}
 \end{table}
 
-Two findings come out of Figure~\ref{fig:retention} and Table~\ref{tab:squeeze}.
+\begin{table}[h]
+\centering
+\caption{Literal-only unlearning on Pythia-1B, seven seeds. Columns as in
+Table~\ref{tab:squeeze}; with seven seeds the smallest attainable two-sided $p$ is
+$0.016$.}\label{tab:squeeze1b}
+\small\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+Subject & literal & paraphrase (cal) & retention lit.\,/\,para. & $p$ \\
+\midrule
+none     & $+0.389\pm0.031$ & $+0.219\pm0.034$ & 1.00 / 1.00 & --    \\
+GA 5     & $+0.333\pm0.036$ & $+0.208\pm0.037$ & 0.85 / 0.93 & 0.031 \\
+GA 10    & $+0.260\pm0.038$ & $+0.188\pm0.038$ & 0.65 / 0.82 & 0.109 \\
+GA 15    & $+0.202\pm0.037$ & $+0.140\pm0.032$ & 0.50 / 0.60 & 0.578 \\
+GA 20    & $+0.161\pm0.032$ & $+0.119\pm0.022$ & 0.40 / 0.52 & 0.219 \\
+GA 25    & $+0.068\pm0.029$ & $+0.086\pm0.024$ & 0.16 / 0.35 & 0.156 \\
+NPO 10   & $+0.304\pm0.039$ & $+0.198\pm0.035$ & 0.77 / 0.87 & 0.016 \\
+NPO 25   & $+0.178\pm0.035$ & $+0.157\pm0.028$ & 0.44 / 0.69 & 0.016 \\
+NPO 40   & $+0.081\pm0.024$ & $+0.122\pm0.020$ & 0.19 / 0.58 & 0.016 \\
+NPO 55   & $+0.046\pm0.021$ & $+0.045\pm0.019$ & 0.12 / 0.17 & 0.578 \\
+NPO 75   & $+0.013\pm0.013$ & $+0.037\pm0.021$ & 0.04 / 0.15 & 0.375 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\emph{The literal form is unlearned faster than the fact.} At every strength where
-both advantages are still clearly non-zero, paraphrase retention exceeds literal
-retention. Pooled over GA 10--20 and NPO 25--40 (40 seed-level cells), the mean
-difference is $0.21\pm0.03$, positive in 34 cells, Wilcoxon $p=2\cdot10^{-7}$. Before
-unlearning the paraphrase advantage is about $60\%$ of the literal one; after 15 GA
-steps or 25 NPO steps the two are equal. A literal score therefore understates how
-much of the fact survives partial unlearning, by a factor close to two at NPO 25
-($0.27$ against $0.49$).
+Three findings come out of Figure~\ref{fig:retention} and
+Tables~\ref{tab:squeeze} and~\ref{tab:squeeze1b}.
 
-\emph{At the level of verdicts the effect is small and partly noise.} In the region
-GA 10--20 and NPO 25--55 (48 cells), the literal audit issues a certificate while the
-paraphrase audit revokes in 10 cells. The mirror image, a revocation by the literal
-audit and a certificate from the paraphrase audit, occurs in 5. Both kinds arise when
-two tests sit near their thresholds, so the 10 cells should not be read as ten
-misleading certificates; the excess of 5 over the mirror count is the part
-attributable to squeezing. The paraphrase audit is also the less powerful one: on the
-positive control it revokes in 7 of 8 seeds against 8 of 8 for the literal audit.
-Strong unlearning (GA $\ge25$, NPO $\ge75$) removes both advantages and the two
-audits agree.
+\emph{The literal form is unlearned faster than the fact, at both sizes.} At every
+strength where both advantages are still clearly non-zero, paraphrase retention
+exceeds literal retention on average. Pooled over GA 10--20 and NPO 25--40, the mean
+difference is $0.21\pm0.03$ for Pythia-410M (40 seed-level cells, positive in 34,
+Wilcoxon $p=2\cdot10^{-7}$) and $0.21\pm0.04$ for Pythia-1B (35 cells, positive in
+27, $p=1\cdot10^{-5}$). Before unlearning the paraphrase advantage is $56$--$60\%$ of
+the literal one at both sizes. The effect is largest under NPO: at 40 steps on
+Pythia-1B the literal score retains $19\%$ of its advantage and the paraphrase score
+$58\%$, so a literal score understates what survives by a factor of three. Under GA
+on Pythia-1B the per-strength differences are smaller and not individually
+significant.
 
-The practical reading is that the paraphrase scores should be added to the declared
-class, not substituted for the literal score: the combined audit over all scores
-revokes whenever either score carries evidence, and its cost is a few extra forward
-passes per pair.
+\emph{The larger model is harder to unlearn.} At every strength Pythia-1B retains
+more of the literal advantage than Pythia-410M (for example $0.44$ against $0.27$ at
+NPO 25), so the strengths at which the literal advantage is small while the
+paraphrase advantage is not move towards stronger unlearning: NPO 25--40 for
+Pythia-410M, NPO 40--55 for Pythia-1B. An auditor does not know in advance which
+strength a provider used, which argues for scoring paraphrases routinely rather than
+tuning the audit to one setting.
+
+\emph{Auditing paraphrases changes verdicts where it matters, and only there.}
+Single-run verdict counts are noisy, because two tests near their thresholds disagree
+in both directions: in the region GA 10--20, NPO 25--55 on Pythia-410M the literal
+audit issues while the paraphrase audit revokes in 10 cells of
+Table~\ref{tab:squeeze}, and the mirror image occurs in 5. To compare audit rules
+rather than single runs, the verifier is re-run offline on the stored score
+differences of every cell with 40 reveal orders (\texttt{union\_audit.py}). Three
+rules are compared at $\eps=0.2$, $\alpha=0.05$: the literal score alone; a
+\emph{union} of two separate audits, the literal score and the two calibrated
+paraphrase scores, each at $\alpha/2$, revoking if either revokes and issuing only if
+both issue (by the Bonferroni bound its false-alarm rate under the exact null is at
+most $\alpha$); and the six-score \emph{mixture} engine used above.
+
+\begin{table}[h]
+\centering
+\caption{Fraction of runs (seeds $\times$ 40 reveal orders) ending REVOKED under
+three audit rules at the strengths where they differ; $\eps=0.2$, $\alpha=0.05$.
+The last column is the fraction in which the literal audit issues a certificate and
+the union audit revokes.}\label{tab:union}
+\small
+\begin{tabular}{llcccc}
+\toprule
+Model & Subject & literal & union & mixture & lit.\ ISSUED, union REVOKED \\
+\midrule
+410M & GA 15  & 0.65 & 0.84 & 0.90 & 0.20 \\
+410M & GA 20  & 0.40 & 0.58 & 0.68 & 0.19 \\
+410M & NPO 25 & 0.22 & 0.57 & 0.54 & 0.38 \\
+410M & NPO 40 & 0.05 & 0.19 & 0.20 & 0.17 \\
+1B   & GA 15  & 0.71 & 0.74 & 0.73 & 0.05 \\
+1B   & GA 20  & 0.55 & 0.51 & 0.52 & 0.02 \\
+1B   & NPO 40 & 0.23 & 0.46 & 0.48 & 0.25 \\
+1B   & NPO 55 & 0.01 & 0.14 & 0.12 & 0.12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:union} shows the result. With no or light unlearning (none, GA 5, NPO
+10) all three rules revoke in at least $99\%$ of runs at both sizes; with strong
+unlearning (GA $\ge 50$, NPO $\ge 75$) all three revoke in at most $3\%$. In the
+partial region the union and the mixture revoke far more often than the literal score
+alone: at NPO 25 on Pythia-410M, $38\%$ of runs would issue a literal-only
+certificate that the union audit revokes, and at NPO 40 on Pythia-1B, $25\%$. Under
+GA on Pythia-1B the rules do not differ, consistent with the small retention gap
+there. The paraphrase scores are weaker on their own (on the positive control the
+paraphrase audit alone revokes in 7 of 8 seeds on Pythia-410M and 6 of 7 on
+Pythia-1B), which is why they belong next to the literal score in the declared class
+rather than in its place. The union adds two scores to an audit that already computes
+one, a few forward passes per pair.
 
 \subsection{Certification time (Theorem~\ref{thm:growth})}
 
@@ -511,9 +590,10 @@ engine's experts inherits the bound at the cost of $\log$ of the expert count.
 \item Theorem~\ref{thm:detect} is conditional on $\gamma$, which data can only bound
 from below. Closing that gap needs either a computational assumption on the
 provider or a cryptographic attestation; neither is attempted here.
-\item The squeezing experiments use one model size and fictitious facts. Whether the
-retention gap widens with scale, and whether it persists for facts the model also
-knows from pre-training, is untested.
+\item The partial-unlearning experiments use two model sizes, one data domain and
+fictitious facts. Pythia-1B shows the same retention gap as Pythia-410M and is harder
+to unlearn; whether the trend continues at larger scale, and whether the gap
+persists for facts the model also knows from pre-training, is untested.
 \item The organic advantage $\Delta^o_\xi$ is a counterfactual quantity: organic
 records were not included by a coin. It is the advantage the pipeline \emph{would}
 show on organic data under randomised inclusion, which is the standard definition
