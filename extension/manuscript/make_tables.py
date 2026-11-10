@@ -153,10 +153,5 @@ if __name__ == "__main__":
     growth()
     detect()
     semantic()
-    squeeze("squeeze_summary.json", "squeeze410m", True)
-    squeeze("squeeze_summary_pythia1b.json", "squeeze1b", True)
-    union()
     union_extremes()
-    retention_coords()
-    if os.path.exists(os.path.join(RES, "baselines_pythia410m_analysis.json")):
-        import make_baseline_table  # noqa: F401
+    # partial-unlearning, matched-twin and baseline tables: make_tables_ext.py

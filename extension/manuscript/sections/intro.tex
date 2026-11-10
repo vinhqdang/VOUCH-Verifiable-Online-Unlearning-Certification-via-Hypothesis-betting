@@ -31,9 +31,10 @@ its own canary templates are easy to recognise. How much can a provider gain by
 recognising canaries, and what would it take to deny it that gain?
 
 \emph{Third, does an audit of the trained form see knowledge that survives in other
-forms?} Gradient-based unlearning can suppress the exact string it was given while the
-fact it encodes stays reachable through a paraphrase
-\citep{li2026beliefs}. A random-string secret has no paraphrase, so
+forms?} Gradient-based unlearning has been reported to suppress the exact string it was
+given while the fact it encodes stays reachable through a paraphrase
+\citep{li2026beliefs}, and a deletion request may name one record of a fact the model
+learned from several. A random-string secret has no paraphrase, so
 VOUCH's canaries cannot probe this failure. Semantic canaries can, provided the exact
 null survives the move to natural language.
 
@@ -42,56 +43,66 @@ theory and new experiments on Pythia models \citep{biderman2023pythia}.
 
 \begin{itemize}
 \item \textbf{Semantic twins keep the exact null.} A twin pair that states two
-incompatible facts about one fictitious entity, drawn by a label-symmetric generator,
-keeps VOUCH's exact conditional null for every score that compares the two facts under
-the same prompt, including belief scores over paraphrased questions that never appear
-in training (Proposition~\ref{prop:semantic}). Calibrating by the base model removes the
-base model's prior between the two values without leaving the declared class.
+incompatible facts about one fictitious entity keeps VOUCH's exact conditional null for
+every score that compares the two facts under the same prompt, including belief scores
+over paraphrased questions that never appear in training, and their versions calibrated
+by the base model (Proposition~\ref{prop:semantic}). This realises the natural-language
+canary that the original paper named as its next step.
 
-\item \textbf{A ladder from the cohort to organic records.} The cohort certificate
-transfers to the generator population with a McDiarmid term
-(Theorem~\ref{thm:population}) and from canaries to organic records with a term equal to
-twice the provider's ability to tell the two apart (Theorem~\ref{thm:detect}). The second
-result turns the honest-provider assumption into a quantitative statement: a provider
-who special-cases the cohort must operate a canary detector, and the gap it can open
-between canary and organic leakage is at most twice that detector's advantage
-(Corollary~\ref{cor:ladder}).
+\item \textbf{A ladder from the cohort to organic records.} Under a bounded-influence
+assumption, the cohort certificate transfers to the canary generator's population with a
+McDiarmid term (Theorem~\ref{thm:population}); and from canaries to organic records with
+a term equal to twice the provider's ability to tell the two apart from their contents
+(Theorem~\ref{thm:detect}). The second result prices one deviation from the
+honest-provider assumption, content-based special-casing: whatever rule a provider uses to
+treat canaries differently, the gap it opens is bounded by that rule's distinguishing
+advantage (Corollary~\ref{cor:ladder}).
 
-\item \textbf{Detectability is measured and can be closed by construction.} Every canary
-design used so far, VOUCH's random-string records and naive semantic twins alike, is
-detected with advantage one by a character $n$-gram classifier. Twins drawn from the
-organic record generator itself, with a single slot varied, bring perplexity and
-$n$-gram detectors to chance level (Section~\ref{sec:exp-detect}).
+\item \textbf{Detectability and its price, measured.} VOUCH's random-string records and
+semantic twins built from their own templates are detected with advantage one by a
+character $n$-gram classifier. Twins drawn from the organic record generator itself, with
+one slot varied, are not detected by perplexity or $n$-gram detectors beyond the noise of
+the detectors. But when such records appear once, as organic records do, Pythia-410M
+retains no detectable trace of them, so the audit becomes valid but powerless: the term
+the ladder pays for detectability is traded for power (Sections~\ref{sec:exp-detect}
+and~\ref{sec:exp-matched}).
 
-\item \textbf{Partial unlearning removes the trained form faster than the fact.} When
-unlearning targets the literal statements only, the literal advantage falls faster than
-the advantage on paraphrased questions never trained, by $0.21$ in retention at both
-model sizes ($p<10^{-6}$). Pythia-1B is harder to unlearn than Pythia-410M, and the
-strengths at which the two scores diverge move accordingly. A union audit over literal
-and paraphrase scores revokes in up to $38\%$ more runs than a literal-only audit in
-this regime and agrees with it elsewhere (Section~\ref{sec:exp-squeeze}).
+\item \textbf{The literal form and the fact under partial unlearning.} When unlearning
+targets only the literal statement, the advantage on paraphrased questions is retained
+slightly longer than the literal one in all three experiments we ran (two model sizes, two
+designs), by $0.07$ to $0.12$ in like-for-like retention; the direction is consistent but
+no test reaches significance at eight seeds, so we do not claim to have demonstrated the
+squeezing effect at this scale. What does change verdicts is an incomplete forget set:
+when the fact was also trained in a form that the forget set does not contain, a union
+audit over literal and calibrated paraphrase scores revokes up to $38\%$ of runs that a
+literal-only audit certifies, and it costs nothing in validity when the forget set is
+complete (Section~\ref{sec:exp-squeeze}).
 
-\item \textbf{Comparison with membership-inference audits.} On the same runs, the
-standard membership-inference audit (an AUC test of members against a holdout set,
-with loss, Min-K\%, zlib and reference-calibrated scores) is compared with VOUCH,
-including retraining as an exact-null control (Section~\ref{sec:exp-baselines}).
+\item \textbf{Comparison with membership-inference audits.} On the same runs, a
+membership-inference test of canaries against an organic holdout raises a false alarm on
+every retrained model, because the test detects the difference between canaries and
+organic records rather than membership; against matched ghost twins it is valid but
+misses partial unlearning that VOUCH's paired, sequential test detects
+(Section~\ref{sec:exp-baselines}).
 
 \item \textbf{When the cohort certificate arrives.} Under a uniformly random reveal order
 the betting edge of VOUCH's without-replacement process is deterministic
-(Lemma~\ref{lem:edge}). A Freedman bound on the wealth process then gives a tail bound
-on the certification time that holds before refutation and exhibits the
-finite-population speed-up (Theorem~\ref{thm:growth}); it is checked numerically and is
-conservative by a factor of two to four.
+(Lemma~\ref{lem:edge}). A Freedman bound on the wealth process then gives a tail bound on
+the certification time that holds before refutation and shows where the
+finite-population speed-up comes from (Theorem~\ref{thm:growth}); it is checked
+numerically and is conservative by a factor of two to four.
 \end{itemize}
 
 All code, results and the scripts that turn results into the tables of this paper are
 released with the VOUCH repository.
 
 \paragraph{What is not claimed.} The organic-record result is conditional on the
-distinguishing advantage, which data can bound only from below; we report the strongest
-detectors we could build, not a proof that none better exists. All facts in the
-experiments are fictitious and the models have at most one billion parameters. These
-limits are discussed in Section~\ref{sec:discussion}.
+distinguishing advantage, which data can bound only from below, and on a bounded-influence
+assumption that cannot be checked; we report the strongest detectors we could build, not
+a proof that none better exists. Squeezing is not demonstrated. All facts in the
+experiments are fictitious, the data come from one domain, and the models have at most
+one billion parameters and are fine-tuned with LoRA. These limits are discussed in
+Section~\ref{sec:discussion}.
 
 \paragraph{Organisation.} Section~\ref{sec:background} recalls VOUCH and fixes notation.
 Section~\ref{sec:related} places the work in the literature.

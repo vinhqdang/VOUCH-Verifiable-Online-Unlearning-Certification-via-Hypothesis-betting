@@ -1,0 +1,17 @@
+\begin{tabular}{l cc cccc cc cc cc}
+\toprule
+ & \multicolumn{2}{c}{VOUCH} & \multicolumn{4}{c}{(a) canaries vs.\ ghosts} & \multicolumn{2}{c}{(b) vs.\ organic} & \multicolumn{2}{c}{(c) paraphrase} & \multicolumn{2}{c}{(d) organic} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}\cmidrule(lr){12-13}
+Subject & lit. & union & loss & Min-K\% & zlib & ref & loss & ref & loss & ref & loss & ref \\
+\midrule
+none & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 0.75 & 1.00 & 1.00 & 0.00 & 0.00 & 0.38 & 0.12 \\
+retrain & 0.02 & 0.01 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.12 & 0.00 \\
+\midrule
+GA 10 & 0.96 & 0.96 & 0.38 & 0.00 & 0.25 & 0.12 & 1.00 & 1.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+GA 15 & 0.68 & 0.67 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.25 & 0.00 \\
+GA 20 & 0.25 & 0.25 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.12 & 0.00 \\
+NPO 25 & 0.36 & 0.34 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.12 & 0.00 \\
+NPO 40 & 0.06 & 0.04 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+NPO 75 & 0.01 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 1.00 & 1.00 & 0.00 & 0.00 & 0.25 & 0.12 \\
+\bottomrule
+\end{tabular}

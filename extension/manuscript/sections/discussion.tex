@@ -1,67 +1,82 @@
 \section{Discussion and limitations}\label{sec:discussion}
 
-\paragraph{What the extension changes in practice.} Three recommendations follow for a
-verifier who audits with VOUCH. First, canaries should be drawn from the distribution
-of the records they stand in for, because every design that departs from it visibly is
-detected with advantage one and leaves the organic claim of Corollary~\ref{cor:ladder}
-empty. Second, when the facts behind the canaries can be paraphrased, the declared class
-should contain both the literal score and paraphrase scores calibrated by the base
-model, audited as a union at level $\alpha/2$ each: under partial unlearning the union
-revokes runs that a literal-only audit would certify, and elsewhere it agrees with it.
-Third, calibrating paraphrase scores by the base model costs
-nothing and matters when the base model has strong priors between values: on the GPT-2
-pilot it raised the paraphrase advantage of the positive control from $+0.02$ to
-$+0.17$, while on Pythia-410M it changed the advantage by less than $0.07$ in every seed.
+\paragraph{What the extension changes in practice.} Four recommendations follow for a
+verifier who audits with VOUCH. First, canaries that carry natural-language facts can be
+used without giving up the exact null, provided both twins are scored under the same
+prompt. Second, the declared class should contain calibrated paraphrase scores next to the
+literal score, audited as a union at level $\alpha/2$ each. Paraphrase scores never
+replaced the literal score in our experiments, since they are weaker on their own, but
+they catch knowledge that an incomplete forget set leaves behind and cost nothing in
+validity when the forget set is complete. Third, a verifier who wants the certificate to
+say something about organic records must pay for it twice: in detectability, by drawing
+canaries from the organic distribution, and in power, because such canaries are memorised
+no more than organic records are. Fourth, membership-inference tests against a holdout
+set should not be read as unlearning audits unless members and non-members come from one
+distribution by construction, as ghost twins do.
 
-\paragraph{The distinguishing advantage cannot be certified.} Theorem~\ref{thm:detect}
-is conditional on $\gamma$, and data bound $\gamma$ only from below. Our detectors are
-two cheap families; a provider with more compute could train stronger ones. What the
-theorem does establish is the direction of the burden. A provider who passes the audit
-on canaries while leaving organic data untouched has, in effect, built a canary
-detector, and the size of the gap it obtains is bounded by that detector's advantage.
-Closing the conditional requires either a computational assumption on the provider or a
+\paragraph{The distinguishing advantage cannot be certified.} Theorem~\ref{thm:detect} is
+conditional on $\gamma$, and data bound $\gamma$ only from below. Our detectors are two
+cheap families; a provider with more compute could train stronger ones. What the theorem
+establishes is the direction of the burden: a provider that passes the audit on canaries
+while leaving organic data untouched has, in effect, built a canary detector, and the gap
+it obtains is bounded by that detector's advantage. The theorem covers recognition by
+content only. Recognition by provenance, for instance because canaries reach the provider
+through a separate channel, has to be prevented by the protocol, and closing the
+conditional altogether requires a computational assumption on the provider or a
 cryptographic attestation that the committed pipeline was run
-\citep{eisenhofer2025verifiable}, which is complementary to a statistical certificate.
+\citep{eisenhofer2025verifiable}.
 
-\paragraph{Matching real data is the hard part.} Organic-matched twins reach chance-level
-detectability here because we wrote the organic generator. In a deployment the organic
-distribution is the users' own data, which the verifier sees only through samples, and a
-canary generator fitted to those samples inherits their idiosyncrasies and their privacy
-constraints. Generating matched canaries for real corpora, and measuring their
-detectability against detectors trained by an adversary with access to the corpus, is
-the main open problem this work leaves.
+\paragraph{Detectability against power.} The organic-matched cohort in our experiments is
+both undetectable by our detectors and unmemorised by the model, and the second fact makes
+the first moot for an audit: a certificate issued on canaries that left no trace says that
+the pipeline leaves little trace of records seen once, which is true of the organic forget
+biographies as well, but it cannot distinguish a pipeline that unlearns from one that
+never learned. Larger training budgets, longer canaries spread over several slots, or
+repetition through paraphrased rather than verbatim copies are ways to buy back power, each
+with a detectability cost that would have to be measured. Generating matched canaries for
+real corpora, whose distribution the verifier sees only through samples, is the main open
+problem this work leaves.
 
-\paragraph{Scope of the experiments.} All facts are fictitious and all records are
-short biographies from one domain. Fictitious facts are a deliberate choice, since they
-guarantee that the base model knows neither value, but whether the retention gap
-persists for facts the model also learned in pre-training is untested. The models have
-at most one billion parameters and are fine-tuned with LoRA adapters; Pythia-1B already
-behaves differently from Pythia-410M in how much unlearning it needs, so the strengths
-at which the gap is largest should be expected to move with scale. The forget sets of
-the partial-unlearning experiment are constructed to contain only the literal form,
-which is the setting in which squeezing is expected; when the forget set contains every
-trained form, GA and NPO remove both advantages (Table~\ref{tab:semantic}).
+\paragraph{Squeezing.} Our partial-unlearning experiments find the direction predicted by
+\citet{li2026beliefs}, with paraphrase retention above literal retention in every
+experiment and at almost every strength, but an effect of $0.07$ to $0.12$ in retention
+that eight seeds do not separate from zero. Comparisons that mix a raw literal score with a calibrated paraphrase
+score, or that treat cells rather than seeds as replicates, make the effect look larger and
+more significant than it is. Whether the effect grows with model size, training budget or a different
+unlearning objective, and whether it appears for facts the model also learned in
+pre-training, is open.
 
-\paragraph{The theory.} Theorem~\ref{thm:population} conditions on the training
-randomness and assumes bounded influence, which holds with $\kappa=\ell=1$ under exact
-unlearning but is not verified for partial unlearning. The organic advantage
-$\Delta^o_\xi$ is a counterfactual quantity: organic records were not included by a
-coin, so it is the advantage the pipeline would show on organic data under randomised
-inclusion, the standard definition of membership leakage, not an observed rate.
-Theorem~\ref{thm:growth} is conservative by a factor of two to four and covers a
+\paragraph{Scope of the experiments.} All facts are fictitious and all records are short
+biographies from one domain; fictitious facts guarantee that the base model knows neither
+value, at the price of realism. The models have at most one billion parameters and are
+fine-tuned with LoRA adapters for $600$ steps; the same step counts are used for both
+sizes, so that Pythia-1B needs more unlearning steps for the same reduction is a statement
+about this configuration, not a tuned comparison. The membership-inference baselines are
+fixed-sample tests with bootstrap intervals, the form in which they are used in
+benchmarks; per-example calibrated attacks with shadow models \citep{carlini2022lira,
+hayes2024inexact} were compared with VOUCH in the original paper and are not repeated
+here.
+
+\paragraph{The theory.} Theorem~\ref{thm:population} conditions on the training randomness
+and assumes bounded influence, which holds with $\kappa=\ell=1$ under exact unlearning but
+is not verifiable under partial unlearning. The organic advantage $\Delta^o_\xi$ is a
+counterfactual quantity, the advantage the pipeline would show on organic data under
+randomised inclusion, not an observed rate. Theorem~\ref{thm:growth} is conservative by a
+factor of two to four, conditions on the realised cohort, and covers one arm of a
 constant-stake mixture rather than the adaptive experts of the VOUCH engine.
 
 \section{Conclusion}\label{sec:conclusion}
 
-VOUCH certifies forgetting on a committed cohort of planted canaries. This paper asked
-what such a certificate says about the data users delete, and what it can see. Semantic
-twins keep the exact null, so canaries can carry natural-language facts that have
-paraphrases. The certificate transfers to the generator population at the cost of a
-McDiarmid term, and from canaries to organic records at the cost of twice the provider's
-ability to tell them apart; existing canary designs make that cost maximal and
-organic-matched twins bring it to chance level against the detectors we built. Under
-partial unlearning the trained form disappears faster than the fact at both model sizes
-we tested, and an audit that also scores paraphrases revokes runs that a literal-only
-audit would certify. The certificate remains a statement about a declared score class,
-a committed cohort and a provider whose pipeline is attested or trusted; within those
-limits, it now reaches further towards the claim a deletion request actually asks for.
+VOUCH certifies forgetting on a committed cohort of planted canaries. This paper asked what
+such a certificate says about the data users delete, and what it can see. Semantic twins
+keep the exact null, so canaries can carry natural-language facts that have paraphrases.
+The certificate transfers to organic records at the cost of twice the provider's ability
+to tell canaries from organic records, a cost that existing canary designs make maximal
+and that organic-matched canaries remove, at the price of the memorisation signal the
+audit needs. Under partial unlearning the fact outlives its literal form only slightly at
+the scales we tested; an incomplete forget set is the larger practical risk, and an audit
+that scores paraphrases next to the literal form catches it. Membership-inference tests
+against a holdout set either confound canaries with organic records or lack the power of
+a paired sequential test. The certificate remains a statement about a declared score
+class, a committed cohort and a provider whose pipeline is attested or trusted, and the
+experiments show where each of these qualifications binds.

@@ -59,10 +59,11 @@ The special-casing provider that VOUCH's threat model excludes is the subject of
 Section~\ref{sec:organic}: we do not remove the assumption, but we price it.
 
 \paragraph{What is new here.} Relative to VOUCH, this paper (i) moves the canaries to
-natural language and proves the exact null survives, (ii) states and proves the transfer
-from canaries to organic records as a function of canary detectability, and measures
-detectability for several designs including one built to make it zero, (iii) tests the
-certificate against partial unlearning that suppresses the trained form, with two model
-sizes and a union audit, (iv) compares with membership-inference audits on the same
-runs, and (v) bounds the certification time through wealth growth rather than through
-refutation.
+natural language and proves that the exact null survives; (ii) states and proves the
+transfer from canaries to organic records as a function of canary detectability, measures
+detectability for several designs including one built to make it negligible, and measures
+what that design costs in power; (iii) tests the certificate against unlearning that
+targets only the literal form, in two designs and at two model sizes, and evaluates a union
+audit with paraphrase scores; (iv) compares with membership-inference audits on the same
+runs, with retraining as an exact-null control; and (v) bounds the certification time
+through wealth growth rather than through refutation.
