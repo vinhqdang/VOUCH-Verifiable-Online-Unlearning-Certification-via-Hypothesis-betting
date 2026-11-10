@@ -72,12 +72,14 @@ are detected with advantage one by the $n$-gram classifier, and the first two al
 the perplexity features: random strings, a middle initial in every canary name and
 attributes that never occur in organic data give the cohort away. For these designs
 Corollary~\ref{cor:ladder} carries no information about organic records. Organic-matched
-twins bring both detectors to the level of two organic samples. The perplexity detector's
-advantage, $0.052$, is below the 95th percentile of the null reference. The $n$-gram
-detector's AUC of $0.442$ is below one half; refitting the same detector with permuted
+twins bring both detectors close to the level of two organic samples. The perplexity
+detector's advantage, $0.052$, is below the 95th percentile of the null reference. The
+$n$-gram detector's advantage, $0.102$, is marginally above the 95th percentile ($0.095$)
+and below the 99th ($0.110$), and its AUC of $0.442$ is below one half; refitting the same detector with permuted
 labels thirty times gives AUCs with mean $0.498$ and minimum $0.440$, and the same
 detector separating two independent organic samples gives $0.537$, so the value is within
-the range of the detector's own noise. These numbers are lower bounds on $\gamma$ against
+the range of the detector's own noise (\texttt{detect\_null.py}). Taken at face value,
+$\gamma\ge0.10$ would still add $0.20$ to the ladder of Corollary~\ref{cor:ladder}. These numbers are lower bounds on $\gamma$ against
 two detector families. They do not show that no detector exists, and matching is easy
 here because we wrote the organic generator ourselves.
 
@@ -89,14 +91,14 @@ in-twins were trained in.
 \begin{table}[t]
 \centering\small
 \caption{Semantic-twin audit on Pythia-410M with the full forget set ($m=384$, three
-seeds). Realised advantages per seed and the two-sided verdict over all scores (I issued,
-R revoked, U undetermined).}
+seeds). Realised advantages of the calibrated literal and paraphrase scores per seed, and
+the two-sided verdict over all scores (I issued, R revoked, U undetermined).}
 \label{tab:semantic}
 \input{tables/semantic}
 \end{table}
 
-Paraphrased questions that were never trained carry about two thirds of the literal
-advantage, and the audit over all scores revokes the positive control and issues for
+Paraphrased questions that were never trained carry most of the literal advantage
+($0.24$ against $0.28$ on average for the calibrated scores), and the audit over all scores revokes the positive control and issues for
 retraining in every seed at $\eps=0.2$. On one retraining seed the calibrated paraphrase
 score alone would have revoked, which is within the $5\%$ false-alarm rate per score that
 the exact null allows. A pilot with GPT-2 ($128$ pairs, $400$ training steps, one seed)
@@ -127,8 +129,11 @@ objective that targeted the same record, which is the squeezing effect of
 The \emph{retention} of a score is its advantage after unlearning divided by its
 advantage before unlearning. Because a single seed's pre-unlearning paraphrase advantage
 can be close to zero, which makes per-seed ratios unstable, we normalise each seed's
-advantages by the mean pre-unlearning advantage over seeds. The pre-specified test
-averages, within each seed, the difference between paraphrase and literal retention over
+advantages by the mean pre-unlearning advantage over seeds. We made this choice after
+observing the instability: our first analysis used per-seed ratios, and in the literal-only
+design it gives a gap of $+0.37\pm0.30$ ($7$ of $8$ seeds positive, $p=0.016$), a mean
+dominated by one seed whose pre-unlearning paraphrase advantage is close to zero; both
+versions are stored with the results. The test averages, within each seed, the difference between paraphrase and literal retention over
 the whole grid of strengths, and applies a Wilcoxon signed-rank test \citep{wilcoxon1945}
 to the eight per-seed values; seeds, not cells, are the unit of replication. The primary
 comparison is like for like: calibrated literal against calibrated paraphrase.
@@ -147,12 +152,12 @@ literal; open markers: paraphrase.}
 \caption{Paraphrase minus literal retention, averaged over the whole grid of strengths
 within each seed; mean $\pm$ standard error over eight seeds, number of seeds with a
 positive value, and the Wilcoxon signed-rank $p$ (smallest attainable value $0.008$). The
-first row of each block is the pre-specified like-for-like comparison.}
+first row of each block is the like-for-like comparison.}
 \label{tab:retention}
 \footnotesize\setlength{\tabcolsep}{3pt}\input{tables/retention_tests}
 \end{table}
 
-\paragraph{The fact survives slightly longer than the form, but the effect is small.}
+\paragraph{Paraphrase retention is slightly higher, but not significantly so.}
 Figure~\ref{fig:retention} shows paraphrase retention at or above literal retention at
 almost every strength in all three experiments, and Table~\ref{tab:retention} quantifies
 it. In the like-for-like comparison the gap is $+0.07$ to $+0.12$, positive in five or six
@@ -162,8 +167,9 @@ compare a raw score with a calibrated one, whose noise differs, and we do not re
 them; treating strength-by-seed cells rather than seeds as replicates would likewise
 overstate the evidence, since cells of one seed share its pre-unlearning model. In the literal-only design, where only generalisation can carry the fact to
 paraphrase, the gap is $+0.08$ with $p=0.25$. We therefore do not claim to have
-demonstrated squeezing at this scale: the direction is consistent across experiments and
-model sizes, but its size is within the seed-to-seed variation of eight runs.
+demonstrated squeezing at this scale. The direction is the same in all three experiments,
+but they are not independent replications (they share seeds and canary manifests), and the
+size of the gap is within the seed-to-seed variation of eight runs.
 
 \begin{table}[t]
 \centering\small
@@ -182,18 +188,26 @@ literal score alone at level $\alpha$; a \emph{union} of two separate audits, on
 literal score and one on the two calibrated paraphrase scores, each at level $\alpha/2$,
 which revokes if either revokes and issues only if both issue, so that its false-alarm
 probability under the exact null is at most $\alpha$; and VOUCH's \emph{mixture} engine
-over all six scores at level $\alpha$. With an incomplete forget set
+over all six scores at level $\alpha$. The union's literal arm uses the raw literal score
+and its paraphrase arm is itself a mixture over the two calibrated belief scores. With an
+incomplete forget set
 (Table~\ref{tab:incomplete}), the union revokes far more often than the literal rule at
 intermediate strengths: after $25$ NPO steps on Pythia-410M, $38\%$ of runs end with a
 literal-only certificate that the union revokes, and after $40$ NPO steps on Pythia-1B,
 $22\%$. In seed terms the literal rule issues while the union revokes in a majority of
 reveal orders in three of eight seeds at NPO $25$ on Pythia-410M and in one of eight at
-NPO $40$ on Pythia-1B. A literal-only
+NPO $40$ on Pythia-1B; in the other seeds the fraction is at most $35\%$, so the averages
+are driven by a minority of seeds (per-seed values in \texttt{incomplete\_stats.json}). The
+union is also slightly less powerful than the literal rule at some strengths on Pythia-1B,
+the price of splitting $\alpha$. A literal-only
 certificate is not wrong in these runs: it states that the literal score's advantage is
 below $\eps$, which it is. The union revokes because the paraphrase scores still depend on
-the coins, which a literal-only audit does not examine. Under no or light unlearning all
-rules revoke in at least $96.9\%$ of runs, and under strong unlearning all revoke in at
-most $3.3\%$.
+the coins, which a literal-only audit does not examine. In this design that is close to
+true by construction: the paraphrase scores resemble a form that was trained and never
+unlearned, and a larger declared class revokes more often. The experiment shows that a
+literal-only class is blind to such residue, not that the union is a better audit in
+general. Under no or light unlearning (none, GA $5$, NPO $10$) all rules revoke in at least
+$96.9\%$ of runs, and after $75$ NPO steps all revoke in at most $3\%$.
 
 \begin{table}[t]
 \centering\small
@@ -210,8 +224,8 @@ paraphrase only through generalisation (Table~\ref{tab:clean}), the paraphrase a
 before unlearning is about half the literal one and falls roughly in step with it. The
 literal and the union rule revoke at nearly identical rates at every strength, and the
 union issues on retraining in $99\%$ of runs, so its false-alarm rate is within the
-nominal level. The paraphrase scores cost nothing in validity here and buy nothing in
-power. The practical lesson of this subsection is therefore narrower than squeezing: an
+nominal level. The paraphrase scores cost nothing in validity here and buy almost
+nothing in power. The practical lesson of this subsection is therefore narrower than squeezing: an
 audit that scores paraphrases catches knowledge the provider did not target, which an
 incomplete forget set leaves behind, and costs little when there is none.
 
@@ -233,13 +247,15 @@ at most $6\%$ of runs, consistent with the nominal level. But so is the positive
 a record seen once in $600$ training steps, whose twin differs from it in a single slot,
 leaves no detectable trace in the model, and the realised advantages are within
 sampling noise of zero at every strength. (They are slightly negative on average,
-$-0.035\pm0.013$ on retraining, which is within two to three standard errors of zero; the
-exact null guarantees zero expectation and the revocation rates stay within the nominal
-level.) The organic forget biographies, also seen once, are detected only weakly by a
+$-0.035\pm0.014$ on retraining, $2.4$ standard errors from zero. The rows of the table are
+not independent, since all subjects of a seed share its cohort and coins, and the exact
+null guarantees zero expectation for retraining by construction; the revocation rates stay
+within the nominal level.) The organic forget biographies, also seen once, are detected only weakly by a
 membership-inference AUC of $0.55$. This is the cost that Corollary~\ref{cor:ladder}
 hides: making the canaries indistinguishable from organic records removes the third term
 of the ladder, and at this training budget it also removes the memorisation signal the
-audit needs. Repeating matched records would restore power but adds a signal of its own,
+audit needs, at least at this training budget, the only one we tested. Repeating matched
+records would restore power but adds a signal of its own,
 since verbatim duplicates are rare in organic data. A verifier must choose a point on this
 trade-off, and the organic claim is only as good as the canaries are organic.
 

@@ -63,7 +63,8 @@ semantic twins built from their own templates are detected with advantage one by
 character $n$-gram classifier. Twins drawn from the organic record generator itself, with
 one slot varied, are not detected by perplexity or $n$-gram detectors beyond the noise of
 the detectors. But when such records appear once, as organic records do, Pythia-410M
-retains no detectable trace of them, so the audit becomes valid but powerless: the term
+retains no detectable trace of them at our training budget, so the audit becomes valid but
+powerless: the term
 the ladder pays for detectability is traded for power (Sections~\ref{sec:exp-detect}
 and~\ref{sec:exp-matched}).
 
@@ -75,14 +76,18 @@ no test reaches significance at eight seeds, so we do not claim to have demonstr
 squeezing effect at this scale. What does change verdicts is an incomplete forget set:
 when the fact was also trained in a form that the forget set does not contain, a union
 audit over literal and calibrated paraphrase scores revokes up to $38\%$ of runs that a
-literal-only audit certifies, and it costs nothing in validity when the forget set is
-complete (Section~\ref{sec:exp-squeeze}).
+literal-only audit certifies, an effect driven by a minority of seeds and close to true by
+construction, since the paraphrase scores probe a form the forget set omitted; when the
+forget set is complete the union agrees with the literal audit and keeps its error rate
+(Section~\ref{sec:exp-squeeze}).
 
 \item \textbf{Comparison with membership-inference audits.} On the same runs, a
 membership-inference test of canaries against an organic holdout raises a false alarm on
 every retrained model, because the test detects the difference between canaries and
 organic records rather than membership; against matched ghost twins it is valid but
-misses partial unlearning that VOUCH's paired, sequential test detects
+misses partial unlearning that a paired test on the same records detects; a paired
+fixed-sample sign test is about as powerful as VOUCH, so the advantage comes from pairing, and
+sequential testing buys continuous monitoring at some cost in power
 (Section~\ref{sec:exp-baselines}).
 
 \item \textbf{When the cohort certificate arrives.} Under a uniformly random reveal order

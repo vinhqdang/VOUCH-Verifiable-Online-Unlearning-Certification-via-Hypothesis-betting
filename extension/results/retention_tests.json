@@ -6,9 +6,23 @@
   8,
   0.1953125
  ],
+ "410M, incomplete|literal_cal|belief_cal|per-seed-ratio": [
+  0.058759525574598744,
+  0.03058365181505937,
+  6,
+  8,
+  0.078125
+ ],
  "410M, incomplete|literal|belief": [
   0.07706033461935152,
   0.03314693755342921,
+  6,
+  8,
+  0.078125
+ ],
+ "410M, incomplete|literal|belief|per-seed-ratio": [
+  0.07537557796970677,
+  0.030917161916173344,
   6,
   8,
   0.078125
@@ -20,12 +34,26 @@
   8,
   0.078125
  ],
+ "410M, incomplete|literal|belief_cal|per-seed-ratio": [
+  0.1569076468129773,
+  0.05408025769794909,
+  6,
+  8,
+  0.0546875
+ ],
  "1B, incomplete|literal_cal|belief_cal": [
   0.12029939994563968,
   0.0452516707030673,
   6,
   8,
   0.078125
+ ],
+ "1B, incomplete|literal_cal|belief_cal|per-seed-ratio": [
+  0.11825771255016168,
+  0.0591001458905671,
+  6,
+  8,
+  0.0546875
  ],
  "1B, incomplete|literal|belief": [
   0.0830488229731747,
@@ -34,12 +62,26 @@
   8,
   0.109375
  ],
+ "1B, incomplete|literal|belief|per-seed-ratio": [
+  0.09885510720393402,
+  0.0644183607540882,
+  6,
+  8,
+  0.25
+ ],
  "1B, incomplete|literal|belief_cal": [
   0.1634358178395694,
   0.05121869099374061,
   7,
   8,
   0.0234375
+ ],
+ "1B, incomplete|literal|belief_cal|per-seed-ratio": [
+  0.14931484824995736,
+  0.052566858751594094,
+  7,
+  8,
+  0.015625
  ],
  "410M, literal only|literal_cal|belief_cal": [
   0.07968535279344169,
@@ -48,6 +90,13 @@
   8,
   0.25
  ],
+ "410M, literal only|literal_cal|belief_cal|per-seed-ratio": [
+  0.367424614245478,
+  0.29608804143650486,
+  7,
+  8,
+  0.015625
+ ],
  "410M, literal only|literal|belief": [
   0.06499354154936585,
   0.08153126524958035,
@@ -55,11 +104,25 @@
   8,
   0.640625
  ],
+ "410M, literal only|literal|belief|per-seed-ratio": [
+  0.7154998362357123,
+  0.6577739913149043,
+  5,
+  8,
+  0.1484375
+ ],
  "410M, literal only|literal|belief_cal": [
   0.13354712343497976,
   0.07917578395760744,
   6,
   8,
   0.1953125
+ ],
+ "410M, literal only|literal|belief_cal|per-seed-ratio": [
+  0.4205507543671141,
+  0.27167711731012145,
+  8,
+  8,
+  0.0078125
  ]
 }

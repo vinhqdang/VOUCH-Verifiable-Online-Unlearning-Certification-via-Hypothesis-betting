@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """Analyse a run written by run_baselines.py (extension, partial unlearning).
 
-Pre-specified analysis (no strength window is selected after seeing the data):
+Analysis over the whole grid of strengths (no strength window is selected):
 
   advantages   realised cohort advantage of every VOUCH score, per subject,
                mean and standard error over seeds
   retention    for each unlearning subject and seed, advantage after unlearning
-               divided by the same seed's advantage before unlearning ("none")
-  primary test like-for-like comparison of the base-calibrated scores:
+               divided by the same seed's advantage before unlearning ("none").
+               These per-seed ratios are unstable when a seed's pre-unlearning
+               advantage is near zero; the manuscript therefore normalises by
+               the mean pre-unlearning advantage over seeds instead
+               (make_tables_ext.py), and reports this per-seed version alongside.
+  test         like-for-like comparison of the base-calibrated scores:
                paraphrase (belief_cal) retention minus literal (literal_cal)
                retention, averaged over ALL unlearning strengths of the grid
                within each seed, then a Wilcoxon signed-rank test over seeds

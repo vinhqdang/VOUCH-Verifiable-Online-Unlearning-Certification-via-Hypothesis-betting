@@ -77,7 +77,7 @@ def semantic():
     rows = []
     for m, nm in lab.items():
         S = [r["subjects"][m] for r in R]
-        lit = ", ".join(f"${s['advantage']['literal']:+.2f}$" for s in S)
+        lit = ", ".join(f"${s['advantage']['literal_cal']:+.2f}$" for s in S)
         par = ", ".join(f"${s['advantage']['belief_cal']:+.2f}$" for s in S)
         v2 = " ".join(abbrev[s["verdicts"]["all/eps=0.2"]["status"]] for s in S)
         v1 = " ".join(abbrev[s["verdicts"]["all/eps=0.1"]["status"]] for s in S)
@@ -153,5 +153,4 @@ if __name__ == "__main__":
     growth()
     detect()
     semantic()
-    union_extremes()
     # partial-unlearning, matched-twin and baseline tables: make_tables_ext.py

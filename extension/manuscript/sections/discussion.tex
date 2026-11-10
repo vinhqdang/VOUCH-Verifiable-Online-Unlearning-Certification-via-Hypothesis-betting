@@ -6,13 +6,15 @@ used without giving up the exact null, provided both twins are scored under the 
 prompt. Second, the declared class should contain calibrated paraphrase scores next to the
 literal score, audited as a union at level $\alpha/2$ each. Paraphrase scores never
 replaced the literal score in our experiments, since they are weaker on their own, but
-they catch knowledge that an incomplete forget set leaves behind and cost nothing in
-validity when the forget set is complete. Third, a verifier who wants the certificate to
+they reveal residue that an incomplete forget set leaves behind, which a literal-only class
+cannot see by construction, and they kept the error rate when the forget set was
+complete. Third, a verifier who wants the certificate to
 say something about organic records must pay for it twice: in detectability, by drawing
 canaries from the organic distribution, and in power, because such canaries are memorised
 no more than organic records are. Fourth, membership-inference tests against a holdout
 set should not be read as unlearning audits unless members and non-members come from one
-distribution by construction, as ghost twins do.
+distribution by construction, as ghost twins do, and a paired test on twins is far more
+powerful than an unpaired one.
 
 \paragraph{The distinguishing advantage cannot be certified.} Theorem~\ref{thm:detect} is
 conditional on $\gamma$, and data bound $\gamma$ only from below. Our detectors are two
@@ -75,7 +77,7 @@ to tell canaries from organic records, a cost that existing canary designs make 
 and that organic-matched canaries remove, at the price of the memorisation signal the
 audit needs. Under partial unlearning the fact outlives its literal form only slightly at
 the scales we tested; an incomplete forget set is the larger practical risk, and an audit
-that scores paraphrases next to the literal form catches it. Membership-inference tests
+that scores paraphrases next to the literal form reveals it. Membership-inference tests
 against a holdout set either confound canaries with organic records or lack the power of
 a paired sequential test. The certificate remains a statement about a declared score
 class, a committed cohort and a provider whose pipeline is attested or trusted, and the

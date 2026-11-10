@@ -5,8 +5,13 @@ baseline experiments. Run after make_tables.py: cd extension/manuscript && pytho
 import json
 import os
 
+import sys
+
 import numpy as np
-from scipy.stats import wilcoxon
+from scipy.stats import binomtest, wilcoxon
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "experiments"))
+from union_audit import cell  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RES = os.path.join(HERE, "..", "results")
@@ -61,12 +66,16 @@ def retention_tests():
             m, se = ms(per)
             p = wilcoxon(per).pvalue
             summary[(name, a, b)] = (m, se, int((per > 0).sum()), len(per), p)
+            ratio = np.array([np.mean([adv(r, n, b) / adv(r, "none", b) - adv(r, n, a) / adv(r, "none", a)
+                                       for n in GRID]) for r in R])
+            summary[(name, a, b, "per-seed-ratio")] = (ratio.mean(), ms(ratio)[1], int((ratio > 0).sum()),
+                                                      len(ratio), wilcoxon(ratio).pvalue)
             rows.append(f"{name} & {lab} & ${m:+.3f}\\pm{se:.3f}$ & {int((per > 0).sum())}/{len(per)} & {p:.3f} \\\\")
         rows.append("\\addlinespace")
     write("retention_tests", "\\begin{tabular}{llccc}\n\\toprule\n"
           "Experiment & Scores compared & retention gap & seeds $>0$ & $p$ \\\\\n\\midrule\n"
           + "\n".join(rows[:-1]) + "\n\\bottomrule\n\\end{tabular}\n")
-    json.dump({f"{k[0]}|{k[1]}|{k[2]}": v for k, v in summary.items()},
+    json.dump({"|".join(k): v for k, v in summary.items()},
               open(os.path.join(RES, "retention_tests.json"), "w"), indent=1, default=float)
 
 
@@ -127,6 +136,34 @@ def incomplete():
           "\\midrule\n" + "\n".join(out) + "\n\\bottomrule\n\\end{tabular}\n")
 
 
+def incomplete_stats():
+    """Seed-level counts and extremes quoted in the text, stored for reproducibility."""
+    out = {}
+    for m, f, uf in (("410M", "semantic_pythia410m_squeeze.json", "union_audit_pythia410m.json"),
+                     ("1B", "semantic_pythia1b_squeeze.json", "union_audit_pythia1b.json")):
+        R = runs(f)
+        U = {r["subject"]: r for r in load(uf)["rows"]}
+        per_seed = {}
+        for n in GRID:
+            fr = []
+            for r in R:
+                res = cell((r["subjects"][n]["pair_diffs"], 0.05, 0.2, 40))
+                fr.append(float(np.mean([a == "ISSUED" and b == "REVOKED"
+                                         for a, b in zip(res["literal"], res["union"])])))
+            per_seed[n] = fr
+        light = ["none", "ga@5", "npo@10"]
+        out[m] = {"per_seed_literal_issued_union_revoked": per_seed,
+                  "seeds_majority": {n: int(sum(x > 0.5 for x in v)) for n, v in per_seed.items()},
+                  "light_min_revoked": min(U[n][f"revoked_{u}"] for n in light
+                                           for u in ("literal", "union", "mixture")),
+                  "npo75_max_revoked": max(U["npo@75"][f"revoked_{u}"]
+                                           for u in ("literal", "union", "mixture"))}
+    json.dump(out, open(os.path.join(RES, "incomplete_stats.json"), "w"), indent=1)
+    print("incomplete:", {m: (v["seeds_majority"]["npo@25"], v["seeds_majority"]["npo@40"],
+                              round(v["light_min_revoked"], 3), round(v["npo75_max_revoked"], 3))
+                          for m, v in out.items()})
+
+
 # --- clean design and matched twins ------------------------------------------
 def runtable(fname, out_name, subjects, mia_file):
     R = [r for r in load(fname) if all(n in r["subjects"] for n in subjects)]
@@ -150,13 +187,20 @@ def runtable(fname, out_name, subjects, mia_file):
 # --- membership-inference baselines -----------------------------------------
 def baselines():
     an = load("runA_semantic_literal_analysis.json")["rules"]
+    RA = load("runA_semantic_literal.json")
+
+    def sign_rate(n, k="literal"):
+        """Paired fixed-sample sign test on the same pairs and score as VOUCH."""
+        return np.mean([binomtest(sum(d[k] > 0 for d in r["subjects"][n]["pair_diffs"]),
+                                  len(r["subjects"][n]["pair_diffs"])).pvalue < 0.05 for r in RA])
     mia = {r["subject"]: r for r in load("runA_semantic_literal_mia.json")["rows"]}
     order = ["none", "retrain", "ga@10", "ga@15", "ga@20", "npo@25", "npo@40", "npo@75"]
     lines = []
     for n in order:
         r = mia[n]
         f = lambda k: f"{r[k]:.2f}"
-        cells = [f"{an[n]['revoked_literal']:.2f}", f"{an[n]['revoked_union']:.2f}"]
+        cells = [f"{an[n]['revoked_literal']:.2f}", f"{an[n]['revoked_union']:.2f}",
+                 f"{sign_rate(n):.2f}"]
         cells += [f(f"mia/literal/matched/{x}/leak") for x in ("loss", "mink", "zlib", "ref")]
         cells += [f(f"mia/literal/unmatched/{x}/leak") for x in ("loss", "ref")]
         cells += [f(f"mia/paraphrase/matched/{x}/leak") for x in ("loss", "ref")]
@@ -164,12 +208,12 @@ def baselines():
         lines.append(f"{label(n)} & " + " & ".join(cells) + " \\\\")
         if n == "retrain":
             lines.append("\\midrule")
-    write("baselines", "\\begin{tabular}{l cc cccc cc cc cc}\n\\toprule\n"
-          " & \\multicolumn{2}{c}{VOUCH} & \\multicolumn{4}{c}{(a) canaries vs.\\ ghosts}"
+    write("baselines", "\\begin{tabular}{l ccc cccc cc cc cc}\n\\toprule\n"
+          " & \\multicolumn{2}{c}{VOUCH} & sign & \\multicolumn{4}{c}{(a) canaries vs.\\ ghosts}"
           " & \\multicolumn{2}{c}{(b) vs.\\ organic} & \\multicolumn{2}{c}{(c) paraphrase}"
           " & \\multicolumn{2}{c}{(d) organic} \\\\\n"
-          "\\cmidrule(lr){2-3}\\cmidrule(lr){4-7}\\cmidrule(lr){8-9}\\cmidrule(lr){10-11}\\cmidrule(lr){12-13}\n"
-          "Subject & lit. & union & loss & Min-K\\% & zlib & ref & loss & ref & loss & ref & loss & ref \\\\\n"
+          "\\cmidrule(lr){2-3}\\cmidrule(lr){4-4}\\cmidrule(lr){5-8}\\cmidrule(lr){9-10}\\cmidrule(lr){11-12}\\cmidrule(lr){13-14}\n"
+          "Subject & lit. & union & lit. & loss & Min-K\\% & zlib & ref & loss & ref & loss & ref & loss & ref \\\\\n"
           "\\midrule\n" + "\n".join(lines) + "\n\\bottomrule\n\\end{tabular}\n")
     print("AUC (a) loss:", {n: round(mia[n]["mia/literal/matched/loss/auc"], 3) for n in order})
     print("AUC (b) loss:", {n: round(mia[n]["mia/literal/unmatched/loss/auc"], 3) for n in order})
@@ -177,6 +221,7 @@ def baselines():
 
 if __name__ == "__main__":
     retention_tests()
+    incomplete_stats()
     figure()
     incomplete()
     runtable("runA_semantic_literal.json", "clean",

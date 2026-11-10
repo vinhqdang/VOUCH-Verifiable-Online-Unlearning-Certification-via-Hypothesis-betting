@@ -11,24 +11,29 @@ pairings of members and non-members are compared: (a) canary in-twins against th
 twins, the matched holdout that VOUCH's design provides; (b) canary in-twins against
 organic holdout records, the usual holdout of a benchmark; (c) the paraphrased questions
 of in-twins against those of ghost twins; and (d) the organic forget biographies against
-the organic holdout, the audit on the data users actually delete.
+the organic holdout, the audit on the data users actually delete. To separate the
+contribution of pairing from that of sequential testing we add a paired fixed-sample test:
+a two-sided sign test at level $0.05$ on the literal score differences of all $384$ pairs,
+the same pairs and the same score that VOUCH uses, evaluated once at the end.
 
 \begin{table}[t]
 \centering\small
 \caption{Fraction of seeds (VOUCH: of seeds $\times$ $40$ reveal orders) in which each audit
 reports leakage, literal-only design, Pythia-410M, eight seeds. VOUCH columns are
-REVOKED rates of the literal and the union rule; membership-inference columns are
-fractions of seeds whose $95\%$ bootstrap AUC interval excludes $0.5$. Retraining is the
+REVOKED rates of the literal and the union rule; ``sign'' is the fraction of seeds in which
+the paired fixed-sample sign test on the literal score rejects; membership-inference
+columns are fractions of seeds whose $95\%$ bootstrap AUC interval excludes $0.5$. Retraining is the
 exact null, so every positive entry in its row is a false alarm.}
 \label{tab:baselines}
 \setlength{\tabcolsep}{3.2pt}
 \footnotesize\setlength{\tabcolsep}{3pt}\input{tables/baselines}
 \end{table}
 
-Table~\ref{tab:baselines} shows three things.
+Table~\ref{tab:baselines} shows four things.
 
 \emph{An unmatched holdout makes the test meaningless.} Pairing (b) reports leakage on
-every seed of every subject, retraining included, with AUC $0.000$ on retraining: the
+every seed of every subject in the table, retraining included (and on seven of eight
+seeds after $25$ GA steps), with AUC $0.000$ on retraining: the
 canaries and the organic holdout differ in distribution, so the test detects the
 difference between two kinds of record, not membership. Calibrating by the base model does
 not help. This is the confound of Theorem~\ref{thm:detect} seen from the side of the
@@ -41,10 +46,17 @@ records as VOUCH and is valid: no false alarm on retraining, and the positive co
 detected in every seed by the loss, Min-K\% and zlib scores (AUC $0.59$). But under partial
 unlearning it falls silent long before VOUCH does: after $10$ GA steps the loss test flags
 $38\%$ of seeds where VOUCH revokes $96\%$ of runs, and after $15$ GA steps or $25$ NPO
-steps it flags none where VOUCH revokes $68\%$ and $36\%$. The difference is the pairing.
-An unpaired AUC compares in-twins with ghost twins across different entities, whose loss
-differences are dominated by the entities themselves; VOUCH compares the two twins of the
-same entity, which cancels that variation, and accumulates the evidence sequentially.
+steps it flags none where VOUCH revokes $68\%$ and $36\%$. The paired fixed-sample sign test on the same pairs is at least as powerful as VOUCH at all
+strengths but one (for example $62\%$ of seeds against $36\%$ of runs after $25$ NPO steps;
+after $40$ NPO steps it rejects in no seed while VOUCH revokes $6\%$ of runs), so the gap between
+VOUCH and the matched-holdout test comes from pairing and from scoring the target value
+rather than the whole record, not from sequential testing. An unpaired AUC compares
+in-twins with ghost twins across different entities, whose whole-record losses are
+dominated by the entities themselves; a paired test compares the two twins of one entity,
+which cancels that variation. Sequential testing costs some power against a test run once
+at the end, and buys the right to monitor continuously and stop at any time without
+inflating the error; the original paper measures what a fixed-sample test loses under
+optional stopping.
 
 \emph{The paraphrase and organic audits are weak.} Pairing (c) detects nothing, not even on
 the positive control, because a whole-record loss over a question and a one-word answer is
