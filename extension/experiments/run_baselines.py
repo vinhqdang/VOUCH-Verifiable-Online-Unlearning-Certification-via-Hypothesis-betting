@@ -47,7 +47,7 @@ sys.path.insert(0, os.path.join(ROOT, "experiments"))
 from run_lm_big import clone_adapter, drop_adapter, fresh_adapter, train_adapter  # noqa: E402
 
 from extension.semantic.canaries import SemanticGenerator  # noqa: E402
-from extension.semantic.scores import pair_score_diffs  # noqa: E402
+from extension.semantic.scores import pair_score_diffs  # noqa: E402,F401  (definitions mirrored below)
 from vouch.training.inject import synthetic_bio_corpus  # noqa: E402
 
 OUT = os.path.join(ROOT, "extension", "results")
@@ -174,21 +174,65 @@ def main():
         from contextlib import nullcontext
         base_feats = record_feats(model.disable_adapter)
 
+        # VOUCH score differences, batched: same definitions as
+        # extension.semantic.scores.pair_score_diffs (literal, belief, belief_max
+        # and their base-calibrated versions), computed in padded batches.
+        reqs = []   # (pair index, value slot 0=in/1=ghost, prompt index 0=literal,1..=questions)
+        for i, p in enumerate(man.pairs):
+            prompts = [p.literal_prefix()] + [p.question_prefixes()[k] for k in q_eval]
+            for v, val in enumerate((p.in_value, p.ghost_value)):
+                for j, pr in enumerate(prompts):
+                    reqs.append((i, v, j, pr, " " + val))
+
         @torch.no_grad()
-        def lp(prefix, target):
+        def batched_target_lp():
             model.eval()
-            p_ids = tok(prefix)["input_ids"]
-            t_ids = tok(target)["input_ids"]
-            ids = torch.tensor([p_ids + t_ids], device=args.device)
-            logits = model(input_ids=ids).logits[0, :-1].float()
-            tl = torch.log_softmax(logits, -1)[torch.arange(ids.shape[1] - 1), ids[0, 1:]]
-            return tl[-len(t_ids):].cpu().numpy()
+            out = np.zeros(len(reqs))
+            pad = tok.pad_token_id
+            for a in range(0, len(reqs), args.score_batch):
+                chunk = reqs[a:a + args.score_batch]
+                seqs, tl = [], []
+                for (_, _, _, pr, tg) in chunk:
+                    pi, ti = tok(pr)["input_ids"], tok(tg)["input_ids"]
+                    seqs.append(pi + ti)
+                    tl.append((len(pi), len(ti)))
+                mx = max(len(x) for x in seqs)
+                ids = torch.full((len(seqs), mx), pad, dtype=torch.long)
+                att = torch.zeros((len(seqs), mx), dtype=torch.long)
+                for r, x in enumerate(seqs):
+                    ids[r, :len(x)] = torch.tensor(x)
+                    att[r, :len(x)] = 1
+                ids, att = ids.to(args.device), att.to(args.device)
+                logits = model(input_ids=ids, attention_mask=att).logits.float()
+                lps = torch.log_softmax(logits, -1)
+                for r, (lp_, lt) in enumerate(tl):
+                    pos = torch.arange(lp_ - 1, lp_ + lt - 1, device=args.device)
+                    tgt = ids[r, lp_:lp_ + lt]
+                    out[a + r] = float(lps[r, pos, tgt].mean())
+            return out
 
-        def base_lp(prefix, target):
-            with model.disable_adapter():
-                return lp(prefix, target)
+        def score_table(vals):
+            nq = len(q_eval)
+            t = vals.reshape(len(man.pairs), 2, 1 + nq)   # pair, in/ghost, prompt
+            lit = t[:, :, 0]
+            bel = t[:, :, 1:].mean(-1)
+            bmx = t[:, :, 1:].max(-1)
+            return {"literal": lit, "belief": bel, "belief_max": bmx}
 
-        base_cache: dict = {}
+        with model.disable_adapter():
+            base_tab = score_table(batched_target_lp())
+
+        def pair_diffs_batched():
+            tab = score_table(batched_target_lp())
+            out = []
+            for i in range(len(man.pairs)):
+                d = {}
+                for k in ("literal", "belief", "belief_max"):
+                    d[k] = float(tab[k][i, 0] - tab[k][i, 1])
+                for k in ("literal", "belief", "belief_max"):
+                    d[k + "_cal"] = d[k] - float(base_tab[k][i, 0] - base_tab[k][i, 1])
+                out.append(d)
+            return out
 
         def audit(name, adapter):
             t0 = time.time()
@@ -198,8 +242,7 @@ def main():
             for g in fr:
                 f = np.column_stack([fr[g], fr[g][:, 0] - base_feats[g][:, 0]])
                 subj[g] = f.round(5).tolist()
-            subj["pair_diffs"] = [pair_score_diffs(lp, p, base_fn=base_lp, questions=q_eval,
-                                                   base_cache=base_cache) for p in man.pairs]
+            subj["pair_diffs"] = pair_diffs_batched()
             subj["scoring_seconds"] = time.time() - t0
             rec["subjects"][name] = subj
             rec["feature_names"] = list(FEATS)
