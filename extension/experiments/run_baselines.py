@@ -48,7 +48,7 @@ sys.path.insert(0, os.path.join(ROOT, "experiments"))
 
 from run_lm_big import clone_adapter, drop_adapter, fresh_adapter, train_adapter  # noqa: E402
 
-from extension.semantic.canaries import SemanticGenerator  # noqa: E402
+from extension.semantic.canaries import MatchedGenerator, SemanticGenerator  # noqa: E402
 from extension.semantic.scores import pair_score_diffs  # noqa: E402,F401  (definitions mirrored below)
 from vouch.training.inject import synthetic_bio_corpus  # noqa: E402
 
@@ -75,6 +75,10 @@ def main():
     ap.add_argument("--score-batch", type=int, default=32)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--out", default="baselines_pythia410m.json")
+    ap.add_argument("--forms", default="literal+qa", choices=["literal", "literal+qa"],
+                    help="forms the in-twins are trained in; the forget set always "
+                         "holds the literal form only")
+    ap.add_argument("--generator", default="semantic", choices=["semantic", "matched"])
     args = ap.parse_args()
 
     from peft import LoraConfig, get_peft_model
@@ -84,8 +88,9 @@ def main():
     out_path = os.path.join(OUT, args.out)
     runs = json.load(open(out_path)) if os.path.exists(out_path) else []
     done = {(r["seed"], m) for r in runs for m in r["subjects"]}
-    forms = "literal+qa"
-    q_eval = [1, 2, 3, 4]
+    forms = args.forms
+    # questions used in training (question 0 under literal+qa) are never scored
+    q_eval = [1, 2, 3, 4] if forms == "literal+qa" else [0, 1, 2, 3, 4]
 
     tok = AutoTokenizer.from_pretrained(args.model)
     if tok.pad_token is None:
@@ -105,10 +110,12 @@ def main():
         if rec is None:
             rec = {"seed": seed, "model": args.model, "pairs": args.pairs,
                    "forms": forms, "forget_forms": "literal", "questions_scored": q_eval,
+                   "generator": args.generator,
                    "subjects": {}}
             runs.append(rec)
         torch.manual_seed(seed)
-        man = SemanticGenerator(seed=seed).generate(args.pairs)
+        gen = SemanticGenerator if args.generator == "semantic" else MatchedGenerator
+        man = gen(seed=seed).generate(args.pairs)
         rec["manifest_sha256"] = man.commitment()
         rec["coins"] = [p.coin for p in man.pairs]
         rec["repetitions"] = [p.repetition for p in man.pairs]
