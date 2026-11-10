@@ -12,6 +12,8 @@ same AUC; we report the test form):
                       matched    the ghost twins (same generator, never trained)
                       unmatched  organic biographies never trained, the usual
                                  holdout set of an unlearning benchmark
+  organic           the organic forget-set biographies against the same organic
+                    holdout: the MUSE-style audit on the data users delete
   verdict           LEAK if the 95% bootstrap interval of the AUC excludes 0.5,
                     PASS otherwise
 
@@ -58,8 +60,9 @@ def mia_cell(job):
     subj, seed = job
     rng = np.random.default_rng(seed)
     out = {}
-    designs = {"literal/matched": ("in", "ghost"), "literal/unmatched": ("in", "holdout"),
-               "paraphrase/matched": ("in_qa", "ghost_qa")}
+    designs = {k: v for k, v in {"literal/matched": ("in", "ghost"), "literal/unmatched": ("in", "holdout"),
+               "paraphrase/matched": ("in_qa", "ghost_qa"),
+               "organic/forget": ("forget_bio", "holdout")}.items() if v[0] in subj}
     for d, (gp, gn) in designs.items():
         P, N = np.array(subj[gp]), np.array(subj[gn])
         for j, f in enumerate(FEATS):
@@ -101,7 +104,7 @@ def main():
                                                           for s in vou[i][rule]]))
             row[f"vouch_issued_{rule}"] = float(np.mean([s == "ISSUED" for i in idx
                                                          for s in vou[i][rule]]))
-        for k in mkeys:
+        for k in [k for k in mkeys if all(k in mia[i] for i in idx)]:
             row[f"mia/{k}/leak"] = float(np.mean([mia[i][k]["leak"] for i in idx]))
             row[f"mia/{k}/auc"] = float(np.mean([mia[i][k]["auc"] for i in idx]))
         rows.append(row)

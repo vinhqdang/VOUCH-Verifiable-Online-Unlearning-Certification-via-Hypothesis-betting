@@ -11,8 +11,10 @@ compared with VOUCH offline (analyze_baselines.py):
             ghost   ghost-twin literal statements (never trained, matched)
             in_qa / ghost_qa   paraphrased question + answer, questions never
                     trained (k = 1..4), one feature vector per pair, averaged
-            holdout organic biographies never trained (unmatched non-members,
-                    the usual holdout of MUSE-style audits)
+            holdout organic biographies never trained (non-members)
+            forget_bio  the organic biographies of the forget set (trained, then
+                    unlearned); against holdout this is the MUSE-style audit on
+                    organic data, members and non-members from one distribution
   features  loss    mean token negative log-likelihood
             mink    mean of the lowest 20% token log-probabilities, negated
                     (Min-K% Prob, Shi et al. 2024)
@@ -122,6 +124,7 @@ def main():
             "in": [p.in_text for p in man.pairs],
             "ghost": [p.ghost_text for p in man.pairs],
             "holdout": holdout,
+            "forget_bio": forget_bio,
         }
         qa_in = [[p.qa(p.in_value, k) for k in q_eval] for p in man.pairs]
         qa_gh = [[p.qa(p.ghost_value, k) for k in q_eval] for p in man.pairs]
