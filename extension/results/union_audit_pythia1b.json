@@ -1,0 +1,148 @@
+{
+ "source": "extension/results/semantic_pythia1b_squeeze.json",
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+ ],
+ "eps": 0.2,
+ "alpha": 0.05,
+ "rows": [
+  {
+   "subject": "none",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 1.0,
+   "revoked_union": 1.0,
+   "revoked_mixture": 1.0,
+   "issued_literal": 0.0,
+   "issued_union": 0.0,
+   "issued_mixture": 0.0,
+   "literal_issued_union_revoked": 0.0
+  },
+  {
+   "subject": "ga@5",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 1.0,
+   "revoked_union": 1.0,
+   "revoked_mixture": 1.0,
+   "issued_literal": 0.0,
+   "issued_union": 0.0,
+   "issued_mixture": 0.0,
+   "literal_issued_union_revoked": 0.0
+  },
+  {
+   "subject": "ga@10",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.9178571428571428,
+   "revoked_union": 0.8964285714285715,
+   "revoked_mixture": 0.9035714285714286,
+   "issued_literal": 0.08214285714285714,
+   "issued_union": 0.10357142857142858,
+   "issued_mixture": 0.09642857142857143,
+   "literal_issued_union_revoked": 0.010714285714285714
+  },
+  {
+   "subject": "ga@15",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.7107142857142857,
+   "revoked_union": 0.7392857142857143,
+   "revoked_mixture": 0.7285714285714285,
+   "issued_literal": 0.2892857142857143,
+   "issued_union": 0.26071428571428573,
+   "issued_mixture": 0.26785714285714285,
+   "literal_issued_union_revoked": 0.04642857142857143
+  },
+  {
+   "subject": "ga@20",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.5464285714285714,
+   "revoked_union": 0.5071428571428571,
+   "revoked_mixture": 0.5178571428571429,
+   "issued_literal": 0.45357142857142857,
+   "issued_union": 0.4928571428571429,
+   "issued_mixture": 0.48214285714285715,
+   "literal_issued_union_revoked": 0.02142857142857143
+  },
+  {
+   "subject": "ga@25",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.25,
+   "revoked_union": 0.26785714285714285,
+   "revoked_mixture": 0.29642857142857143,
+   "issued_literal": 0.75,
+   "issued_union": 0.7321428571428571,
+   "issued_mixture": 0.7035714285714286,
+   "literal_issued_union_revoked": 0.02857142857142857
+  },
+  {
+   "subject": "npo@10",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.9964285714285714,
+   "revoked_union": 0.9964285714285714,
+   "revoked_mixture": 1.0,
+   "issued_literal": 0.0035714285714285713,
+   "issued_union": 0.0035714285714285713,
+   "issued_mixture": 0.0,
+   "literal_issued_union_revoked": 0.0
+  },
+  {
+   "subject": "npo@25",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.7,
+   "revoked_union": 0.725,
+   "revoked_mixture": 0.7428571428571429,
+   "issued_literal": 0.3,
+   "issued_union": 0.275,
+   "issued_mixture": 0.2571428571428571,
+   "literal_issued_union_revoked": 0.02857142857142857
+  },
+  {
+   "subject": "npo@40",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.225,
+   "revoked_union": 0.45714285714285713,
+   "revoked_mixture": 0.4785714285714286,
+   "issued_literal": 0.775,
+   "issued_union": 0.5428571428571428,
+   "issued_mixture": 0.5214285714285715,
+   "literal_issued_union_revoked": 0.25
+  },
+  {
+   "subject": "npo@55",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.010714285714285714,
+   "revoked_union": 0.1357142857142857,
+   "revoked_mixture": 0.11785714285714285,
+   "issued_literal": 0.9892857142857143,
+   "issued_union": 0.8642857142857143,
+   "issued_mixture": 0.8821428571428571,
+   "literal_issued_union_revoked": 0.125
+  },
+  {
+   "subject": "npo@75",
+   "n_seeds": 7,
+   "k": 40,
+   "revoked_literal": 0.017857142857142856,
+   "revoked_union": 0.025,
+   "revoked_mixture": 0.017857142857142856,
+   "issued_literal": 0.9821428571428571,
+   "issued_union": 0.975,
+   "issued_mixture": 0.9821428571428571,
+   "literal_issued_union_revoked": 0.014285714285714285
+  }
+ ]
+}
