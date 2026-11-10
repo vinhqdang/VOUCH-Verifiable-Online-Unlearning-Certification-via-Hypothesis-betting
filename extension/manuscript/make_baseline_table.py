@@ -23,14 +23,16 @@ for s in ORDER:
     cells += [f(f"mia/literal/matched/{x}/leak") for x in ("loss", "mink", "zlib", "ref")]
     cells += [f(f"mia/literal/unmatched/{x}/leak") for x in ("loss", "ref")]
     cells += [f(f"mia/paraphrase/matched/{x}/leak") for x in ("loss", "ref")]
+    cells += [f(f"mia/organic/forget/{x}/leak") for x in ("loss", "ref")]
     lines.append(f"{label(s)} & " + " & ".join(cells) + " \\\\")
     if s == "retrain":
         lines.append("\\midrule")
-body = ("\\begin{tabular}{l cc cccc cc cc}\n\\toprule\n"
-        " & \\multicolumn{2}{c}{VOUCH revoked} & \\multicolumn{4}{c}{MIA, literal, matched holdout}"
-        " & \\multicolumn{2}{c}{MIA, literal, organic holdout} & \\multicolumn{2}{c}{MIA, paraphrase, matched} \\\\\n"
-        "\\cmidrule(lr){2-3}\\cmidrule(lr){4-7}\\cmidrule(lr){8-9}\\cmidrule(lr){10-11}\n"
-        "Subject & literal & union & loss & Min-K\\% & zlib & ref & loss & ref & loss & ref \\\\\n\\midrule\n"
+body = ("\\begin{tabular}{l cc cccc cc cc cc}\n\\toprule\n"
+        " & \\multicolumn{2}{c}{VOUCH} & \\multicolumn{4}{c}{(a) canaries vs.\\ ghosts}"
+        " & \\multicolumn{2}{c}{(b) canaries vs.\\ organic} & \\multicolumn{2}{c}{(c) paraphrase}"
+        " & \\multicolumn{2}{c}{(d) organic forget set} \\\\\n"
+        "\\cmidrule(lr){2-3}\\cmidrule(lr){4-7}\\cmidrule(lr){8-9}\\cmidrule(lr){10-11}\\cmidrule(lr){12-13}\n"
+        "Subject & literal & union & loss & Min-K\\% & zlib & ref & loss & ref & loss & ref & loss & ref \\\\\n\\midrule\n"
         + "\n".join(lines) + "\n\\bottomrule\n\\end{tabular}\n")
 open(os.path.join(HERE, "tables", "baselines.tex"), "w").write(body)
 print("wrote baselines")
