@@ -40,8 +40,12 @@ def main():
     ap.add_argument("--eps", default="0.2")
     ap.add_argument("--out", default=os.path.join(
         ROOT, "extension", "results", "squeeze_summary.json"))
+    ap.add_argument("--seeds", type=int, nargs="+", default=None,
+                    help="restrict to these seeds (e.g. to drop an incomplete seed)")
     args = ap.parse_args()
     runs = json.load(open(args.path))
+    if args.seeds is not None:
+        runs = [r for r in runs if r["seed"] in args.seeds]
     names = sorted({k for r in runs for k in r["subjects"]},
                    key=lambda s: (s.split("@")[0] != "none", s.split("@")[0],
                                   int(s.split("@")[1]) if "@" in s else 0))
@@ -93,6 +97,7 @@ def main():
                "retention_gap_pooled_n": int(len(pooled))}
     print("region", summary)
     json.dump({"summary": summary, "source": os.path.relpath(args.path, ROOT), "eps": float(args.eps),
+               "seeds": sorted(r["seed"] for r in runs),
                "rows": rows}, open(args.out, "w"), indent=1)
 
 
