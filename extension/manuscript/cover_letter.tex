@@ -1,0 +1,95 @@
+\documentclass[10pt,a4paper]{letter}
+\usepackage[top=1.8cm,bottom=1.8cm,left=2.4cm,right=2.4cm]{geometry}
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
+
+\signature{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}\\ORCID 0000-0002-3877-8024}
+\address{Quang-Vinh Dang\\British University Vietnam\\Hung Yen, Vietnam\\\href{mailto:vinh.dq4@buv.edu.vn}{vinh.dq4@buv.edu.vn}}
+\date{13 November 2026}
+
+\begin{document}
+
+\begin{letter}{The Editors-in-Chief\\\emph{Machine Learning}\\Springer Nature}
+
+\opening{Dear Editors,}
+
+Please consider the enclosed manuscript, ``\emph{Beyond Planted Strings: Semantic
+Canaries, Canary Detectability, and Partial Unlearning in Anytime-Valid Unlearning
+Certificates},'' for publication in \emph{Machine Learning}.
+
+\textbf{Relation to my earlier paper.} The manuscript extends ``\emph{VOUCH: Anytime-Valid
+Certificates for Machine Unlearning via Paired-Canary Hypothesis-Betting},'' which has
+been accepted by \emph{Machine Learning} [manuscript number: \emph{to be inserted}]. I
+raise the overlap here so that you can judge it. The new manuscript recalls the VOUCH
+certificate in one background section and cites the earlier paper for every result it
+uses; it reproduces no theorem, table or figure of it. Everything stated as a result is
+new: the theorems and propositions of its Sections~4--7, all experiments, and all
+numbers. The two papers share the underlying construction (paired ghost canaries, the
+exact null, betting e-processes), the fictitious-biography data generator, and the
+released code base.
+
+\textbf{What is new.} The earlier paper left three questions open, two of which it
+named itself: whether canaries made of random strings say anything about the data that
+users actually delete, what a provider that treats canaries differently could gain, and
+whether an audit that reads the trained surface form sees knowledge that survives in
+paraphrase. The manuscript addresses them as follows.
+\begin{itemize}
+\item \emph{Natural-language canaries.} It proves that semantic twins, two incompatible
+facts about one fictitious entity, keep the exact null for every score that compares the
+two facts under the same prompt, including belief scores over paraphrased questions that
+were never trained and their versions calibrated by the base model.
+\item \emph{From canaries to organic records.} Under a bounded-influence assumption the
+cohort certificate transfers to the canary generator's population and then to organic
+records at a cost of twice the provider's ability to tell the two apart from their
+contents. For one-sided leakage the dependence is sharp: the largest organic advantage
+compatible with a certified cohort is a Neyman--Pearson power. Two measurements go with
+it: every canary design built for VOUCH, and naive semantic twins, is detected with
+advantage one, and a provider guided by an off-the-shelf detector leaves essentially all
+organic records un-unlearned while the cohort advantage stays at the tolerance.
+\item \emph{The cost of enlarging the class and of monitoring continuously.} Adding
+scores costs nothing in error on the certificate side and a logarithm on the revocation
+side; in the sign model no sequential test needs fewer than $\log(1/\alpha)/\mathrm{KL}$
+samples, and an oracle bettor reaches that within a logarithmic term, which matches a
+fixed-sample sign test at about $78\%$ power.
+\item \emph{Experiments on Pythia-410M and Pythia-1B} with eight seeds per setting, and
+a comparison with membership-inference audits on the same runs.
+\end{itemize}
+
+\textbf{What the experiments do and do not show.} I want to be direct about the limits,
+because several results are negative or qualified, and the manuscript reports them as such.
+\begin{itemize}
+\item The squeezing effect, that unlearning removes the literal form faster than the
+fact, appears in the expected direction in all three experiments, but its size
+($+0.07$ to $+0.12$ in retention, like for like) is not significant with eight seeds.
+The manuscript does not claim to have demonstrated it. An earlier analysis of mine
+overstated the effect by comparing a raw score with a calibrated one and by treating
+strength-by-seed cells as replicates; both are corrected, and the manuscript says so.
+\item Organic-matched canaries, which a verifier would choose to make the certificate
+transfer to organic records, are not detected by the detectors I built, but a record seen
+once leaves no detectable trace in the model at the training budget used, so the audit is
+valid and powerless there. The manuscript presents this as the price of the transfer, not
+as a flaw to be hidden.
+\item A membership-inference test of canaries against an organic holdout raised a false
+alarm on every retrained model; against matched ghost twins it is valid but weaker than a
+paired test on the same records.
+\item The theory is conditional on the distinguishing advantage, which data can bound
+only from below, and on a bounded-influence assumption that cannot be checked. All facts
+are fictitious, from one domain, and the models have at most one billion parameters.
+\end{itemize}
+
+\textbf{Reproducibility.} All code, every per-seed result and the scripts that turn the
+results into the tables and the figure of the manuscript are released in the repository
+below, in the directory \texttt{extension/}, together with a test suite for the
+generators and the numerical checks of the new propositions.
+\begin{center}
+\href{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting}{\texttt{github.com/vinhqdang/VOUCH-Verifiable-Online-}\\\texttt{Unlearning-Certification-via-Hypothesis-betting}}
+\end{center}
+
+This manuscript is original, has not been published previously, and is not under
+consideration elsewhere. I am the sole author. I have no conflicts of interest to declare.
+I would be glad to suggest reviewers, or to supply the earlier paper's referee reports and
+my responses to them, if that would help you assess the overlap.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
