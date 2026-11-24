@@ -2,7 +2,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
-\usepackage{url}
+\usepackage{xurl}
 \signature{Quang-Vinh Dang\\British University Vietnam, Hung Yen, Vietnam\\
 \texttt{vinh.dq4@buv.edu.vn} \quad ORCID 0000-0002-3877-8024}
 \address{}
@@ -22,29 +22,29 @@ unlearns them while retaining other data.
 
 \textbf{Contributions and significance.}
 \begin{itemize}
-\item A bound, valid for any audit that compares randomly included canaries with excluded
-twins, under which the leakage a canary-aware provider can hide is at most twice the
-advantage of the best canary detector, together with a sharp form: for one-sided leakage
-the largest hideable leakage equals the Neyman--Pearson power of telling canaries from
-organic records. Every detector is therefore an attack, and every attack is a detector.
-\item A measurement on current designs: the canaries of a recent anytime-valid audit are
-recognised perfectly by a character $n$-gram classifier, and a provider guided by it holds
-the canary advantage at the audit's tolerance while leaving all organic records
-un-unlearned.
+\item A bound for audits that average a bounded per-pair statistic over randomly included
+canaries and excluded twins: the leakage a canary-aware provider can hide, measured on records
+planted like canaries, is at most twice the advantage of the best canary detector. For a
+provider whose leakage is one-sided and determined by the trained record, the bound is sharp
+and equals the Neyman--Pearson power of telling canary records from organic records. Every
+detector is therefore a provider strategy, and every strategy a detector.
+\item A measurement on two canary designs, including those of a recent anytime-valid audit:
+a character $n$-gram classifier recognises both perfectly, and in a simulation driven by its
+decisions a provider holds its canary miss rate at the audit's tolerance while skipping at
+least 99\% of organic records.
 \item A canary design drawn from the organic record generator, with a proof that it keeps the
-audit's exact null, which reduces the provider's gain to near chance; and a
-detectability--power trade-off that follows from the bound and is confirmed on Pythia
-models: indistinguishable canaries are memorised no more than organic records, so the audit
-becomes valid but powerless.
-\item Two practical failure modes: a membership-inference audit against an unmatched holdout
-accuses an honest, retrained provider in every run, and a literal-only audit misses residue
-that an incomplete forget set leaves behind.
+audit's exact null, which our detectors do not separate from organic records beyond noise; and
+a detectability--power trade-off that follows from the bound: on Pythia-410M such canaries,
+seen once, leave the audit valid but without power.
+\item Two practical findings: a membership-inference audit against an unmatched holdout is
+decided by distribution shift and, with a two-sided test, accuses a retrained provider in every
+seed; and a literal-only audit misses residue that an incomplete forget set leaves behind.
 \end{itemize}
 The results give auditors and regulators a concrete rule: a canary-based unlearning
 certificate speaks for user data only up to the canaries' measured detectability, which
 should be reported with every audit.
 
-\textbf{Closest prior work and what is new.} The closest work is my own paper on VOUCH,
+\textbf{Closest prior work and what is new.} The closest work is my own paper
 ``VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary
 Hypothesis-Betting'', accepted by \emph{Machine Learning} (Springer) and in press. VOUCH
 introduced the paired-canary certificate that the manuscript uses as its running example,
@@ -56,7 +56,7 @@ yet publicly available, its accepted version is uploaded with this submission fo
 reviewers' reference. Related work on dishonest providers (Zhang et al., 2024), canary-based
 privacy auditing (Steinke et al., 2023), copyright traps (Meeus et al., 2024) and
 distribution shift in membership-inference benchmarks (Duan et al., 2024; Das et al., 2024)
-is discussed in Section~VI; none of these bounds what recognising canaries buys a provider.
+is discussed in the related-work section; none of these bounds what recognising canaries buys a provider.
 
 \textbf{Reproducibility.} All code, per-seed results and the scripts that produce every
 table and figure are public at
@@ -65,7 +65,7 @@ table and figure are public at
 seeds.
 
 The manuscript is not under consideration elsewhere.
-It is 12 pages in the IEEE two-column format, with a 4-page supplement containing proofs and
+It is 13 pages in the IEEE two-column format, with a 4-page supplement containing proofs and
 additional results. There are no competing interests and no funding to declare.
 
 \closing{Sincerely,}

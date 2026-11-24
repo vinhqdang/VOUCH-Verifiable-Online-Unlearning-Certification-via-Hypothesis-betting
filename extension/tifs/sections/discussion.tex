@@ -12,10 +12,12 @@ which costs nothing in certificate error and catches residue that an incomplete 
 leaves behind.
 
 \paragraph{The trade-off cannot be designed away} Corollary~\ref{cor:tradeoff} is an identity,
-not an artefact of our designs: an audit can see more than the organic advantage only through
-features that also make its canaries recognisable. A certificate from undetectable canaries
-says how much the pipeline leaks for records like users' records, which at single exposure may
-be little, and cannot distinguish unlearning from never having learned. Larger training
+not an artefact of our designs: an audit can see more than the counterfactual organic advantage
+only through features that also make its canaries recognisable. A certificate from
+indistinguishable canaries speaks for organic records planted in the same way, whose leakage at
+single exposure may be small, and then cannot distinguish unlearning from never having learned.
+It does not speak for the particular records users deleted, which may have been seen many
+times. Larger training
 budgets, canaries spread over several slots, or repetition through paraphrased rather than
 verbatim copies are ways to buy back power, each at a detectability cost that would have to
 be measured.
@@ -29,8 +31,11 @@ canaries for real corpora, whose distribution the auditor sees only through samp
 main open problem.
 
 \paragraph{Scope of the evaluation} The selective provider is simulated from detector decisions
-on records, which by Theorem~\ref{thm:sharp}(ii) determines its canary and organic advantages
-when skipped records stay favoured; we did not train and selectively unlearn a model end to end.
+on records, which determines its canary and organic advantages in the idealised profile of
+Theorem~\ref{thm:sharp}; we did not train and selectively unlearn a model end to end, so no
+audit verdict for a selective provider is reported. The detectors are trained on canaries from
+the same generators and on organic records from the same corpus, and the canaries of other
+audits were not tested.
 All facts are fictitious and from one domain, the models have at most one billion parameters
 and are fine-tuned with LoRA for $600$ steps, and the same unlearning step counts are used for
 both sizes. Per-example calibrated attacks with shadow models \citep{carlini2022lira} were
@@ -40,7 +45,7 @@ compared with VOUCH in the original paper and are not repeated.
 randomness and assumes bounded influence, which holds under exact unlearning but cannot be
 verified under partial unlearning. The organic advantage is counterfactual. The sharp form
 needs one-sided leakage, which gradient ascent violates; Theorem~\ref{thm:detect} with its
-factor two covers that case. Proposition~\ref{prop:anytime} assumes i.i.d.\ signs and an
+factor two covers that case. Proposition~\ref{S-prop:anytime} assumes i.i.d.\ signs and an
 oracle stake.
 
 \section{Conclusion}\label{sec:conclusion}
@@ -48,10 +53,11 @@ oracle stake.
 A planted-canary audit certifies the canaries. Whether it certifies anything about the data
 users delete depends on whether the provider can tell the two apart, and we proved that the
 leakage a canary-aware provider can hide is at most twice its distinguishing advantage, exactly
-the Neyman--Pearson power when leakage is one-sided. Current canary designs are recognised
-perfectly, and a provider guided by a simple classifier can leave all organic records
-un-unlearned while holding the canary advantage at the tolerance. Organic-matched canaries,
-which keep the exact null, close the gap, but an indistinguishable canary is memorised no more
-than an organic record, and at single exposure the audit loses its power. An auditor must
+the Neyman--Pearson power when leakage is one-sided. The two canary designs we tested are
+recognised perfectly, and in simulation a provider guided by a simple classifier skips at least
+$99\%$ of organic records while holding its canary miss rate at the tolerance. Organic-matched
+canaries, which keep the exact null, are not separated by our detectors beyond noise, but they
+can be no more sensitive than planted organic records, and at single exposure the audit had no
+power. An auditor must
 choose a point on this trade-off and report it; membership-inference audits against unmatched
-holdouts should not be used at all.
+holdouts measure distribution shift rather than membership and should not be used.

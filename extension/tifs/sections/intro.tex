@@ -31,51 +31,52 @@ which canaries reach the provider through a distinguishable channel, and provide
 deviate from the committed pipeline altogether are out of scope; the former must be closed
 by the injection protocol and the latter by attestation \citep{eisenhofer2025verifiable}.
 
-\paragraph{Contributions.} The contributions are a bound, its measurement on current canary
-designs, and a design that closes the bound together with what it costs.
+\paragraph{Contributions.} The contributions are a bound, its measurement on two canary
+designs, and a canary design meant to remove the detectability term, together with what it costs.
 
 \begin{itemize}
-\item \textbf{A sharp evasion bound.} For any audit whose statistic averages a bounded
-per-pair leakage over randomly included canaries, the gap between the canary advantage and
-the advantage the same pipeline run would show on organic records is at most twice the
-distinguishing advantage between canaries and organic records
-(Theorem~\ref{thm:detect}). For one-sided leakage the bound is sharp: the largest organic
-advantage compatible with a canary advantage of at most $\eps$ is the Neyman--Pearson power
-of testing canaries against organic records at level $\eps$, which is $\eps$ when the two
-coincide and $1$ when they are mutually singular (Theorem~\ref{thm:sharp}). Every canary
-detector therefore yields an attack, and every attack yields a detector.
+\item \textbf{An evasion bound and its sharp form.} For audits whose statistic averages a
+bounded per-pair leakage over randomly included canaries, the gap between the canary advantage
+and the advantage the same pipeline run would show on organic records planted in the same way
+is at most twice the distinguishing advantage between canaries and organic records
+(Theorem~\ref{thm:detect}). For a provider whose leakage is one-sided and determined by the
+trained record, the bound is sharp: the largest organic advantage compatible with a canary
+advantage of at most $\eps$ is the Neyman--Pearson power of testing canary records against
+organic records at level $\eps$, which is $\eps$ when the two coincide and $1$ when they are
+mutually singular (Theorem~\ref{thm:sharp}). Every canary detector therefore yields a provider
+strategy, and every strategy yields a detector.
 
-\item \textbf{Current canary designs are fully evadable.} A character $n$-gram classifier
+\item \textbf{The canary designs we tested are fully evadable.} A character $n$-gram classifier
 recognises VOUCH's random-string canaries and semantic canaries built from their own
-templates with advantage one, and verbatim repetition alone gives a lower bound of $0.75$ on
-the distinguishing advantage. A provider guided by the classifier holds the canary
-advantage at the audit's tolerance of $0.2$ while leaving all organic records un-unlearned
-(Section~\ref{sec:exp-detect}).
+templates with advantage one, because of artefacts of their generators. In a simulation
+driven by its decisions, a selective provider holds its canary miss rate, an upper bound on
+the canary advantage, at the audit's tolerance of $0.2$ while skipping at least $99\%$ of
+organic records (Section~\ref{sec:exp-detect}).
 
 \item \textbf{Organic-matched canaries with an exact null.} Paired canaries stating two
 incompatible facts keep the audit's exact null for every score that compares the facts
 under a common prompt, including scores on paraphrased questions never trained
 (Proposition~\ref{prop:semantic}). Drawing both twins from the organic record generator
-makes each twin distributed as an organic record. Against these canaries the selective
-provider's gain falls to $0.03$ to $0.08$ above random selection, within the bound.
+makes each twin distributed as an organic record, and our detectors do not separate such
+canaries from organic records beyond their own noise.
 
-\item \textbf{The detectability--power trade-off.} The bound implies that the canary
-advantage can exceed the organic advantage only by twice the detectability
-(Corollary~\ref{cor:tradeoff}): an indistinguishable canary is exactly as hard to detect in
-the model as an organic record. On Pythia-410M a record seen once leaves no detectable
-trace at our training budget, so the audit with matched canaries is valid but powerless and
-certifies a model that never unlearned in $97\%$ of runs
-(Section~\ref{sec:exp-matched}).
+\item \textbf{The detectability--power trade-off.} The bound implies that the canary advantage
+can exceed the counterfactual organic advantage only by twice the detectability
+(Corollary~\ref{cor:tradeoff}). On Pythia-410M at our training budget, the audit with matched
+canaries seen once is valid but has no power, and it certifies a model that never unlearned in
+$97\%$ of seed-by-order runs (Section~\ref{sec:exp-matched}); a canary-aware provider would not
+need to evade it.
 
-\item \textbf{Two further failure modes of audits.} A membership-inference audit that
-compares canaries with an organic holdout accuses a retrained, exactly unlearned model in
-every seed, while a paired test on the same records is valid and as powerful as VOUCH
-(Section~\ref{sec:exp-baselines}). When the forget set omits a form in which a fact was
-trained, adding paraphrase scores to the audit revokes up to $38\%$ of runs that a literal
-audit certifies (Section~\ref{sec:exp-squeeze}).
+\item \textbf{Membership-inference audits and incomplete forget sets.} A membership-inference
+audit that compares canaries with an organic holdout is decided by the distribution shift
+between the two: its AUC on a retrained, exactly unlearned model is $0.000$, so a two-sided
+test accuses that model in every seed. A paired test on the same records is valid and about as
+powerful as VOUCH (Section~\ref{sec:exp-baselines}). When the forget set omits a form in which a
+fact was trained, adding paraphrase scores to the audit revokes up to $49\%$ of the runs that a
+literal audit certifies in that cell (Section~\ref{sec:exp-squeeze}).
 \end{itemize}
 
-\paragraph{Novelty relative to the closest work.} The closest published work is VOUCH
+\paragraph{Novelty relative to the closest work.} The closest prior work is VOUCH
 \citep{dang2026vouch}, which introduced paired ghost canaries and the anytime-valid
 certificate that we use as the running example. VOUCH proves that recognising canaries does
 not invalidate the certificate on the cohort, and its threat model assumes that the
@@ -94,7 +95,9 @@ consequence for unlearning audits: false accusation of an honest provider.
 
 \paragraph{Scope.} Data can bound the distinguishing advantage only from below, so the
 statement about organic records is conditional on the strongest detector anyone can build;
-we report the strongest we built. All records are fictitious biographies from one domain,
+we report estimates for the detectors we built. The organic advantage is a counterfactual
+quantity: the leakage of organic records planted like canaries, not of the particular records
+users deleted. All records are fictitious biographies from one domain,
 and the models have at most one billion parameters. The selective provider is simulated
 from detector decisions rather than run end to end. Section~\ref{sec:discussion} discusses
 these limits.

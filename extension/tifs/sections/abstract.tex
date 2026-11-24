@@ -1,18 +1,17 @@
-Statistical audits of machine unlearning plant canary records in a model's training data,
-include them in a deletion request, and test whether the deployed model still favours them.
+Unlearning audits plant canary records in a model's training data, request their deletion,
+and test whether the deployed model still favours them.
 Such an audit speaks for users' data only if the provider treats canaries like other
-records. We study a provider that does not: it recognises canaries by their
-content and unlearns them while leaving other records in place. For any audit that compares
-randomly included canaries with excluded twins, we prove that the leakage such a provider
-can hide behind the audit is at most twice the advantage of the best test that tells
-canaries from organic records. When leakage is one-sided, the largest hideable leakage
-equals the power of the optimal such test exactly. A character n-gram
-classifier recognises existing canary designs perfectly, including the
-random-string canaries of a recent anytime-valid certificate. A simulated provider guided
-by it holds the canary advantage at the audit's tolerance while leaving every organic record
-un-unlearned. We prove that twins drawn from the organic record generator keep the audit's
-exact null. They bring the provider's gain close to chance, but on Pythia-410M a record seen
-once leaves no detectable trace, and the audit certifies even a model that never unlearned.
-The bound shows that this trade-off is inherent: an audit can be more sensitive than organic
-leakage only to the extent that its canaries are detectable. A membership-inference audit against
-an unmatched holdout accuses an honest, retrained model in every run.
+records. We study a provider that recognises canaries by their content and unlearns only them. For audits that average a bounded
+per-pair statistic over randomly included canaries and excluded twins, we prove that the
+leakage such a provider can hide, measured on records planted like canaries, is at most twice
+the advantage of the best test that tells canaries from organic records. When leakage is
+one-sided and determined by the trained record, the largest hideable leakage equals the power
+of the optimal such test. A character n-gram classifier recognises both canary designs we
+tested perfectly, including the random-string canaries of a recent anytime-valid
+certificate. In a simulation driven by its decisions, a provider keeps its canary miss rate,
+an upper bound on the canary advantage, at the audit's tolerance while leaving at least 99\%
+of organic records un-unlearned. We prove that twins drawn from the organic record generator
+keep the audit's exact null, and our detectors do not separate them beyond noise. On
+Pythia-410M, however, the audit then has no power and certifies a model that never unlearned. The bound shows that this trade-off is inherent: an audit can exceed organic leakage in
+sensitivity only as far as its canaries are detectable. Membership-inference
+audits with an unmatched holdout are invalid.

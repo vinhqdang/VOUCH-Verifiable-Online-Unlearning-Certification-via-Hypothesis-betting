@@ -2,28 +2,39 @@
 
 \subsection{Leakage profiles}
 
-Fix a pipeline run $\xi$ and write the audit statistic as an average
-$\Delta=\frac1m\sum_iT_i$ of per-pair terms $T_i\in[-1,1]$; for VOUCH $T_i=2Z_i-1$. For pair
+Fix a pipeline run $\xi$. We consider audits whose statistic is an average
+$\Delta=\frac1m\sum_iT_i$ of per-pair terms $T_i\in[-1,1]$; for VOUCH $T_i=2Z_i-1$. Statistics
+that are not averages of per-pair terms, such as an AUC over all members and non-members, the
+exposure rank of a secret or the wealth of an e-process, are not covered directly. For pair
 contents $c$ define the \emph{leakage profile}
 \[
 h_\xi(c)\;=\;\mathbb{E}\bigl[\,T_i\;\big|\;C_i=c,\ \xi\,\bigr]\in[-1,1],
 \]
-the expected contribution of a pair with contents $c$ placed in the cohort, the expectation
-being over the coins and the other pairs' contents. A canary-aware provider chooses the
-profile through its content-dependent treatment rule. The \emph{canary advantage} of the run
-is $\Delta_\xi=\mathbb{E}_{c\sim P}[h_\xi(c)]$, the expected statistic over fresh cohorts.
+the expected term of a pair with contents $c$, the expectation being over the coins and the
+other pairs' contents. The \emph{canary advantage} of the run is
+$\Delta_\xi=\mathbb{E}_{c\sim P}[h_\xi(c)]$, the expected statistic over fresh cohorts.
 
 Let $P_o$ be a distribution of \emph{organic} pairs: two records of the kind users delete,
 with a hypothetical fair coin choosing which was trained. The \emph{organic advantage}
-$\Delta^o_\xi=\mathbb{E}_{c\sim P_o}[h_\xi(c)]$ is the advantage the same run would show if
-organic pairs were planted in the same way. It is membership leakage under randomised
-inclusion, evaluated on the data users delete, and a counterfactual quantity of the
-pipeline, not an observed rate.
+$\Delta^o_\xi=\mathbb{E}_{c\sim P_o}[h_\xi(c)]$ is the advantage the same run would show on
+organic pairs planted in the same way. It is membership leakage under randomised inclusion,
+evaluated on records of the kind users delete; it is a counterfactual quantity of the
+pipeline, not the leakage of the particular records that users deleted, which were not
+included by a coin and may be repeated or correlated.
+
+Three conditions make $h_\xi$ well defined as a function of content alone, and we assume them
+throughout. (a) The provider's treatment rule is fixed before the cohort is drawn and acts on
+each record separately; features of the corpus such as the number of verbatim copies of a
+record are treated as part of that record's content. A rule fitted on the realised corpus is
+covered to the extent that its decisions do not depend on any single pair. (b) A planted
+organic pair would be treated like any organic record, which is the no-provenance condition
+of Section~\ref{sec:threat}. (c) $\xi$ is independent of the contents
+(Assumption~\ref{ass:gen}).
 
 \begin{definition}[Distinguishing advantage]\label{def:gamma}
-For a class $\mathcal H$ of functions from pair contents to $[0,1]$,
-$\gamma_{\mathcal H}(P,P_o)=\sup_{\phi\in\mathcal H}|\mathbb{E}_P\phi-\mathbb{E}_{P_o}\phi|$.
-For the class of all measurable functions it is the total variation distance $\TV(P,P_o)$.
+For a class $\mathcal H$ of functions to $[0,1]$ and distributions $Q,Q_o$ on their domain,
+$\gamma_{\mathcal H}(Q,Q_o)=\sup_{\phi\in\mathcal H}|\mathbb{E}_Q\phi-\mathbb{E}_{Q_o}\phi|$.
+For the class of all measurable functions it is the total variation distance $\TV(Q,Q_o)$.
 \end{definition}
 
 \subsection{The bound}
@@ -55,90 +66,106 @@ The same identity read in the other direction limits the auditor.
 
 \begin{corollary}[Detectability--power trade-off]\label{cor:tradeoff}
 For every pipeline run and every $\mathcal H\ni\phi_\xi$,
-$|\Delta_\xi|\le|\Delta^o_\xi|+2\gamma_{\mathcal H}(P,P_o)$. In particular, if canaries are
-distributed as organic records, $P=P_o$, then $\Delta_\xi=\Delta^o_\xi$ for every pipeline.
+$|\Delta_\xi|\le|\Delta^o_\xi|+2\gamma_{\mathcal H}(P,P_o)$. In particular, if $P=P_o$, then
+$\Delta_\xi=\Delta^o_\xi$ for every pipeline.
 \end{corollary}
 
 An audit is powerful when the canary advantage of a non-unlearning pipeline is large. The
-corollary says that it can exceed the organic advantage of the same pipeline only by twice
-the canaries' detectability. Designs that make canaries easy to memorise, by repetition,
-high-entropy secrets or unusual attributes, buy power with detectability; canaries that are
-indistinguishable from organic records are exactly as hard to detect in the model as organic
-records are. There is no canary design that is both undetectable and more sensitive than the
-data it stands in for.
+corollary says that it can exceed the organic advantage of the same pipeline, in the
+counterfactual sense above, only by twice the canaries' detectability. Designs that make
+canaries easy to memorise, by repetition, high-entropy secrets or unusual attributes, buy
+power with detectability, and canaries distributed as planted organic records are exactly as
+sensitive as planted organic records.
 
-\subsection{A sharp form for one-sided leakage}
+\subsection{A sharp form for record-level providers}
 
-The factor two allows over-forgetting, $h_\xi<0$. Call leakage \emph{one-sided} if
-$h_\xi(c)\ge0$ for every $c$: no record is forgotten beyond exactness. This holds for an
-idealised selective provider that either leaves a record alone or unlearns it exactly. It is
-a pointwise assumption that the auditor cannot check, and it need not hold for gradient
-ascent, which over-forgets. Let $p,p_o$ be densities of $P,P_o$ with respect to $P+P_o$ and
-define the \emph{Neyman--Pearson power}
+The provider of Section~\ref{sec:threat} sees only the trained twin of each pair, so its
+treatment of a pair is a function of one record. Call leakage \emph{record-determined and
+one-sided} if there is $g_\xi:\mathcal R\to[0,1]$ on records such that
+$h_\xi(c)=\frac12\bigl(g_\xi(c^0)+g_\xi(c^1)\bigr)$, that is, the expected term of a pair is
+the average over the coin of a leakage $g_\xi(r)$ incurred when record $r$ is the one
+trained. This holds for an idealised selective provider that either unlearns a record exactly
+($g=0$) or skips it and leaves it favoured ($g=1$), and its randomised versions. Overshooting
+pipelines such as gradient ascent violate one-sidedness, and Theorem~\ref{thm:detect} covers
+them. By label symmetry $\Delta_\xi=\mathbb{E}_{P_1}g_\xi$ and
+$\Delta^o_\xi=\mathbb{E}_{P_{o,1}}g_\xi$, where $P_1$ and $P_{o,1}$ are the distributions of
+a single canary record and a single organic record. Let $p_1,p_{o,1}$ be their densities with
+respect to $P_1+P_{o,1}$ and define the \emph{Neyman--Pearson power}
 \[
-\beta(\eps)=\sup\bigl\{\mathbb{E}_{P_o}\varphi\;:\;\varphi:\mathcal C\to[0,1]\text{
-measurable},\ \mathbb{E}_P\varphi\le\eps\bigr\}.
+\beta(\eps)=\sup_{\varphi}\bigl\{\mathbb{E}_{P_{o,1}}\varphi\;:\;\mathbb{E}_{P_1}\varphi\le\eps\bigr\},
 \]
+the supremum running over measurable $\varphi:\mathcal R\to[0,1]$.
 
 \begin{theorem}[Sharp evasion bound]\label{thm:sharp}
-Let $\eps\in(0,1]$, $B^\ast=\{p_o>p\}$ and $a=P(B^\ast)$.
+Let $\eps\in(0,1]$, $B^\ast=\{p_{o,1}>p_1\}$, $a=P_1(B^\ast)$ and $\TV=\TV(P_1,P_{o,1})$.
 \begin{enumerate}
-\item[(i)] Every run with $h_\xi\in[0,1]$ and $\Delta_\xi\le\eps$ has
-$\Delta^o_\xi\le\beta(\eps)\le\min\{1,\eps+\TV(P,P_o)\}$. If $h_\xi\in\mathcal H\subseteq
-[0,1]^{\mathcal C}$, then $\Delta^o_\xi\le\Delta_\xi+\gamma_{\mathcal H}(P,P_o)$.
-\item[(ii)] $\beta(\eps)$ is attained by a profile $h=\varphi^\ast$, a likelihood-ratio test
-of $P_o$ against $P$. Hence no argument that uses only the canary advantage and the
-generator can exclude $\Delta^o_\xi=\beta(\eps)$. If $P$ has no atoms on $\{p>0\}$,
-$\varphi^\ast$ can be taken to be the indicator of a set of records, which is the profile of
-a provider that skips unlearning on that set, provided the skipped records stay favoured.
+\item[(i)] Every run with record-determined one-sided leakage and $\Delta_\xi\le\eps$ has
+$\Delta^o_\xi\le\beta(\eps)\le\min\{1,\eps+\TV\}$, and $\Delta^o_\xi\le\Delta_\xi+
+\gamma_{\mathcal H}(P_1,P_{o,1})$ for every $\mathcal H\ni g_\xi$.
+\item[(ii)] $\beta(\eps)$ is attained by $g=\varphi^\ast$, a possibly randomised
+likelihood-ratio test of $P_{o,1}$ against $P_1$, which is the leakage of a provider that
+skips unlearning on record $r$ with probability $\varphi^\ast(r)$, if skipped records stay
+favoured. No argument that uses only the canary advantage and the generator can exclude
+$\Delta^o_\xi=\beta(\eps)$ for such a provider.
 \item[(iii)] $\beta(\eps)\ge\eps(1+\TV/a)$ for $\eps\le a$ and $\beta(\eps)\ge a+\TV$ for
-$\eps\ge a$. In particular $\beta(\eps)=\eps$ if $P=P_o$, and $\beta(\eps)=1$ for every
-$\eps>0$ if $P$ and $P_o$ are mutually singular.
+$\eps\ge a$. In particular $\beta(\eps)=\eps$ if $P_1=P_{o,1}$, and $\beta(\eps)=1$ for every
+$\eps>0$ if $P_1$ and $P_{o,1}$ are mutually singular.
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-(i) $\varphi=h_\xi$ is feasible, since $\mathbb{E}_P\varphi=\Delta_\xi\le\eps$, and
-$\mathbb{E}_{P_o}\varphi=\Delta^o_\xi$. For $\varphi\in[0,1]$,
-$\mathbb{E}_{P_o}\varphi\le\mathbb{E}_P\varphi+\TV$. The class statement is
+(i) $\varphi=g_\xi$ is feasible, since $\mathbb{E}_{P_1}\varphi=\Delta_\xi\le\eps$, and
+$\mathbb{E}_{P_{o,1}}\varphi=\Delta^o_\xi$. For $\varphi\in[0,1]$,
+$\mathbb{E}_{P_{o,1}}\varphi\le\mathbb{E}_{P_1}\varphi+\TV$; the class statement is
 Definition~\ref{def:gamma}. (ii) The Neyman--Pearson lemma \citep{neyman1933efficient} gives a
-possibly randomised likelihood-ratio test attaining the supremum; if $P$ is atomless a
-non-randomised test of the same size and power exists. (iii) $\mathbf 1_{B^\ast}$ has
-$\mathbb{E}_P=a$ and $\mathbb{E}_{P_o}=a+\TV$; for $\eps\le a$ use $(\eps/a)\mathbf
-1_{B^\ast}$. If $P=P_o$, (i) gives $\beta\le\eps$ and $\varphi\equiv\eps$ attains it. If
-$P\perp P_o$, then $a=0$ and $P_o(B^\ast)=1$.
+likelihood-ratio test, randomised on the boundary, that attains the supremum; a provider
+realises it with an independent coin per record. (iii) $\mathbf 1_{B^\ast}$ has
+$\mathbb{E}_{P_1}=a$ and $\mathbb{E}_{P_{o,1}}=a+\TV$; for $\eps\le a$ use $(\eps/a)\mathbf
+1_{B^\ast}$. If $P_1=P_{o,1}$, (i) gives $\beta\le\eps$ and $\varphi\equiv\eps$ attains it. If
+$P_1\perp P_{o,1}$, then $a=0$ and $P_{o,1}(B^\ast)=1$.
 \end{proof}
 
-\paragraph{Every detector is an attack.} Part (ii) turns any canary detector into a provider
-strategy. A provider that unlearns the records its detector flags as canary-like and leaves
-the rest has a canary advantage of at most the detector's miss rate on canaries, with
-equality when the skipped canaries stay favoured, and leaves un-unlearned the fraction of
-organic records that the detector correctly passes. Its gain over a provider that skips
-records at random, which leaves a fraction equal to the miss rate, is a lower bound on
-$\beta(\eps)-\eps$. Conversely every provider strategy is a detector. A certificate needs
-the realised advantage strictly below $\eps$ with a margin, so a miss rate of $\eps$ is the
-edge of what the audit tolerates, not a point it certainly passes.
+The record-level distance is at most the pair-level one, so the record form is the stronger
+statement for this provider. Sharpness is relative to the idealised profile in which a
+skipped record stays favoured; a real model memorises a skipped record only partly, so a real
+provider hides less organic leakage per skipped record, but it can also skip more records for
+the same canary advantage.
+
+\paragraph{Every detector is an attack} Part (ii) turns any canary detector into a provider
+strategy. A provider that unlearns the records its detector flags and skips the rest has a
+canary advantage of at most the detector's miss rate on canaries, with equality in the
+idealised profile, and skips the fraction of organic records that the detector passes. Its
+gain over a provider that skips records at random, which skips a fraction equal to the miss
+rate, estimates $\beta(\eps)-\eps$ from below. Conversely every provider strategy is a
+detector. A certificate needs the realised advantage strictly below $\eps$ with a margin, so
+a miss rate of $\eps$ is the edge of what the audit tolerates, not a point it certainly
+passes.
 
 \begin{remark}[Repetition is content]\label{rem:dup}
 The provider sees the corpus, so a canary repeated verbatim is flagged by the duplicate
-detector $\phi(c)=\mathbf 1[c\text{ occurs at least twice}]$, whose advantage is
-$P(\text{repeated})-\rho_o$ with $\rho_o$ the share of duplicated organic records. Designs
+detector $\phi(r)=\mathbf 1[r\text{ occurs at least twice}]$, whose advantage is
+$P_1(\text{repeated})-\rho_o$ with $\rho_o$ the share of duplicated organic records. Designs
 that repeat canaries to strengthen memorisation pay before any content is examined. The
-semantic design of Section~\ref{sec:experiments} repeats three quarters of its twins, so
-$\gamma\ge0.75-\rho_o$ with $\rho_o=0.004$ in our organic corpus of $2{,}000$ records.
+semantic design of Section~\ref{sec:experiments} repeats about three quarters of its twins,
+so $\gamma\gtrsim0.75-\rho_o$ with $\rho_o=0.004$ in our organic corpus of $2{,}000$ records.
+VOUCH's random-string design is already separated by its content.
 \end{remark}
 
 \subsection{From the realised cohort to organic records}
 
 The certificate concerns the realised cohort advantage $\Delta$, not its expectation
 $\Delta_\xi$ over cohorts. The transfer costs a concentration term under the following
-assumption, which holds with $\kappa=\ell=1$ under exact unlearning and is otherwise
-unverifiable.
+assumption.
 
 \begin{assumption}[Bounded influence]\label{ass:influence}
 For fixed $\xi$, changing one coin changes at most $\kappa$ of the $m$ terms $T_i$, and
 replacing the contents of one pair changes at most $\ell$ of them.
 \end{assumption}
+
+Under exact unlearning $\kappa=\ell=1$. Under partial or selective unlearning, the regime of
+interest here, one record's training can perturb every pair whose score difference is close
+to zero, the assumption cannot be verified, and with $\ell$ of order $m$ the term below is
+vacuous.
 
 \begin{theorem}[Transfer to the generator population]\label{thm:population}
 Under Assumptions~\ref{ass:gen} and~\ref{ass:influence}, for $\alpha'\in(0,1)$, with
@@ -146,20 +173,21 @@ probability at least $1-\alpha'$ over the coins and contents,
 $|\Delta-\Delta_\xi|\le u_m(\alpha'):=\sqrt{2(\kappa^2+\ell^2)\log(2/\alpha')/m}$.
 \end{theorem}
 
-The proof applies McDiarmid's inequality \citep{mcdiarmid1989bounded} to the $2m$ independent
-coordinates and is in the supplement. At $m=512$, $\alpha'=0.05$ and $\kappa=\ell=1$,
-$u_m=0.17$.
+The proof applies McDiarmid's inequality \citep{mcdiarmid1989bounded} and is in the
+supplement. At $m=384$, $\alpha'=0.05$ and $\kappa=\ell=1$, $u_m=0.20$, as large as the
+tolerance $\eps=0.2$ used in our experiments; the term halves only at four times the cohort.
 
 \begin{corollary}[What a certificate says about organic records]\label{cor:ladder}
-If a two-sided $(\eps,\alpha)$ certificate is issued, then with probability at least
-$1-\alpha-\alpha'$, $|\Delta^o_\xi|<\eps+u_m(\alpha')+2\gamma_{\mathcal H}(P,P_o)$ for every
-$\mathcal H\ni\phi_\xi$. Under one-sided leakage, $\Delta^o_\xi<\eps+u_m(\alpha')+
-\gamma_{\mathcal H}(P,P_o)$ for every $\mathcal H\ni h_\xi$, and
-$\Delta^o_\xi\le\beta(\eps+u_m(\alpha'))$ with $\beta(x)=1$ for $x\ge1$.
+Under the conditions above, the probability that a two-sided $(\eps,\alpha)$ certificate is
+issued and $|\Delta^o_\xi|\ge\eps+u_m(\alpha')+2\gamma_{\mathcal H}(P,P_o)$ for some
+$\mathcal H\ni\phi_\xi$ is at most $\alpha+\alpha'$. Under record-determined one-sided leakage
+the same holds with $\Delta^o_\xi\ge\eps+u_m(\alpha')+\gamma_{\mathcal H}(P_1,P_{o,1})$ for
+some $\mathcal H\ni g_\xi$, and with $\Delta^o_\xi>\beta(\eps+u_m(\alpha'))$, where
+$\beta(x)=1$ for $x\ge1$.
 \end{corollary}
 
-The three terms have separate causes: the tolerance the auditor chose, the size of the
-cohort, and how far the canaries are from the data they stand in for. Only the last depends
-on the canary design. The auditor cannot certify it, since every detector bounds $\gamma$
-from below and none from above; Section~\ref{sec:exp-detect} reports the strongest lower
-bounds we obtained.
+This is a joint probability: when certificates are rarely issued, the probability of the
+event given issuance can be larger. The three terms have separate causes, the tolerance, the
+cohort size and the distance between canaries and the data they stand in for. Only the last
+depends on the canary design. The auditor cannot certify it, since a detector bounds $\gamma$
+only from below; Section~\ref{sec:exp-detect} reports estimates for the detectors we built.

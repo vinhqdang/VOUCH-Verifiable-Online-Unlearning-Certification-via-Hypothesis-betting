@@ -45,11 +45,13 @@ Let organic records be produced by a generator $G_o$, for instance sentence temp
 slot distributions. An \emph{organic-matched} pair is drawn by sampling one record $r\sim G_o$
 and filling one designated slot of it with an unordered pair of values from that slot's
 distribution, swapped by a fair coin. Each twin is a record of $G_o$ with one slot redrawn.
-Take $P_o$ to be the distribution of pairs formed in the same way from organic records, so
-that the organic advantage compares an organic record with a counterfactual copy that
-differs in one slot. Then $P=P_o$, and by Corollary~\ref{cor:tradeoff} and
-Theorem~\ref{thm:sharp} the canary advantage equals the organic advantage for every pipeline.
-Two details matter in practice: names are drawn as in organic data, and each canary appears
+If the organic advantage is defined with the same construction, an organic record paired
+with a copy whose designated slot is redrawn, then $P=P_o$ by construction and, by
+Corollary~\ref{cor:tradeoff}, the canary advantage equals this organic advantage for every
+pipeline. The definition is a choice: it is the counterfactual that matched canaries can speak
+for, and Section~\ref{sec:bound} explains why it is not the leakage of the particular records
+users deleted. At the record level, each twin is distributed as an organic record up to the
+conditioning on two distinct slot values, so $P_1\approx P_{o,1}$. Two details matter in practice: names are drawn as in organic data, and each canary appears
 once, since verbatim repetition is itself a signal (Remark~\ref{rem:dup}). Matching is easy
 when the auditor writes the organic generator, as in our experiments; for a deployed model it
 requires sampling from the users' own data distribution, which is the main open problem
@@ -66,7 +68,7 @@ without correction for $|\F'|$; enlarging the class can only delay issuance. (ii
 exact null, a weighted average $\sum_sw_sE_s$ of the alarm's wealth processes is a
 nonnegative supermartingale with initial value one, so revoking when it reaches $1/\alpha$
 has error at most $\alpha$, and it dominates every Bonferroni rule ``revoke when some
-$E_s\ge1/(w_s\alpha)$''. (iii) In the sign model of Proposition~\ref{prop:anytime}, a
+$E_s\ge1/(w_s\alpha)$''. (iii) In the sign model of Proposition~\ref{S-prop:anytime}, a
 leaking score with weight $w$ delays the oracle alarm by at most $\log(1/w)/\KL$.
 \end{proposition}
 
@@ -79,26 +81,14 @@ the certificate side.
 \subsection{The price of continuous monitoring}\label{sec:anytime}
 
 A provider under audit may be monitored at any time, so the auditor needs a test that stays
-valid under optional stopping. In the sign model, i.i.d.\ signs $Z_t\sim
-\Bern(\frac{1+\Delta}2)$ tested against $\Delta=0$, let
-$\KL(\Delta)=\frac{1+\Delta}2\log(1+\Delta)+\frac{1-\Delta}2\log(1-\Delta)\approx\Delta^2/2$.
-
-\begin{proposition}[Expected stopping time]\label{prop:anytime}
-(i) Every level-$\alpha$ sequential test that stops almost surely under $\Delta$ has
-$\mathbb{E}_\Delta\tau\ge\log(1/\alpha)/\KL(\Delta)$. (ii) The oracle bettor with stake
-$\Delta$ stops with $\mathbb{E}_\Delta\tau\le(\log(1/\alpha)+\log(1+\Delta))/\KL(\Delta)$.
-(iii) A uniform mixture of $K$ constant stakes $\lambda_k$ stops with
-$\mathbb{E}_\Delta\tau\le(\log(K/\alpha)+\log(1+\lambda_k))/g_\Delta(\lambda_k)$ for every $k$
-with $g_\Delta(\lambda_k)=\frac{1+\Delta}2\log(1+\lambda_k)+\frac{1-\Delta}2\log(1-\lambda_k)
->0$.
-\end{proposition}
-
-Part (i) is Wald's argument \citep{wald1945sequential}; proofs are in the supplement. For a
-two-sided test at $\alpha=0.05$ the oracle's constant is $2\log 40=7.4$ against $7.9$ for a
-fixed-sample sign test with $80\%$ power: the expected sample size of the oracle equals that
-of a fixed-sample test with about $78\%$ power, and simulations show that a ten-stake mixture
-costs $1.1$ to $1.4$ times the oracle (Table~\ref{S-tab:anytime} in the supplement). Continuous monitoring therefore
-costs a constant factor of order one, which explains why a paired fixed-sample sign test is
-about as powerful as VOUCH in Section~\ref{sec:exp-baselines}. On a finite cohort revealed in
-uniform order the betting edge grows deterministically as the cohort is exhausted; the
-supplement turns this into a Freedman tail bound on the certification time (Theorem~\ref{S-thm:growth}).
+valid under optional stopping. In the sign model, i.i.d.\ signs with advantage $\Delta$ tested
+against $\Delta=0$, no level-$\alpha$ sequential test stops in fewer than
+$\log(1/\alpha)/\KL$ expected samples, with $\KL\approx\Delta^2/2$, and an oracle bettor comes
+within $\log(1+\Delta)/\KL$ of that (Proposition~\ref{S-prop:anytime} in the supplement). For a
+two-sided test at $\alpha=0.05$ the oracle's expected sample size equals that of a
+fixed-sample sign test with about $78\%$ power, and a ten-stake mixture costs $1.1$ to $1.4$
+times the oracle. Continuous monitoring therefore costs a constant factor of order one, which
+explains why a paired fixed-sample sign test is about as powerful as VOUCH in
+Section~\ref{sec:exp-baselines}. On a finite cohort revealed in uniform order the betting edge
+grows deterministically as the cohort is exhausted, and the supplement turns this into a
+Freedman tail bound on the certification time (Theorem~\ref{S-thm:growth}).

@@ -38,13 +38,14 @@ We train two detectors to tell $400$ canary in-twins from $400$ organic records,
 fold over five folds: a logistic regression on GPT-2 \citep{radford2019gpt2} token-loss
 features (mean, maximum, median and spread of the token losses, and length), which needs no
 access to the audited model, and a logistic regression on character $2$--$4$-grams, which
-needs labelled canaries. A detector's advantage $\max_\tau|\mathrm{TPR}-\mathrm{FPR}|$ is a
-lower bound on $\gamma$.
+needs labelled canaries. A detector's advantage $\max_\tau|\mathrm{TPR}-\mathrm{FPR}|$
+estimates a lower bound on $\gamma$; since the threshold is chosen on the evaluated scores, the
+estimate is biased upward, and we read it against a null reference.
 
 \begin{table}[t]
 \centering\footnotesize\setlength{\tabcolsep}{3pt}
 \caption{Detecting canaries among organic records ($400$ each, five-fold out-of-fold
-scores). An advantage is a lower bound on $\gamma$ of Theorem~\ref{thm:detect}. A detector
+scores). An advantage estimates a lower bound on $\gamma$ of Theorem~\ref{thm:detect}. A detector
 with label-independent scores exceeds an advantage of $0.095$ in $5\%$ and $0.110$ in $1\%$
 of $4{,}000$ simulations at this sample size.}
 \label{tab:detect}
@@ -61,34 +62,42 @@ leaves a fraction equal to the miss rate.}
 \resizebox{\columnwidth}{!}{\input{tables/selective}}
 \end{table}
 
-\paragraph{Current designs are recognised perfectly} Table~\ref{tab:detect} shows that VOUCH's
-random-string records and both forms of semantic twins built from their own templates are
-detected with advantage one by the $n$-gram classifier, and the first two also by the
-perplexity features: random strings, a middle initial in every canary name and attributes
-that never occur in organic data give the cohort away. Verbatim repetition adds a further
-lower bound of $0.75$ before any content is read (Remark~\ref{rem:dup}). For these designs
-$\beta(\eps)$ is close to one and Corollary~\ref{cor:ladder} carries no information about
-organic records.
+\paragraph{The designs we tested are recognised perfectly} Table~\ref{tab:detect} shows that
+VOUCH's random-string records and both forms of semantic twins built from their own
+templates are detected with advantage one by the $n$-gram classifier, and the first two also
+by the perplexity features. The cause is in how the records are generated: random strings, a
+middle initial in every canary name, and attributes that never occur in organic data give the
+cohort away. These are artefacts of two concrete generators, not a property of semantic
+canaries as such, and we did not test the canaries of other audits. For the semantic design,
+verbatim repetition adds a further estimate of about $0.75$ before any content is read
+(Remark~\ref{rem:dup}). For these designs $\beta(\eps)$ is close to one and
+Corollary~\ref{cor:ladder} carries no information about organic records.
 
 \paragraph{What recognition buys} Table~\ref{tab:selective} simulates the attack of
-Section~\ref{sec:bound}: the provider unlearns what the detector flags and skips the rest, with
+Section~\ref{sec:bound} from detector decisions on held-out records; no model is trained or
+unlearned selectively. The provider unlearns what the detector flags and skips the rest, with
 the threshold and the orientation of the score chosen on four folds and evaluated on the
-fifth. Against random-string canaries and the literal form of semantic twins, the provider
-holds the canary miss rate at the target while leaving all organic records un-unlearned at
-$\eps=0.2$ with either detector, and at least $99\%$ at every target in the table. A
-certificate at these tolerances says nothing about organic data.
+fifth. Against random-string canaries and the literal form of semantic twins, it holds the
+canary miss rate, an upper bound on the canary advantage in the idealised profile, at the
+target ($0.20$ to $0.21$ at $\eps=0.2$) while skipping at least $99\%$ of organic records,
+with either detector and at every target in the table. Against the question--answer form
+the $n$-gram detector does the same, but the perplexity detector skips only $57\%$ to $79\%$:
+a provider without labelled canaries gains less. Since the measured advantage of a skipped,
+never-unlearned canary is about $0.27$ to $0.29$ rather than one (Table~\ref{tab:incomplete}),
+a real provider would incur a canary advantage well below its miss rate and could skip more.
 
-\paragraph{Organic-matched canaries close the gap} Both detectors are close to the level of
-two organic samples on organic-matched twins (Table~\ref{tab:detect}). The perplexity
-advantage, $0.052$, is below the 95th percentile of the null reference. The $n$-gram
-advantage, $0.102$, lies between the 95th and the 99th percentile, and its AUC of $0.442$ is
-below one half; refitting it with permuted labels thirty times gives AUCs with mean $0.498$
-and minimum $0.440$, and the same detector separating two independent organic samples gives
-$0.537$, so the value is within the detector's own noise. Against these canaries the selective
-provider leaves $0.23$ and $0.28$ of organic records un-unlearned at $\eps=0.2$, which is
-$0.03$ and $0.08$ above random selection and below the $\eps+\gamma\approx0.30$ that the
-$n$-gram advantage permits under Theorem~\ref{thm:sharp}. These are lower bounds against two
-detector families; they do not show that no stronger detector exists.
+\paragraph{Organic-matched canaries are not separated beyond noise} On organic-matched twins
+both detectors are close to the level of two organic samples (Table~\ref{tab:detect}). The
+perplexity advantage, $0.052$, is below the 95th percentile of the null reference. The
+$n$-gram advantage, $0.102$, lies between the 95th and the 99th percentile, so it is not
+significant at the $1\%$ level, and its AUC of $0.442$ is below one half; refitting it with
+permuted labels thirty times gives AUCs with mean $0.498$ and minimum $0.440$, and the same
+detector separating two independent organic samples gives $0.537$. Against these canaries the
+selective provider skips $0.23$ and $0.28$ of organic records at $\eps=0.2$, which is $0.03$
+and $0.08$ above random selection. If that excess is real, it is evidence that $\gamma>0$;
+either way these are estimates against two detector families and do not show that no stronger
+detector exists. As Section~\ref{sec:exp-matched} shows, the attack is in any case
+unnecessary against this design.
 
 \subsection{Auditing with semantic twins}\label{sec:exp-semantic}
 
@@ -125,19 +134,23 @@ the organic forget biographies against the organic holdout (loss score).}
 \end{table*}
 
 The audit is valid and powerless. Retraining and every unlearning subject are revoked in at
-most $6\%$ of runs, consistent with the nominal level. So is the positive control: a record
-seen once in $600$ training steps, whose twin differs from it in one slot, leaves no
-detectable trace, and the audit \emph{issues} a certificate for the model that never
-unlearned in $97\%$ of runs. The certificate is not false, since the canary advantage of that
-model is below $\eps$, but it is vacuous: it cannot distinguish a pipeline that unlearns from
-one that never learned. The organic forget biographies, also seen once, give a
-membership-inference AUC of only $0.55$ on the same model. This is
-Corollary~\ref{cor:tradeoff} observed: removing the detectability term removes the
-memorisation signal that the audit needs, because indistinguishable canaries are memorised no
-more than organic records are. (The realised advantages are slightly negative on average,
-$-0.035\pm0.014$ on retraining; rows share each seed's cohort and coins, the exact null
-guarantees zero expectation for retraining, and revocation rates stay within the nominal
-level.) Repetition would restore power at the detectability price of Remark~\ref{rem:dup}.
+most $6\%$ of the $320$ seed-by-order runs, consistent with the nominal level. So is the
+positive control: the raw literal advantage of the model that never unlearned is
+$-0.001\pm0.015$ over eight seeds, and the audit \emph{issues} a certificate for it in $97\%$
+of runs. The certificate is not false, since the canary advantage of that model is below
+$\eps$, but it is vacuous: it cannot distinguish a pipeline that unlearns from one that never
+learned, and a canary-aware provider could skip unlearning altogether. The organic forget
+biographies, also seen once, give a membership-inference AUC of only $0.55$ on the same model,
+so organic records retain a weak trace that the audit cannot see. Corollary~\ref{cor:tradeoff}
+predicts this direction, since matched canaries can be no more sensitive than planted organic
+records, but the experiment does not measure the organic advantage and cannot separate the
+corollary from other causes of low power: the training budget, single exposure and twins that
+differ in one slot. Repetition would restore power at the detectability price of
+Remark~\ref{rem:dup}. The calibrated literal advantages are slightly negative in every row, $-0.020$
+to $-0.046$, up to about three standard errors from zero. The rows share each seed's cohort
+and coins, so they are one draw of eight coin vectors rather than independent evidence. The
+raw literal advantages are within one standard error of zero for the controls and GA, and
+drift negative under strong NPO ($-0.053\pm0.023$ after $75$ steps), as over-forgetting would.
 
 \subsection{Membership-inference audits}\label{sec:exp-baselines}
 
@@ -160,32 +173,38 @@ literal score differences of all $384$ pairs, evaluated once at the end.
 reports leakage, literal-only semantic design, Pythia-410M, eight seeds. VOUCH columns are
 REVOKED rates of the literal and the union rule; ``sign'' is the paired fixed-sample sign
 test; membership-inference columns are fractions of seeds whose $95\%$ bootstrap AUC
-interval excludes $0.5$. Retraining satisfies the exact null, so every positive entry in its
-row is a false accusation.}
+interval excludes $0.5$, two-sided. Retraining satisfies the exact null, so every positive entry in
+its row is a false alarm. Subjects are a subset of the grid; all are in the released results.}
 \label{tab:baselines}
 \input{tables/baselines}
 \end{table*}
 
-\paragraph{An unmatched holdout accuses honest providers} Pairing (b) reports leakage on every
-seed of every subject in Table~\ref{tab:baselines}, retraining included, with AUC $0.000$ on
-retraining. Canaries and organic holdout records differ in distribution, so the test detects
-the difference between two kinds of record, not membership, and calibrating by the base model
-does not help. An auditor who used this test would accuse a provider that retrained from
-scratch. This is Theorem~\ref{thm:detect} seen from the attack side, the reason randomised
-inclusion is necessary \citep{zhang2024mia}, and consistent with observations on pre-trained
-models \citep{duan2024membership,das2024blind}.
+\paragraph{An unmatched holdout makes the test invalid} Pairing (b) reports leakage on every
+seed of every subject in Table~\ref{tab:baselines}, retraining included. On retraining its AUC
+is $0.000$: canaries look \emph{less} like members than the organic holdout does, because the
+two kinds of record differ in distribution and the test measures that difference, not
+membership. With the two-sided criterion an auditor would therefore accuse a provider that
+retrained from scratch; with a one-sided criterion (members scored above non-members) the test
+would not flag retraining, but it would not flag the model that never unlearned either, whose
+AUC is $0.34$. Either way the outcome is decided by the distribution shift, and calibrating by
+the base model does not help. With organic-matched canaries, for which the shift is small, the
+same pairing raises no alarm on retraining. This is Theorem~\ref{thm:detect} seen from the
+attack side, the reason randomised inclusion is necessary \citep{zhang2024mia}, and consistent
+with observations on pre-trained models \citep{duan2024membership,das2024blind}.
 
 \paragraph{Pairing, not sequential testing, gives power} Pairing (a) uses VOUCH's records and is
 valid: no false alarm on retraining, and the positive control is detected in every seed by the
 loss, Min-K\% and zlib scores. Under partial unlearning it falls silent early: after $10$ GA
 steps the loss test flags $38\%$ of seeds where VOUCH revokes $96\%$ of runs, and after $15$
 GA or $25$ NPO steps it flags none where VOUCH revokes $68\%$ and $36\%$. The paired sign test
-on the same pairs is at least as powerful as VOUCH at all strengths but one ($62\%$ of seeds
-against $36\%$ of runs after $25$ NPO steps; after $40$ NPO steps it rejects in no seed while
-VOUCH revokes $6\%$ of runs). The gap comes from pairing and from scoring the target value
+on the same pairs is about as powerful as VOUCH: it rejects more often after $10$ and $15$ GA
+and $25$ NPO steps ($62\%$ of seeds against $36\%$ of runs after $25$ NPO steps), equally
+often after $20$ GA steps, and less often after $40$ and $75$ NPO steps ($0\%$ against $6\%$
+and $1\%$). Seeds and seed-by-order runs have different granularity, so only large
+differences are meaningful. The gap comes from pairing and from scoring the target value
 rather than the whole record: an unpaired AUC compares records about different entities, whose
 losses are dominated by the entities themselves. Sequential testing costs a constant factor
-(Proposition~\ref{prop:anytime}) and buys the right to monitor at any time.
+(Proposition~\ref{S-prop:anytime}) and buys the right to monitor at any time.
 
 \paragraph{Organic audits are weak at single exposure} Pairing (c) detects nothing, because a
 whole-record loss over a question and a one-word answer is dominated by the question. Pairing
@@ -222,14 +241,16 @@ $\eps=0.2$, $\alpha=0.05$.}
 \paragraph{Paraphrase scores expose an incomplete forget set} With an incomplete forget set
 (Table~\ref{tab:incomplete}) the union revokes far more often than the literal rule at
 intermediate strengths: after $25$ NPO steps on Pythia-410M, $38\%$ of runs end with a literal
-certificate that the union revokes, and after $40$ NPO steps on Pythia-1B, $22\%$. The averages
+certificate that the union revokes ($49\%$ of the runs the literal rule certifies), and after
+$40$ NPO steps on Pythia-1B, $22\%$ ($27\%$). These are the largest values over the $22$
+cells of the table. The averages
 are driven by a minority of seeds: the literal rule issues while the union revokes in a
 majority of reveal orders in three of eight seeds and one of eight seeds respectively. The
 literal certificate is not wrong, since the literal advantage is below $\eps$; the union
 revokes because the paraphrase scores still depend on the coins, which here is close to true
 by construction, since they resemble a trained form that was never forgotten. The lesson is
-that a literal-only class is blind to such residue. Under no or light unlearning all rules
-revoke in at least $96.9\%$ of runs, and after $75$ NPO steps in at most $3\%$.
+that a literal-only class is blind to such residue. With no unlearning, $5$ GA steps or $10$ NPO
+steps all rules revoke in at least $96.9\%$ of runs, and after $75$ NPO steps in at most $3\%$.
 
 \paragraph{Squeezing is not demonstrated at this scale} Paraphrase retention, the advantage
 after unlearning divided by the mean advantage before unlearning over seeds, is at or above
@@ -242,7 +263,10 @@ literal-only design the gap is $+0.08$ ($p=0.25$), and the union and literal rul
 nearly identical rates while the union issues on retraining in $99\%$ of runs. An earlier
 analysis with per-seed ratios gave a significant gap dominated by one seed whose
 pre-unlearning paraphrase advantage was near zero; we report the stable normalisation and
-store both. Paraphrase scores therefore cost little in validity and catch residue that the
+store both. Comparisons that mix a raw literal with a calibrated paraphrase score give larger
+gaps, significant for Pythia-1B ($p=0.023$), but the two scores have different noise and we
+report nine comparisons without a multiplicity correction, so we do not rely on them.
+Paraphrase scores therefore cost little in validity and catch residue that the
 forget set omitted, but we do not claim that literal unlearning leaves the fact behind at
 this scale.
 

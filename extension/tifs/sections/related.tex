@@ -7,10 +7,10 @@ lower bound on the privacy parameter of a training algorithm from randomly inclu
 inclusion in training can be tested later \citep{meeus2024traps}. VOUCH
 \citep{dang2026vouch} adds a paired control and betting e-processes
 \citep{waudbysmith2024,ramdas2023game,shafer2021testing,grunwald2024safe} to certify the
-outcome of one unlearning run with an exact null. All of these designs rely on canaries that
-are easy to memorise, and none bounds what a provider gains by recognising them.
-Theorem~\ref{thm:detect} applies to each of them whenever the audit statistic averages a
-bounded per-canary leakage under randomised inclusion.
+outcome of one unlearning run with an exact null. None of these works bounds what a provider gains
+by recognising the planted records. Theorem~\ref{thm:detect} covers an audit of this family
+when its statistic is an average of bounded per-canary terms under randomised inclusion;
+exposure ranks, abstaining guesses and AUC statistics require a separate argument.
 
 \paragraph{Adversarial providers and verification} \citet{thudi2022necessity} argue that
 approximate unlearning cannot be audited from weights alone. \citet{zhang2024verification}
