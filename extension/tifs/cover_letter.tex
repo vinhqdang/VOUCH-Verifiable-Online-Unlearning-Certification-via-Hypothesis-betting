@@ -1,0 +1,73 @@
+\documentclass[11pt]{letter}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{url}
+\signature{Quang-Vinh Dang\\British University Vietnam, Hung Yen, Vietnam\\
+\texttt{vinh.dq4@buv.edu.vn} \quad ORCID 0000-0002-3877-8024}
+\address{}
+\begin{document}
+\begin{letter}{Editor-in-Chief\\IEEE Transactions on Information Forensics and Security}
+\opening{Dear Editor-in-Chief,}
+
+I submit the manuscript ``Canary-Aware Providers and the Limits of Unlearning Audits: A Sharp
+Bound and the Detectability--Power Trade-off'' for consideration as a regular paper.
+
+\textbf{Problem.} Audits of machine unlearning plant canary records in a model's training
+data, include them in a deletion request, and test whether the deployed model still favours
+them. Such an audit certifies the canaries. It certifies the data users delete only if the
+provider cannot treat the two differently, an assumption that current audits make and do not
+test. The manuscript studies a provider that recognises canaries by their content and
+unlearns them while retaining other data.
+
+\textbf{Contributions and significance.}
+\begin{itemize}
+\item A bound, valid for any audit that compares randomly included canaries with excluded
+twins, under which the leakage a canary-aware provider can hide is at most twice the
+advantage of the best canary detector, together with a sharp form: for one-sided leakage
+the largest hideable leakage equals the Neyman--Pearson power of telling canaries from
+organic records. Every detector is therefore an attack, and every attack is a detector.
+\item A measurement on current designs: the canaries of a recent anytime-valid audit are
+recognised perfectly by a character $n$-gram classifier, and a provider guided by it holds
+the canary advantage at the audit's tolerance while leaving all organic records
+un-unlearned.
+\item A canary design drawn from the organic record generator, with a proof that it keeps the
+audit's exact null, which reduces the provider's gain to near chance; and a
+detectability--power trade-off that follows from the bound and is confirmed on Pythia
+models: indistinguishable canaries are memorised no more than organic records, so the audit
+becomes valid but powerless.
+\item Two practical failure modes: a membership-inference audit against an unmatched holdout
+accuses an honest, retrained provider in every run, and a literal-only audit misses residue
+that an incomplete forget set leaves behind.
+\end{itemize}
+The results give auditors and regulators a concrete rule: a canary-based unlearning
+certificate speaks for user data only up to the canaries' measured detectability, which
+should be reported with every audit.
+
+\textbf{Closest prior work and what is new.} The closest work is my own paper on VOUCH,
+``VOUCH: Anytime-Valid Certificates for Machine Unlearning via Paired-Canary
+Hypothesis-Betting'', accepted by \emph{Machine Learning} (Springer) and in press. VOUCH
+introduced the paired-canary certificate that the manuscript uses as its running example,
+and it assumes that the provider does not special-case canaries. The present manuscript drops
+that assumption; the evasion bound and its sharp form, the selective-provider evaluation, the
+semantic and organic-matched canary designs, the trade-off and the membership-inference
+comparison are all new and do not appear in the VOUCH paper. Because the VOUCH paper is not
+yet publicly available, its accepted version is uploaded with this submission for the
+reviewers' reference. Related work on dishonest providers (Zhang et al., 2024), canary-based
+privacy auditing (Steinke et al., 2023), copyright traps (Meeus et al., 2024) and
+distribution shift in membership-inference benchmarks (Duan et al., 2024; Das et al., 2024)
+is discussed in Section~VI; none of these bounds what recognising canaries buys a provider.
+
+\textbf{Reproducibility.} All code, per-seed results and the scripts that produce every
+table and figure are public at
+\url{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting}
+(directory \texttt{extension/}); all records are fictitious and generated from committed
+seeds.
+
+The manuscript is not under consideration elsewhere.
+It is 12 pages in the IEEE two-column format, with a 4-page supplement containing proofs and
+additional results. There are no competing interests and no funding to declare.
+
+\closing{Sincerely,}
+\end{letter}
+\end{document}

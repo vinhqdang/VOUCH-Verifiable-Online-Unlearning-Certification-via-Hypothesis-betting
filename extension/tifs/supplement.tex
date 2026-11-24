@@ -1,0 +1,146 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{xurl}
+\usepackage{xr-hyper}
+\usepackage[hidelinks]{hyperref}
+\externaldocument[M-]{main}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\Bern}{\mathrm{Bern}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\TV}{\mathrm{TV}}
+
+\begin{document}
+
+\title{Supplementary Material for\\ ``Canary-Aware Providers and the Limits of Unlearning
+Audits: A Sharp Bound and the Detectability--Power Trade-off''}
+\author{Quang-Vinh~Dang}
+\maketitle
+
+% Numbering continues from the main manuscript.
+\setcounter{table}{6}
+\setcounter{figure}{1}
+\setcounter{theorem}{8}
+\renewcommand{\thesection}{S-\Roman{section}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+This supplement contains the proofs omitted from the main text
+(Section~\ref{sec:s-proofs}), a bound on the certification time of the cohort certificate
+that the main text refers to (Section~\ref{sec:s-time}), and additional experimental results
+(Section~\ref{sec:s-results}). Numbering of theorems, tables and figures continues that of the
+main manuscript.
+
+\section{Proofs}\label{sec:s-proofs}
+
+\subsection{Proof of Theorem~\ref{M-thm:population}}
+
+Given $\xi$, $\Delta$ is a function of the $2m$ independent coordinates
+$(b_1,\dots,b_m,C_1,\dots,C_m)$. By Assumption~\ref{M-ass:influence}, changing one coin changes
+$\Delta$ by at most $2\kappa/m$ and changing one pair's contents by at most $2\ell/m$.
+McDiarmid's inequality \citep{mcdiarmid1989bounded} gives
+$\Pr[|\Delta-\Delta_\xi|\ge u]\le2\exp(-2u^2/\sum_kc_k^2)$ with
+$\sum_kc_k^2=4(\kappa^2+\ell^2)/m$, that is $2\exp(-u^2m/(2(\kappa^2+\ell^2)))$; equating it to
+$\alpha'$ gives $u_m$. Corollary~\ref{M-cor:ladder} follows by a union bound with the
+certificate's error probability and Theorems~\ref{M-thm:detect} and~\ref{M-thm:sharp}. Under exact
+unlearning $\kappa=\ell=1$, since a pair's coin or contents can then affect only that pair's
+own term. Under partial unlearning $\kappa$ and $\ell$ measure how far one canary's training
+reaches into the others' scores; with stochastic training one record can perturb every pair
+whose score difference is close to zero, so the assumption is a worst-case bound that the
+auditor cannot check.
+
+\subsection{Proof of Proposition~\ref{M-prop:semantic}}
+
+Write $\F_{t-1}$ for the auditor's information after $t-1$ reveals.
+\input{sections/_semantic_proof}
+
+\subsection{Proof of Proposition~\ref{M-prop:class}}
+
+Write $E_s$ for the wealth process of arm $s$ and $E=\sum_sw_sE_s$.
+\input{sections/_class_proof}
+
+\subsection{Proof of Proposition~\ref{M-prop:anytime}}
+
+\input{sections/_anytime_proof}
+
+Table~\ref{tab:anytime} checks the constants by simulation. A two-sided sequential test runs
+two arms at level $\alpha/2$, so its oracle expected time is $2\log(2/\alpha)/\Delta^2\,(1+o(1))$
+as $\Delta\to0$, while the two-sided fixed-sample sign test needs
+$n\approx(z_{1-\alpha/2}+z_{1-\beta})^2/\Delta^2$ pairs for power $1-\beta$. At $\alpha=0.05$
+the constants are $7.4$ for the sequential oracle and $3.8$, $7.9$, $10.5$ for power $0.5$,
+$0.8$, $0.9$.
+
+\input{sections/_anytime_table}
+
+\section{Certification time of the cohort certificate}\label{sec:s-time}
+
+VOUCH bounds the certification time through refutation: once enough zeros have been revealed
+the null becomes infeasible \citep{dang2026vouch}. In practice the wealth crosses $1/\alpha$
+much earlier, by growth. Under a uniform reveal order $\pi$ the upper arm bets against the
+without-replacement boundary
+\begin{equation}\label{eq:worboundary}
+p_0(t)=\frac{mp_0-S_{t-1}}{m-t+1},\qquad p_0=\tfrac12+\tfrac\eps2,
+\end{equation}
+with wealth $W_t=\prod_{u\le t}(1+\lambda_u(p_0(u)-Z_{\pi(u)}))$, and $\F_t$ denotes the
+auditor's information after $t$ reveals.
+
+\input{sections/_time_body}
+\input{sections/_time_table}
+
+\section{Additional experimental results}\label{sec:s-results}
+
+\paragraph{Retention} The retention of a score is its advantage after unlearning divided by the
+mean advantage before unlearning over seeds; per-seed ratios are unstable when a seed's
+pre-unlearning paraphrase advantage is close to zero. Table~\ref{tab:retention} reports the
+per-seed tests behind Fig.~\ref{M-fig:retention}. Comparisons that mix a raw literal score with
+a calibrated paraphrase score give larger gaps and, for Pythia-1B, a significant one, but the
+two scores have different noise and we do not rely on them.
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{2pt}
+\caption{Paraphrase minus literal retention, averaged over the grid of strengths within each
+seed; mean $\pm$ standard error over eight seeds, number of seeds with a positive value, and
+the Wilcoxon signed-rank $p$ (smallest attainable $0.008$). The first row of each block is the
+like-for-like comparison.}
+\label{tab:retention}
+\resizebox{\columnwidth}{!}{\input{tables/retention_tests}}
+\end{table}
+
+\paragraph{Literal-only design} Table~\ref{tab:clean} gives the audit verdicts for the
+literal-only semantic design whose models are used in Table~\ref{M-tab:baselines}. The paraphrase
+advantage before unlearning is about half the literal one and falls roughly in step with it;
+the literal and the union rule revoke at nearly identical rates, and the union issues on
+retraining in $99\%$ of runs.
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Literal-only semantic design, Pythia-410M: mean calibrated advantages $\pm$ standard
+errors over eight seeds; fraction of runs revoked by the literal and the union rule and issued
+by the union rule ($40$ reveal orders per seed); membership-inference AUC of the organic forget
+biographies against the organic holdout (loss score).}
+\label{tab:clean}
+\resizebox{\textwidth}{!}{\input{tables/clean}}
+\end{table*}
+
+\bibliographystyle{IEEEtranN}
+\bibliography{refs}
+
+\end{document}

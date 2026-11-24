@@ -1,0 +1,104 @@
+\section{Canary design and audit cost}\label{sec:design}
+
+Theorem~\ref{thm:sharp} says what a canary design must achieve: the smaller its
+distinguishing advantage, the less a canary-aware provider can hide. This section gives a
+design that keeps the audit's exact null while making canaries look organic, and states what
+enlarging the score class and monitoring continuously cost.
+
+\subsection{Semantic twins}
+
+VOUCH's secrets are random alphanumeric strings, recognisable by their entropy, and they
+have no paraphrase, so an audit built on them cannot ask whether a fact survives in another
+form. A \emph{semantic twin} pair names a fictitious entity $e$ and an attribute (birthplace,
+profession) and states two incompatible values: $c^0$ says that $e$ has value $v$, $c^1$ that
+it has $v'\neq v$. The generator draws the two values as an unordered pair and swaps them by a
+fair coin, so it is label-symmetric by construction. Each score compares the two values under
+the same prompt:
+\emph{literal}, the mean token log-probability of the value after the trained prefix (``$e$
+was born in''); \emph{belief}, the same quantity averaged over a committed set of
+paraphrased questions none of which is trained (``Where was $e$ born?''); \emph{belief\_max},
+the maximum over the set; and the \emph{calibrated} version of each, which subtracts the
+score under the frozen base model $M_0$ and removes the base model's prior between the two
+values. We call the calibrated belief scores \emph{paraphrase} scores.
+
+\begin{proposition}[Exact null for semantic twins]\label{prop:semantic}
+Under Assumption~\ref{ass:gen}, if $M$ is conditionally independent of the coins given the
+contents, then for every score above and every step $t$ of a reveal order chosen
+independently of the signs, $Z^{(s)}_{\pi(t)}\mid\F_{t-1}\sim\Bern(\frac12)$ exactly.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Enlarge $\F_{t-1}$ by the position $\pi(t)=j$ and the unordered contents of pair $j$. The two
+numbers $s(M,c_j^0)$ and $s(M,c_j^1)$ are then determined, because both twins are scored by
+the same function of the model under the same prompt, and $M_0$ is fixed before any coin. The
+coin $b_j$ is still fair and only decides which number belongs to the in-twin, so
+$D_j\overset d=-D_j$ and the tie-break coin makes $Z_j$ fair. The full proof is in the
+supplement.
+\end{proof}
+
+Semantics costs power, not validity: a base-model preference for one value enters both arms
+symmetrically, adds variance, and is largely removed by calibration.
+
+\subsection{Organic-matched twins}\label{sec:matched}
+
+Let organic records be produced by a generator $G_o$, for instance sentence templates with
+slot distributions. An \emph{organic-matched} pair is drawn by sampling one record $r\sim G_o$
+and filling one designated slot of it with an unordered pair of values from that slot's
+distribution, swapped by a fair coin. Each twin is a record of $G_o$ with one slot redrawn.
+Take $P_o$ to be the distribution of pairs formed in the same way from organic records, so
+that the organic advantage compares an organic record with a counterfactual copy that
+differs in one slot. Then $P=P_o$, and by Corollary~\ref{cor:tradeoff} and
+Theorem~\ref{thm:sharp} the canary advantage equals the organic advantage for every pipeline.
+Two details matter in practice: names are drawn as in organic data, and each canary appears
+once, since verbatim repetition is itself a signal (Remark~\ref{rem:dup}). Matching is easy
+when the auditor writes the organic generator, as in our experiments; for a deployed model it
+requires sampling from the users' own data distribution, which is the main open problem
+(Section~\ref{sec:discussion}).
+
+\subsection{Enlarging the score class}\label{sec:class}
+
+Paraphrase scores enlarge the declared class $\F$, and the certificate and the alarm pay
+differently for it.
+
+\begin{proposition}[Cost of enlarging the class]\label{prop:class}
+Let $\F'\supseteq\F$ be finite. (i) The false-certificate probability stays at most $\alpha$
+without correction for $|\F'|$; enlarging the class can only delay issuance. (ii) Under the
+exact null, a weighted average $\sum_sw_sE_s$ of the alarm's wealth processes is a
+nonnegative supermartingale with initial value one, so revoking when it reaches $1/\alpha$
+has error at most $\alpha$, and it dominates every Bonferroni rule ``revoke when some
+$E_s\ge1/(w_s\alpha)$''. (iii) In the sign model of Proposition~\ref{prop:anytime}, a
+leaking score with weight $w$ delays the oracle alarm by at most $\log(1/w)/\KL$.
+\end{proposition}
+
+Part (i) holds because a false certificate requires the wealth of a score whose tolerance
+is violated to cross $1/\alpha$, which no union over the class changes; (ii) is the merging
+of e-values by averaging \citep{vovk2021evalues}. The union audit of
+Section~\ref{sec:exp-squeeze} splits $\alpha$ on both sides and is therefore conservative on
+the certificate side.
+
+\subsection{The price of continuous monitoring}\label{sec:anytime}
+
+A provider under audit may be monitored at any time, so the auditor needs a test that stays
+valid under optional stopping. In the sign model, i.i.d.\ signs $Z_t\sim
+\Bern(\frac{1+\Delta}2)$ tested against $\Delta=0$, let
+$\KL(\Delta)=\frac{1+\Delta}2\log(1+\Delta)+\frac{1-\Delta}2\log(1-\Delta)\approx\Delta^2/2$.
+
+\begin{proposition}[Expected stopping time]\label{prop:anytime}
+(i) Every level-$\alpha$ sequential test that stops almost surely under $\Delta$ has
+$\mathbb{E}_\Delta\tau\ge\log(1/\alpha)/\KL(\Delta)$. (ii) The oracle bettor with stake
+$\Delta$ stops with $\mathbb{E}_\Delta\tau\le(\log(1/\alpha)+\log(1+\Delta))/\KL(\Delta)$.
+(iii) A uniform mixture of $K$ constant stakes $\lambda_k$ stops with
+$\mathbb{E}_\Delta\tau\le(\log(K/\alpha)+\log(1+\lambda_k))/g_\Delta(\lambda_k)$ for every $k$
+with $g_\Delta(\lambda_k)=\frac{1+\Delta}2\log(1+\lambda_k)+\frac{1-\Delta}2\log(1-\lambda_k)
+>0$.
+\end{proposition}
+
+Part (i) is Wald's argument \citep{wald1945sequential}; proofs are in the supplement. For a
+two-sided test at $\alpha=0.05$ the oracle's constant is $2\log 40=7.4$ against $7.9$ for a
+fixed-sample sign test with $80\%$ power: the expected sample size of the oracle equals that
+of a fixed-sample test with about $78\%$ power, and simulations show that a ten-stake mixture
+costs $1.1$ to $1.4$ times the oracle (Table~\ref{S-tab:anytime} in the supplement). Continuous monitoring therefore
+costs a constant factor of order one, which explains why a paired fixed-sample sign test is
+about as powerful as VOUCH in Section~\ref{sec:exp-baselines}. On a finite cohort revealed in
+uniform order the betting edge grows deterministically as the cohort is exhausted; the
+supplement turns this into a Freedman tail bound on the certification time (Theorem~\ref{S-thm:growth}).

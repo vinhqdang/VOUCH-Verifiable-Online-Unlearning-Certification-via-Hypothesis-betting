@@ -1,0 +1,46 @@
+\section{Related work}\label{sec:related}
+
+\paragraph{Planted-record audits} The secret-sharer methodology plants random secrets and
+measures their exposure \citep{carlini2019secret}. Privacy auditing with canaries estimates a
+lower bound on the privacy parameter of a training algorithm from randomly included canaries
+\citep{steinke2023privacy}, and copyright traps plant sequences in documents so that their
+inclusion in training can be tested later \citep{meeus2024traps}. VOUCH
+\citep{dang2026vouch} adds a paired control and betting e-processes
+\citep{waudbysmith2024,ramdas2023game,shafer2021testing,grunwald2024safe} to certify the
+outcome of one unlearning run with an exact null. All of these designs rely on canaries that
+are easy to memorise, and none bounds what a provider gains by recognising them.
+Theorem~\ref{thm:detect} applies to each of them whenever the audit statistic averages a
+bounded per-canary leakage under randomised inclusion.
+
+\paragraph{Adversarial providers and verification} \citet{thudi2022necessity} argue that
+approximate unlearning cannot be audited from weights alone. \citet{zhang2024verification}
+show that a dishonest provider can pass existing families of verification strategies while
+retaining the data; our bound quantifies this for planted-canary audits as a function of
+canary detectability, and shows that it can be closed only at the price of power.
+Cryptographic proofs of unlearning \citep{eisenhofer2025verifiable} attest that a committed
+computation ran, which is complementary: they exclude deviation from the pipeline, while our
+threat model is a pipeline that is run faithfully but treats records by content.
+\citet{yu2025impossibility} show that retraining-based definitions are ill-posed for
+multi-stage pipelines, one reason paired audits avoid a retrained reference.
+
+\paragraph{Membership inference as an audit} Score-based attacks threshold the loss, its zlib
+ratio \citep{carlini2021extracting} or Min-K\% Prob \citep{shi2024mink}; LiRA calibrates per
+example with shadow models \citep{carlini2022lira}, and \citet{hayes2024inexact} show that
+population-level attacks overstate unlearning. \citet{zhang2024mia} establish that
+membership scores cannot prove training on given data without randomised inclusion.
+\citet{duan2024membership} find attacks near chance when members and non-members share a
+distribution, and \citet{das2024blind} show that classifiers that never query the model match
+published attacks on shifted benchmarks. Our results add the unlearning-audit consequence:
+an unmatched holdout accuses an honest provider, and a matched holdout is valid but weaker
+than a paired test.
+
+\paragraph{Evaluating unlearning} Gradient ascent, NPO \citep{zhang2024npo}, SimNPO
+\citep{fan2025simnpo} and representation misdirection \citep{li2024wmdp} are evaluated on TOFU
+\citep{maini2024tofu} and MUSE \citep{shi2024muse}. Their metrics have been shown to overstate
+forgetting: unlearned knowledge returns after benign relearning \citep{hu2025jogging}, under
+quantisation \citep{zhang2025quantization} and under lightweight attacks
+\citep{lucki2024adversarial}, and forget-quality metrics track surface behaviour
+\citep{wang2025towards,yuan2025closer,feng2025existing}; see
+\citet{liu2025rethinking,xue2026survey} for surveys. \citet{li2026beliefs} show that
+gradient-based unlearning shifts probability onto paraphrases of the target; our paraphrase
+scores measure the audit side of the same phenomenon.

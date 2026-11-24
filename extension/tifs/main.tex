@@ -1,0 +1,72 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{xurl}
+\usepackage{xr-hyper}
+\usepackage[hidelinks]{hyperref}
+\externaldocument[S-]{supplement}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\Bern}{\mathrm{Bern}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\TV}{\mathrm{TV}}
+
+\begin{document}
+
+\title{Canary-Aware Providers and the Limits of\\ Unlearning Audits: A Sharp Bound and the\\
+Detectability--Power Trade-off}
+
+\author{Quang-Vinh~Dang%
+\thanks{Q.-V.~Dang is with British University Vietnam, Hung Yen, Vietnam
+(e-mail: vinh.dq4@buv.edu.vn; ORCID: 0000-0002-3877-8024).}}
+
+\markboth{IEEE Transactions on Information Forensics and Security}%
+{Dang: Canary-Aware Providers and the Limits of Unlearning Audits}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\begin{IEEEkeywords}
+Machine unlearning, auditing, canaries, membership inference, hypothesis testing,
+e-values, large language models.
+\end{IEEEkeywords}
+
+\input{sections/intro}
+\input{sections/model}
+\input{sections/bound}
+\input{sections/design}
+\input{sections/experiments}
+\input{sections/related}
+\input{sections/discussion}
+
+\section*{Code and data availability}
+All records are fictitious and generated deterministically from committed seeds. Code,
+per-seed results and the scripts that produce every table and figure are available at
+\url{https://github.com/vinhqdang/VOUCH-Verifiable-Online-Unlearning-Certification-via-Hypothesis-betting},
+directory \texttt{extension/}.
+
+\bibliographystyle{IEEEtranN}
+\bibliography{refs}
+
+\end{document}

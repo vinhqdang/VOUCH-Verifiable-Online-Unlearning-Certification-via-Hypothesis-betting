@@ -1,0 +1,107 @@
+\section{Introduction}\label{sec:intro}
+
+\IEEEPARstart{A} user who asks a model provider to delete their data receives, at best, an
+assurance that an unlearning routine was run. Regulators and users increasingly ask for
+evidence instead, and the evidence that can be produced without trusting the provider's
+own report is statistical: plant records whose fate the auditor knows, ask for their
+deletion, and test whether the deployed model still favours them. The secret-sharer
+methodology \citep{carlini2019secret}, privacy auditing with canaries
+\citep{steinke2023privacy}, copyright traps \citep{meeus2024traps} and membership-inference
+tests on a forget set \citep{shi2024muse,hayes2024inexact} all follow this pattern. The most
+recent instance, VOUCH \citep{dang2026vouch}, plants \emph{paired ghost canaries}, two
+exchangeable records of which a fair coin admits one into training and later into the
+forget set. Under exact unlearning the sign of the score difference between the twins is
+then a fair coin, and betting e-processes turn the signs into an anytime-valid certificate
+with an exact null.
+
+Every audit of this kind certifies a statement about the planted records. The statement
+that matters to users is about their own records. The two coincide only if the provider
+processes canaries exactly as it processes everything else, and audits typically assume
+it; VOUCH calls the assumption \emph{honest but verifiable}. A provider with an incentive to
+pass the audit cheaply, by unlearning carefully what the auditor will check and cutting
+corners elsewhere, violates it. This paper asks how much such a provider can hide, what
+it needs in order to hide it, and what an auditor can do about it.
+
+\paragraph{Threat.} We consider a \emph{canary-aware} provider: it sees the training corpus
+and the forget set, including the planted records, and may run any rule on their content to
+decide how thoroughly to unlearn each record. It does not see the auditor's coins. The
+provider passes the audit if the canary advantage stays below the auditor's tolerance, and
+it gains by leaving as much organic data as possible un-unlearned. Provenance attacks, in
+which canaries reach the provider through a distinguishable channel, and providers that
+deviate from the committed pipeline altogether are out of scope; the former must be closed
+by the injection protocol and the latter by attestation \citep{eisenhofer2025verifiable}.
+
+\paragraph{Contributions.} The contributions are a bound, its measurement on current canary
+designs, and a design that closes the bound together with what it costs.
+
+\begin{itemize}
+\item \textbf{A sharp evasion bound.} For any audit whose statistic averages a bounded
+per-pair leakage over randomly included canaries, the gap between the canary advantage and
+the advantage the same pipeline run would show on organic records is at most twice the
+distinguishing advantage between canaries and organic records
+(Theorem~\ref{thm:detect}). For one-sided leakage the bound is sharp: the largest organic
+advantage compatible with a canary advantage of at most $\eps$ is the Neyman--Pearson power
+of testing canaries against organic records at level $\eps$, which is $\eps$ when the two
+coincide and $1$ when they are mutually singular (Theorem~\ref{thm:sharp}). Every canary
+detector therefore yields an attack, and every attack yields a detector.
+
+\item \textbf{Current canary designs are fully evadable.} A character $n$-gram classifier
+recognises VOUCH's random-string canaries and semantic canaries built from their own
+templates with advantage one, and verbatim repetition alone gives a lower bound of $0.75$ on
+the distinguishing advantage. A provider guided by the classifier holds the canary
+advantage at the audit's tolerance of $0.2$ while leaving all organic records un-unlearned
+(Section~\ref{sec:exp-detect}).
+
+\item \textbf{Organic-matched canaries with an exact null.} Paired canaries stating two
+incompatible facts keep the audit's exact null for every score that compares the facts
+under a common prompt, including scores on paraphrased questions never trained
+(Proposition~\ref{prop:semantic}). Drawing both twins from the organic record generator
+makes each twin distributed as an organic record. Against these canaries the selective
+provider's gain falls to $0.03$ to $0.08$ above random selection, within the bound.
+
+\item \textbf{The detectability--power trade-off.} The bound implies that the canary
+advantage can exceed the organic advantage only by twice the detectability
+(Corollary~\ref{cor:tradeoff}): an indistinguishable canary is exactly as hard to detect in
+the model as an organic record. On Pythia-410M a record seen once leaves no detectable
+trace at our training budget, so the audit with matched canaries is valid but powerless and
+certifies a model that never unlearned in $97\%$ of runs
+(Section~\ref{sec:exp-matched}).
+
+\item \textbf{Two further failure modes of audits.} A membership-inference audit that
+compares canaries with an organic holdout accuses a retrained, exactly unlearned model in
+every seed, while a paired test on the same records is valid and as powerful as VOUCH
+(Section~\ref{sec:exp-baselines}). When the forget set omits a form in which a fact was
+trained, adding paraphrase scores to the audit revokes up to $38\%$ of runs that a literal
+audit certifies (Section~\ref{sec:exp-squeeze}).
+\end{itemize}
+
+\paragraph{Novelty relative to the closest work.} The closest published work is VOUCH
+\citep{dang2026vouch}, which introduced paired ghost canaries and the anytime-valid
+certificate that we use as the running example. VOUCH proves that recognising canaries does
+not invalidate the certificate on the cohort, and its threat model assumes that the
+provider does not special-case canaries; it measures that its canaries are easy to
+recognise but does not ask what recognition buys. This paper drops that assumption. The
+bound of Theorems~\ref{thm:detect} and~\ref{thm:sharp}, the selective-provider evaluation,
+the semantic and organic-matched canary designs with their exact null, the
+detectability--power trade-off and the comparison with membership-inference audits are new.
+\citet{zhang2024verification} show that a dishonest provider can defeat existing
+verification strategies; we quantify the defeat for planted-canary audits as a function of
+canary detectability, and show where it can and cannot be closed.
+\citet{duan2024membership} and \citet{das2024blind} observe that membership-inference
+benchmarks with shifted non-members measure the shift; Theorem~\ref{thm:detect} is the
+certificate-level form of that observation, and Section~\ref{sec:exp-baselines} shows its
+consequence for unlearning audits: false accusation of an honest provider.
+
+\paragraph{Scope.} Data can bound the distinguishing advantage only from below, so the
+statement about organic records is conditional on the strongest detector anyone can build;
+we report the strongest we built. All records are fictitious biographies from one domain,
+and the models have at most one billion parameters. The selective provider is simulated
+from detector decisions rather than run end to end. Section~\ref{sec:discussion} discusses
+these limits.
+
+\paragraph{Organisation.} Section~\ref{sec:model} defines the audit and the threat model.
+Section~\ref{sec:bound} proves the bound. Section~\ref{sec:design} presents canary designs
+and the cost of continuous monitoring. Section~\ref{sec:experiments} reports the
+experiments, Section~\ref{sec:related} discusses related work and
+Section~\ref{sec:discussion} the limitations. Proofs not given in the text and additional
+results are in the supplementary material.

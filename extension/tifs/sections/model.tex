@@ -1,0 +1,89 @@
+\section{Audit and threat model}\label{sec:model}
+
+\subsection{Parties and pipeline}
+
+A \emph{provider} fine-tunes a model on a corpus, receives deletion requests, applies an
+unlearning routine to a forget set and deploys the resulting model $M$. An \emph{auditor}
+wants evidence that the routine removed the influence of the forget set without trusting
+the provider's report. Before training, the auditor generates a cohort of $m$ canary pairs
+with contents $C_i=(c_i^0,c_i^1)$, $i=1,\dots,m$, and draws independent fair coins
+$b_i\sim\Bern(\frac12)$. The \emph{in-twin} $c_i^{b_i}$ is inserted into the training corpus
+and later into the forget set; the \emph{ghost twin} $c_i^{1-b_i}$ is never trained on. The
+auditor commits to the manifest of contents and coins (VOUCH uses a Merkle commitment) and
+opens a coin only when its pair is audited. All other randomness of training and
+unlearning is collected in $\xi$.
+
+\begin{assumption}[Generator]\label{ass:gen}
+The contents $C_1,\dots,C_m$ are independent draws from a distribution $P$ on ordered pairs
+that is label-symmetric: $(c^0,c^1)\sim P$ implies $(c^1,c^0)\sim P$. The coins are
+independent of the contents and of $\xi$, and $\xi$ is independent of the contents.
+\end{assumption}
+
+Both properties describe the auditor's own sampler, not the model or the data, and are
+under the auditor's control. Label symmetry makes the two twins of a pair identically
+distributed, so every canary record is a draw from one record distribution.
+
+\subsection{The audit}
+
+A \emph{score} $s(M,c)$ measures how much the model favours a record, for example the mean
+token log-probability of a secret value after its prompt. A class $\F$ of scores is declared
+before any query. For each pair and score the auditor computes
+$D_i^{(s)}=s(M,c_i^{\mathrm{in}})-s(M,c_i^{\mathrm{ghost}})$ and its sign
+$Z_i^{(s)}=\mathbf 1[D_i^{(s)}>0]$, with ties split by a committed coin. The \emph{cohort
+advantage} of a score is
+\[
+\Delta \;=\; \frac1m\sum_{i=1}^m\bigl(2Z_i-1\bigr)\in[-1,1].
+\]
+It is zero in expectation under exact unlearning and positive when the in-twins are still
+favoured; negative values, in-twins scored conspicuously low, are leakage as well.
+
+\paragraph{The exact null.} If $M$ is conditionally independent of the coins given the
+contents, as under exact unlearning or retraining from scratch, the sign of the pair opened
+at each step of a reveal order chosen independently of the signs is a fair coin given
+everything opened before \cite[Thm.~1]{dang2026vouch}. No independence between pairs is
+needed.
+
+\paragraph{The certificate.} VOUCH reveals the pairs in a uniformly random order and runs,
+for each score and direction, a betting wealth process against the boundary
+$p_0(t)=(mp_0-S_{t-1})/(m-t+1)$ with $p_0=\frac12+\frac\eps2$, where $S_{t-1}$ counts the
+ones already revealed. If the cohort advantage were at least $\eps$, each wealth process
+would be a nonnegative supermartingale, so by Ville's inequality the probability that any
+of them ever reaches $1/\alpha$ is at most $\alpha$. A two-sided $(\eps,\alpha)$
+certificate (ISSUED) states $|\Delta|<\eps$ for every declared score and is false with
+probability at most $\alpha$ under arbitrary dependence between pairs
+\cite[Thm.~2]{dang2026vouch}. A separate process tests the exact null and raises an alarm
+(REVOKED) when the model still depends on the coins; a run that does neither is
+UNDETERMINED. We use VOUCH as the running example, but the results of
+Section~\ref{sec:bound} hold for any audit statistic that averages a bounded per-pair
+leakage over randomly included canaries, for example a paired membership-inference test
+whose per-pair statistic is a bounded function of the twins' score difference.
+
+\subsection{Threat model}\label{sec:threat}
+
+The provider runs the committed training and unlearning pipeline on the committed data,
+but the pipeline may treat records differently according to their content. Formally, the
+provider chooses, before seeing any coin, a measurable rule that maps each record to the
+treatment it receives (for example, how many unlearning steps act on it, or whether it
+is unlearned at all). We call such a provider \emph{canary-aware}. Its goal is to pass the
+audit, that is, to keep the canary advantage below the tolerance $\eps$, while leaving as
+much organic data in the forget set as possible un-unlearned.
+
+\emph{Capabilities.} The provider sees every record of the training corpus and of the forget
+set, including canaries, and may hold labelled examples of the auditor's canary design, for
+instance because the generator is public. It may count repetitions in the corpus. It sees
+neither the coins nor which twin of a pair was trained, because only the in-twin enters
+its data.
+
+\emph{Out of scope.} A provider that recognises canaries by the channel through which they
+arrive (provenance) defeats any content-based guarantee; the auditor must inject canaries
+through the ordinary data path, for example as ordinary user accounts. A provider that runs
+a different pipeline than the committed one, or serves a different model to the auditor,
+is addressed by cryptographic proofs of unlearning \citep{eisenhofer2025verifiable} and is
+not considered.
+
+\emph{A second failure mode.} Independently of strategy, a deletion request may name one
+record of a fact that the model also learned from another record, and gradient-based
+unlearning can suppress a trained string while the fact stays reachable through paraphrase
+\citep{li2026beliefs}. An audit that scores only the trained surface form cannot see such
+residue. We treat this as a property of the declared score class and return to it in
+Sections~\ref{sec:design} and~\ref{sec:exp-squeeze}.

@@ -1,0 +1,12 @@
+\begin{tabular}{lccccc}
+\toprule
+ & \multicolumn{2}{c}{Perplexity features} & \multicolumn{2}{c}{Character $n$-grams} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Canary design & AUC & advantage & AUC & advantage & $\gamma\ge$ \\
+\midrule
+VOUCH random-string QA & 0.998 & 0.973 & 1.000 & 1.000 & 1.000 \\
+semantic twin, literal & 0.998 & 0.978 & 1.000 & 1.000 & 1.000 \\
+semantic twin, question--answer & 0.892 & 0.605 & 1.000 & 1.000 & 1.000 \\
+organic-matched twin & 0.521 & 0.052 & 0.442 & 0.102 & 0.102 \\
+\bottomrule
+\end{tabular}

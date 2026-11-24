@@ -1,0 +1,18 @@
+\begin{proof}
+We follow the proof of \cite[Thm.~1]{dang2026vouch}. Enlarge $\F_{t-1}$ to $\mathcal G_{t-1}$,
+which also reveals the position $\pi(t)$ and the \emph{unordered} contents
+$\{c^0_j,c^1_j\}$ of the pair $j=\pi(t)$ opened at step $t$, but not its coin. Given
+$\mathcal G_{t-1}$ and the deployed model, the two numbers $s(M,c^0_j)$ and
+$s(M,c^1_j)$ are determined, because each score is a function of the model and the
+record alone: both twins share the literal prefix or the question set $Q$ and differ only
+in the value evaluated, and the calibrated score subtracts $s(M_0,\cdot)$, where the base
+model $M_0$ is fixed before any coin is drawn. The coin $b_j$ is independent of the other
+coins and of the contents by Assumption~\ref{M-ass:gen}, independent of $M$ given the
+contents by hypothesis, and no earlier reveal involves it, so
+$b_j\mid\mathcal G_{t-1}\sim\Bern(\frac12)$. Since $b_j$ decides which of the two
+determined numbers is the in-twin's, $D_j\overset{d}{=}-D_j$ given $\mathcal G_{t-1}$,
+and the committed tie-break coin splits an atom at zero equally, so
+$Z_j\mid\mathcal G_{t-1}\sim\Bern(\frac12)$. Averaging over
+$\mathcal G_{t-1}\supseteq\F_{t-1}$ gives the claim. The semantics of the records never
+enters.
+\end{proof}

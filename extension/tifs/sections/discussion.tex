@@ -1,0 +1,57 @@
+\section{Discussion and limitations}\label{sec:discussion}
+
+\paragraph{Recommendations for auditors} Four follow from the results. First, a
+planted-canary certificate speaks for organic data only up to the canaries' detectability,
+and detectability should be measured and reported with every audit; for repeated or
+high-entropy canaries it is close to one and the certificate is a statement about the canaries
+alone. Second, canaries must enter through the ordinary data path, since provenance defeats
+any content-based guarantee. Third, a membership-inference audit should compare members with
+non-members drawn from one distribution by construction, as ghost twins are, and should pair
+them. Fourth, the declared class should include paraphrase scores next to the literal score,
+which costs nothing in certificate error and catches residue that an incomplete forget set
+leaves behind.
+
+\paragraph{The trade-off cannot be designed away} Corollary~\ref{cor:tradeoff} is an identity,
+not an artefact of our designs: an audit can see more than the organic advantage only through
+features that also make its canaries recognisable. A certificate from undetectable canaries
+says how much the pipeline leaks for records like users' records, which at single exposure may
+be little, and cannot distinguish unlearning from never having learned. Larger training
+budgets, canaries spread over several slots, or repetition through paraphrased rather than
+verbatim copies are ways to buy back power, each at a detectability cost that would have to
+be measured.
+
+\paragraph{Detectability is bounded only from below} Our detectors are two cheap families; a
+provider with more compute could train stronger ones, and the organic statement is conditional
+on $\gamma$. What the theorem establishes is the direction of the burden: a provider that
+passes on canaries while leaving organic data untouched has, in effect, built a canary
+detector, and the gap it obtains is bounded by that detector's advantage. Generating matched
+canaries for real corpora, whose distribution the auditor sees only through samples, is the
+main open problem.
+
+\paragraph{Scope of the evaluation} The selective provider is simulated from detector decisions
+on records, which by Theorem~\ref{thm:sharp}(ii) determines its canary and organic advantages
+when skipped records stay favoured; we did not train and selectively unlearn a model end to end.
+All facts are fictitious and from one domain, the models have at most one billion parameters
+and are fine-tuned with LoRA for $600$ steps, and the same unlearning step counts are used for
+both sizes. Per-example calibrated attacks with shadow models \citep{carlini2022lira} were
+compared with VOUCH in the original paper and are not repeated.
+
+\paragraph{Scope of the theory} Theorem~\ref{thm:population} conditions on the training
+randomness and assumes bounded influence, which holds under exact unlearning but cannot be
+verified under partial unlearning. The organic advantage is counterfactual. The sharp form
+needs one-sided leakage, which gradient ascent violates; Theorem~\ref{thm:detect} with its
+factor two covers that case. Proposition~\ref{prop:anytime} assumes i.i.d.\ signs and an
+oracle stake.
+
+\section{Conclusion}\label{sec:conclusion}
+
+A planted-canary audit certifies the canaries. Whether it certifies anything about the data
+users delete depends on whether the provider can tell the two apart, and we proved that the
+leakage a canary-aware provider can hide is at most twice its distinguishing advantage, exactly
+the Neyman--Pearson power when leakage is one-sided. Current canary designs are recognised
+perfectly, and a provider guided by a simple classifier can leave all organic records
+un-unlearned while holding the canary advantage at the tolerance. Organic-matched canaries,
+which keep the exact null, close the gap, but an indistinguishable canary is memorised no more
+than an organic record, and at single exposure the audit loses its power. An auditor must
+choose a point on this trade-off and report it; membership-inference audits against unmatched
+holdouts should not be used at all.

@@ -1,0 +1,19 @@
+\begin{proof}
+(i) Let $\Lambda_t=\sum_{u\le t}\log\frac{d\Bern((1+\Delta)/2)}{d\Bern(1/2)}(Z_u)$. Wald's
+identity \citep{wald1945sequential} gives $\mathbb{E}_\Delta\Lambda_\tau=\mathrm{KL}(\Delta)\,\mathbb{E}_\Delta\tau$.
+Changing measure on $\{\tau=n\}$, where $d\Pr_0/d\Pr_\Delta=e^{-\Lambda_n}$,
+$\alpha\ge\Pr_0[\tau<\infty]=\mathbb{E}_\Delta\bigl[e^{-\Lambda_\tau}\bigr]\ge
+e^{-\mathbb{E}_\Delta\Lambda_\tau}$ by Jensen, so $\mathbb{E}_\Delta\Lambda_\tau\ge
+\log(1/\alpha)$.
+(ii) $W_t$ is a nonnegative martingale under the null with $W_0=1$, so Ville's inequality
+gives level $\alpha$. Under $\Delta$, $\mathbb{E}\log(1+\Delta(2Z-1))=\frac{1+\Delta}2
+\log(1+\Delta)+\frac{1-\Delta}2\log(1-\Delta)=\mathrm{KL}(\Delta)=:g$, and
+$\log W_t-gt$ is a martingale with bounded increments, so Wald's identity gives
+$\mathbb{E}\log W_\tau=g\,\mathbb{E}\tau$ once $\mathbb{E}\tau<\infty$, which holds since the
+drift is positive. Since $W_{\tau-1}<1/\alpha$ and each factor is at most $1+\Delta$,
+$\log W_\tau<\log(1/\alpha)+\log(1+\Delta)$.
+(iii) The mixture wealth is at least $W^{\lambda_k}_t/K$, so it crosses $1/\alpha$ no later
+than $W^{\lambda_k}$ crosses $K/\alpha$; apply (ii) with $\alpha\to\alpha/K$ and the stake
+$\lambda_k$, whose growth rate is $g_\Delta(\lambda_k)$; the proof of (ii) applies verbatim
+to any stake with positive growth rate, with overshoot factor $1+\lambda_k$.
+\end{proof}
