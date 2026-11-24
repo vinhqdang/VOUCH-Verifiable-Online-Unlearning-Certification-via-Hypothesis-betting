@@ -30,14 +30,15 @@ detector, and the gap it obtains is bounded by that detector's advantage. Genera
 canaries for real corpora, whose distribution the auditor sees only through samples, is the
 main open problem.
 
-\paragraph{Scope of the evaluation} The selective provider is simulated from detector decisions
-on records, which determines its canary and organic advantages in the idealised profile of
-Theorem~\ref{thm:sharp}; we did not train and selectively unlearn a model end to end, so no
-audit verdict for a selective provider is reported. The detectors are trained on canaries from
+\paragraph{Scope of the evaluation} The end-to-end attack uses Pythia-410M, NPO and organic
+probes repeated four times; with probes seen once, as most user records are, the organic
+leakage it hides would be smaller and harder to measure. Its evidence on the probes comes from
+pooling eight seeds, since one run of the probe audit has little power. The simulation of
+Table~\ref{tab:selective} uses detector decisions only. The detectors are trained on canaries from
 the same generators and on organic records from the same corpus, and the canaries of other
 audits were not tested.
 All facts are fictitious and from one domain, the models have at most one billion parameters
-and are fine-tuned with LoRA for $600$ steps, and the same unlearning step counts are used for
+and are fine-tuned with LoRA for $600$ steps ($800$ in the end-to-end attack), and the same unlearning step counts are used for
 both sizes. Per-example calibrated attacks with shadow models \citep{carlini2022lira} were
 compared with VOUCH in the original paper and are not repeated.
 
@@ -54,8 +55,9 @@ A planted-canary audit certifies the canaries. Whether it certifies anything abo
 users delete depends on whether the provider can tell the two apart, and we proved that the
 leakage a canary-aware provider can hide is at most twice its distinguishing advantage, exactly
 the Neyman--Pearson power when leakage is one-sided. The two canary designs we tested are
-recognised perfectly, and in simulation a provider guided by a simple classifier skips at least
-$99\%$ of organic records while holding its canary miss rate at the tolerance. Organic-matched
+recognised perfectly, and a provider that unlearns only what a simple classifier flags obtains the
+certificate while organic records deleted in the same request keep two thirds of their
+leakage. Organic-matched
 canaries, which keep the exact null, are not separated by our detectors beyond noise, but they
 can be no more sensitive than planted organic records, and at single exposure the audit had no
 power. An auditor must

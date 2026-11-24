@@ -1,7 +1,7 @@
 \section{Experiments}\label{sec:experiments}
 
-The experiments ask four questions. How well can a provider recognise current canaries, and
-what does recognition buy it (Theorem~\ref{thm:sharp})? Do organic-matched canaries close the
+The experiments ask five questions. How well can a provider recognise current canaries, and
+what does recognition buy it (Theorem~\ref{thm:sharp})? Does the attack work end to end? Do organic-matched canaries close the
 gap, and what do they cost in power (Corollary~\ref{cor:tradeoff})? How do
 membership-inference audits behave on the same models? Does auditing paraphrases expose
 residue that a literal audit misses? Every number is produced by a script under
@@ -99,28 +99,61 @@ either way these are estimates against two detector families and do not show tha
 detector exists. As Section~\ref{sec:exp-matched} shows, the attack is in any case
 unnecessary against this design.
 
-\subsection{Auditing with semantic twins}\label{sec:exp-semantic}
+\subsection{An end-to-end canary-aware provider}\label{sec:exp-e2e}
 
-Before turning to matched canaries we check that semantic twins give a working audit when
-canaries are repeated as in VOUCH and the forget set contains every trained form
-(Table~\ref{tab:semantic}). Paraphrased questions that were never trained carry most of the
-literal advantage ($0.24$ against $0.28$ on average, calibrated), and the audit over all
-scores revokes the positive control and issues for retraining in every seed at $\eps=0.2$;
-GA and NPO remove both advantages. A GPT-2 pilot did not separate the controls: semantic
-twins need a model that generalises a stated fact to its paraphrases.
+The simulation above uses detector decisions only. We now run the attack on a model. Each
+training corpus contains, besides the keep and forget biographies, the auditor's $384$
+semantic canary pairs (literal form, repeated $1$, $2$, $4$ or $8$ times) and $384$
+\emph{organic probe} pairs: organic-matched twins with fair coins drawn by the experimenter,
+each in-twin repeated four times, so that they are memorised about as well as the canaries.
+The probes are part of the deletion request like any user record, and because their
+inclusion is randomised their paired sign statistic measures the organic advantage
+$\Delta^o_\xi$ of Section~\ref{sec:bound} directly, with an exact null under retraining.
+Pythia-410M is fine-tuned for $800$ steps. The provider trains a character $n$-gram detector
+on $1{,}000$ canaries from the public generator (fresh seed) against $1{,}000$ organic records it
+holds, and the \emph{selective} provider runs NPO only on the forget records the detector
+flags. The \emph{honest} provider runs NPO on the whole forget set. In all eight seeds the
+detector flags every canary and no probe or forget biography.
 
 \begin{table}[t]
-\centering\footnotesize\setlength{\tabcolsep}{2.5pt}
-\caption{Semantic-twin audit on Pythia-410M, full forget set, $m=384$, three seeds: realised
-calibrated literal and paraphrase advantages per seed and the two-sided verdict (I issued, R
-revoked, U undetermined).}
-\label{tab:semantic}
-\resizebox{\columnwidth}{!}{\input{tables/semantic}}
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{End-to-end canary-aware provider, Pythia-410M, eight seeds, NPO with $75$ or $150$
+steps. Canary cohort: pooled advantage and fraction of runs ($8$ seeds $\times$ $40$ reveal
+orders) in which VOUCH issues a two-sided $(0.2,0.05)$ certificate. Organic probes: pooled
+advantage over the $3{,}072$ probe pairs and two-sided exact sign-test $p$-value (the signs are
+independent fair coins under the exact null). AUC: membership inference of the organic forget
+biographies against the organic holdout (loss score).}
+\label{tab:e2e}
+\resizebox{\columnwidth}{!}{\input{tables/e2e}}
 \end{table}
+
+\paragraph{The selective provider passes and retains organic leakage} Table~\ref{tab:e2e} shows
+that the selective provider removes the canary advantage completely ($+0.006$ pooled after
+$150$ NPO steps) and VOUCH issues the certificate in $98\%$ of runs, as for the honest provider
+and for retraining. The organic probes keep an advantage of $+0.091$ ($p=5\cdot10^{-7}$),
+two thirds of the $+0.136$ of the model that never unlearned, while the honest provider at the
+same strength brings them to $+0.018$, indistinguishable from zero. Per seed, the probe
+advantage of the selective provider exceeds that of the honest provider in seven of eight
+seeds (mean difference $+0.074$, Wilcoxon $p=0.016$) and that of retraining in all eight
+($p=0.008$). The membership-inference AUC of the organic forget biographies, which are seen
+once and leave a weak trace, moves in the same direction ($0.53$ against $0.48$ for the honest
+provider and $0.56$ without unlearning). The certificate the provider obtains is correct about
+the canaries and says nothing about the organic records it left in place, as
+Theorem~\ref{thm:sharp} predicts for a detector with advantage one.
+
+Two qualifications apply. At $75$ NPO steps the honest provider also leaves probe residue
+($+0.062$), so the two providers differ only at the stronger setting. And the per-seed VOUCH
+audit of the probes revokes the selective provider in only $8\%$ of runs: a probe advantage of
+$0.09$ on $384$ pairs is below what one run can detect at $\alpha=0.05$, and the evidence comes
+from pooling eight seeds. An auditor who wants to catch the provider with organic-looking
+records alone needs more of them, or records memorised more strongly, which is the trade-off of
+Corollary~\ref{cor:tradeoff}.
 
 \subsection{The price of indistinguishability}\label{sec:exp-matched}
 
-Table~\ref{tab:matched} audits organic-matched twins, each appearing once, on Pythia-410M with
+With canaries repeated as in VOUCH and a complete forget set, semantic twins give a working
+audit on Pythia-410M: it revokes the positive control and issues for retraining in every seed
+(supplement, Section~\ref{S-sec:exp-semantic}). Table~\ref{tab:matched} audits organic-matched twins, each appearing once, on Pythia-410M with
 eight seeds, in a design where the in-twins are trained and unlearned in their literal form.
 
 \begin{table*}[t]
@@ -255,7 +288,7 @@ steps all rules revoke in at least $96.9\%$ of runs, and after $75$ NPO steps in
 \paragraph{Squeezing is not demonstrated at this scale} Paraphrase retention, the advantage
 after unlearning divided by the mean advantage before unlearning over seeds, is at or above
 literal retention at almost every strength in all three experiments
-(Fig.~\ref{fig:retention}). Averaging the difference over strengths within each seed and
+(supplement, Fig.~\ref{S-fig:retention}). Averaging the difference over strengths within each seed and
 testing the eight per-seed values with a Wilcoxon signed-rank test \citep{wilcoxon1945}, the
 like-for-like gap is $+0.07$ to $+0.12$, positive in five or six of eight seeds, and not
 significant in any experiment ($p\ge0.08$; supplement, Table~\ref{S-tab:retention}). In the
@@ -270,10 +303,4 @@ Paraphrase scores therefore cost little in validity and catch residue that the
 forget set omitted, but we do not claim that literal unlearning leaves the fact behind at
 this scale.
 
-\begin{figure*}[t]
-\centering
-\input{tables/fig_retention}
-\caption{Retention of the calibrated literal (filled markers) and paraphrase (open markers)
-advantage, normalised by the mean pre-unlearning advantage over eight seeds ($m=384$).}
-\label{fig:retention}
-\end{figure*}
+

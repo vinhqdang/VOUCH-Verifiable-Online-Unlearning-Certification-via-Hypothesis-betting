@@ -48,10 +48,12 @@ strategy, and every strategy yields a detector.
 
 \item \textbf{The canary designs we tested are fully evadable.} A character $n$-gram classifier
 recognises VOUCH's random-string canaries and semantic canaries built from their own
-templates with advantage one, because of artefacts of their generators. In a simulation
-driven by its decisions, a selective provider holds its canary miss rate, an upper bound on
-the canary advantage, at the audit's tolerance of $0.2$ while skipping at least $99\%$ of
-organic records (Section~\ref{sec:exp-detect}).
+templates with advantage one, because of artefacts of their generators. We run the attack
+end to end on Pythia-410M: a provider that unlearns only the records the classifier flags
+obtains VOUCH's certificate in $98\%$ of runs, while organic probe records with randomised
+inclusion, deleted in the same request, keep two thirds of their advantage
+($+0.091$ against $+0.136$ without unlearning, $p=5\cdot10^{-7}$); honest unlearning at the
+same strength removes it (Sections~\ref{sec:exp-detect} and~\ref{sec:exp-e2e}).
 
 \item \textbf{Organic-matched canaries with an exact null.} Paired canaries stating two
 incompatible facts keep the audit's exact null for every score that compares the facts
@@ -98,8 +100,8 @@ statement about organic records is conditional on the strongest detector anyone 
 we report estimates for the detectors we built. The organic advantage is a counterfactual
 quantity: the leakage of organic records planted like canaries, not of the particular records
 users deleted. All records are fictitious biographies from one domain,
-and the models have at most one billion parameters. The selective provider is simulated
-from detector decisions rather than run end to end. Section~\ref{sec:discussion} discusses
+and the models have at most one billion parameters. The end-to-end attack uses one
+model size and one unlearning method. Section~\ref{sec:discussion} discusses
 these limits.
 
 \paragraph{Organisation.} Section~\ref{sec:model} defines the audit and the threat model.

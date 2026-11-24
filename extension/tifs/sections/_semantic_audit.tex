@@ -1,0 +1,21 @@
+\subsection{Auditing with semantic twins}\label{sec:exp-semantic}
+
+
+Before turning to matched canaries we check that semantic twins give a working audit when
+canaries are repeated as in VOUCH and the forget set contains every trained form
+(Table~\ref{tab:semantic}). Paraphrased questions that were never trained carry most of the
+literal advantage ($0.24$ against $0.28$ on average, calibrated), and the audit over all
+scores revokes the positive control and issues for retraining in every seed at $\eps=0.2$;
+GA and NPO remove both advantages. A GPT-2 pilot did not separate the controls: semantic
+twins need a model that generalises a stated fact to its paraphrases.
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{2.5pt}
+\caption{Semantic-twin audit on Pythia-410M, full forget set, $m=384$, three seeds: realised
+calibrated literal and paraphrase advantages per seed and the two-sided verdict (I issued, R
+revoked, U undetermined).}
+\label{tab:semantic}
+\resizebox{\columnwidth}{!}{\input{tables/semantic}}
+\end{table}
+
+

@@ -38,7 +38,7 @@ Audits: A Sharp Bound and the Detectability--Power Trade-off''}
 
 % Numbering continues from the main manuscript.
 \setcounter{table}{6}
-\setcounter{figure}{1}
+\setcounter{figure}{0}
 \setcounter{theorem}{7}
 \renewcommand{\thesection}{S-\Roman{section}}
 \renewcommand{\theequation}{S\arabic{equation}}
@@ -111,10 +111,13 @@ auditor's information after $t$ reveals.
 
 \section{Additional experimental results}\label{sec:s-results}
 
+\input{sections/_semantic_audit}
+\input{sections/_retention_fig}
+
 \paragraph{Retention} The retention of a score is its advantage after unlearning divided by the
 mean advantage before unlearning over seeds; per-seed ratios are unstable when a seed's
 pre-unlearning paraphrase advantage is close to zero. Table~\ref{tab:retention} reports the
-per-seed tests behind Fig.~\ref{M-fig:retention}. Comparisons that mix a raw literal score with
+per-seed tests behind Fig.~\ref{fig:retention}. Comparisons that mix a raw literal score with
 a calibrated paraphrase score give larger gaps and, for Pythia-1B, a significant one, but the
 two scores have different noise and we do not rely on them.
 
