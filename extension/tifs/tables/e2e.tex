@@ -1,0 +1,14 @@
+\begin{tabular}{lccccc}
+\toprule
+ & \multicolumn{2}{c}{Canary cohort} & \multicolumn{2}{c}{Organic probes} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Subject & $\hat\Delta$ & ISSUED & $\hat\Delta$ & $p$ & AUC \\
+\midrule
+none & $+0.348$ & 0.00 & $+0.136$ & $5\cdot10^{-14}$ & 0.56 \\
+retrain & $-0.021$ & 0.97 & $-0.016$ & 0.40 & 0.50 \\
+honest, 75 & $+0.027$ & 0.94 & $+0.062$ & $6\cdot10^{-4}$ & 0.48 \\
+selective, 75 & $+0.007$ & 0.97 & $+0.083$ & $4\cdot10^{-6}$ & 0.52 \\
+honest, 150 & $+0.023$ & 0.98 & $+0.018$ & 0.34 & 0.48 \\
+selective, 150 & $+0.006$ & 0.98 & $+0.091$ & $5\cdot10^{-7}$ & 0.53 \\
+\bottomrule
+\end{tabular}

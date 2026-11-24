@@ -96,9 +96,37 @@ def main():
               f"probe adv={row['probe_adv_literal'][0]:+.3f} "
               f"iss={row['probe_issued']:.2f} rev={row['probe_revoked']:.2f} | "
               f"organic AUC={row['organic_auc_loss']:.3f}")
+    # pooled sign tests over all seeds' pairs, and paired per-seed comparisons
+    from scipy.stats import binomtest, wilcoxon
+    pooled = {}
+    for nm in names:
+        seeds = [r for r in runs if nm in r["subjects"]]
+        for g in ("canary", "probe"):
+            z = np.concatenate([np.array(r["subjects"][nm][g + "_literal"]) > 0 for r in seeds])
+            k, n = int(z.sum()), len(z)
+            pooled[f"{nm}/{g}"] = {"adv": 2 * k / n - 1, "n": n,
+                                   "p_two_sided": float(binomtest(k, n).pvalue)}
+    adv = lambda r, nm, g: float(np.mean(np.sign(r["subjects"][nm][g + "_literal"])))
+    paired = {}
+    for a_, b_ in (("selective@150", "honest@150"), ("selective@75", "honest@75"),
+                   ("selective@150", "retrain"), ("selective@75", "retrain"),
+                   ("selective@150", "none")):
+        both = [r for r in runs if a_ in r["subjects"] and b_ in r["subjects"]]
+        if len(both) < 2:
+            continue
+        d = [adv(r, a_, "probe") - adv(r, b_, "probe") for r in both]
+        paired[f"{a_} - {b_}"] = {"per_seed": d, "mean": float(np.mean(d)),
+                                  "positive": int(sum(x > 0 for x in d)), "n": len(d),
+                                  "p_wilcoxon": float(wilcoxon(d).pvalue)}
+    for k_, v in pooled.items():
+        print(f"pooled {k_:22s} adv={v['adv']:+.3f} n={v['n']} p={v['p_two_sided']:.1e}")
+    for k_, v in paired.items():
+        print(f"paired probe {k_:26s} mean={v['mean']:+.3f} pos={v['positive']}/{v['n']} "
+              f"p={v['p_wilcoxon']:.3f}")
     sel = {r["seed"]: r.get("selection") for r in runs}
     json.dump({"source": args.path, "eps": args.eps, "alpha": args.alpha, "k": args.k,
-               "selection": sel, "rows": rows}, open(args.out, "w"), indent=1)
+               "selection": sel, "rows": rows,
+               "pooled": pooled, "paired": paired}, open(args.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

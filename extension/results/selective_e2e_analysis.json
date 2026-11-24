@@ -1,0 +1,384 @@
+{
+ "source": "extension/results/selective_e2e.json",
+ "eps": 0.2,
+ "alpha": 0.05,
+ "k": 40,
+ "selection": {
+  "0": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "1": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "2": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "3": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "4": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "5": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "6": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "7": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  }
+ },
+ "rows": [
+  {
+   "subject": "none",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.3483072916666667,
+    0.02749722201145007
+   ],
+   "canary_adv_literal_cal": [
+    0.265625,
+    0.02274523268992972
+   ],
+   "canary_issued": 0.0,
+   "canary_seeds_majority_issued": 0,
+   "canary_revoked": 1.0,
+   "canary_seeds_majority_revoked": 8,
+   "probe_adv_literal": [
+    0.13606770833333334,
+    0.01343960148180858
+   ],
+   "probe_adv_literal_cal": [
+    0.016276041666666668,
+    0.014876592088126164
+   ],
+   "probe_issued": 0.521875,
+   "probe_seeds_majority_issued": 4,
+   "probe_revoked": 0.478125,
+   "probe_seeds_majority_revoked": 4,
+   "organic_auc_loss": 0.56176125
+  },
+  {
+   "subject": "honest@75",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.026692708333333336,
+    0.020703592949188897
+   ],
+   "canary_adv_literal_cal": [
+    0.01953125,
+    0.024856786910836925
+   ],
+   "canary_issued": 0.9375,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.0625,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.0625,
+    0.017524651359098035
+   ],
+   "probe_adv_literal_cal": [
+    0.01953125,
+    0.012044899235537256
+   ],
+   "probe_issued": 0.9625,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.0375,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.479340625
+  },
+  {
+   "subject": "selective@75",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.007161458333333333,
+    0.006743412595730734
+   ],
+   "canary_adv_literal_cal": [
+    0.015625,
+    0.011393893475530919
+   ],
+   "canary_issued": 0.975,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.025,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.08333333333333333,
+    0.0053911371823621435
+   ],
+   "probe_adv_literal_cal": [
+    0.019531249999999997,
+    0.015555089134783878
+   ],
+   "probe_issued": 0.915625,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.084375,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.51607125
+  },
+  {
+   "subject": "honest@150",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.0234375,
+    0.01763487037870734
+   ],
+   "canary_adv_literal_cal": [
+    0.01497395833333333,
+    0.017286351624155927
+   ],
+   "canary_issued": 0.98125,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.01875,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.017578125,
+    0.019511088304071503
+   ],
+   "probe_adv_literal_cal": [
+    0.003906250000000002,
+    0.012861751423409618
+   ],
+   "probe_issued": 0.990625,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.009375,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.484269375
+  },
+  {
+   "subject": "selective@150",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.005859375,
+    0.011154899899132783
+   ],
+   "canary_adv_literal_cal": [
+    0.001953125,
+    0.011089570494555693
+   ],
+   "canary_issued": 0.98125,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.01875,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.09114583333333333,
+    0.01275775907699572
+   ],
+   "probe_adv_literal_cal": [
+    0.018229166666666664,
+    0.0131319662163116
+   ],
+   "probe_issued": 0.921875,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.078125,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.5256775
+  },
+  {
+   "subject": "retrain",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    -0.021484375,
+    0.018053938312320373
+   ],
+   "canary_adv_literal_cal": [
+    0.01171875,
+    0.01950643264563082
+   ],
+   "canary_issued": 0.975,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.025,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    -0.015625,
+    0.012214624374540179
+   ],
+   "probe_adv_literal_cal": [
+    0.0,
+    0.011893130478531085
+   ],
+   "probe_issued": 0.9875,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.0125,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.497551875
+  }
+ ],
+ "pooled": {
+  "none/canary": {
+   "adv": 0.34830729166666674,
+   "n": 3072,
+   "p_two_sided": 1.329420171122045e-84
+  },
+  "none/probe": {
+   "adv": 0.13606770833333326,
+   "n": 3072,
+   "p_two_sided": 4.882597012221937e-14
+  },
+  "honest@75/canary": {
+   "adv": 0.02669270833333326,
+   "n": 3072,
+   "p_two_sided": 0.14388845257604785
+  },
+  "honest@75/probe": {
+   "adv": 0.0625,
+   "n": 3072,
+   "p_two_sided": 0.0005666860781143871
+  },
+  "selective@75/canary": {
+   "adv": 0.007161458333333259,
+   "n": 3072,
+   "p_two_sided": 0.7047789766419872
+  },
+  "selective@75/probe": {
+   "adv": 0.08333333333333326,
+   "n": 3072,
+   "p_two_sided": 4.158821807851935e-06
+  },
+  "honest@150/canary": {
+   "adv": 0.0234375,
+   "n": 3072,
+   "p_two_sided": 0.20018728308032258
+  },
+  "honest@150/probe": {
+   "adv": 0.017578125,
+   "n": 3072,
+   "p_two_sided": 0.3389539495777231
+  },
+  "selective@150/canary": {
+   "adv": 0.005859375,
+   "n": 3072,
+   "p_two_sided": 0.759064278077129
+  },
+  "selective@150/probe": {
+   "adv": 0.09114583333333326,
+   "n": 3072,
+   "p_two_sided": 4.7262290594142435e-07
+  },
+  "retrain/canary": {
+   "adv": -0.021484375,
+   "n": 3072,
+   "p_two_sided": 0.24089420359034358
+  },
+  "retrain/probe": {
+   "adv": -0.015625,
+   "n": 3072,
+   "p_two_sided": 0.39645092735505444
+  }
+ },
+ "paired": {
+  "selective@150 - honest@150": {
+   "per_seed": [
+    0.057291666666666664,
+    0.14583333333333334,
+    0.08854166666666666,
+    0.10416666666666667,
+    0.11979166666666667,
+    0.06249999999999999,
+    -0.03125,
+    0.04166666666666666
+   ],
+   "mean": 0.07356770833333333,
+   "positive": 7,
+   "n": 8,
+   "p_wilcoxon": 0.015625
+  },
+  "selective@75 - honest@75": {
+   "per_seed": [
+    0.07291666666666667,
+    0.010416666666666657,
+    0.015625,
+    -0.07291666666666669,
+    0.057291666666666664,
+    0.08333333333333333,
+    -0.015625,
+    0.015625
+   ],
+   "mean": 0.02083333333333333,
+   "positive": 6,
+   "n": 8,
+   "p_wilcoxon": 0.3046875
+  },
+  "selective@150 - retrain": {
+   "per_seed": [
+    0.08333333333333333,
+    0.16145833333333334,
+    0.026041666666666664,
+    0.10416666666666667,
+    0.19791666666666669,
+    0.08854166666666666,
+    0.09895833333333333,
+    0.09375
+   ],
+   "mean": 0.10677083333333334,
+   "positive": 8,
+   "n": 8,
+   "p_wilcoxon": 0.0078125
+  },
+  "selective@75 - retrain": {
+   "per_seed": [
+    0.10416666666666667,
+    0.10416666666666666,
+    0.078125,
+    0.08333333333333333,
+    0.171875,
+    0.08854166666666666,
+    0.125,
+    0.036458333333333336
+   ],
+   "mean": 0.09895833333333333,
+   "positive": 8,
+   "n": 8,
+   "p_wilcoxon": 0.0078125
+  },
+  "selective@150 - none": {
+   "per_seed": [
+    -0.08333333333333333,
+    0.04166666666666667,
+    -0.11979166666666669,
+    -0.015625,
+    -0.005208333333333329,
+    -0.07291666666666667,
+    -0.13020833333333334,
+    0.026041666666666657
+   ],
+   "mean": -0.044921875,
+   "positive": 2,
+   "n": 8,
+   "p_wilcoxon": 0.1484375
+  }
+ }
+}
