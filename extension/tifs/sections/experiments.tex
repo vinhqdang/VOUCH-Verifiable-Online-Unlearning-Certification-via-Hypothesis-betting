@@ -105,49 +105,58 @@ The simulation above uses detector decisions only. We now run the attack on a mo
 training corpus contains, besides the keep and forget biographies, the auditor's $384$
 semantic canary pairs (literal form, repeated $1$, $2$, $4$ or $8$ times) and $384$
 \emph{organic probe} pairs: organic-matched twins with fair coins drawn by the experimenter,
-each in-twin repeated four times, so that they are memorised about as well as the canaries.
-The probes are part of the deletion request like any user record, and because their
-inclusion is randomised their paired sign statistic measures the organic advantage
-$\Delta^o_\xi$ of Section~\ref{sec:bound} directly, with an exact null under retraining.
-Pythia-410M is fine-tuned for $800$ steps. The provider trains a character $n$-gram detector
-on $1{,}000$ canaries from the public generator (fresh seed) against $1{,}000$ organic records it
-holds, and the \emph{selective} provider runs NPO only on the forget records the detector
-flags. The \emph{honest} provider runs NPO on the whole forget set. In all eight seeds the
-detector flags every canary and no probe or forget biography.
+each in-twin repeated four times in one design and eight times in a second. The probes are
+part of the deletion request like any user record, and because their inclusion is randomised
+their paired sign statistic measures the organic advantage $\Delta^o_\xi$ of
+Section~\ref{sec:bound} directly, with an exact null under retraining. Pythia-410M is
+fine-tuned for $800$ steps. The provider trains a character $n$-gram detector on $1{,}000$
+canaries from the public generator (fresh seed) against $1{,}000$ organic records it holds;
+the \emph{selective} provider runs NPO only on the forget records the detector flags, the
+\emph{honest} provider on the whole forget set. In all sixteen runs the detector flags every
+canary and no probe or forget biography.
 
 \begin{table}[t]
-\centering\footnotesize\setlength{\tabcolsep}{3pt}
-\caption{End-to-end canary-aware provider, Pythia-410M, eight seeds, NPO with $75$ or $150$
-steps. Canary cohort: pooled advantage and fraction of runs ($8$ seeds $\times$ $40$ reveal
-orders) in which VOUCH issues a two-sided $(0.2,0.05)$ certificate. Organic probes: pooled
-advantage over the $3{,}072$ probe pairs and two-sided exact sign-test $p$-value (the signs are
-independent fair coins under the exact null). AUC: membership inference of the organic forget
-biographies against the organic holdout (loss score).}
+\centering\footnotesize\setlength{\tabcolsep}{2.5pt}
+\caption{End-to-end canary-aware provider, Pythia-410M, eight seeds per design, NPO with $75$
+or $150$ steps. Canary cohort: pooled advantage and fraction of runs ($8$ seeds $\times$ $40$
+reveal orders) in which VOUCH issues a two-sided $(0.2,0.05)$ certificate. Organic probes:
+pooled advantage over the $3{,}072$ probe pairs, two-sided exact sign-test $p$-value (the
+signs are independent fair coins under the exact null), and fraction of runs in which a VOUCH
+audit of the probes revokes. AUC: membership inference of the organic forget biographies
+against the organic holdout (loss score).}
 \label{tab:e2e}
 \resizebox{\columnwidth}{!}{\input{tables/e2e}}
 \end{table}
 
-\paragraph{The selective provider passes and retains organic leakage} Table~\ref{tab:e2e} shows
-that the selective provider removes the canary advantage completely ($+0.006$ pooled after
-$150$ NPO steps) and VOUCH issues the certificate in $98\%$ of runs, as for the honest provider
-and for retraining. The organic probes keep an advantage of $+0.091$ ($p=5\cdot10^{-7}$),
-two thirds of the $+0.136$ of the model that never unlearned, while the honest provider at the
-same strength brings them to $+0.018$, indistinguishable from zero. Per seed, the probe
-advantage of the selective provider exceeds that of the honest provider in seven of eight
-seeds (mean difference $+0.074$, Wilcoxon $p=0.016$) and that of retraining in all eight
-($p=0.008$). The membership-inference AUC of the organic forget biographies, which are seen
-once and leave a weak trace, moves in the same direction ($0.53$ against $0.48$ for the honest
-provider and $0.56$ without unlearning). The certificate the provider obtains is correct about
-the canaries and says nothing about the organic records it left in place, as
-Theorem~\ref{thm:sharp} predicts for a detector with advantage one.
+\paragraph{The selective provider obtains the certificate and keeps organic leakage}
+Table~\ref{tab:e2e} shows that in both designs the selective provider removes the canary
+advantage ($+0.006$ and $+0.010$ pooled after $150$ NPO steps) and VOUCH issues the certificate
+in $98\%$ and $99\%$ of runs, in the majority of reveal orders in all eight seeds, as for the
+honest provider and for retraining. The organic probes keep much of their advantage. With
+probes repeated four times the selective provider leaves $+0.091$ ($p=5\cdot10^{-7}$), two
+thirds of the level without unlearning, while the honest provider leaves $+0.018$, not
+distinguishable from zero; per seed the selective provider's probe advantage is the larger in
+seven of eight seeds (Wilcoxon $p=0.016$). With probes repeated eight times the selective
+provider leaves $+0.166$ after $150$ steps and $+0.186$ after $75$, about $60\%$ of the $+0.307$
+without unlearning, against $+0.086$ and $+0.103$ for the honest provider (larger in six and
+seven of eight seeds, $p=0.031$ and $0.039$). In this design a single VOUCH audit of the probes
+catches the selective provider: it revokes in $60\%$ of runs after $150$ steps, and in the
+majority of reveal orders in five of eight seeds, against $11\%$ and no seed for the honest
+provider; after $75$ steps the figures are $75\%$ and seven seeds against $34\%$ and two. The
+certificate the provider obtains is correct about the canaries and silent about the organic
+records it left in place, as Theorem~\ref{thm:sharp} predicts for a detector with advantage
+one.
 
-Two qualifications apply. At $75$ NPO steps the honest provider also leaves probe residue
-($+0.062$), so the two providers differ only at the stronger setting. And the per-seed VOUCH
-audit of the probes revokes the selective provider in only $8\%$ of runs: a probe advantage of
-$0.09$ on $384$ pairs is below what one run can detect at $\alpha=0.05$, and the evidence comes
-from pooling eight seeds. An auditor who wants to catch the provider with organic-looking
-records alone needs more of them, or records memorised more strongly, which is the trade-off of
-Corollary~\ref{cor:tradeoff}.
+\paragraph{Qualifications} With probes repeated four times, one run of the probe audit has
+little power ($8\%$ revocations of the selective provider) and the evidence comes from pooling
+seeds; the eight-fold design buys that power with repetition, which a provider could detect
+(Remark~\ref{rem:dup}), the trade-off of Corollary~\ref{cor:tradeoff}. Honest NPO does not
+remove all probe leakage either: with eight-fold probes it leaves $+0.086$ after $150$ steps
+($p=2\cdot10^{-6}$) while VOUCH certifies its canaries in every run, because those probes are
+memorised more deeply than the canaries, repeated $3.75$ times on average. A certificate on
+canaries therefore understates the leakage of records memorised more strongly than the
+canaries even for an honest provider, a second reason to match canaries to the data they stand
+for.
 
 \subsection{The price of indistinguishability}\label{sec:exp-matched}
 

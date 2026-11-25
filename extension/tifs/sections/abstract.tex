@@ -8,9 +8,9 @@ the advantage of the best test that tells canaries from organic records. When le
 one-sided and determined by the trained record, the largest hideable leakage equals the power
 of the optimal such test. A character n-gram classifier recognises both canary designs we
 tested perfectly, including the random-string canaries of a recent anytime-valid
-certificate. On Pythia-410M, a provider that unlearns only what the classifier flags obtains
-the audit's certificate in 98\% of runs, while organic records with randomised inclusion keep
-two thirds of their leakage, which honest unlearning removes. We prove that twins drawn from the organic record generator
+certificate. On Pythia-410M, a provider unlearning only what the classifier flags obtains
+the certificate in 98\% of runs, while deleted organic records retain
+two thirds of their leakage, two to five times what honest unlearning leaves. We prove that twins drawn from the organic record generator
 keep the audit's exact null, and our detectors do not separate them beyond noise. At single
 exposure, however, the audit then has no power and certifies a model that never unlearned. The bound shows that this trade-off is inherent: an audit can exceed organic leakage in
 sensitivity only as far as its canaries are detectable. Membership-inference

@@ -1,14 +1,23 @@
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccccc}
 \toprule
- & \multicolumn{2}{c}{Canary cohort} & \multicolumn{2}{c}{Organic probes} & \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Subject & $\hat\Delta$ & ISSUED & $\hat\Delta$ & $p$ & AUC \\
+ & \multicolumn{2}{c}{Canary cohort} & \multicolumn{3}{c}{Organic probes} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-6}
+Subject & $\hat\Delta$ & ISSUED & $\hat\Delta$ & $p$ & REVOKED & AUC \\
 \midrule
-none & $+0.348$ & 0.00 & $+0.136$ & $5\cdot10^{-14}$ & 0.56 \\
-retrain & $-0.021$ & 0.97 & $-0.016$ & 0.40 & 0.50 \\
-honest, 75 & $+0.027$ & 0.94 & $+0.062$ & $6\cdot10^{-4}$ & 0.48 \\
-selective, 75 & $+0.007$ & 0.97 & $+0.083$ & $4\cdot10^{-6}$ & 0.52 \\
-honest, 150 & $+0.023$ & 0.98 & $+0.018$ & 0.34 & 0.48 \\
-selective, 150 & $+0.006$ & 0.98 & $+0.091$ & $5\cdot10^{-7}$ & 0.53 \\
+\multicolumn{7}{l}{\emph{probes repeated $4$ times}} \\
+none & $+0.348$ & 0.00 & $+0.136$ & $5\cdot10^{-14}$ & 0.48 & 0.56 \\
+retrain & $-0.021$ & 0.97 & $-0.016$ & 0.40 & 0.01 & 0.50 \\
+honest, 75 & $+0.027$ & 0.94 & $+0.062$ & $6\cdot10^{-4}$ & 0.04 & 0.48 \\
+selective, 75 & $+0.007$ & 0.97 & $+0.083$ & $4\cdot10^{-6}$ & 0.08 & 0.52 \\
+honest, 150 & $+0.023$ & 0.98 & $+0.018$ & 0.34 & 0.01 & 0.48 \\
+selective, 150 & $+0.006$ & 0.98 & $+0.091$ & $5\cdot10^{-7}$ & 0.08 & 0.53 \\
+\midrule
+\multicolumn{7}{l}{\emph{probes repeated $8$ times}} \\
+none & $+0.265$ & 0.03 & $+0.307$ & $1\cdot10^{-65}$ & 1.00 & 0.55 \\
+retrain & $-0.021$ & 0.97 & $-0.016$ & 0.40 & 0.01 & 0.50 \\
+honest, 75 & $+0.009$ & 0.97 & $+0.103$ & $1\cdot10^{-8}$ & 0.34 & 0.48 \\
+selective, 75 & $+0.008$ & 0.98 & $+0.186$ & $7\cdot10^{-25}$ & 0.75 & 0.51 \\
+honest, 150 & $+0.014$ & 1.00 & $+0.086$ & $2\cdot10^{-6}$ & 0.11 & 0.48 \\
+selective, 150 & $+0.010$ & 0.99 & $+0.166$ & $3\cdot10^{-20}$ & 0.60 & 0.52 \\
 \bottomrule
 \end{tabular}

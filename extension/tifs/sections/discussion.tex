@@ -31,9 +31,9 @@ canaries for real corpora, whose distribution the auditor sees only through samp
 main open problem.
 
 \paragraph{Scope of the evaluation} The end-to-end attack uses Pythia-410M, NPO and organic
-probes repeated four times; with probes seen once, as most user records are, the organic
-leakage it hides would be smaller and harder to measure. Its evidence on the probes comes from
-pooling eight seeds, since one run of the probe audit has little power. The simulation of
+probes repeated four or eight times; with probes seen once, as most user records are, the
+organic leakage it hides would be smaller and harder to measure. With four-fold probes its
+evidence comes from pooling eight seeds, since one run of the probe audit has little power. The simulation of
 Table~\ref{tab:selective} uses detector decisions only. The detectors are trained on canaries from
 the same generators and on organic records from the same corpus, and the canaries of other
 audits were not tested.
@@ -56,7 +56,7 @@ users delete depends on whether the provider can tell the two apart, and we prov
 leakage a canary-aware provider can hide is at most twice its distinguishing advantage, exactly
 the Neyman--Pearson power when leakage is one-sided. The two canary designs we tested are
 recognised perfectly, and a provider that unlearns only what a simple classifier flags obtains the
-certificate while organic records deleted in the same request keep two thirds of their
+certificate while organic records deleted in the same request keep about two thirds of their
 leakage. Organic-matched
 canaries, which keep the exact null, are not separated by our detectors beyond noise, but they
 can be no more sensitive than planted organic records, and at single exposure the audit had no

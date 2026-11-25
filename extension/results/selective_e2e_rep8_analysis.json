@@ -1,0 +1,384 @@
+{
+ "source": "extension/results/selective_e2e_rep8.json",
+ "eps": 0.2,
+ "alpha": 0.05,
+ "k": 40,
+ "selection": {
+  "0": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "1": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "2": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "3": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "4": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "5": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "6": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  },
+  "7": {
+   "forget_records": 968,
+   "selected": 384,
+   "canaries_flagged": 1.0,
+   "probes_flagged": 0.0,
+   "forget_bio_flagged": 0.0
+  }
+ },
+ "rows": [
+  {
+   "subject": "none",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.26497395833333337,
+    0.027585164098964783
+   ],
+   "canary_adv_literal_cal": [
+    0.19791666666666669,
+    0.01916193491023201
+   ],
+   "canary_issued": 0.028125,
+   "canary_seeds_majority_issued": 0,
+   "canary_revoked": 0.971875,
+   "canary_seeds_majority_revoked": 8,
+   "probe_adv_literal": [
+    0.306640625,
+    0.028754486513180105
+   ],
+   "probe_adv_literal_cal": [
+    0.072265625,
+    0.017619412490817547
+   ],
+   "probe_issued": 0.0,
+   "probe_seeds_majority_issued": 0,
+   "probe_revoked": 1.0,
+   "probe_seeds_majority_revoked": 8,
+   "organic_auc_loss": 0.54776625
+  },
+  {
+   "subject": "honest@75",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.009114583333333332,
+    0.015303930931604644
+   ],
+   "canary_adv_literal_cal": [
+    0.03580729166666667,
+    0.01889303238530156
+   ],
+   "canary_issued": 0.971875,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.028125,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.10286458333333333,
+    0.021626233951284136
+   ],
+   "probe_adv_literal_cal": [
+    0.03645833333333333,
+    0.016962817135681544
+   ],
+   "probe_issued": 0.659375,
+   "probe_seeds_majority_issued": 6,
+   "probe_revoked": 0.340625,
+   "probe_seeds_majority_revoked": 2,
+   "organic_auc_loss": 0.48423625
+  },
+  {
+   "subject": "selective@75",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.008463541666666668,
+    0.014295411224832025
+   ],
+   "canary_adv_literal_cal": [
+    0.0019531249999999996,
+    0.009740791838379509
+   ],
+   "canary_issued": 0.978125,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.021875,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.185546875,
+    0.019286349026541062
+   ],
+   "probe_adv_literal_cal": [
+    0.043619791666666664,
+    0.018147603990581188
+   ],
+   "probe_issued": 0.25,
+   "probe_seeds_majority_issued": 1,
+   "probe_revoked": 0.75,
+   "probe_seeds_majority_revoked": 7,
+   "organic_auc_loss": 0.513029375
+  },
+  {
+   "subject": "honest@150",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.014322916666666664,
+    0.014186990301836564
+   ],
+   "canary_adv_literal_cal": [
+    0.01953125,
+    0.013414798907814577
+   ],
+   "canary_issued": 0.996875,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.003125,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.0859375,
+    0.016674802701648044
+   ],
+   "probe_adv_literal_cal": [
+    0.005208333333333334,
+    0.017441530014480715
+   ],
+   "probe_issued": 0.89375,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.10625,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.481276875
+  },
+  {
+   "subject": "selective@150",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    0.009765625000000002,
+    0.02199684171038867
+   ],
+   "canary_adv_literal_cal": [
+    0.011067708333333332,
+    0.011284424122283662
+   ],
+   "canary_issued": 0.9875,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.0125,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    0.166015625,
+    0.022150456637723585
+   ],
+   "probe_adv_literal_cal": [
+    0.04296875,
+    0.012672039680246352
+   ],
+   "probe_issued": 0.396875,
+   "probe_seeds_majority_issued": 3,
+   "probe_revoked": 0.603125,
+   "probe_seeds_majority_revoked": 5,
+   "organic_auc_loss": 0.524234375
+  },
+  {
+   "subject": "retrain",
+   "n_seeds": 8,
+   "canary_adv_literal": [
+    -0.021484375,
+    0.018053938312320373
+   ],
+   "canary_adv_literal_cal": [
+    0.01171875,
+    0.01950643264563082
+   ],
+   "canary_issued": 0.975,
+   "canary_seeds_majority_issued": 8,
+   "canary_revoked": 0.025,
+   "canary_seeds_majority_revoked": 0,
+   "probe_adv_literal": [
+    -0.015625,
+    0.012214624374540179
+   ],
+   "probe_adv_literal_cal": [
+    0.0,
+    0.011893130478531085
+   ],
+   "probe_issued": 0.9875,
+   "probe_seeds_majority_issued": 8,
+   "probe_revoked": 0.0125,
+   "probe_seeds_majority_revoked": 0,
+   "organic_auc_loss": 0.497551875
+  }
+ ],
+ "pooled": {
+  "none/canary": {
+   "adv": 0.26497395833333326,
+   "n": 3072,
+   "p_two_sided": 2.8256416510480305e-49
+  },
+  "none/probe": {
+   "adv": 0.306640625,
+   "n": 3072,
+   "p_two_sided": 1.1535359100978198e-65
+  },
+  "honest@75/canary": {
+   "adv": 0.00911458333333326,
+   "n": 3072,
+   "p_two_sided": 0.6261667712910042
+  },
+  "honest@75/probe": {
+   "adv": 0.10286458333333326,
+   "n": 3072,
+   "p_two_sided": 1.2843383358649732e-08
+  },
+  "selective@75/canary": {
+   "adv": 0.00846354166666674,
+   "n": 3072,
+   "p_two_sided": 0.6519570114919784
+  },
+  "selective@75/probe": {
+   "adv": 0.185546875,
+   "n": 3072,
+   "p_two_sided": 7.387678706172207e-25
+  },
+  "honest@150/canary": {
+   "adv": 0.01432291666666674,
+   "n": 3072,
+   "p_two_sided": 0.43786351949623853
+  },
+  "honest@150/probe": {
+   "adv": 0.0859375,
+   "n": 3072,
+   "p_two_sided": 2.055656251896924e-06
+  },
+  "selective@150/canary": {
+   "adv": 0.009765625,
+   "n": 3072,
+   "p_two_sided": 0.600825780435465
+  },
+  "selective@150/probe": {
+   "adv": 0.166015625,
+   "n": 3072,
+   "p_two_sided": 3.4343763745365296e-20
+  },
+  "retrain/canary": {
+   "adv": -0.021484375,
+   "n": 3072,
+   "p_two_sided": 0.24089420359034358
+  },
+  "retrain/probe": {
+   "adv": -0.015625,
+   "n": 3072,
+   "p_two_sided": 0.39645092735505444
+  }
+ },
+ "paired": {
+  "selective@150 - honest@150": {
+   "per_seed": [
+    0.015625,
+    0.20833333333333334,
+    -0.005208333333333329,
+    0.06770833333333333,
+    0.08333333333333331,
+    0.0,
+    0.140625,
+    0.13020833333333331
+   ],
+   "mean": 0.080078125,
+   "positive": 6,
+   "n": 8,
+   "p_wilcoxon": 0.03125
+  },
+  "selective@75 - honest@75": {
+   "per_seed": [
+    -0.05729166666666667,
+    0.09375,
+    0.17708333333333331,
+    0.03645833333333333,
+    0.10416666666666669,
+    0.015625,
+    0.171875,
+    0.11979166666666666
+   ],
+   "mean": 0.08268229166666666,
+   "positive": 7,
+   "n": 8,
+   "p_wilcoxon": 0.0390625
+  },
+  "selective@150 - retrain": {
+   "per_seed": [
+    0.09895833333333333,
+    0.21354166666666669,
+    0.09375,
+    0.16666666666666666,
+    0.29166666666666663,
+    0.13541666666666666,
+    0.28125,
+    0.171875
+   ],
+   "mean": 0.181640625,
+   "positive": 8,
+   "n": 8,
+   "p_wilcoxon": 0.0078125
+  },
+  "selective@75 - retrain": {
+   "per_seed": [
+    0.13541666666666669,
+    0.15625,
+    0.19791666666666666,
+    0.17708333333333331,
+    0.22395833333333334,
+    0.22916666666666669,
+    0.2864583333333333,
+    0.203125
+   ],
+   "mean": 0.201171875,
+   "positive": 8,
+   "n": 8,
+   "p_wilcoxon": 0.0078125
+  },
+  "selective@150 - none": {
+   "per_seed": [
+    -0.15625,
+    -0.036458333333333315,
+    -0.328125,
+    -0.11458333333333331,
+    -0.07812500000000003,
+    -0.25,
+    0.020833333333333343,
+    -0.18229166666666666
+   ],
+   "mean": -0.140625,
+   "positive": 1,
+   "n": 8,
+   "p_wilcoxon": 0.015625
+  }
+ }
+}

@@ -50,10 +50,12 @@ strategy, and every strategy yields a detector.
 recognises VOUCH's random-string canaries and semantic canaries built from their own
 templates with advantage one, because of artefacts of their generators. We run the attack
 end to end on Pythia-410M: a provider that unlearns only the records the classifier flags
-obtains VOUCH's certificate in $98\%$ of runs, while organic probe records with randomised
-inclusion, deleted in the same request, keep two thirds of their advantage
-($+0.091$ against $+0.136$ without unlearning, $p=5\cdot10^{-7}$); honest unlearning at the
-same strength removes it (Sections~\ref{sec:exp-detect} and~\ref{sec:exp-e2e}).
+obtains VOUCH's certificate in $98\%$ to $99\%$ of runs, while organic probe records with
+randomised inclusion, deleted in the same request, keep about two thirds of their advantage,
+two to five times what an honest provider leaves; when the probes are memorised strongly
+enough, a VOUCH audit of the probes themselves revokes the selective provider in five of
+eight seeds and the honest one in none (Sections~\ref{sec:exp-detect}
+and~\ref{sec:exp-e2e}).
 
 \item \textbf{Organic-matched canaries with an exact null.} Paired canaries stating two
 incompatible facts keep the audit's exact null for every score that compares the facts
